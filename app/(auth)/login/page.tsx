@@ -22,13 +22,9 @@ export default function LoginPage() {
   async function onSubmit(data: LoginInput) {
     setServerError(null);
     try {
-      const res = await api.post<{ requiresTwoFactor: boolean }>("/api/identity/login", data);
-      if (res?.requiresTwoFactor) {
-        router.push("/login/2fa");
-      } else {
-        router.refresh();
-        router.push("/communities");
-      }
+      await api.post("/api/identity/login", data);
+      router.refresh();
+      router.push("/communities");
     } catch (err) {
       setServerError(err instanceof ApiError ? err.message : "Invalid email or password.");
     }
