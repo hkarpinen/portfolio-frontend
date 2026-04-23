@@ -1,0 +1,90 @@
+"use client";
+
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { api } from "@/lib/api-client";
+
+type NavAuthProps = {
+  displayName: string | null;
+  avatarUrl?: string | null;
+};
+
+export function NavAuth({ displayName, avatarUrl = null }: NavAuthProps) {
+  const router = useRouter();
+
+  async function logout() {
+    try {
+      await api.post("/api/identity/logout");
+    } catch {
+      /* ignore */
+    }
+    router.push("/login");
+    router.refresh();
+  }
+
+  if (!displayName) {
+    return (
+      <Link href="/login" style={{
+        fontSize: "13px", fontWeight: "600", color: "var(--accent)",
+        textDecoration: "none", padding: "6px 14px", borderRadius: "8px",
+        background: "var(--accent-subtle)", transition: "background 110ms",
+      }}>
+        Sign in
+      </Link>
+    );
+  }
+
+  const initials = displayName
+    .split(/\s+/)
+    .map((part) => part[0])
+    .filter(Boolean)
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+      <Link
+        href="/settings/profile"
+        aria-label="Your profile"
+        style={{
+          display: "flex", alignItems: "center", gap: "8px",
+          textDecoration: "none", padding: "4px 8px 4px 4px", borderRadius: "10px",
+          transition: "background 110ms",
+        }}
+        onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = "var(--surface-2)"}
+        onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = "transparent"}
+      >
+        {avatarUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={avatarUrl}
+            alt=""
+            style={{ width: "28px", height: "28px", borderRadius: "9999px", objectFit: "cover", border: "2px solid var(--surface)" }}
+          />
+        ) : (
+          <span style={{
+            width: "28px", height: "28px", borderRadius: "9999px",
+            background: "var(--accent-subtle)", color: "var(--accent)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            fontSize: "10px", fontWeight: "700", fontFamily: "var(--ff-display)",
+          }}>
+            {initials || "?"}
+          </span>
+        )}
+        <span style={{ fontSize: "13px", fontWeight: "500", color: "var(--text-2)" }}>
+          {displayName}
+        </span>
+      </Link>
+      <button
+        onClick={logout}
+        style={{
+          fontSize: "12px", fontWeight: "500", color: "var(--danger)",
+          background: "none", border: "none", cursor: "pointer", padding: "4px 8px",
+        }}
+      >
+        Logout
+      </button>
+    </div>
+  );
+}

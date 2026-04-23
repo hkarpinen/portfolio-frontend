@@ -1,0 +1,182 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import Link from "next/link";
+import { useCreateBill } from "@/hooks/use-bills";
+import { ApiError } from "@/lib/api-client";
+
+const CATEGORIES = [
+  "Rent", "Utilities", "Groceries", "Transportation", "Entertainment",
+  "Healthcare", "Insurance", "Subscriptions", "Internet", "Phone", "Other",
+] as const;
+
+const FREQUENCIES = ["Monthly", "Weekly", "BiWeekly", "Annually"] as const;
+
+const schema = z.object({
+  title: z.string().min(1, "Name is required").max(100),
+  amount: z.string().min(1, "Amount is required").refine((v) => !isNaN(Number(v)) && Number(v) > 0, "Amount must be positive"),
+  currency: z.string(),
+  category: z.enum(CATEGORIES),
+  dueDate: z.string().min(1, "Due date is required"),
+  description: z.string().max(500).optional(),
+  isRecurring: z.boolean(),
+  recurrenceFrequency: z.enum(FREQUENCIES).optional(),
+});
+
+type FormData = z.infer<typeof schema>;
+
+const inputStyle: React.CSSProperties = {
+  height: "38px", padding: "0 12px",
+  background: "var(--surface-2)", border: "1px solid var(--border)",
+  borderRadius: "12px", color: "var(--text)", fontSize: "14px",
+  outline: "none", width: "100%", fontFamily: "var(--ff-body)",
+};
+
+const labelStyle: React.CSSProperties = {
+  fontSize: "12px", fontWeight: "500", color: "var(--text-2)", letterSpacing: "0.02em",
+};
+
+function handleFocus(e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
+  e.currentTarget.style.borderColor = "var(--accent)";
+  e.currentTarget.style.boxShadow = "0 0 0 3px var(--accent-subtle)";
+}
+
+function handleBlur(e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
+  e.currentTarget.style.borderColor = "var(--border)";
+  e.currentTarget.style.boxShadow = "none";
+}
+
+export default function NewBillPage({ params }: { params: { id: string } }) {
+  const router = useRouter();
+  const createBill = useCreateBill(params.id);
+  const {
+    register, handleSubmit, watch,
+    formState: { errors },
+  } = useForm<FormData>({
+    resolver: zodResolver(schema),
+    defaultValues: { currency: "USD", isRecurring: false },
+  });
+
+  const isRecurring = watch("isRecurring");
+
+  const onSubmit = (data: FormData) => {
+    createBill.mutate(
+      {
+        title: data.title,
+        amount: Number(data.amount),
+        currency: data.currency,
+        category: data.category,
+        dueDate: new Date(data.dueDate).toISOString(),
+        description: data.description,
+        recurrenceFrequency: data.isRecurring ? data.recurrenceFrequency : undefined,
+      },
+      {
+        onSuccess: () => router.push(`/households/${params.id}`),
+      }
+    );
+  };
+
+  return (
+    <div className="page-enter" style={{ maxWidth: "560px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "24px" }}>
+      <div>
+        <Link href={`/households/${params.id}`} style={{ color: "var(--text-3)", fontSize: "12px", textDecoration: "none" }}>
+          ← Back to Household
+        </Link>
+        <h1 style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "28px", letterSpacing: "-0.025em", color: "var(--text)", marginTop: "6px" }}>
+          Add Bill
+        </h1>
+        <p style={{ color: "var(--text-3)", fontSize: "13px", marginTop: "4px" }}>
+          Add a new bill to this household
+        </p>
+      </div>
+
+      <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "16px", padding: "24px", boxShadow: "var(--shadow-sm)" }}>
+        <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+          {createBill.isError && (
+            <div style={{ background: "var(--danger-s)", border: "1px solid var(--danger)", borderRadius: "10px", padding: "10px 14px", fontSize: "13px", color: "var(--danger)" }}>
+              {createBill.error instanceof ApiError ? createBill.error.message : "Something went wrong. Please try again."}
+            </div>
+          )}
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+            <label style={labelStyle}>Name</label>
+            <input type="text" {...register("title")} placeholder="Rent, Electricity, etc." style={inputStyle} onFocus={handleFocus} onBlur={handleBlur} />
+            {errors.title && <p style={{ color: "var(--danger)", fontSize: "12px" }}>{errors.title.message}</p>}
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={labelStyle}>Amount</label>
+              <input type="number" step="0.01" {...register("amount")} placeholder="0.00" style={inputStyle} onFocus={handleFocus} onBlur={handleBlur} />
+              {errors.amount && <p style={{ color: "var(--danger)", fontSize: "12px" }}>{errors.amount.message}</p>}
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={labelStyle}>Currency</label>
+              <select {...register("currency")} style={inputStyle} onFocus={handleFocus} onBlur={handleBlur}>
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+                <option value="GBP">GBP</option>
+                <option value="CAD">CAD</option>
+              </select>
+            </div>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+            <label style={labelStyle}>Category</label>
+            <select {...register("category")} style={inputStyle} onFocus={handleFocus} onBlur={handleBlur}>
+              <option value="">Select category</option>
+              {CATEGORIES.map((c) => <option key={c} value={c}>{c.charAt(0) + c.slice(1).toLowerCase()}</option>)}
+            </select>
+            {errors.category && <p style={{ color: "var(--danger)", fontSize: "12px" }}>{errors.category.message}</p>}
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+            <label style={labelStyle}>Due Date</label>
+            <input type="date" {...register("dueDate")} style={inputStyle} onFocus={handleFocus} onBlur={handleBlur} />
+            {errors.dueDate && <p style={{ color: "var(--danger)", fontSize: "12px" }}>{errors.dueDate.message}</p>}
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+            <label style={labelStyle}>Description <span style={{ color: "var(--text-3)", fontWeight: "400" }}>(optional)</span></label>
+            <textarea {...register("description")} rows={2} placeholder="Any additional notes" style={{ padding: "10px 12px", background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: "12px", color: "var(--text)", fontSize: "14px", outline: "none", width: "100%", resize: "vertical", fontFamily: "var(--ff-body)" }} onFocus={handleFocus} onBlur={handleBlur} />
+          </div>
+
+          <label style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer" }}>
+            <input id="isRecurring" type="checkbox" {...register("isRecurring")} style={{ width: "16px", height: "16px", accentColor: "var(--accent)" }} />
+            <span style={{ fontSize: "13px", fontWeight: "500", color: "var(--text-2)" }}>Recurring bill</span>
+          </label>
+
+          {isRecurring && (
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={labelStyle}>Frequency</label>
+              <select {...register("recurrenceFrequency")} style={inputStyle} onFocus={handleFocus} onBlur={handleBlur}>
+                {FREQUENCIES.map((f) => <option key={f} value={f}>{f.charAt(0) + f.slice(1).toLowerCase()}</option>)}
+              </select>
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={createBill.isPending}
+            style={{
+              background: "var(--accent)", color: "#fff", height: "40px", borderRadius: "12px",
+              fontWeight: "600", fontSize: "14px", border: "none",
+              cursor: createBill.isPending ? "not-allowed" : "pointer",
+              opacity: createBill.isPending ? 0.6 : 1,
+              width: "100%", fontFamily: "var(--ff-body)",
+            }}
+            onMouseDown={(e) => { (e.currentTarget as HTMLButtonElement).style.transform = "scale(0.97)"; }}
+            onMouseUp={(e) => { (e.currentTarget as HTMLButtonElement).style.transform = "scale(1)"; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.transform = "scale(1)"; }}
+            onMouseEnter={(e) => { if (!createBill.isPending) (e.currentTarget as HTMLButtonElement).style.background = "var(--accent-hi)"; }}
+          >
+            {createBill.isPending ? "Adding..." : "Add Bill"}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
