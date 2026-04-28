@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { getCookieHeader } from "@/lib/server-cookies";
 import { JoinHouseholdButton } from "./join-button";
-import { fetchOverviewServer } from "@/lib/api/bills";
-import type { HouseholdSummary, UpcomingBill } from "@/types/api";
+import { fetchOverviewServer } from "@/lib/api/households";
+import type { HouseholdSummary, UpcomingBill } from "@/types/bills";
 import styles from "./households.module.css";
 
 export const dynamic = 'force-dynamic';

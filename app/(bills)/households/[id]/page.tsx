@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BillsList } from "./bills-list";
-import { fetchHouseholdDetailServer } from "@/lib/api/bills";
+import { fetchHouseholdDetailServer } from "@/lib/api/households";
 import { getSession } from "@/lib/auth/session";
 import { getCookieHeader } from "@/lib/server-cookies";
-import type { Bill, Household, HouseholdDashboard, HouseholdMember, HouseholdPageResponse } from "@/types/api";
+import type { Bill, Household, HouseholdDashboard, HouseholdMember, HouseholdPageResponse } from "@/types/bills";
 
 export const dynamic = 'force-dynamic';
 

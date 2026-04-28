@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useForumSearch } from "@/hooks/use-forum";
-import type { SearchResult } from "@/types/api";
+import type { SearchResult } from "@/types/forum";
 
 export const dynamic = 'force-dynamic';
 

@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useCreateCommunity, useUploadCommunityImage } from "@/hooks/use-forum";
+import { useCreateCommunity, useUploadCommunityImage } from "@/hooks/use-community";
 import { ApiError } from "@/lib/api-client";
 
 export default function NewCommunityPage() {

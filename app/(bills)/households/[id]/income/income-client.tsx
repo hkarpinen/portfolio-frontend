@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { AddHouseholdIncomeModal } from "./add-income-modal";
-import type { IncomeSource } from "@/types/api";
+import type { IncomeSource } from "@/types/bills";
 import { Button } from "@/components/ui/button";
 
 interface IncomeClientProps {

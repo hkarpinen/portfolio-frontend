@@ -2,7 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useCreatePersonalBill } from "@/hooks/use-bills";
+import { useCreatePersonalBill } from "@/hooks/use-personal-bills";
 import { ApiError } from "@/lib/api-client";
 import {
   BILL_CATEGORIES,

@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { fetchCommunityBySlugServer, fetchThreadsServer } from "@/lib/api/forum";
+import { fetchCommunityBySlugServer } from "@/lib/api/communities";
+import { fetchThreadsServer } from "@/lib/api/forum";
 import { getSession } from "@/lib/auth/session";
 import { CommunityActions } from "./community-actions";
 import { timeAgo } from "@/lib/utils";
-import type { CommunityDetailResponse, ThreadSummaryResponse } from "@/types/api";
+import type { CommunityDetailResponse, ThreadSummaryResponse } from "@/types/forum";
 
 export const dynamic = 'force-dynamic';
 

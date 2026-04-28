@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { useDeletePersonalBill, usePersonalBills, useUpdatePersonalBill } from "@/hooks/use-bills";
+import { useDeletePersonalBill, usePersonalBills, useUpdatePersonalBill } from "@/hooks/use-personal-bills";
 import { BILL_CATEGORIES, FREQUENCIES, personalBillSchema, type PersonalBillFormData } from "./_personal-bill-form-shared";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ApiError } from "@/lib/api-client";
-import type { PersonalBillPage } from "@/types/api";
-import type { PersonalBill } from "@/types/api";
+import type { PersonalBillPage } from "@/types/bills";
+import type { PersonalBill } from "@/types/bills";
 import { DeleteIconButton } from "@/components/ui/delete-icon-button";
 
 const CATEGORY_ICONS: Record<string, string> = {

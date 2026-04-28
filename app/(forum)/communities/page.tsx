@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { CommunityCard } from "./community-card";
-import { fetchCommunitiesServer } from "@/lib/api/forum";
-import type { CommunitySummaryResponse } from "@/types/api";
+import { fetchCommunitiesServer } from "@/lib/api/communities";
+import type { CommunitySummaryResponse } from "@/types/forum";
 
 export const dynamic = 'force-dynamic';
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useJoinHousehold } from "@/hooks/use-bills";
+import { useJoinHousehold } from "@/hooks/use-household";
 import { ApiError } from "@/lib/api-client";
 import { Button } from "@/components/ui/button";
 

@@ -1,8 +1,8 @@
 import { getCookieHeader } from "@/lib/server-cookies";
 import { AddIncomeForm } from "./add-income-form";
 import { IncomeList } from "./income-list";
-import { fetchIncomeServer } from "@/lib/api/bills";
-import type { IncomeSource } from "@/types/api";
+import { fetchIncomeServer } from "@/lib/api/income";
+import type { IncomeSource } from "@/types/bills";
 
 export const dynamic = 'force-dynamic';
 

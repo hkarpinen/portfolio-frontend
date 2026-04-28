@@ -1,6 +1,6 @@
 "use client";
 
-import { useCommunityMembers, useAppointModerator, useRemoveModerator } from "@/hooks/use-forum";
+import { useCommunityMembers, useAppointModerator, useRemoveModerator } from "@/hooks/use-community";
 import { ApiError } from "@/lib/api-client";
 
 interface Props {

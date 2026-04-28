@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { ApiError } from "@/lib/api-client";
-import { useCommunityMembership, useJoinCommunity } from "@/hooks/use-forum";
-import type { CommunityActivitySnapshot } from "@/types/api";
+import { useCommunityMembership, useJoinCommunity } from "@/hooks/use-community";
+import type { CommunityActivitySnapshot } from "@/types/forum";
 import styles from "./community-card.module.css";
 
 interface CommunityCardProps {

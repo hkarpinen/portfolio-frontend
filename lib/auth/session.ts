@@ -5,7 +5,7 @@ import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import { SERVER_API } from "@/lib/api-url";
 import { getCookieHeader } from "@/lib/server-cookies";
-import type { Me } from "@/types/api";
+import type { Me } from "@/types/identity";
 
 /**
  * Canonical server-side auth/session module.

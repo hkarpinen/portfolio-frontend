@@ -8,7 +8,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createCommentSchema, CreateCommentInput } from "@/schemas/forum";
 import { useCreateComment, useCastVote } from "@/hooks/use-forum";
-import type { Comment } from "@/types/api";
+import type { Comment } from "@/types/forum";
 import styles from "./comment-tree.module.css";
 
 // Compact horizontal vote controls for comments

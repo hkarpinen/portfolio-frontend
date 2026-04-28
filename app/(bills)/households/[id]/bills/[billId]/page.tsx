@@ -9,7 +9,7 @@ import { ApiError } from "@/lib/api-client";
 import { useBillDetail, useAddSplit, useRemoveSplit, useUpdateBill } from "@/hooks/use-bills";
 import { useMe } from "@/hooks/use-identity";
 import { Button } from "@/components/ui/button";
-import type { BillPageResponse } from "@/types/api";
+import type { BillPageResponse } from "@/types/bills";
 
 const splitSchema = z.object({
   membershipId: z.string().optional(),

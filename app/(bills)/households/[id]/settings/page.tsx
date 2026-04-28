@@ -16,9 +16,9 @@ import {
   useChangeMemberRole,
   useDeleteHousehold,
   useTransferOwnership,
-} from "@/hooks/use-bills";
+} from "@/hooks/use-household";
 import { useMe } from "@/hooks/use-identity";
-import type { Household, HouseholdMember } from "@/types/api";
+import type { Household, HouseholdMember } from "@/types/bills";
 
 const SPLIT_METHODS = ["Equal", "ByIncome", "Custom", "Percentage"] as const;
 const CURRENCIES = ["USD", "EUR", "GBP", "CAD", "AUD", "JPY", "CHF", "SEK", "NOK", "DKK"] as const;

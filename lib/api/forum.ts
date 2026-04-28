@@ -1,64 +1,18 @@
 import { api } from "@/lib/api-client";
 import { serverFetch } from "@/lib/server-api-client";
 import type {
-  CommunitySummaryResponse,
-  CommunityDetailResponse,
   ThreadSummaryResponse,
   ThreadMutationResponse,
   Thread,
-  CommunityMembership,
-  CommunityMemberItem,
-  CommunityPage,
+  Comment,
   ThreadPage,
   ProfileCommentPage,
   ForumProfile,
   UserCommunityItem,
   SearchResult,
-  Comment,
-} from "@/types/api";
+} from "@/types/forum";
 
-export const uploadCommunityImage = (file: File) => {
-  const formData = new FormData();
-  formData.append("file", file);
-  return api.upload<{ url: string }>("/api/forum/media/image", formData);
-};
-
-// ─── Communities ───────────────────────────────────────────────────────────────
-
-export const fetchCommunities = (page = 1, pageSize = 20) =>
-  api.get<CommunityPage>(`/api/forum/communities?page=${page}&pageSize=${pageSize}`);
-
-export const fetchCommunityBySlug = (slug: string) =>
-  api.get<CommunityDetailResponse>(`/api/forum/communities/by-slug/${slug}`);
-
-export const createCommunity = (body: { name: string; description?: string; privacy?: string; imageUrl?: string }) =>
-  api.post<CommunityDetailResponse>("/api/forum/communities", body);
-
-export const updateCommunity = (communityId: string, body: Partial<CommunitySummaryResponse>) =>
-  api.put<CommunityDetailResponse>(`/api/forum/communities/${communityId}`, body);
-
-export const deleteCommunity = (communityId: string) =>
-  api.delete<void>(`/api/forum/communities/${communityId}`);
-
-export const fetchMembership = (communityId: string) =>
-  api.get<CommunityMembership>(`/api/forum/communities/${communityId}/membership`);
-
-export const joinCommunity = (communityId: string) =>
-  api.post(`/api/forum/communities/${communityId}/join`);
-
-export const fetchMyMemberships = () =>
-  api.get<{ items: Array<{ communityId?: string }> }>("/api/forum/memberships");
-
-export const fetchCommunityMembers = (communityId: string) =>
-  api.get<CommunityMemberItem[]>(`/api/forum/communities/${communityId}/members`);
-
-export const appointModerator = (membershipId: string) =>
-  api.post(`/api/forum/memberships/${membershipId}/moderator`, {});
-
-export const removeModerator = (membershipId: string) =>
-  api.delete(`/api/forum/memberships/${membershipId}/moderator`);
-
-// ─── Threads ───────────────────────────────────────────────────────────────────
+// ─── Threads ─────────────────────────────────────────────────────────────────
 
 export const fetchThreads = (params: { communityId?: string; sort?: string; page?: number; pageSize?: number } = {}) => {
   const qs = new URLSearchParams({
@@ -82,7 +36,7 @@ export const createThread = (body: {
   flair?: string;
 }) => api.post<ThreadMutationResponse>("/api/forum/threads", body);
 
-// ─── Comments ──────────────────────────────────────────────────────────────────
+// ─── Comments ────────────────────────────────────────────────────────────────
 
 interface CommentTreeNode {
   comment: {
@@ -124,12 +78,12 @@ export const fetchComments = async (threadId: string): Promise<{ items: Comment[
 export const createComment = (body: { threadId: string; content: string; parentCommentId?: string }) =>
   api.post<Comment>("/api/forum/comments", body);
 
-// ─── Votes ─────────────────────────────────────────────────────────────────────
+// ─── Votes ───────────────────────────────────────────────────────────────────
 
 export const castVote = (body: { targetType: 0 | 1; targetId: string; direction: 1 | -1 }) =>
   api.post("/api/forum/votes", body);
 
-// ─── Search ────────────────────────────────────────────────────────────────────
+// ─── Search ──────────────────────────────────────────────────────────────────
 
 export const searchForum = (query: string) =>
   api.get<{ items?: SearchResult[] } | SearchResult[]>(
@@ -139,7 +93,7 @@ export const searchForum = (query: string) =>
 export const searchThreads = (query: string) =>
   api.get<ThreadPage>(`/api/forum/threads/search?q=${encodeURIComponent(query)}&page=1&pageSize=20`);
 
-// ─── Profiles ──────────────────────────────────────────────────────────────────
+// ─── Profiles ────────────────────────────────────────────────────────────────
 
 export const fetchForumProfile = (userId: string) =>
   api.get<ForumProfile>(`/api/forum/profiles/${userId}`);
@@ -153,28 +107,7 @@ export const fetchProfileComments = (userId: string, page = 1, pageSize = 20) =>
 export const fetchProfileMemberships = (userId: string) =>
   api.get<UserCommunityItem[]>(`/api/forum/profiles/${userId}/memberships`);
 
-// ─── Server-side (RSC) fetchers ───────────────────────────────────────────────
-// These use SERVER_API + cookie forwarding for use in React Server Components.
-// The browser `api` client cannot be used in server components.
-
-export const fetchCommunitiesServer = (
-  cookieHeader?: string,
-  page = 1,
-  pageSize = 20,
-) =>
-  serverFetch<CommunityPage>(
-    `/api/forum/communities?page=${page}&pageSize=${pageSize}`,
-    cookieHeader,
-  );
-
-export const fetchCommunityBySlugServer = (
-  slug: string,
-  cookieHeader?: string,
-) =>
-  serverFetch<CommunityDetailResponse>(
-    `/api/forum/communities/by-slug/${slug}`,
-    cookieHeader,
-  );
+// ─── Server-side (RSC) fetchers ──────────────────────────────────────────────
 
 export const fetchThreadsServer = (
   params: { communityId?: string; sort?: string; page?: number; pageSize?: number } = {},
@@ -199,18 +132,3 @@ export const fetchCommentsServer = async (threadId: string, cookieHeader?: strin
   );
   return { items: (data?.rootComments ?? []).map(mapTreeNode) };
 };
-
-export const fetchMyMembershipsServer = (cookieHeader: string) =>
-  serverFetch<{ items: Array<{ communityId?: string }> }>(
-    "/api/forum/memberships",
-    cookieHeader,
-  );
-
-export const fetchMembershipServer = (
-  communityId: string,
-  cookieHeader: string,
-) =>
-  serverFetch<CommunityMembership>(
-    `/api/forum/communities/${communityId}/membership`,
-    cookieHeader,
-  );

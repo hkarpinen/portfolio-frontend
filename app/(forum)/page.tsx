@@ -1,13 +1,10 @@
 import Link from "next/link";
 import { VoteButtons } from "./communities/[slug]/threads/[threadId]/vote-buttons";
-import {
-  fetchThreadsServer,
-  fetchCommunitiesServer,
-  fetchMyMembershipsServer,
-} from "@/lib/api/forum";
+import { fetchThreadsServer } from "@/lib/api/forum";
+import { fetchCommunitiesServer, fetchMyMembershipsServer } from "@/lib/api/communities";
 import { getCookieHeader } from "@/lib/server-cookies";
 import { timeAgo } from "@/lib/utils";
-import type { ThreadSummaryResponse, CommunitySummaryResponse } from "@/types/api";
+import type { ThreadSummaryResponse, CommunitySummaryResponse } from "@/types/forum";
 
 export const dynamic = "force-dynamic";
 

@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { IncomeClient } from "./income-client";
-import { fetchHouseholdServer, fetchHouseholdIncomeServer } from "@/lib/api/bills";
+import { fetchHouseholdServer } from "@/lib/api/households";
+import { fetchHouseholdIncomeServer } from "@/lib/api/income";
 import { getCookieHeader } from "@/lib/server-cookies";
-import type { IncomeSource, Household } from "@/types/api";
+import type { IncomeSource, Household } from "@/types/bills";
 
 export const dynamic = "force-dynamic";
 

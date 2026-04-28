@@ -8,7 +8,7 @@ import Link from "next/link";
 
 import { fetchThreadServer, fetchCommentsServer } from "@/lib/api/forum";
 import { getSession } from "@/lib/auth/session";
-import type { Thread, Comment } from "@/types/api";
+import type { Thread, Comment } from "@/types/forum";
 
 export const dynamic = 'force-dynamic';
 

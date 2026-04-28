@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useCommunityMembership, useJoinCommunity } from "@/hooks/use-forum";
+import { useCommunityMembership, useJoinCommunity } from "@/hooks/use-community";
 import { ApiError } from "@/lib/api-client";
 import styles from "./community-actions.module.css";
 

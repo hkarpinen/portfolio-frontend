@@ -1,8 +1,8 @@
 "use client";
 
-import { useDeleteIncomeSource, useIncome } from "@/hooks/use-bills";
-import type { IncomePage } from "@/types/api";
-import type { IncomeSource } from "@/types/api";
+import { useDeleteIncomeSource, useIncome } from "@/hooks/use-income";
+import type { IncomePage } from "@/types/bills";
+import type { IncomeSource } from "@/types/bills";
 import { DeleteIconButton } from "@/components/ui/delete-icon-button";
 
 export function IncomeList({ initialData }: { initialData: IncomePage }) {

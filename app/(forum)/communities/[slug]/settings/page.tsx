@@ -1,10 +1,10 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { fetchCommunityBySlugServer } from "@/lib/api/forum";
+import { fetchCommunityBySlugServer } from "@/lib/api/communities";
 import { getCookieHeader } from "@/lib/server-cookies";
 import { CommunitySettingsForm } from "./settings-form";
 import { SettingsTabs } from "./settings-tabs";
-import type { CommunityDetailResponse } from "@/types/api";
+import type { CommunityDetailResponse } from "@/types/forum";
 
 export const dynamic = "force-dynamic";
 

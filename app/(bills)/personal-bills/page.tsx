@@ -1,8 +1,8 @@
 import { getCookieHeader } from "@/lib/server-cookies";
 import { AddPersonalBillForm } from "./add-personal-bill-form";
 import { PersonalBillList } from "./personal-bill-list";
-import { fetchPersonalBillsServer } from "@/lib/api/bills";
-import type { PersonalBill } from "@/types/api";
+import { fetchPersonalBillsServer } from "@/lib/api/personal-bills";
+import type { PersonalBill } from "@/types/bills";
 
 export const dynamic = "force-dynamic";
 

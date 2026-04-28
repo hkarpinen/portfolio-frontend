@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useDeleteBill } from "@/hooks/use-bills";
 import styles from "./bills-list.module.css";
-import type { Bill } from "@/types/api";
+import type { Bill } from "@/types/bills";
 
 interface BillsListProps {
   householdId: string;

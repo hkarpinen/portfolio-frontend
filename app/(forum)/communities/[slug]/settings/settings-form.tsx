@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useUpdateCommunity, useUploadCommunityImage, useDeleteCommunity } from "@/hooks/use-forum";
+import { useUpdateCommunity, useUploadCommunityImage, useDeleteCommunity } from "@/hooks/use-community";
 import { useMe } from "@/hooks/use-identity";
 import { ApiError } from "@/lib/api-client";
 import styles from "./settings-form.module.css";

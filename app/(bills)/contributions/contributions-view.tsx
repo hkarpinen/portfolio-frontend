@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import type { ContributionItem, PersonalBillItem, ContributionPeriodSummary } from "@/types/api";
+import type { ContributionItem, PersonalBillItem, ContributionPeriodSummary } from "@/types/bills";
 
 type Period = "monthly" | "quarterly" | "yearly";
 

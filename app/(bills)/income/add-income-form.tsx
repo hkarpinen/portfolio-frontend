@@ -2,7 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useCreateIncomeSource } from "@/hooks/use-bills";
+import { useCreateIncomeSource } from "@/hooks/use-income";
 import { ApiError } from "@/lib/api-client";
 import { FREQUENCIES, incomeSchema, IncomeFormData, iStyle, Field, onFocusField, onBlurField } from "./_income-form-shared";
 import { Button } from "@/components/ui/button";

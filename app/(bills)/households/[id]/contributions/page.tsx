@@ -3,14 +3,14 @@ import { notFound } from "next/navigation";
 import {
   fetchHouseholdServer,
   fetchHouseholdContributionsServer,
-} from "@/lib/api/bills";
+} from "@/lib/api/households";
 import { getCookieHeader } from "@/lib/server-cookies";
 import type {
   Household,
   HouseholdContributionsResponse,
   MemberContribution,
   HouseholdContributionItem,
-} from "@/types/api";
+} from "@/types/bills";
 
 export const dynamic = "force-dynamic";
 

@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { requireUser } from "@/lib/auth/session";
-import { fetchCommunityBySlugServer, fetchMembershipServer } from "@/lib/api/forum";
+import { fetchCommunityBySlugServer, fetchMembershipServer } from "@/lib/api/communities";
 import { getCookieHeader } from "@/lib/server-cookies";
 
 /**

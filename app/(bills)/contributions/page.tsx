@@ -1,7 +1,7 @@
 import { getCookieHeader } from "@/lib/server-cookies";
 import { BudgetView } from "./contributions-view";
-import { fetchOverviewServer } from "@/lib/api/bills";
-import type { ContributionPeriodSummary } from "@/types/api";
+import { fetchOverviewServer } from "@/lib/api/households";
+import type { ContributionPeriodSummary } from "@/types/bills";
 
 export const dynamic = "force-dynamic";
 

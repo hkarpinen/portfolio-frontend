@@ -1,6 +1,6 @@
 import { api } from "@/lib/api-client";
 import { serverFetch } from "@/lib/server-api-client";
-import type { Me, AdminUser } from "@/types/api";
+import type { Me, AdminUser } from "@/types/identity";
 
 // ─── Current user (client + server) ───────────────────────────────────────────
 
