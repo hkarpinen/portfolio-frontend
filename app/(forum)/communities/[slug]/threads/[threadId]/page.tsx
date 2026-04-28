@@ -4,6 +4,7 @@ import { CommentTree } from "./comment-tree";
 import { timeAgo } from "@/lib/utils";
 import { CommentForm } from "./comment-form";
 import { VoteButtons } from "./vote-buttons";
+import { ThreadActions } from "./thread-actions";
 import Link from "next/link";
 
 import { fetchThreadServer, fetchCommentsServer } from "@/lib/api/forum";
@@ -107,6 +108,13 @@ export default async function ThreadPage({
               style={{ marginTop: "16px", fontSize: "14px", color: "var(--text-2)", lineHeight: 1.7 }}
               dangerouslySetInnerHTML={{ __html: bodyHtml }}
             />
+            {/* Action row */}
+            <div style={{ display: "flex", alignItems: "center", gap: "4px", marginTop: "16px", paddingTop: "12px", borderTop: "1px solid var(--border)" }}>
+              <ThreadActions
+                threadId={thread.threadId}
+                threadUrl={`${process.env.NEXT_PUBLIC_BASE_URL ?? ""}/communities/${params.slug}/threads/${thread.threadId}`}
+              />
+            </div>
           </div>
         </div>
       </article>

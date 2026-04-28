@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { VoteButtons } from "./communities/[slug]/threads/[threadId]/vote-buttons";
+import { ThreadActions } from "./communities/[slug]/threads/[threadId]/thread-actions";
 import { fetchThreadsServer } from "@/lib/api/forum";
 import { fetchCommunitiesServer, fetchMyMembershipsServer } from "@/lib/api/communities";
 import { getCookieHeader } from "@/lib/server-cookies";
@@ -222,22 +223,21 @@ export default async function ForumFeedPage({
                   </Link>
 
                   {/* Actions row */}
-                  <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+                  <div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
                     <Link
                       href={`/communities/${thread.communityId}/threads/${thread.threadId}`}
-                      style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "12px", color: "var(--text-3)", textDecoration: "none" }}
+                      style={{ display: "flex", alignItems: "center", gap: "4px", padding: "4px 10px", borderRadius: "6px", fontSize: "12px", color: "var(--text-3)", textDecoration: "none", fontWeight: 500 }}
+                      className="row-hover"
                     >
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
                       </svg>
-                      View
+                      {thread.commentCount ?? 0} comments
                     </Link>
-                    <Link
-                      href={`/communities/${thread.communityId}/threads/new`}
-                      style={{ fontSize: "12px", color: "var(--text-3)", textDecoration: "none" }}
-                    >
-                      Post here
-                    </Link>
+                    <ThreadActions
+                      threadId={thread.threadId}
+                      threadUrl={`${process.env.NEXT_PUBLIC_BASE_URL ?? ""}/communities/${thread.communitySlug ?? thread.communityId}/threads/${thread.threadId}`}
+                    />
                   </div>
                 </div>
               </div>

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { timeAgo } from "@/lib/utils";
+import { ThreadActions } from "@/app/(forum)/communities/[slug]/threads/[threadId]/thread-actions";
 import type { ThreadSummaryResponse } from "@/types/forum";
 
 interface ThreadCardProps {
@@ -32,26 +33,21 @@ export function ThreadCard({
   }
 
   return (
-    <Link
-      href={`/communities/${displaySlug}/threads/${thread.threadId}`}
-      style={{ textDecoration: "none", display: "block" }}
+    <div
+      className="thread-card"
+      style={{
+        padding: "16px 18px",
+        background: "var(--surface)",
+        border: "1px solid var(--border)",
+        borderRadius: "var(--r-lg)",
+        transition: "transform 200ms var(--ease-spring), box-shadow 200ms",
+      }}
     >
+      {/* Desktop: horizontal vote + content */}
       <div
-        className="thread-card"
-        style={{
-          padding: "16px 18px",
-          background: "var(--surface)",
-          border: "1px solid var(--border)",
-          borderRadius: "var(--r-lg)",
-          cursor: "pointer",
-          transition: "transform 200ms var(--ease-spring), box-shadow 200ms",
-        }}
+        className="thread-card-inner"
+        style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}
       >
-        {/* Desktop: horizontal vote + content */}
-        <div
-          className="thread-card-inner"
-          style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}
-        >
           {/* Vote controls — desktop column */}
           <div
             className="thread-vote-col"
@@ -116,100 +112,107 @@ export function ThreadCard({
 
           {/* Content */}
           <div style={{ flex: 1, minWidth: 0 }}>
-            {/* Meta row */}
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "6px",
-                marginBottom: "4px",
-                flexWrap: "wrap",
-              }}
+            {/* Clickable meta + title */}
+            <Link
+              href={`/communities/${displaySlug}/threads/${thread.threadId}`}
+              style={{ textDecoration: "none", display: "block" }}
             >
-              {showCommunity && displayCommunity && (
-                <span style={{ fontSize: "11px", fontWeight: 600, color: "var(--accent)" }}>
-                  {displayCommunity}
-                </span>
-              )}
-              {showCommunity && displayCommunity && (
-                <span style={{ fontSize: "11px", color: "var(--text-3)" }}>·</span>
-              )}
-              <span style={{ fontSize: "11px", color: "var(--text-3)" }}>
-                Posted by {thread.authorDisplayName ?? "Unknown"} · {timeAgo(thread.createdAt)}
-              </span>
-              {thread.isPinned && (
-                <span
-                  style={{
-                    fontSize: "10px",
-                    fontWeight: 600,
-                    color: "var(--success)",
-                    background: "var(--success-s)",
-                    borderRadius: "9999px",
-                    padding: "1px 6px",
-                  }}
-                >
-                  Pinned
-                </span>
-              )}
-              {thread.flair && thread.flair !== "None" && (
-                <span
-                  style={{
-                    fontSize: "10px",
-                    fontWeight: 600,
-                    color: "var(--accent-v)",
-                    background: "var(--accent-v-subtle)",
-                    borderRadius: "9999px",
-                    padding: "1px 6px",
-                  }}
-                >
-                  {thread.flair}
-                </span>
-              )}
-            </div>
-
-            {/* Title */}
-            <h3
-              style={{
-                fontFamily: "var(--ff-display)",
-                fontWeight: 600,
-                fontSize: "14px",
-                lineHeight: 1.45,
-                color: "var(--text)",
-                margin: 0,
-                marginBottom: "8px",
-              }}
-            >
-              {thread.title}
-            </h3>
-
-            {/* Action buttons */}
-            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-              <span
+              {/* Meta row */}
+              <div
                 style={{
-                  fontSize: "11px",
-                  color: "var(--text-3)",
                   display: "flex",
                   alignItems: "center",
-                  gap: "4px",
+                  gap: "6px",
+                  marginBottom: "4px",
+                  flexWrap: "wrap",
                 }}
+              >
+                {showCommunity && displayCommunity && (
+                  <span style={{ fontSize: "11px", fontWeight: 600, color: "var(--accent)" }}>
+                    {displayCommunity}
+                  </span>
+                )}
+                {showCommunity && displayCommunity && (
+                  <span style={{ fontSize: "11px", color: "var(--text-3)" }}>·</span>
+                )}
+                <span style={{ fontSize: "11px", color: "var(--text-3)" }}>
+                  Posted by {thread.authorDisplayName ?? "Unknown"} · {timeAgo(thread.createdAt)}
+                </span>
+                {thread.isPinned && (
+                  <span
+                    style={{
+                      fontSize: "10px",
+                      fontWeight: 600,
+                      color: "var(--success)",
+                      background: "var(--success-s)",
+                      borderRadius: "9999px",
+                      padding: "1px 6px",
+                    }}
+                  >
+                    Pinned
+                  </span>
+                )}
+                {thread.flair && thread.flair !== "None" && (
+                  <span
+                    style={{
+                      fontSize: "10px",
+                      fontWeight: 600,
+                      color: "var(--accent-v)",
+                      background: "var(--accent-v-subtle)",
+                      borderRadius: "9999px",
+                      padding: "1px 6px",
+                    }}
+                  >
+                    {thread.flair}
+                  </span>
+                )}
+              </div>
+
+              {/* Title */}
+              <h3
+                style={{
+                  fontFamily: "var(--ff-display)",
+                  fontWeight: 600,
+                  fontSize: "14px",
+                  lineHeight: 1.45,
+                  color: "var(--text)",
+                  margin: 0,
+                  marginBottom: "8px",
+                }}
+              >
+                {thread.title}
+              </h3>
+            </Link>
+
+            {/* Action buttons */}
+            <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+              <Link
+                href={`/communities/${displaySlug}/threads/${thread.threadId}`}
+                style={{
+                  display: "flex", alignItems: "center", gap: "4px",
+                  padding: "4px 10px", borderRadius: "6px",
+                  fontSize: "11px", color: "var(--text-3)", textDecoration: "none", fontWeight: 500,
+                }}
+                className="row-hover"
               >
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
                 </svg>
                 {thread.commentCount ?? 0} comments
-              </span>
-              <span style={{ fontSize: "11px", color: "var(--text-3)" }}>Share</span>
-              <span style={{ fontSize: "11px", color: "var(--text-3)" }}>Report</span>
+              </Link>
+              <ThreadActions
+                threadId={thread.threadId}
+                threadUrl={`/communities/${displaySlug}/threads/${thread.threadId}`}
+              />
             </div>
           </div>
         </div>
-      </div>
       <style>{`
         .thread-card:hover {
           transform: translateY(-2px);
           box-shadow: var(--shadow-md);
         }
       `}</style>
-    </Link>
+    </div>
   );
 }
