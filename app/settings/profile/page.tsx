@@ -5,7 +5,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { api, ApiError } from "@/lib/api-client";
+import { identityKeys, forumKeys } from "@/lib/query-keys";
+import { Button } from "@/components/ui/button";
+import pageStyles from "./page.module.css";
 
 const identitySchema = z.object({
   displayName: z.string().min(1, "Display name is required").max(50),
@@ -134,6 +138,7 @@ function FocusTextarea({
 
 export default function ProfileSettingsPage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [loading, setLoading] = useState(true);
   const [identitySaved, setIdentitySaved] = useState(false);
   const [forumSaved, setForumSaved] = useState(false);
@@ -167,6 +172,7 @@ export default function ProfileSettingsPage() {
     try {
       await api.put("/api/identity/me", { displayName: data.displayName, avatarUrl });
       setIdentitySaved(true);
+      queryClient.invalidateQueries({ queryKey: identityKeys.me() });
       router.refresh();
     } catch (err) {
       setIdentityError(err instanceof ApiError ? err.message : "Something went wrong. Please try again.");
@@ -179,6 +185,8 @@ export default function ProfileSettingsPage() {
     try {
       await api.put("/api/forum/profiles/me", { bio: data.bio ?? null, signature: data.signature ?? null });
       setForumSaved(true);
+      queryClient.invalidateQueries({ queryKey: forumKeys.all });
+      router.refresh();
     } catch (err) {
       setForumError(err instanceof ApiError ? err.message : "Something went wrong. Please try again.");
     }
@@ -384,24 +392,7 @@ export default function ProfileSettingsPage() {
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploading}
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  borderRadius: "9999px",
-                  background: "oklch(0% 0 0 / 0.45)",
-                  color: "#fff",
-                  fontSize: "11px",
-                  fontWeight: 600,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  opacity: 0,
-                  transition: "opacity 150ms",
-                  cursor: "pointer",
-                  border: "none",
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
-                onMouseLeave={(e) => (e.currentTarget.style.opacity = "0")}
+                className={pageStyles.avatarEditOverlay}
               >
                 Edit
               </button>
@@ -454,66 +445,24 @@ export default function ProfileSettingsPage() {
 
 function PrimaryButton({
   children,
+  className,
   ...props
 }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
-  const [pressed, setPressed] = useState(false);
-  const [hovered, setHovered] = useState(false);
   return (
-    <button
-      style={{
-        background: hovered ? "var(--accent-hi)" : "var(--accent)",
-        color: "#fff",
-        border: "none",
-        borderRadius: "12px",
-        padding: "0 18px",
-        height: "38px",
-        fontSize: "14px",
-        fontWeight: 600,
-        cursor: props.disabled ? "not-allowed" : "pointer",
-        opacity: props.disabled ? 0.5 : 1,
-        transform: pressed ? "scale(0.97)" : "scale(1)",
-        transition: "background 150ms, transform 100ms",
-        width: "100%",
-        fontFamily: "var(--ff-body)",
-      }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => { setHovered(false); setPressed(false); }}
-      onMouseDown={() => setPressed(true)}
-      onMouseUp={() => setPressed(false)}
-      {...props}
-    >
+    <Button variant="primary" fullWidth className={className} {...props}>
       {children}
-    </button>
+    </Button>
   );
 }
 
 function SecondaryButton({
   children,
+  className,
   ...props
 }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
-  const [hovered, setHovered] = useState(false);
   return (
-    <button
-      style={{
-        background: hovered ? "var(--surface-3)" : "var(--surface-2)",
-        border: "1px solid var(--border)",
-        borderRadius: "12px",
-        color: "var(--text-2)",
-        padding: "0 14px",
-        height: "34px",
-        fontSize: "13px",
-        fontWeight: 500,
-        cursor: props.disabled ? "not-allowed" : "pointer",
-        opacity: props.disabled ? 0.5 : 1,
-        transition: "background 150ms",
-        width: "100%",
-        fontFamily: "var(--ff-body)",
-      }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      {...props}
-    >
+    <Button variant="secondary" className={className} {...props}>
       {children}
-    </button>
+    </Button>
   );
 }

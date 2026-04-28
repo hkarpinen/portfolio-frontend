@@ -24,6 +24,10 @@ export const billsKeys = {
     householdId
       ? [...billsKeys.all, "contributions", householdId]
       : [...billsKeys.all, "contributions"],
+
+  // Personal Bills
+  personalBills: () => [...billsKeys.all, "personal-bills"] as const,
+  personalBill: (id: string) => [...billsKeys.personalBills(), id] as const,
 } as const;
 
 export const forumKeys = {
@@ -32,6 +36,7 @@ export const forumKeys = {
   communities: () => [...forumKeys.all, "communities"] as const,
   community: (slug: string) => [...forumKeys.communities(), slug] as const,
   communityMembership: (communityId: string) => [...forumKeys.community(communityId), "membership"] as const,
+  communityMembers: (communityId: string) => [...forumKeys.all, "community-members", communityId] as const,
 
   threads: (communityId?: string, sort?: string) =>
     communityId
@@ -42,9 +47,14 @@ export const forumKeys = {
 
   search: (query: string) => [...forumKeys.all, "search", query] as const,
   memberships: () => [...forumKeys.all, "memberships"] as const,
+
+  profile: (userId: string) => [...forumKeys.all, "profile", userId] as const,
+  profileThreads: (userId: string) => [...forumKeys.all, "profile", userId, "threads"] as const,
+  profileMemberships: (userId: string) => [...forumKeys.all, "profile", userId, "memberships"] as const,
 } as const;
 
 export const identityKeys = {
   all: ["identity"] as const,
   me: () => [...identityKeys.all, "me"] as const,
+  adminUsers: (page: number) => [...identityKeys.all, "admin-users", page] as const,
 } as const;

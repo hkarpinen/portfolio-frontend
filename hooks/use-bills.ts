@@ -10,19 +10,27 @@ import {
   addSplit,
   removeSplit,
   createBill,
+  updateBill,
   createHousehold,
   updateHousehold,
   joinHousehold,
   generateInvite,
   removeMember,
+  changeMemberRole,
   fetchHouseholdIncome,
+  fetchIncome,
   createIncomeSource,
+  deleteIncomeSource,
   fetchHouseholdContributions,
   deleteHousehold,
   transferOwnership,
+  fetchPersonalBills,
+  createPersonalBill,
+  updatePersonalBill,
+  deletePersonalBill,
 } from "@/lib/api/bills";
 import { billsKeys } from "@/lib/query-keys";
-import type { BillPageResponse, BillSplit } from "@/types/api";
+import type { BillPageResponse, BillSplit, PersonalBillPage, IncomePage } from "@/types/api";
 
 // ─── Read hooks ────────────────────────────────────────────────────────────────
 
@@ -73,6 +81,14 @@ export function useHouseholdIncome(id: string) {
   });
 }
 
+export function useIncome(initialData?: IncomePage) {
+  return useQuery({
+    queryKey: billsKeys.income(),
+    queryFn: fetchIncome,
+    initialData,
+  });
+}
+
 export function useHouseholdContributions(id: string) {
   return useQuery({
     queryKey: billsKeys.contributions(id),
@@ -100,6 +116,7 @@ export function useUpdateHousehold(householdId: string) {
     mutationFn: (body: Parameters<typeof updateHousehold>[1]) =>
       updateHousehold(householdId, body),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: billsKeys.households() });
       queryClient.invalidateQueries({ queryKey: billsKeys.household(householdId) });
       queryClient.invalidateQueries({ queryKey: billsKeys.householdDetail(householdId) });
     },
@@ -135,6 +152,34 @@ export function useRemoveMember(householdId: string) {
       removeMember(householdId, body),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: billsKeys.householdMembers(householdId) });
+      queryClient.invalidateQueries({ queryKey: billsKeys.contributions(householdId) });
+      queryClient.invalidateQueries({ queryKey: billsKeys.householdDashboard(householdId) });
+    },
+  });
+}
+
+export function useChangeMemberRole(householdId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ membershipId, role }: { membershipId: string; role: string }) =>
+      changeMemberRole(householdId, membershipId, role),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: billsKeys.householdMembers(householdId) });
+      queryClient.invalidateQueries({ queryKey: billsKeys.householdDetail(householdId) });
+    },
+  });
+}
+
+export function useUpdateBill(householdId: string, billId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (body: Parameters<typeof updateBill>[2]) =>
+      updateBill(householdId, billId, body),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: billsKeys.billDetail(householdId, billId) });
+      queryClient.invalidateQueries({ queryKey: billsKeys.bills(householdId) });
+      queryClient.invalidateQueries({ queryKey: billsKeys.overview() });
+      queryClient.invalidateQueries({ queryKey: billsKeys.contributions(householdId) });
     },
   });
 }
@@ -145,6 +190,9 @@ export function useDeleteBill(householdId: string) {
     mutationFn: (billId: string) => deleteBill(householdId, billId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: billsKeys.bills(householdId) });
+      queryClient.invalidateQueries({ queryKey: billsKeys.overview() });
+      queryClient.invalidateQueries({ queryKey: billsKeys.contributions(householdId) });
+      queryClient.invalidateQueries({ queryKey: billsKeys.householdDashboard(householdId) });
     },
   });
 }
@@ -156,6 +204,9 @@ export function usePayBill(householdId: string, billId: string) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: billsKeys.billDetail(householdId, billId) });
       queryClient.invalidateQueries({ queryKey: billsKeys.bills(householdId) });
+      queryClient.invalidateQueries({ queryKey: billsKeys.overview() });
+      queryClient.invalidateQueries({ queryKey: billsKeys.contributions(householdId) });
+      queryClient.invalidateQueries({ queryKey: billsKeys.householdDashboard(householdId) });
     },
   });
 }
@@ -195,6 +246,20 @@ export function useCreateIncomeSource() {
     mutationFn: createIncomeSource,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: billsKeys.income() });
+      queryClient.invalidateQueries({ queryKey: billsKeys.contributions() });
+      queryClient.invalidateQueries({ queryKey: billsKeys.overview() });
+    },
+  });
+}
+
+export function useDeleteIncomeSource() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (incomeId: string) => deleteIncomeSource(incomeId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: billsKeys.income() });
+      queryClient.invalidateQueries({ queryKey: billsKeys.contributions() });
+      queryClient.invalidateQueries({ queryKey: billsKeys.overview() });
     },
   });
 }
@@ -205,6 +270,8 @@ export function useCreateBill(householdId: string) {
     mutationFn: (body: Parameters<typeof createBill>[1]) => createBill(householdId, body),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: billsKeys.bills(householdId) });
+      queryClient.invalidateQueries({ queryKey: billsKeys.overview() });
+      queryClient.invalidateQueries({ queryKey: billsKeys.householdDashboard(householdId) });
     },
   });
 }
@@ -215,6 +282,7 @@ export function useDeleteHousehold() {
     mutationFn: (householdId: string) => deleteHousehold(householdId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: billsKeys.households() });
+      queryClient.invalidateQueries({ queryKey: billsKeys.overview() });
     },
   });
 }
@@ -225,6 +293,48 @@ export function useTransferOwnership(householdId: string) {
     mutationFn: (newOwnerId: string) => transferOwnership(householdId, newOwnerId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: billsKeys.householdDetail(householdId) });
+      queryClient.invalidateQueries({ queryKey: billsKeys.householdMembers(householdId) });
+    },
+  });
+}
+
+// ─── Personal Bills ────────────────────────────────────────────────────────────
+
+export function usePersonalBills(initialData?: PersonalBillPage) {
+  return useQuery({
+    queryKey: billsKeys.personalBills(),
+    queryFn: fetchPersonalBills,
+    initialData,
+  });
+}
+
+export function useCreatePersonalBill() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: createPersonalBill,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: billsKeys.personalBills() });
+    },
+  });
+}
+
+export function useUpdatePersonalBill() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, body }: { id: string; body: Parameters<typeof updatePersonalBill>[1] }) =>
+      updatePersonalBill(id, body),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: billsKeys.personalBills() });
+    },
+  });
+}
+
+export function useDeletePersonalBill() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => deletePersonalBill(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: billsKeys.personalBills() });
     },
   });
 }

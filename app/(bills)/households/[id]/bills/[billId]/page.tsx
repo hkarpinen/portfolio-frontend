@@ -1,12 +1,14 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { ApiError } from "@/lib/api-client";
-import { useBillDetail, useAddSplit, useRemoveSplit } from "@/hooks/use-bills";
+import { useBillDetail, useAddSplit, useRemoveSplit, useUpdateBill } from "@/hooks/use-bills";
 import { useMe } from "@/hooks/use-identity";
+import { Button } from "@/components/ui/button";
 import type { BillPageResponse } from "@/types/api";
 
 const splitSchema = z.object({
@@ -15,6 +17,18 @@ const splitSchema = z.object({
 });
 
 type FormData = z.infer<typeof splitSchema>;
+
+const editBillSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  amount: z.string().min(1).refine((v) => !isNaN(Number(v)) && Number(v) > 0, "Must be positive"),
+  currency: z.string().min(1),
+  category: z.string().min(1),
+  dueDate: z.string().min(1),
+  recurrenceFrequency: z.string().optional(),
+  description: z.string().optional(),
+});
+
+type EditBillData = z.infer<typeof editBillSchema>;
 
 function StatCard({ label, value, color }: { label: string; value: string; color?: string }) {
   return (
@@ -35,6 +49,7 @@ function StatCard({ label, value, color }: { label: string; value: string; color
 export default function BillPage({ params }: { params: { id: string; billId: string } }) {
   const { data: page, isLoading, error: fetchError } = useBillDetail(params.id, params.billId);
   const { data: me } = useMe();
+  const [editOpen, setEditOpen] = useState(false);
 
   const bill = page?.bill;
   const splits = page?.splits ?? [];
@@ -46,10 +61,43 @@ export default function BillPage({ params }: { params: { id: string; billId: str
 
   const addSplitMutation = useAddSplit(params.id, params.billId);
   const removeSplitMutation = useRemoveSplit(params.id, params.billId);
+  const updateBillMutation = useUpdateBill(params.id, params.billId);
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(splitSchema),
   });
+
+  const {
+    register: registerEdit,
+    handleSubmit: handleSubmitEdit,
+    formState: { errors: editErrors },
+  } = useForm<EditBillData>({
+    resolver: zodResolver(editBillSchema),
+    values: bill ? {
+      title: bill.title,
+      amount: String(bill.amount),
+      currency: bill.currency,
+      category: String(bill.category),
+      dueDate: bill.dueDate ? new Date(bill.dueDate).toISOString().slice(0, 10) : "",
+      recurrenceFrequency: bill.recurrenceFrequency ?? "",
+      description: bill.description ?? "",
+    } : undefined,
+  });
+
+  const onEditBill = (data: EditBillData) => {
+    updateBillMutation.mutate(
+      {
+        title: data.title,
+        amount: Number(data.amount),
+        currency: data.currency,
+        category: data.category,
+        dueDate: data.dueDate,
+        recurrenceFrequency: data.recurrenceFrequency || undefined,
+        description: data.description || undefined,
+      },
+      { onSuccess: () => setEditOpen(false) }
+    );
+  };
 
   const onAddSplit = (data: FormData) => {
     const membershipId = isPrivileged ? data.membershipId : currentMembership?.membershipId;
@@ -92,18 +140,102 @@ export default function BillPage({ params }: { params: { id: string; billId: str
         }}>
           ← Household
         </Link>
-        <h1 style={{
-          fontFamily: "var(--ff-display)", fontWeight: "800",
-          fontSize: "28px", letterSpacing: "-0.025em", color: "var(--text)",
-          marginTop: "4px", marginBottom: "4px",
-        }}>{bill.title}</h1>
-        <p style={{ fontSize: "13px", color: "var(--text-3)" }}>
-          Due {new Date(bill.dueDate).toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" })}
-          {bill.recurrenceFrequency && ` · ${bill.recurrenceFrequency}`}
-          {bill.category != null && ` · ${String(bill.category)}`}
-        </p>
-        {bill.description && <p style={{ fontSize: "13px", color: "var(--text-2)", marginTop: "6px", lineHeight: "1.6" }}>{bill.description}</p>}
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginTop: "4px" }}>
+          <div>
+            <h1 style={{
+              fontFamily: "var(--ff-display)", fontWeight: "800",
+              fontSize: "28px", letterSpacing: "-0.025em", color: "var(--text)",
+              marginBottom: "4px",
+            }}>{bill.title}</h1>
+            <p style={{ fontSize: "13px", color: "var(--text-3)" }}>
+              Due {new Date(bill.dueDate).toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" })}
+              {bill.recurrenceFrequency && ` · ${bill.recurrenceFrequency}`}
+              {bill.category != null && ` · ${String(bill.category)}`}
+            </p>
+            {bill.description && <p style={{ fontSize: "13px", color: "var(--text-2)", marginTop: "6px", lineHeight: "1.6" }}>{bill.description}</p>}
+          </div>
+          {isPrivileged && (
+            <button
+              onClick={() => setEditOpen((v) => !v)}
+              style={{
+                padding: "6px 14px", borderRadius: "10px", flexShrink: 0,
+                background: editOpen ? "var(--surface-3)" : "var(--surface-2)",
+                border: "1px solid var(--border)", fontSize: "12px", fontWeight: "600",
+                color: "var(--text-2)", cursor: "pointer", marginTop: "4px",
+              }}
+            >
+              {editOpen ? "Cancel" : "Edit"}
+            </button>
+          )}
+        </div>
       </div>
+
+      {/* Edit form */}
+      {editOpen && isPrivileged && (
+        <div style={{
+          background: "var(--surface)", border: "1px solid var(--border)",
+          borderRadius: "16px", padding: "24px",
+        }}>
+          <h2 style={{ fontFamily: "var(--ff-display)", fontWeight: "700", fontSize: "16px", color: "var(--text)", marginBottom: "16px" }}>
+            Edit Bill
+          </h2>
+          <form onSubmit={handleSubmitEdit(onEditBill)} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            {updateBillMutation.isError && (
+              <div style={{ padding: "10px 14px", borderRadius: "10px", background: "var(--danger-s)", border: "1px solid oklch(62% 0.21 22 / 0.3)", fontSize: "13px", color: "var(--danger)" }}>
+                {updateBillMutation.error instanceof ApiError ? updateBillMutation.error.message : "Something went wrong."}
+              </div>
+            )}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px", gridColumn: "1 / -1" }}>
+                <label style={{ fontSize: "12px", fontWeight: "500", color: "var(--text-2)" }}>Title</label>
+                <input {...registerEdit("title")} style={{ height: "38px", background: "var(--surface-2)", border: `1px solid ${editErrors.title ? "var(--danger)" : "var(--border)"}`, borderRadius: "12px", padding: "0 12px", fontSize: "13px", color: "var(--text)", outline: "none" }} />
+                {editErrors.title && <span style={{ fontSize: "11px", color: "var(--danger)" }}>{editErrors.title.message}</span>}
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={{ fontSize: "12px", fontWeight: "500", color: "var(--text-2)" }}>Amount</label>
+                <input type="number" step="0.01" {...registerEdit("amount")} style={{ height: "38px", background: "var(--surface-2)", border: `1px solid ${editErrors.amount ? "var(--danger)" : "var(--border)"}`, borderRadius: "12px", padding: "0 12px", fontSize: "13px", color: "var(--text)", outline: "none" }} />
+                {editErrors.amount && <span style={{ fontSize: "11px", color: "var(--danger)" }}>{editErrors.amount.message}</span>}
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={{ fontSize: "12px", fontWeight: "500", color: "var(--text-2)" }}>Currency</label>
+                <input {...registerEdit("currency")} placeholder="USD" style={{ height: "38px", background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: "12px", padding: "0 12px", fontSize: "13px", color: "var(--text)", outline: "none" }} />
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={{ fontSize: "12px", fontWeight: "500", color: "var(--text-2)" }}>Category</label>
+                <select {...registerEdit("category")} style={{ height: "38px", background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: "12px", padding: "0 12px", fontSize: "13px", color: "var(--text)", outline: "none" }}>
+                  {["Rent","Utilities","Groceries","Transportation","Entertainment","Healthcare","Insurance","Subscriptions","Internet","Phone","Other"].map((c) => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={{ fontSize: "12px", fontWeight: "500", color: "var(--text-2)" }}>Due Date</label>
+                <input type="date" {...registerEdit("dueDate")} style={{ height: "38px", background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: "12px", padding: "0 12px", fontSize: "13px", color: "var(--text)", outline: "none" }} />
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <label style={{ fontSize: "12px", fontWeight: "500", color: "var(--text-2)" }}>Recurrence</label>
+                <select {...registerEdit("recurrenceFrequency")} style={{ height: "38px", background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: "12px", padding: "0 12px", fontSize: "13px", color: "var(--text)", outline: "none" }}>
+                  <option value="">None</option>
+                  {["Daily","Weekly","Biweekly","Monthly","Quarterly","Yearly"].map((f) => (
+                    <option key={f} value={f}>{f}</option>
+                  ))}
+                </select>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px", gridColumn: "1 / -1" }}>
+                <label style={{ fontSize: "12px", fontWeight: "500", color: "var(--text-2)" }}>Description</label>
+                <textarea {...registerEdit("description")} rows={2} style={{ background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: "12px", padding: "8px 12px", fontSize: "13px", color: "var(--text)", outline: "none", resize: "vertical" }} />
+              </div>
+            </div>
+            <button
+              type="submit"
+              disabled={updateBillMutation.isPending}
+              style={{ alignSelf: "flex-end", padding: "8px 20px", borderRadius: "12px", background: updateBillMutation.isPending ? "var(--surface-3)" : "var(--accent)", color: updateBillMutation.isPending ? "var(--text-3)" : "#fff", border: "none", cursor: updateBillMutation.isPending ? "not-allowed" : "pointer", fontSize: "13px", fontWeight: "600", fontFamily: "var(--ff-display)" }}
+            >
+              {updateBillMutation.isPending ? "Saving…" : "Save Changes"}
+            </button>
+          </form>
+        </div>
+      )}
 
       {/* Stats */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px" }}>
@@ -290,22 +422,13 @@ export default function BillPage({ params }: { params: { id: string; billId: str
                 {errors.amount && <span style={{ fontSize: "11px", color: "var(--danger)" }}>{errors.amount.message}</span>}
               </div>
 
-              <button
+              <Button
                 type="submit"
                 disabled={addSplitMutation.isPending}
-                style={{
-                  height: "38px", borderRadius: "12px",
-                  background: addSplitMutation.isPending ? "var(--surface-3)" : "var(--accent)",
-                  color: addSplitMutation.isPending ? "var(--text-3)" : "#fff",
-                  border: "none", cursor: addSplitMutation.isPending ? "not-allowed" : "pointer",
-                  fontSize: "13px", fontWeight: "600", fontFamily: "var(--ff-display)",
-                  transition: "background 110ms",
-                }}
-                onMouseEnter={e => { if (!addSplitMutation.isPending) (e.currentTarget as HTMLElement).style.background = "var(--accent-hi)"; }}
-                onMouseLeave={e => { if (!addSplitMutation.isPending) (e.currentTarget as HTMLElement).style.background = "var(--accent)"; }}
+                variant="primary"
               >
                 {addSplitMutation.isPending ? "Adding…" : "Add Split"}
-              </button>
+              </Button>
             </form>
           )}
         </div>

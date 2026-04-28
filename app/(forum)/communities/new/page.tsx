@@ -1,23 +1,37 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useCreateCommunity } from "@/hooks/use-forum";
+import { useCreateCommunity, useUploadCommunityImage } from "@/hooks/use-forum";
 import { ApiError } from "@/lib/api-client";
 
 export default function NewCommunityPage() {
   const router = useRouter();
   const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
   const [privacy, setPrivacy] = useState("Public");
+  const [imageUrl, setImageUrl] = useState("");
   const createCommunity = useCreateCommunity();
+  const uploadImage = useUploadCommunityImage();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  async function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const result = await uploadImage.mutateAsync(file);
+    setImageUrl(result.url);
+  }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    createCommunity.mutate({ name, privacy }, {
-      onSuccess: (created) => {
-        router.push(`/communities/${encodeURIComponent(created.name)}`);
-      },
-    });
+    createCommunity.mutate(
+      { name, description: description.trim() || undefined, privacy, imageUrl: imageUrl || undefined },
+      {
+        onSuccess: (created) => {
+          router.push(`/communities/${created.slug}`);
+        },
+      }
+    );
   }
 
   return (
@@ -45,6 +59,58 @@ export default function NewCommunityPage() {
               {createCommunity.error instanceof ApiError ? createCommunity.error.message : "An unexpected error occurred."}
             </div>
           )}
+
+          {/* Image upload */}
+          <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+            {imageUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={imageUrl} alt="" style={{ width: "52px", height: "52px", borderRadius: "12px", objectFit: "cover", border: "1px solid var(--border)", flexShrink: 0 }} />
+            ) : (
+              <div style={{
+                width: "52px", height: "52px", borderRadius: "12px",
+                background: "var(--surface-3)", flexShrink: 0,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: "22px", color: "var(--text-3)",
+              }}>🖼</div>
+            )}
+            <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/gif"
+                style={{ display: "none" }}
+                onChange={handleImageChange}
+              />
+              <div style={{ display: "flex", gap: "8px" }}>
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploadImage.isPending}
+                  style={{
+                    padding: "6px 12px", borderRadius: "8px",
+                    background: "var(--surface-2)", color: "var(--text-2)",
+                    border: "1px solid var(--border)", fontSize: "12px", fontWeight: "500",
+                    cursor: uploadImage.isPending ? "not-allowed" : "pointer",
+                    opacity: uploadImage.isPending ? 0.6 : 1,
+                  }}
+                >
+                  {uploadImage.isPending ? "Uploading…" : "Add image"}
+                </button>
+                {imageUrl && (
+                  <button type="button" onClick={() => setImageUrl("")} style={{ padding: "6px 10px", borderRadius: "8px", background: "transparent", color: "var(--text-3)", border: "1px solid var(--border)", fontSize: "12px", cursor: "pointer" }}>
+                    Remove
+                  </button>
+                )}
+              </div>
+              {uploadImage.isError && (
+                <span style={{ fontSize: "11px", color: "var(--danger)" }}>
+                  {uploadImage.error instanceof ApiError ? uploadImage.error.message : "Upload failed."}
+                </span>
+              )}
+              <span style={{ fontSize: "11px", color: "var(--text-3)" }}>Optional · JPEG, PNG, WebP or GIF · max 5 MB</span>
+            </div>
+          </div>
+
           <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
             <label style={{ fontSize: "10px", fontWeight: 700, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
               Name
@@ -62,6 +128,29 @@ export default function NewCommunityPage() {
                 background: "var(--surface-2)", border: "1px solid var(--border)",
                 borderRadius: "10px", color: "var(--text)", fontSize: "14px",
                 outline: "none", boxSizing: "border-box",
+              }}
+            />
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+            <label style={{ fontSize: "10px", fontWeight: 700, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
+              Description
+              <span style={{ fontWeight: 500, color: "var(--text-3)", marginLeft: "6px", textTransform: "none", letterSpacing: 0 }}>
+                optional · {description.length}/1000
+              </span>
+            </label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              maxLength={1000}
+              rows={3}
+              placeholder="What's this community about?"
+              style={{
+                width: "100%", padding: "10px 14px",
+                background: "var(--surface-2)", border: "1px solid var(--border)",
+                borderRadius: "10px", color: "var(--text)", fontSize: "14px",
+                outline: "none", boxSizing: "border-box",
+                resize: "vertical", lineHeight: "1.6",
+                fontFamily: "var(--ff-body)",
               }}
             />
           </div>

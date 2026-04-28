@@ -1,4 +1,9 @@
-export default function AuthLayout({ children }: { children: React.ReactNode }) {
+import { requireAnonymous } from "@/lib/auth/session";
+
+export default async function AuthLayout({ children }: { children: React.ReactNode }) {
+  // Already-signed-in users have no business on /login or /login/2fa; bounce
+  // them server-side before any markup renders.
+  await requireAnonymous();
   return (
     <div style={{
       minHeight: "100vh",
@@ -55,7 +60,17 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             height: "32px",
             borderRadius: "10px",
             background: "linear-gradient(135deg, var(--accent) 0%, var(--accent-v) 100%)",
-          }} />
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexShrink: 0,
+          }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 2L2 7l10 5 10-5-10-5z" />
+              <path d="M2 17l10 5 10-5" />
+              <path d="M2 12l10 5 10-5" />
+            </svg>
+          </div>
           <span style={{
             fontFamily: "var(--ff-display)",
             fontWeight: "700",

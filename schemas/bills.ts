@@ -6,9 +6,9 @@ export const createHouseholdSchema = z.object({
 });
 
 export const createBillSchema = z.object({
-  name: z.string().min(1).max(100),
+  title: z.string().min(1).max(300),
   amount: z.number().positive(),
-  dueDate: z.string().datetime(),
+  dueDate: z.string().min(1),
   householdId: z.string().uuid(),
 });
 

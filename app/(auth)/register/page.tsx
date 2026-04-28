@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { registerSchema, RegisterInput } from "@/schemas/auth";
 import { api, ApiError } from "@/lib/api-client";
+import { Button } from "@/components/ui/button";
 
 function PasswordStrength({ password }: { password: string }) {
   const len = password.length;
@@ -214,7 +215,7 @@ export default function RegisterPage() {
               {...register("password", {
                 onChange: e => setPwValue(e.target.value),
               })}
-              placeholder="Min. 6 characters"
+              placeholder="Min. 12 characters"
               style={{ ...inputStyle(!!errors.password), paddingRight: "40px" }}
               onFocus={e => {
                 if (!errors.password) {
@@ -278,24 +279,15 @@ export default function RegisterPage() {
           </div>
         </Field>
 
-        <button
+        <Button
           type="submit"
           disabled={isSubmitting}
-          style={{
-            height: "42px", borderRadius: "12px",
-            background: isSubmitting ? "var(--surface-3)" : "var(--accent)",
-            color: isSubmitting ? "var(--text-3)" : "#fff",
-            border: "none", cursor: isSubmitting ? "not-allowed" : "pointer",
-            fontSize: "14px", fontWeight: "600", fontFamily: "var(--ff-display)",
-            transition: "background 110ms, transform 100ms", marginTop: "4px",
-          }}
-          onMouseEnter={e => { if (!isSubmitting) (e.currentTarget as HTMLElement).style.background = "var(--accent-hi)"; }}
-          onMouseLeave={e => { if (!isSubmitting) (e.currentTarget as HTMLElement).style.background = "var(--accent)"; }}
-          onMouseDown={e => { if (!isSubmitting) (e.currentTarget as HTMLElement).style.transform = "scale(0.97)"; }}
-          onMouseUp={e => { (e.currentTarget as HTMLElement).style.transform = "scale(1)"; }}
+          variant="primary"
+          fullWidth
+          style={{ marginTop: "4px", height: "42px" }}
         >
           {isSubmitting ? "Creating account…" : "Create account"}
-        </button>
+        </Button>
       </form>
 
       <p style={{ textAlign: "center", fontSize: "13px", color: "var(--text-3)", marginTop: "24px" }}>

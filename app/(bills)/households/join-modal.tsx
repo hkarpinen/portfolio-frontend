@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useJoinHousehold } from "@/hooks/use-bills";
 import { ApiError } from "@/lib/api-client";
+import { Button } from "@/components/ui/button";
 
 export function JoinHouseholdModal({ onClose }: { onClose: () => void }) {
   const joinMutation = useJoinHousehold();
@@ -103,24 +104,14 @@ export function JoinHouseholdModal({ onClose }: { onClose: () => void }) {
           >
             Cancel
           </button>
-          <button
+          <Button
             onClick={handleJoin}
             disabled={joinMutation.isPending}
-            style={{
-              background: "var(--accent)", color: "#fff",
-              border: "none", padding: "8px 20px", borderRadius: "12px",
-              fontSize: "13px", fontWeight: 600,
-              cursor: joinMutation.isPending ? "not-allowed" : "pointer",
-              opacity: joinMutation.isPending ? 0.6 : 1,
-              fontFamily: "var(--ff-body)",
-            }}
-            onMouseEnter={(e) => { if (!joinMutation.isPending) (e.currentTarget as HTMLButtonElement).style.background = "var(--accent-hi)"; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "var(--accent)"; }}
-            onMouseDown={(e) => { (e.currentTarget as HTMLButtonElement).style.transform = "scale(0.97)"; }}
-            onMouseUp={(e) => { (e.currentTarget as HTMLButtonElement).style.transform = "scale(1)"; }}
+            variant="primary"
+            style={{ opacity: joinMutation.isPending ? 0.6 : 1 }}
           >
             {joinMutation.isPending ? "Joining…" : "Join Household"}
-          </button>
+          </Button>
         </div>
       </div>
     </div>

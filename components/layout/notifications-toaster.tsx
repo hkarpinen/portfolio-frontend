@@ -1,11 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useNotifications } from "@/hooks/use-notifications";
-
-interface Props {
-  enabled: boolean;
-}
+import { useNotificationsContext } from "@/components/layout/notifications-provider";
+import styles from "./notifications-toaster.module.css";
 
 const typeStyles: Record<"success" | "error" | "info", React.CSSProperties> = {
   success: {
@@ -25,10 +22,10 @@ const typeStyles: Record<"success" | "error" | "info", React.CSSProperties> = {
   },
 };
 
-export function NotificationsToaster({ enabled }: Props) {
-  const { notifications, removeNotification } = useNotifications({ connect: enabled });
+export function NotificationsToaster() {
+  const { toasts, removeToast, markRead } = useNotificationsContext();
 
-  if (notifications.length === 0) return null;
+  if (toasts.length === 0) return null;
 
   return (
     <div
@@ -46,7 +43,7 @@ export function NotificationsToaster({ enabled }: Props) {
       aria-label="Notifications"
       aria-live="polite"
     >
-      {notifications.map((n) => (
+      {toasts.map((n) => (
         <div
           key={n.id}
           role={n.type === "error" ? "alert" : "status"}
@@ -70,7 +67,7 @@ export function NotificationsToaster({ enabled }: Props) {
               {n.deepLink && (
                 <Link
                   href={n.deepLink}
-                  onClick={() => removeNotification(n.id)}
+                  onClick={() => { markRead(n.id); removeToast(n.id); }}
                   style={{
                     marginTop: "4px", display: "inline-block",
                     fontSize: "11px", fontWeight: "500",
@@ -83,15 +80,9 @@ export function NotificationsToaster({ enabled }: Props) {
             </div>
             <button
               type="button"
-              onClick={() => removeNotification(n.id)}
+              onClick={() => removeToast(n.id)}
               aria-label="Dismiss"
-              style={{
-                background: "none", border: "none", cursor: "pointer",
-                color: "inherit", opacity: 0.6, fontSize: "13px", padding: "0",
-                flexShrink: 0,
-              }}
-              onMouseEnter={e => (e.currentTarget as HTMLElement).style.opacity = "1"}
-              onMouseLeave={e => (e.currentTarget as HTMLElement).style.opacity = "0.6"}
+              className={styles.dismissBtn}
             >
               ✕
             </button>

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useDeleteBill } from "@/hooks/use-bills";
+import styles from "./bills-list.module.css";
 import type { Bill } from "@/types/api";
 
 interface BillsListProps {
@@ -74,22 +75,12 @@ export function BillsList({ householdId, initialBills, canDelete }: BillsListPro
           <div key={bill.billId} style={{ position: "relative" }} className="bills-list-item">
             <Link
               href={`/households/${householdId}/bills/${bill.billId}`}
+              className={styles.link}
               style={{
                 display: "flex", alignItems: "center", justifyContent: "space-between",
                 gap: "16px", padding: "14px 16px",
                 background: "var(--surface)", border: "1px solid var(--border)",
                 borderRadius: "12px", textDecoration: "none",
-                transition: "border-color 110ms, box-shadow 110ms",
-              }}
-              onMouseEnter={e => {
-                const el = e.currentTarget as HTMLElement;
-                el.style.borderColor = "var(--border-2)";
-                el.style.boxShadow = "var(--shadow-md)";
-              }}
-              onMouseLeave={e => {
-                const el = e.currentTarget as HTMLElement;
-                el.style.borderColor = "var(--border)";
-                el.style.boxShadow = "none";
               }}
             >
               {/* Left: icon + info */}

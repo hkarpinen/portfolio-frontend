@@ -7,6 +7,7 @@ import { z } from "zod";
 import Link from "next/link";
 import { useCreateBill } from "@/hooks/use-bills";
 import { ApiError } from "@/lib/api-client";
+import { Button } from "@/components/ui/button";
 
 const CATEGORIES = [
   "Rent", "Utilities", "Groceries", "Transportation", "Entertainment",
@@ -158,23 +159,14 @@ export default function NewBillPage({ params }: { params: { id: string } }) {
             </div>
           )}
 
-          <button
+          <Button
             type="submit"
             disabled={createBill.isPending}
-            style={{
-              background: "var(--accent)", color: "#fff", height: "40px", borderRadius: "12px",
-              fontWeight: "600", fontSize: "14px", border: "none",
-              cursor: createBill.isPending ? "not-allowed" : "pointer",
-              opacity: createBill.isPending ? 0.6 : 1,
-              width: "100%", fontFamily: "var(--ff-body)",
-            }}
-            onMouseDown={(e) => { (e.currentTarget as HTMLButtonElement).style.transform = "scale(0.97)"; }}
-            onMouseUp={(e) => { (e.currentTarget as HTMLButtonElement).style.transform = "scale(1)"; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.transform = "scale(1)"; }}
-            onMouseEnter={(e) => { if (!createBill.isPending) (e.currentTarget as HTMLButtonElement).style.background = "var(--accent-hi)"; }}
+            variant="primary"
+            fullWidth
           >
             {createBill.isPending ? "Adding..." : "Add Bill"}
-          </button>
+          </Button>
         </form>
       </div>
     </div>

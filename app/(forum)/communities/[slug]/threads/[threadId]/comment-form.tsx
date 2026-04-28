@@ -1,17 +1,23 @@
 "use client";
 
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createCommentSchema, CreateCommentInput } from "@/schemas/forum";
 import { useCreateComment } from "@/hooks/use-forum";
 import { ApiError } from "@/lib/api-client";
+import styles from "./comment-tree.module.css";
 
 interface CommentFormProps {
   threadId: string;
+  isAuthed: boolean;
 }
 
-export function CommentForm({ threadId }: CommentFormProps) {
+export function CommentForm({ threadId, isAuthed }: CommentFormProps) {
+  const pathname = usePathname();
+  const router = useRouter();
   const [submitted, setSubmitted] = useState(false);
   const createComment = useCreateComment(threadId);
 
@@ -22,12 +28,27 @@ export function CommentForm({ threadId }: CommentFormProps) {
     formState: { errors },
   } = useForm<CreateCommentInput>({ resolver: zodResolver(createCommentSchema) });
 
+  if (!isAuthed) {
+    return (
+      <p style={{ fontSize: "13px", color: "var(--text-3)" }}>
+        <Link
+          href={`/login?from=${encodeURIComponent(pathname)}`}
+          style={{ color: "var(--accent)", textDecoration: "none", fontWeight: 500 }}
+        >
+          Sign in
+        </Link>
+        {" "}to leave a comment.
+      </p>
+    );
+  }
+
   function onSubmit(data: CreateCommentInput) {
     createComment.mutate({ content: data.content }, {
       onSuccess: () => {
         reset();
         setSubmitted(true);
         setTimeout(() => setSubmitted(false), 3000);
+        router.refresh();
       },
     });
   }
@@ -84,16 +105,7 @@ export function CommentForm({ threadId }: CommentFormProps) {
         <button
           type="submit"
           disabled={createComment.isPending}
-          style={{
-            padding: "8px 18px", borderRadius: "10px",
-            background: createComment.isPending ? "var(--surface-3)" : "var(--accent)",
-            color: createComment.isPending ? "var(--text-3)" : "#fff",
-            border: "none", cursor: createComment.isPending ? "not-allowed" : "pointer",
-            fontSize: "13px", fontWeight: "600", fontFamily: "var(--ff-display)",
-            transition: "background 110ms",
-          }}
-          onMouseEnter={e => { if (!createComment.isPending) (e.currentTarget as HTMLElement).style.background = "var(--accent-hi)"; }}
-          onMouseLeave={e => { if (!createComment.isPending) (e.currentTarget as HTMLElement).style.background = "var(--accent)"; }}
+          className={styles.replySubmit}
         >
           {createComment.isPending ? "Posting…" : "Post comment"}
         </button>

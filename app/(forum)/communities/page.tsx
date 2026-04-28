@@ -1,36 +1,13 @@
 import Link from "next/link";
-import { SERVER_API } from "@/lib/api-url";
 import { CommunityCard } from "./community-card";
+import { fetchCommunitiesServer } from "@/lib/api/forum";
+import type { CommunitySummaryResponse } from "@/types/api";
 
 export const dynamic = 'force-dynamic';
 
-const API_BASE = SERVER_API;
-
-interface Community {
-  communityId: string;
-  name: string;
-  description?: string;
-  imageUrl?: string;
-  memberCount?: number;
-  threadCount?: number;
-}
-
-async function getCommunities(): Promise<Community[]> {
-  try {
-    const res = await fetch(
-      `${API_BASE}/api/forum/communities?page=1&pageSize=20`,
-      { cache: "no-store" }
-    );
-    if (!res.ok) return [];
-    const data = await res.json();
-    return data?.items ?? data ?? [];
-  } catch {
-    return [];
-  }
-}
-
 export default async function CommunitiesPage() {
-  const communities = await getCommunities();
+  const page = await fetchCommunitiesServer();
+  const communities: CommunitySummaryResponse[] = page?.items ?? [];
 
   return (
     <div className="page-enter" style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
@@ -88,11 +65,14 @@ export default async function CommunitiesPage() {
             <CommunityCard
               key={community.communityId}
               communityId={community.communityId}
+              slug={community.slug}
               name={community.name}
               description={community.description}
               imageUrl={community.imageUrl}
               memberCount={community.memberCount}
               threadCount={community.threadCount}
+              commentCount={community.commentCount}
+              latestActivity={community.latestActivity}
             />
           ))}
         </div>

@@ -1,71 +1,22 @@
 import Link from "next/link";
-import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
-import { SERVER_API } from "@/lib/api-url";
 import { BillsList } from "./bills-list";
+import { fetchHouseholdDetailServer } from "@/lib/api/bills";
+import { getSession } from "@/lib/auth/session";
+import { getCookieHeader } from "@/lib/server-cookies";
+import type { Bill, Household, HouseholdDashboard, HouseholdMember, HouseholdPageResponse } from "@/types/api";
 
 export const dynamic = 'force-dynamic';
 
-interface Bill {
-  billId: string;
-  title: string;
-  amount: number;
-  currency: string;
-  dueDate: string;
-  category?: string;
-  recurrenceFrequency?: string;
-  isActive?: boolean;
-  description?: string;
-}
-
-interface HouseholdDetail {
-  householdId: string;
-  name: string;
-  description?: string;
-  currencyCode: string;
-  ownerId: string;
-}
-
-interface DashboardResponse {
-  totalBills: number;
-  totalIncome: number;
-  netBalance: number;
-  isOvercommitted: boolean;
-}
-
-interface MemberResponse {
-  membershipId: string;
-  userId: string;
-  displayName?: string;
-  role: string;
-}
-
-interface HouseholdPageResponse {
-  household: HouseholdDetail;
-  members: MemberResponse[];
-  bills: Bill[];
-  dashboard: DashboardResponse;
-}
-
-function serverFetch<T>(path: string, cookieHeader: string): Promise<T | null> {
-  return fetch(`${SERVER_API}${path}`, {
-    headers: { Cookie: cookieHeader },
-    cache: "no-store",
-  })
-    .then((r) => (r.ok ? (r.json() as Promise<T>) : null))
-    .catch(() => null);
-}
-
 export default async function HouseholdPage({ params }: { params: { id: string } }) {
-  const cookieStore = cookies();
-  const cookieHeader = cookieStore
-    .getAll()
-    .map((c) => `${c.name}=${c.value}`)
-    .join("; ");
+  const cookieHeader = await getCookieHeader();
 
-  const [page, me] = await Promise.all([
-    serverFetch<HouseholdPageResponse>(`/api/bills/households/${params.id}/detail`, cookieHeader),
-    serverFetch<{ id: string }>("/api/identity/me", cookieHeader),
+  // The (bills) layout has already called requireUser(), so getSession()
+  // is guaranteed to return a session here. Both calls share one /me
+  // request thanks to React.cache.
+  const [page, session] = await Promise.all([
+    fetchHouseholdDetailServer(params.id, cookieHeader),
+    getSession(),
   ]);
 
   if (!page) notFound();
@@ -73,18 +24,14 @@ export default async function HouseholdPage({ params }: { params: { id: string }
   const { household, members, bills, dashboard } = page;
 
   const memberCount = members.length;
-  const isOwner = me?.id?.toLowerCase() === household.ownerId?.toLowerCase();
-  const myMembership = members.find((m) => m.userId?.toLowerCase() === me?.id?.toLowerCase());
+  const isOwner = session?.userId?.toLowerCase() === household.ownerId?.toLowerCase();
+  const myMembership = members.find((m) => m.userId?.toLowerCase() === session?.userId?.toLowerCase());
   const canDelete = isOwner || myMembership?.role === "Admin";
 
   const monthlyObligations = dashboard?.totalBills ?? null;
-  const netBalance = dashboard?.netBalance ?? null;
-  const totalIncome = dashboard?.totalIncome ?? 0;
-  const overcommitted = netBalance !== null && netBalance < 0;
-
-  const coverageRatio = monthlyObligations && totalIncome > 0
-    ? Math.min(totalIncome / monthlyObligations, 1)
-    : monthlyObligations === 0 ? 1 : 0;
+  // NOTE: we intentionally omit a cross-domain net balance here.
+  // The household dashboard is scoped to this household only.
+  // For full income-vs-obligations, users should check the Budget tab.
 
   return (
     <div className="page-enter" style={{ display: "flex", flexDirection: "column", gap: "28px" }}>
@@ -144,7 +91,7 @@ export default async function HouseholdPage({ params }: { params: { id: string }
         {/* Monthly Bills */}
         <div style={{
           background: "var(--surface)",
-          border: `1px solid ${overcommitted ? "var(--warning)" : "var(--border)"}`,
+          border: "1px solid var(--border)",
           borderRadius: "16px",
           padding: "20px",
           boxShadow: "var(--shadow-sm)",
@@ -160,28 +107,33 @@ export default async function HouseholdPage({ params }: { params: { id: string }
             </div>
           </div>
           {monthlyObligations !== null ? (
-            <p style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "28px", letterSpacing: "-0.025em", color: overcommitted ? "var(--warning)" : "var(--text)", lineHeight: 1 }}>
+            <p style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "28px", letterSpacing: "-0.025em", color: "var(--text)", lineHeight: 1 }}>
               {household.currencyCode} {monthlyObligations.toFixed(2)}
             </p>
           ) : (
             <p style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "28px", letterSpacing: "-0.025em", color: "var(--text-3)", lineHeight: 1 }}>—</p>
           )}
           <p style={{ fontSize: "12px", color: "var(--text-3)", marginTop: "6px" }}>
-            {overcommitted ? "Over budget" : "On track"}
+            This household only
           </p>
         </div>
 
-        {/* Net Balance */}
-        <div style={{
-          background: "var(--surface)",
-          border: "1px solid var(--border)",
-          borderRadius: "16px",
-          padding: "20px",
-          boxShadow: "var(--shadow-sm)",
-        }}>
+        {/* Full picture → Budget tab */}
+        <Link
+          href="/contributions"
+          style={{
+            background: "var(--surface)",
+            border: "1px solid var(--border)",
+            borderRadius: "16px",
+            padding: "20px",
+            boxShadow: "var(--shadow-sm)",
+            textDecoration: "none",
+            display: "block",
+          }}
+        >
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
             <span style={{ fontSize: "10px", fontWeight: "700", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
-              Net Balance
+              Full Picture
             </span>
             <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "var(--accent-subtle)", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -189,11 +141,11 @@ export default async function HouseholdPage({ params }: { params: { id: string }
               </svg>
             </div>
           </div>
-          <p style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "28px", letterSpacing: "-0.025em", color: netBalance !== null && netBalance < 0 ? "var(--danger)" : "var(--success)", lineHeight: 1 }}>
-            {netBalance !== null ? `${netBalance >= 0 ? "+" : ""}${netBalance.toFixed(2)}` : "—"}
+          <p style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "18px", letterSpacing: "-0.02em", color: "var(--accent)", lineHeight: 1 }}>
+            Budget tab →
           </p>
-          <p style={{ fontSize: "12px", color: "var(--text-3)", marginTop: "6px" }}>Income minus obligations</p>
-        </div>
+          <p style={{ fontSize: "12px", color: "var(--text-3)", marginTop: "6px" }}>All obligations vs income</p>
+        </Link>
 
         {/* Total Bills */}
         <div style={{
@@ -244,31 +196,7 @@ export default async function HouseholdPage({ params }: { params: { id: string }
         </div>
       </div>
 
-      {/* Coverage progress bar */}
-      {monthlyObligations !== null && monthlyObligations > 0 && (
-        <div style={{
-          background: "var(--surface)",
-          border: "1px solid var(--border)",
-          borderRadius: "16px",
-          padding: "20px",
-          boxShadow: "var(--shadow-sm)",
-        }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "10px" }}>
-            <span style={{ fontSize: "12px", fontWeight: "500", color: "var(--text-2)" }}>Income coverage</span>
-            <span style={{ fontSize: "12px", fontWeight: "700", color: "var(--text)", fontFamily: "var(--ff-display)" }}>
-              {(coverageRatio * 100).toFixed(0)}%
-            </span>
-          </div>
-          <div style={{ background: "var(--surface-3)", borderRadius: "9999px", height: "6px", overflow: "hidden" }}>
-            <div style={{
-              background: "var(--accent)",
-              borderRadius: "9999px",
-              height: "6px",
-              width: `${coverageRatio * 100}%`,
-            }} />
-          </div>
-        </div>
-      )}
+
 
       {/* Tabs */}
       <div style={{ borderBottom: "1px solid var(--border)", display: "flex", gap: "0" }}>

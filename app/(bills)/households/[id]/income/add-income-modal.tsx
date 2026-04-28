@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useCreateIncomeSource } from "@/hooks/use-bills";
 import { ApiError } from "@/lib/api-client";
 import { FREQUENCIES, incomeSchema, IncomeFormData, iStyle, Field, onFocusField, onBlurField } from "@/app/(bills)/income/_income-form-shared";
+import { Button } from "@/components/ui/button";
 
 export function AddHouseholdIncomeModal({
   householdId,
@@ -117,26 +118,15 @@ export function AddHouseholdIncomeModal({
           >
             Cancel
           </button>
-          <button
+          <Button
             type="submit"
             form=""
             onClick={handleSubmit(onSubmit)}
             disabled={createIncome.isPending}
-            style={{
-              background: "var(--accent)", color: "#fff",
-              border: "none", padding: "8px 20px", borderRadius: "12px",
-              fontSize: "13px", fontWeight: 600,
-              cursor: createIncome.isPending ? "not-allowed" : "pointer",
-              opacity: createIncome.isPending ? 0.6 : 1,
-              fontFamily: "var(--ff-body)",
-            }}
-            onMouseEnter={(e) => { if (!createIncome.isPending) (e.currentTarget as HTMLButtonElement).style.background = "var(--accent-hi)"; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "var(--accent)"; }}
-            onMouseDown={(e) => { (e.currentTarget as HTMLButtonElement).style.transform = "scale(0.97)"; }}
-            onMouseUp={(e) => { (e.currentTarget as HTMLButtonElement).style.transform = "scale(1)"; }}
+            variant="primary"
           >
             {createIncome.isPending ? "Adding…" : "Add Income"}
-          </button>
+          </Button>
         </div>
       </div>
     </div>

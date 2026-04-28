@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useCreateIncomeSource } from "@/hooks/use-bills";
 import { ApiError } from "@/lib/api-client";
 import { FREQUENCIES, incomeSchema, IncomeFormData, iStyle, Field, onFocusField, onBlurField } from "./_income-form-shared";
+import { Button } from "@/components/ui/button";
 
 export function AddIncomeForm() {
   const createIncome = useCreateIncomeSource();
@@ -83,24 +84,14 @@ export function AddIncomeForm() {
           </Field>
         </div>
 
-        <button
+        <Button
           type="submit"
           disabled={createIncome.isPending}
-          style={{
-            height: "40px", borderRadius: "12px",
-            background: createIncome.isPending ? "var(--surface-3)" : "var(--accent)",
-            color: createIncome.isPending ? "var(--text-3)" : "#fff",
-            border: "none", cursor: createIncome.isPending ? "not-allowed" : "pointer",
-            fontSize: "13px", fontWeight: "600", fontFamily: "var(--ff-display)",
-            transition: "background 110ms, transform 100ms",
-          }}
-          onMouseEnter={e => { if (!createIncome.isPending) (e.currentTarget as HTMLElement).style.background = "var(--accent-hi)"; }}
-          onMouseLeave={e => { if (!createIncome.isPending) (e.currentTarget as HTMLElement).style.background = "var(--accent)"; }}
-          onMouseDown={e => { if (!createIncome.isPending) (e.currentTarget as HTMLElement).style.transform = "scale(0.97)"; }}
-          onMouseUp={e => { (e.currentTarget as HTMLElement).style.transform = "scale(1)"; }}
+          variant="primary"
+          fullWidth
         >
           {createIncome.isPending ? "Adding…" : "Add Income Source"}
-        </button>
+        </Button>
       </form>
     </div>
   );

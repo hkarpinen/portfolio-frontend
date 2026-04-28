@@ -1,84 +1,15 @@
 import Link from "next/link";
-import { cookies } from "next/headers";
-import { SERVER_API } from "@/lib/api-url";
 import { VoteButtons } from "./communities/[slug]/threads/[threadId]/vote-buttons";
+import {
+  fetchThreadsServer,
+  fetchCommunitiesServer,
+  fetchMyMembershipsServer,
+} from "@/lib/api/forum";
+import { getCookieHeader } from "@/lib/server-cookies";
+import { timeAgo } from "@/lib/utils";
+import type { ThreadSummaryResponse, CommunitySummaryResponse } from "@/types/api";
 
 export const dynamic = "force-dynamic";
-
-interface Thread {
-  threadId: string;
-  title: string;
-  body?: string;
-  authorUsername?: string;
-  authorDisplayName?: string;
-  communityName?: string;
-  communitySlug?: string;
-  flair?: string;
-  voteScore?: number;
-  commentCount?: number;
-  createdAt: string;
-}
-
-interface Community {
-  communityId: string;
-  name: string;
-  slug?: string;
-  description?: string;
-  memberCount?: number;
-  threadCount?: number;
-}
-
-function timeAgo(dateStr: string): string {
-  const diff = Date.now() - new Date(dateStr).getTime();
-  const minutes = Math.floor(diff / 60000);
-  if (minutes < 60) return `${minutes}m ago`;
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h ago`;
-  return `${Math.floor(hours / 24)}d ago`;
-}
-
-async function getThreads(sort: string): Promise<Thread[]> {
-  try {
-    const res = await fetch(
-      `${SERVER_API}/api/forum/threads?page=1&pageSize=30&sort=${sort}`,
-      { cache: "no-store" }
-    );
-    if (!res.ok) return [];
-    const data = await res.json();
-    return data?.items ?? data ?? [];
-  } catch {
-    return [];
-  }
-}
-
-async function getCommunities(): Promise<Community[]> {
-  try {
-    const res = await fetch(
-      `${SERVER_API}/api/forum/communities?page=1&pageSize=10`,
-      { cache: "no-store" }
-    );
-    if (!res.ok) return [];
-    const data = await res.json();
-    return data?.items ?? data ?? [];
-  } catch {
-    return [];
-  }
-}
-
-async function getMyMemberships(cookieHeader: string): Promise<string[]> {
-  try {
-    const res = await fetch(`${SERVER_API}/api/forum/memberships`, {
-      headers: { Cookie: cookieHeader },
-      cache: "no-store",
-    });
-    if (!res.ok) return [];
-    const data = await res.json();
-    const items: { communityId?: string }[] = data?.items ?? data ?? [];
-    return items.map((m) => m.communityId ?? "").filter(Boolean);
-  } catch {
-    return [];
-  }
-}
 
 const FORUM_RULES = [
   "Be respectful and constructive",
@@ -94,11 +25,6 @@ export default async function ForumFeedPage({
   searchParams: { tab?: string };
 }) {
   const tab = searchParams.tab ?? "feed";
-  const cookieStore = cookies();
-  const cookieHeader = cookieStore
-    .getAll()
-    .map((c) => `${c.name}=${c.value}`)
-    .join("; ");
 
   const sortMap: Record<string, string> = {
     feed: "new",
@@ -106,15 +32,18 @@ export default async function ForumFeedPage({
     communities: "new",
   };
 
-  const [threads, communities, myMembershipIds] = await Promise.all([
-    tab !== "communities" ? getThreads(sortMap[tab] ?? "new") : Promise.resolve([] as Thread[]),
-    getCommunities(),
-    getMyMemberships(cookieHeader),
+  const cookieHeader = await getCookieHeader();
+  const [threadsPage, communitiesPage, membershipsData] = await Promise.all([
+    tab !== "communities" ? fetchThreadsServer({ sort: sortMap[tab] ?? "new", pageSize: 30 }) : Promise.resolve(null),
+    fetchCommunitiesServer(undefined, 1, 10),
+    fetchMyMembershipsServer(cookieHeader),
   ]);
 
-  const myCommunities = communities.filter((c) =>
-    myMembershipIds.includes(c.communityId)
-  );
+  const threads: ThreadSummaryResponse[] = threadsPage?.items ?? [];
+  const communities: CommunitySummaryResponse[] = communitiesPage?.items ?? [];
+  const myMembershipIds = (membershipsData?.items ?? []).map((m) => m.communityId ?? "").filter(Boolean);
+
+  const myCommunities = communities.filter((c) => myMembershipIds.includes(c.communityId));
 
   const tabs = [
     { key: "feed", label: "Feed" },
@@ -219,7 +148,7 @@ export default async function ForumFeedPage({
                               {c.name}
                             </p>
                             <p style={{ fontSize: "11px", color: "var(--text-3)" }}>
-                              {c.memberCount ?? 0} members · {c.threadCount ?? 0} posts
+                              {c.description ?? ""}
                             </p>
                           </div>
                         </div>
@@ -261,6 +190,7 @@ export default async function ForumFeedPage({
               >
                 {/* Vote column */}
                 <VoteButtons
+                  threadId={thread.threadId}
                   targetType={0}
                   targetId={thread.threadId}
                   initialScore={thread.voteScore ?? 0}
@@ -270,36 +200,18 @@ export default async function ForumFeedPage({
                 <div style={{ flex: 1, minWidth: 0 }}>
                   {/* Meta row */}
                   <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap", marginBottom: "4px" }}>
-                    {thread.communityName && (
-                      <Link
-                        href={`/communities/${thread.communitySlug ?? thread.communityName}`}
-                        style={{ fontSize: "11px", fontWeight: 600, color: "var(--accent)", textDecoration: "none" }}
-                      >
-                        {thread.communityName}
-                      </Link>
-                    )}
-                    {thread.communityName && <span style={{ fontSize: "11px", color: "var(--text-3)" }}>·</span>}
                     <span style={{ fontSize: "11px", color: "var(--text-3)" }}>
-                      {thread.authorDisplayName ?? thread.authorUsername ?? "Anonymous"}
+                      {thread.authorDisplayName ?? "Anonymous"}
                     </span>
                     <span style={{ fontSize: "11px", color: "var(--text-3)" }}>·</span>
                     <span style={{ fontSize: "11px", color: "var(--text-3)" }}>
                       {timeAgo(thread.createdAt)}
                     </span>
-                    {thread.flair && (
-                      <span style={{
-                        background: "var(--accent-subtle)", color: "var(--accent)",
-                        borderRadius: "9999px", padding: "1px 8px",
-                        fontSize: "10px", fontWeight: 600,
-                      }}>
-                        {thread.flair}
-                      </span>
-                    )}
                   </div>
 
                   {/* Title */}
                   <Link
-                    href={`/communities/${thread.communitySlug ?? thread.communityName}/threads/${thread.threadId}`}
+                    href={`/communities/${thread.communityId}/threads/${thread.threadId}`}
                     style={{ textDecoration: "none" }}
                   >
                     <p style={{
@@ -315,16 +227,16 @@ export default async function ForumFeedPage({
                   {/* Actions row */}
                   <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
                     <Link
-                      href={`/communities/${thread.communitySlug ?? thread.communityName}/threads/${thread.threadId}`}
+                      href={`/communities/${thread.communityId}/threads/${thread.threadId}`}
                       style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "12px", color: "var(--text-3)", textDecoration: "none" }}
                     >
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
                       </svg>
-                      {thread.commentCount ?? 0} comments
+                      View
                     </Link>
                     <Link
-                      href={`/communities/${thread.communitySlug ?? thread.communityName}/threads/new`}
+                      href={`/communities/${thread.communityId}/threads/new`}
                       style={{ fontSize: "12px", color: "var(--text-3)", textDecoration: "none" }}
                     >
                       Post here

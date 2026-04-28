@@ -1,0 +1,20 @@
+.link {
+  display: inline-flex;
+  align-items: center;
+  padding: 12px 14px;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-3);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color 110ms, border-color 110ms;
+}
+.link:hover { color: var(--text); }
+
+.active {
+  font-weight: 600;
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+.active:hover { color: var(--accent); }

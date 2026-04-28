@@ -2,14 +2,8 @@
 
 import { useState } from "react";
 import { AddHouseholdIncomeModal } from "./add-income-modal";
-
-interface IncomeSource {
-  incomeId: string;
-  source: string;
-  amount: number;
-  frequency: string;
-  currency?: string;
-}
+import type { IncomeSource } from "@/types/api";
+import { Button } from "@/components/ui/button";
 
 interface IncomeClientProps {
   householdId: string;
@@ -98,21 +92,12 @@ export function IncomeClient({
         <p style={{ fontSize: "10px", fontWeight: 700, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
           Income Sources
         </p>
-        <button
+        <Button
           onClick={() => setShowModal(true)}
-          style={{
-            background: "var(--accent)", color: "#fff",
-            border: "none", padding: "7px 16px", borderRadius: "10px",
-            fontSize: "13px", fontWeight: 600, cursor: "pointer",
-            fontFamily: "var(--ff-body)",
-          }}
-          onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "var(--accent-hi)"; }}
-          onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "var(--accent)"; }}
-          onMouseDown={(e) => { (e.currentTarget as HTMLButtonElement).style.transform = "scale(0.97)"; }}
-          onMouseUp={(e) => { (e.currentTarget as HTMLButtonElement).style.transform = "scale(1)"; }}
+          variant="primary"
         >
           + Add Income
-        </button>
+        </Button>
       </div>
 
       {/* Sources list */}

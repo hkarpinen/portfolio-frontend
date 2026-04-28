@@ -2,10 +2,14 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { api, ApiError } from "@/lib/api-client";
+import { identityKeys } from "@/lib/query-keys";
+import { Button } from "@/components/ui/button";
 
 export default function TwoFactorPage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [code, setCode] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -16,8 +20,9 @@ export default function TwoFactorPage() {
     setIsSubmitting(true);
     try {
       await api.post("/api/identity/2fa/verify", { code });
-      router.refresh();
+      queryClient.invalidateQueries({ queryKey: identityKeys.me() });
       router.push("/communities");
+      router.refresh();
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Invalid code. Please try again.");
     } finally {
@@ -103,40 +108,15 @@ export default function TwoFactorPage() {
           />
         </div>
 
-        <button
+        <Button
           type="submit"
           disabled={isSubmitting || code.length !== 6}
-          style={{
-            height: "42px",
-            borderRadius: "12px",
-            background: (isSubmitting || code.length !== 6) ? "var(--surface-3)" : "var(--accent)",
-            color: (isSubmitting || code.length !== 6) ? "var(--text-3)" : "#fff",
-            border: "none",
-            cursor: (isSubmitting || code.length !== 6) ? "not-allowed" : "pointer",
-            fontSize: "14px",
-            fontWeight: "600",
-            fontFamily: "var(--ff-display)",
-            transition: "background 110ms, transform 100ms",
-            marginTop: "4px",
-          }}
-          onMouseEnter={e => {
-            if (!isSubmitting && code.length === 6)
-              (e.currentTarget as HTMLElement).style.background = "var(--accent-hi)";
-          }}
-          onMouseLeave={e => {
-            if (!isSubmitting && code.length === 6)
-              (e.currentTarget as HTMLElement).style.background = "var(--accent)";
-          }}
-          onMouseDown={e => {
-            if (!isSubmitting && code.length === 6)
-              (e.currentTarget as HTMLElement).style.transform = "scale(0.97)";
-          }}
-          onMouseUp={e => {
-            (e.currentTarget as HTMLElement).style.transform = "scale(1)";
-          }}
+          variant="primary"
+          fullWidth
+          style={{ marginTop: "4px", height: "42px" }}
         >
           {isSubmitting ? "Verifying…" : "Verify"}
-        </button>
+        </Button>
       </form>
     </div>
   );

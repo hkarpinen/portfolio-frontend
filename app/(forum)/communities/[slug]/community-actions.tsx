@@ -1,19 +1,37 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useCommunityMembership, useJoinCommunity } from "@/hooks/use-forum";
 import { ApiError } from "@/lib/api-client";
+import styles from "./community-actions.module.css";
 
 interface CommunityActionsProps {
   communityId: string;
   slug: string;
+  isAuthed: boolean;
 }
 
-export function CommunityActions({ communityId, slug }: CommunityActionsProps) {
+// Rendered only when unauthenticated — no queries fired
+function AnonActions() {
+  const pathname = usePathname();
+  return (
+    <Link
+      href={`/login?from=${encodeURIComponent(pathname)}`}
+      className={styles.btnSecondary}
+    >
+      Join community
+    </Link>
+  );
+}
+
+// Rendered only when authenticated — safe to call membership queries
+function AuthedActions({ communityId, slug }: { communityId: string; slug: string }) {
   const { data: membership, isLoading } = useCommunityMembership(communityId);
   const joinMutation = useJoinCommunity(communityId);
 
   const joined = membership?.isMember ?? false;
+  const canManage = membership?.role === "Owner" || membership?.role === "Moderator";
 
   if (isLoading) {
     return (
@@ -35,44 +53,36 @@ export function CommunityActions({ communityId, slug }: CommunityActionsProps) {
         </span>
       )}
       {joined ? (
-        <Link
-          href={`/communities/${slug}/threads/new`}
-          style={{
-            display: "inline-flex", alignItems: "center", gap: "6px",
-            padding: "8px 16px", borderRadius: "10px",
-            background: "var(--accent)", color: "#fff",
-            fontSize: "13px", fontWeight: "600", textDecoration: "none",
-            transition: "background 110ms",
-          }}
-          onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = "var(--accent-hi)"}
-          onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = "var(--accent)"}
-        >
-          + New thread
-        </Link>
+        <>
+          {canManage && (
+            <Link
+              href={`/communities/${slug}/settings`}
+              className={styles.btnSecondary}
+            >
+              ⚙ Settings
+            </Link>
+          )}
+          <Link
+            href={`/communities/${slug}/threads/new`}
+            className={styles.btnPrimary}
+          >
+            + New thread
+          </Link>
+        </>
       ) : (
         <button
-          onClick={() => joinMutation.mutate(undefined, {
-            onError: (err) => {
-              if (err instanceof ApiError && err.status === 401) {
-                window.location.href = "/login";
-              }
-            },
-          })}
+          onClick={() => joinMutation.mutate()}
           disabled={joinMutation.isPending}
-          style={{
-            padding: "8px 16px", borderRadius: "10px",
-            background: "var(--surface-2)", color: "var(--text)",
-            border: "1px solid var(--border)",
-            fontSize: "13px", fontWeight: "500", cursor: joinMutation.isPending ? "not-allowed" : "pointer",
-            transition: "background 110ms",
-            opacity: joinMutation.isPending ? 0.7 : 1,
-          }}
-          onMouseEnter={e => { if (!joinMutation.isPending) (e.currentTarget as HTMLElement).style.background = "var(--surface-3)"; }}
-          onMouseLeave={e => { if (!joinMutation.isPending) (e.currentTarget as HTMLElement).style.background = "var(--surface-2)"; }}
+          className={styles.btnSecondary}
         >
           {joinMutation.isPending ? "Joining…" : "Join community"}
         </button>
       )}
     </div>
   );
+}
+
+export function CommunityActions({ communityId, slug, isAuthed }: CommunityActionsProps) {
+  if (!isAuthed) return <AnonActions />;
+  return <AuthedActions communityId={communityId} slug={slug} />;
 }

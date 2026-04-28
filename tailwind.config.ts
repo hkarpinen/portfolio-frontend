@@ -35,6 +35,7 @@ const config: Config = {
           v:        'var(--accent-v)',
           glow:     'var(--accent-glow)',
           subtle:   'var(--accent-subtle)',
+          'v-subtle': 'var(--accent-v-subtle)',
         },
         success: {
           DEFAULT: 'var(--success)',
@@ -51,8 +52,8 @@ const config: Config = {
       },
 
       fontFamily: {
-        display: ['Plus Jakarta Sans', 'sans-serif'],
-        body:    ['Inter', 'sans-serif'],
+        display: ['var(--ff-display)', 'sans-serif'],
+        body:    ['var(--ff-body)', 'sans-serif'],
       },
       fontSize: {
         xs:    ['11px', { lineHeight: '16px' }],
@@ -142,35 +143,6 @@ const config: Config = {
         '2xl': '1440px',
       },
 
-      keyframes: {
-        fadeUp: {
-          from: { opacity: '0', transform: 'translateY(16px)' },
-          to:   { opacity: '1', transform: 'translateY(0)' },
-        },
-        fadeIn: {
-          from: { opacity: '0' },
-          to:   { opacity: '1' },
-        },
-        scaleIn: {
-          from: { opacity: '0', transform: 'scale(0.95)' },
-          to:   { opacity: '1', transform: 'scale(1)' },
-        },
-        slideIn: {
-          from: { opacity: '0', transform: 'translateX(-12px)' },
-          to:   { opacity: '1', transform: 'translateX(0)' },
-        },
-        shimmer: {
-          from: { backgroundPosition: '-200% center' },
-          to:   { backgroundPosition:  '200% center' },
-        },
-        spin: {
-          to: { transform: 'rotate(360deg)' },
-        },
-        meshMove: {
-          '0%, 100%': { transform: 'translate(0,0) scale(1)' },
-          '50%':      { transform: 'translate(60px,-40px) scale(1.08)' },
-        },
-      },
       animation: {
         'fade-up':  'fadeUp 380ms cubic-bezier(0.16,1,0.3,1) both',
         'fade-in':  'fadeIn 220ms cubic-bezier(0.2,0,0,1) both',

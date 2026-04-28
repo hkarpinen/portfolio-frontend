@@ -1,6 +1,5 @@
-"use client";
-
 import Link from "next/link";
+import styles from "./about.module.css";
 
 const PROJECTS = [
   {
@@ -88,16 +87,13 @@ export default function AboutPage() {
 
             {/* Action buttons */}
             <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-              <Link href="/contact" style={{
+              <Link href="/contact" className={styles.btnAccent} style={{
                 display: "inline-flex", alignItems: "center", gap: "6px",
                 padding: "7px 16px", borderRadius: "10px",
                 background: "var(--accent)", color: "#fff",
                 fontSize: "13px", fontWeight: "600", textDecoration: "none",
                 transition: "background 110ms",
-              }}
-              onMouseEnter={(e: React.MouseEvent<HTMLAnchorElement>) => (e.currentTarget as HTMLElement).style.background = "var(--accent-hi)"}
-              onMouseLeave={(e: React.MouseEvent<HTMLAnchorElement>) => (e.currentTarget as HTMLElement).style.background = "var(--accent)"}
-              >
+              }}>
                 Contact me
               </Link>
               {[
@@ -105,22 +101,16 @@ export default function AboutPage() {
                 { label: "GitHub", href: "https://github.com" },
                 { label: "LinkedIn", href: "https://linkedin.com" },
               ].map(btn => (
-                <a key={btn.label} href={btn.href} target="_blank" rel="noopener noreferrer" style={{
-                  display: "inline-flex", alignItems: "center",
-                  padding: "7px 16px", borderRadius: "10px",
-                  background: "var(--surface-2)", color: "var(--text-2)",
-                  border: "1px solid var(--border)",
-                  fontSize: "13px", fontWeight: "500", textDecoration: "none",
-                  transition: "background 110ms, color 110ms",
-                }}
-                onMouseEnter={e => {
-                  (e.currentTarget as HTMLElement).style.background = "var(--surface-3)";
-                  (e.currentTarget as HTMLElement).style.color = "var(--text)";
-                }}
-                onMouseLeave={e => {
-                  (e.currentTarget as HTMLElement).style.background = "var(--surface-2)";
-                  (e.currentTarget as HTMLElement).style.color = "var(--text-2)";
-                }}
+                <a key={btn.label} href={btn.href} target="_blank" rel="noopener noreferrer"
+                  className={styles.btnSecondary}
+                  style={{
+                    display: "inline-flex", alignItems: "center",
+                    padding: "7px 16px", borderRadius: "10px",
+                    background: "var(--surface-2)", color: "var(--text-2)",
+                    border: "1px solid var(--border)",
+                    fontSize: "13px", fontWeight: "500", textDecoration: "none",
+                    transition: "background 110ms, color 110ms",
+                  }}
                 >
                   {btn.label}
                 </a>
@@ -149,7 +139,7 @@ export default function AboutPage() {
         display: "grid",
         gridTemplateColumns: "1fr 280px",
         gap: "24px",
-      }} className="portfolio-grid">
+      }} className={styles.portfolioGrid}>
         {/* Projects */}
         <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
           <h2 style={{
@@ -163,6 +153,7 @@ export default function AboutPage() {
             <Link
               key={project.title}
               href={project.href}
+              className={styles.projectCard}
               style={{
                 display: "block",
                 background: "var(--surface)",
@@ -172,18 +163,6 @@ export default function AboutPage() {
                 boxShadow: "var(--shadow-sm)",
                 textDecoration: "none",
                 transition: "transform 200ms cubic-bezier(0.16,1,0.3,1), box-shadow 200ms, border-color 110ms",
-              }}
-              onMouseEnter={e => {
-                const el = e.currentTarget as HTMLElement;
-                el.style.transform = "translateY(-2px)";
-                el.style.boxShadow = "var(--shadow-md)";
-                el.style.borderColor = "var(--accent)";
-              }}
-              onMouseLeave={e => {
-                const el = e.currentTarget as HTMLElement;
-                el.style.transform = "translateY(0)";
-                el.style.boxShadow = "var(--shadow-sm)";
-                el.style.borderColor = "var(--border)";
               }}
             >
               <div style={{ display: "flex", alignItems: "flex-start", gap: "14px" }}>
@@ -284,11 +263,6 @@ export default function AboutPage() {
         </div>
       </div>
 
-      <style>{`
-        @media (max-width: 768px) {
-          .portfolio-grid { grid-template-columns: 1fr !important; }
-        }
-      `}</style>
     </div>
   );
 }

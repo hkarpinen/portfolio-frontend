@@ -1,42 +1,18 @@
 import Link from "next/link";
-import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
-import { SERVER_API } from "@/lib/api-url";
+import {
+  fetchHouseholdServer,
+  fetchHouseholdContributionsServer,
+} from "@/lib/api/bills";
+import { getCookieHeader } from "@/lib/server-cookies";
+import type {
+  Household,
+  HouseholdContributionsResponse,
+  MemberContribution,
+  HouseholdContributionItem,
+} from "@/types/api";
 
 export const dynamic = "force-dynamic";
-
-interface ContributionItem {
-  splitId: string;
-  billId: string;
-  billTitle: string;
-  billCategory?: string;
-  amount: number;
-  currency: string;
-  dueDate: string;
-  isClaimed: boolean;
-}
-
-interface MemberContribution {
-  userId: string;
-  displayName?: string;
-  totalDue: number;
-  totalPaid: number;
-  contributions: ContributionItem[];
-}
-
-interface MonthlyContributionsResponse {
-  periodLabel: string;
-  periodStart: string;
-  total: number;
-  currency: string;
-  members: MemberContribution[];
-}
-
-interface HouseholdDetail {
-  householdId: string;
-  name: string;
-  currencyCode: string;
-}
 
 const AVATAR_COLORS = [
   "var(--accent)",
@@ -58,32 +34,16 @@ function initials(name?: string) {
   return name.split(" ").slice(0, 2).map((p) => p.charAt(0).toUpperCase()).join("");
 }
 
-function serverFetch<T>(path: string, cookieHeader: string): Promise<T | null> {
-  return fetch(`${SERVER_API}${path}`, {
-    headers: { Cookie: cookieHeader },
-    cache: "no-store",
-  })
-    .then((r) => (r.ok ? (r.json() as Promise<T>) : null))
-    .catch(() => null);
-}
-
 export default async function HouseholdContributionsPage({
   params,
 }: {
   params: { id: string };
 }) {
-  const cookieStore = cookies();
-  const cookieHeader = cookieStore
-    .getAll()
-    .map((c) => `${c.name}=${c.value}`)
-    .join("; ");
+  const cookieHeader = await getCookieHeader();
 
   const [household, months] = await Promise.all([
-    serverFetch<HouseholdDetail>(`/api/bills/households/${params.id}`, cookieHeader),
-    serverFetch<MonthlyContributionsResponse[]>(
-      `/api/bills/households/${params.id}/contributions`,
-      cookieHeader
-    ).then((r) => r ?? []),
+    fetchHouseholdServer(params.id, cookieHeader),
+    fetchHouseholdContributionsServer(params.id, cookieHeader).then((r) => r ?? []),
   ]);
 
   if (!household) notFound();

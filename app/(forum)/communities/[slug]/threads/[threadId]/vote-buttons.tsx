@@ -1,20 +1,27 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useCastVote } from "@/hooks/use-forum";
 import { ApiError } from "@/lib/api-client";
+import styles from "./vote-buttons.module.css";
 
 interface VoteButtonsProps {
+  threadId: string;
   targetType: 0 | 1;
   targetId: string;
   initialScore: number;
 }
 
-export function VoteButtons({ targetType, targetId, initialScore }: VoteButtonsProps) {
+export function VoteButtons({ threadId, targetType, targetId, initialScore }: VoteButtonsProps) {
   const [score, setScore] = useState(initialScore);
   const [voted, setVoted] = useState<1 | -1 | null>(null);
 
-  const { mutate: castVote, isPending } = useCastVote();
+  // Sync with server-rendered score after router.refresh() re-renders the parent
+  useEffect(() => {
+    setScore(initialScore);
+  }, [initialScore]);
+
+  const { mutate: castVote, isPending } = useCastVote(threadId);
 
   function vote(direction: 1 | -1) {
     if (voted === direction || isPending) return;
@@ -46,26 +53,11 @@ export function VoteButtons({ targetType, targetId, initialScore }: VoteButtonsP
       <button
         onClick={() => vote(1)}
         aria-label="Upvote"
+        data-voted={voted === 1 ? "true" : undefined}
+        className={`${styles.voteBtn} ${styles.voteBtnUp}`}
         style={{
-          width: "28px", height: "28px", borderRadius: "8px",
-          border: "none", cursor: "pointer",
-          background: voted === 1 ? "var(--success-s)" : "transparent",
-          color: voted === 1 ? "var(--success)" : "var(--text-3)",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          transition: "background 110ms, color 110ms",
-          fontSize: "12px",
-        }}
-        onMouseEnter={e => {
-          if (voted !== 1) {
-            (e.currentTarget as HTMLElement).style.background = "var(--surface-2)";
-            (e.currentTarget as HTMLElement).style.color = "var(--success)";
-          }
-        }}
-        onMouseLeave={e => {
-          if (voted !== 1) {
-            (e.currentTarget as HTMLElement).style.background = "transparent";
-            (e.currentTarget as HTMLElement).style.color = "var(--text-3)";
-          }
+          background: voted === 1 ? "var(--success-s)" : undefined,
+          color: voted === 1 ? "var(--success)" : undefined,
         }}
       >
         <svg width="12" height="12" viewBox="0 0 24 24" fill={voted === 1 ? "currentColor" : "none"} stroke="currentColor" strokeWidth={2.5}>
@@ -85,26 +77,11 @@ export function VoteButtons({ targetType, targetId, initialScore }: VoteButtonsP
       <button
         onClick={() => vote(-1)}
         aria-label="Downvote"
+        data-voted={voted === -1 ? "true" : undefined}
+        className={`${styles.voteBtn} ${styles.voteBtnDown}`}
         style={{
-          width: "28px", height: "28px", borderRadius: "8px",
-          border: "none", cursor: "pointer",
-          background: voted === -1 ? "var(--danger-s)" : "transparent",
-          color: voted === -1 ? "var(--danger)" : "var(--text-3)",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          transition: "background 110ms, color 110ms",
-          fontSize: "12px",
-        }}
-        onMouseEnter={e => {
-          if (voted !== -1) {
-            (e.currentTarget as HTMLElement).style.background = "var(--surface-2)";
-            (e.currentTarget as HTMLElement).style.color = "var(--danger)";
-          }
-        }}
-        onMouseLeave={e => {
-          if (voted !== -1) {
-            (e.currentTarget as HTMLElement).style.background = "transparent";
-            (e.currentTarget as HTMLElement).style.color = "var(--text-3)";
-          }
+          background: voted === -1 ? "var(--danger-s)" : undefined,
+          color: voted === -1 ? "var(--danger)" : undefined,
         }}
       >
         <svg width="12" height="12" viewBox="0 0 24 24" fill={voted === -1 ? "currentColor" : "none"} stroke="currentColor" strokeWidth={2.5}>

@@ -1,8 +1,7 @@
 import { z } from "zod";
 
 export const createCommunitySchema = z.object({
-  slug: z.string().min(3).max(50),
-  name: z.string().min(3).max(100),
+  name: z.string().min(3).max(64),
   description: z.string().max(500),
 });
 

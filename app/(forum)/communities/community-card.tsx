@@ -1,56 +1,85 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
-import { api, ApiError } from "@/lib/api-client";
+import { ApiError } from "@/lib/api-client";
+import { useCommunityMembership, useJoinCommunity } from "@/hooks/use-forum";
+import type { CommunityActivitySnapshot } from "@/types/api";
+import styles from "./community-card.module.css";
 
 interface CommunityCardProps {
   communityId: string;
+  slug: string;
   name: string;
   description?: string;
   imageUrl?: string;
   memberCount?: number;
   threadCount?: number;
+  commentCount?: number;
+  latestActivity?: CommunityActivitySnapshot;
 }
 
-export function CommunityCard({ communityId, name, description, imageUrl, memberCount, threadCount }: CommunityCardProps) {
-  const [joined, setJoined] = useState<boolean | null>(null);
-  const [joining, setJoining] = useState(false);
-  const [hovered, setHovered] = useState(false);
-  const slug = encodeURIComponent(name);
+function formatRelative(dateStr: string) {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60_000);
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  if (days < 7) return `${days}d ago`;
+  return new Date(dateStr).toLocaleDateString(undefined, { month: "short", day: "numeric" });
+}
 
-  useEffect(() => {
-    api.get<{ isMember?: boolean }>(`/api/forum/communities/${communityId}/membership`)
-      .then((data) => setJoined(data?.isMember ?? false))
-      .catch(() => setJoined(false));
-  }, [communityId]);
+function ActivityAvatar({ avatarUrl, name }: { avatarUrl?: string; name?: string }) {
+  if (avatarUrl) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img src={avatarUrl} alt="" style={{ width: 18, height: 18, borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
+    );
+  }
+  const initial = (name ?? "?")[0].toUpperCase();
+  return (
+    <div style={{
+      width: 18, height: 18, borderRadius: "50%", background: "var(--accent-subtle)",
+      display: "flex", alignItems: "center", justifyContent: "center",
+      fontSize: "10px", fontWeight: 700, color: "var(--accent)", flexShrink: 0,
+    }}>{initial}</div>
+  );
+}
 
-  async function handleJoin(e: React.MouseEvent) {
+export function CommunityCard({ communityId, slug, name, description, imageUrl, memberCount, threadCount, commentCount, latestActivity }: CommunityCardProps) {
+  const { data: membership } = useCommunityMembership(communityId);
+  const joinMutation = useJoinCommunity(communityId);
+
+  const joined = membership === undefined ? null : (membership?.isMember ?? false);
+  const joining = joinMutation.isPending;
+
+  function handleJoin(e: React.MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
-    if (joining) return;
-    setJoining(true);
-    try {
-      await api.post(`/api/forum/communities/${communityId}/join`);
-      setJoined(true);
-    } catch (err) {
-      if (err instanceof ApiError && err.status === 401) window.location.href = "/login";
-    } finally {
-      setJoining(false);
-    }
+    joinMutation.mutate(undefined, {
+      onError: (err) => {
+        if (err instanceof ApiError && err.status === 401) window.location.href = "/login";
+      },
+    });
   }
+
+  const hasReply = !!latestActivity?.latestReplyAt;
+  const activityTime = latestActivity
+    ? hasReply
+      ? latestActivity.latestReplyAt!
+      : latestActivity.threadCreatedAt
+    : null;
 
   return (
     <div
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      className={styles.card}
       style={{
         background: "var(--surface)",
         border: "1px solid var(--border)",
         borderRadius: "16px",
         padding: "20px",
-        boxShadow: hovered ? "var(--shadow-md)" : "var(--shadow-sm)",
-        transform: hovered ? "translateY(-2px)" : "translateY(0)",
+        boxShadow: "var(--shadow-sm)",
         transition: "box-shadow 180ms ease, transform 180ms ease",
       }}
     >
@@ -80,11 +109,14 @@ export function CommunityCard({ communityId, name, description, imageUrl, member
               <p style={{ fontSize: "13px", color: "var(--text-2)", marginTop: "2px", overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>{description}</p>
             )}
             <div style={{ display: "flex", gap: "16px", marginTop: "4px" }}>
-              {memberCount !== undefined && (
-                <span style={{ fontSize: "11px", fontWeight: 500, color: "var(--text-3)" }}>{memberCount.toLocaleString()} members</span>
+              {memberCount !== undefined && memberCount > 0 && (
+                <span style={{ fontSize: "11px", fontWeight: 500, color: "var(--text-3)" }}>{memberCount.toLocaleString()} {memberCount === 1 ? "member" : "members"}</span>
               )}
-              {threadCount !== undefined && (
-                <span style={{ fontSize: "11px", fontWeight: 500, color: "var(--text-3)" }}>{threadCount.toLocaleString()} threads</span>
+              {threadCount !== undefined && threadCount > 0 && (
+                <span style={{ fontSize: "11px", fontWeight: 500, color: "var(--text-3)" }}>{threadCount.toLocaleString()} {threadCount === 1 ? "thread" : "threads"}</span>
+              )}
+              {commentCount !== undefined && commentCount > 0 && (
+                <span style={{ fontSize: "11px", fontWeight: 500, color: "var(--text-3)" }}>{commentCount.toLocaleString()} {commentCount === 1 ? "reply" : "replies"}</span>
               )}
             </div>
           </div>
@@ -118,6 +150,47 @@ export function CommunityCard({ communityId, name, description, imageUrl, member
           )}
         </div>
       </div>
+
+      {latestActivity && (
+        <Link
+          href={`/communities/${slug}/threads/${latestActivity.threadId}`}
+          style={{ textDecoration: "none" }}
+        >
+          <div style={{
+            marginTop: "12px",
+            paddingTop: "10px",
+            borderTop: "1px solid var(--border)",
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            minWidth: 0,
+          }}>
+            <ActivityAvatar
+              avatarUrl={hasReply ? latestActivity.latestReplyAuthorAvatarUrl : latestActivity.authorAvatarUrl}
+              name={hasReply ? latestActivity.latestReplyAuthorDisplayName : latestActivity.authorDisplayName}
+            />
+            <div style={{ minWidth: 0, flex: 1 }}>
+              <p style={{
+                fontSize: "12px", color: "var(--text-2)", margin: 0,
+                overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+              }}>
+                <span style={{ fontWeight: 500, color: "var(--text)" }}>
+                  {hasReply ? latestActivity.latestReplyAuthorDisplayName ?? "Someone" : latestActivity.authorDisplayName ?? "Someone"}
+                </span>
+                {" "}
+                {hasReply ? "replied in" : "posted"}
+                {" "}
+                <span style={{ fontWeight: 500, color: "var(--accent)" }}>{latestActivity.threadTitle}</span>
+              </p>
+            </div>
+            {activityTime && (
+              <span style={{ fontSize: "11px", color: "var(--text-3)", flexShrink: 0 }}>
+                {formatRelative(activityTime)}
+              </span>
+            )}
+          </div>
+        </Link>
+      )}
     </div>
   );
 }

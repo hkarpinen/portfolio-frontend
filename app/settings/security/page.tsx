@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { api, ApiError } from "@/lib/api-client";
+import { Button } from "@/components/ui/button";
 
 const passwordSchema = z
   .object({
@@ -98,70 +99,25 @@ function FocusInput({
 function PrimaryButton({
   children,
   fullWidth,
+  className,
   ...props
 }: React.ButtonHTMLAttributes<HTMLButtonElement> & { fullWidth?: boolean }) {
-  const [pressed, setPressed] = useState(false);
-  const [hovered, setHovered] = useState(false);
   return (
-    <button
-      style={{
-        background: hovered ? "var(--accent-hi)" : "var(--accent)",
-        color: "#fff",
-        border: "none",
-        borderRadius: "12px",
-        padding: "0 18px",
-        height: "38px",
-        fontSize: "14px",
-        fontWeight: 600,
-        cursor: props.disabled ? "not-allowed" : "pointer",
-        opacity: props.disabled ? 0.5 : 1,
-        transform: pressed ? "scale(0.97)" : "scale(1)",
-        transition: "background 150ms, transform 100ms",
-        width: fullWidth ? "100%" : "auto",
-        fontFamily: "var(--ff-body)",
-      }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => { setHovered(false); setPressed(false); }}
-      onMouseDown={() => setPressed(true)}
-      onMouseUp={() => setPressed(false)}
-      {...props}
-    >
+    <Button variant="primary" fullWidth={fullWidth} className={className} {...props}>
       {children}
-    </button>
+    </Button>
   );
 }
 
 function DangerButton({
   children,
+  className,
   ...props
 }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
-  const [hovered, setHovered] = useState(false);
-  const [pressed, setPressed] = useState(false);
   return (
-    <button
-      style={{
-        background: hovered ? "oklch(55% 0.21 22)" : "var(--danger)",
-        color: "#fff",
-        border: "none",
-        borderRadius: "12px",
-        padding: "0 18px",
-        height: "38px",
-        fontSize: "14px",
-        fontWeight: 600,
-        cursor: props.disabled ? "not-allowed" : "pointer",
-        opacity: props.disabled ? 0.5 : 1,
-        transform: pressed ? "scale(0.97)" : "scale(1)",
-        transition: "background 150ms, transform 100ms",
-        fontFamily: "var(--ff-body)",
-      }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => { setHovered(false); setPressed(false); }}
-      onMouseDown={() => setPressed(true)}
-      onMouseUp={() => setPressed(false)}
-      {...props}
-    >
+    <Button variant="danger" className={className} {...props}>
       {children}
-    </button>
+    </Button>
   );
 }
 

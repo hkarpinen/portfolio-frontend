@@ -9,10 +9,30 @@ export class ApiError extends Error {
 
 type Method = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
 
-function handleUnauthorized() {
-  if (typeof window !== "undefined") {
-    window.location.href = "/login";
-  }
+/**
+ * Single source of truth for translating a backend HTTP error into an
+ * {@link ApiError}. Centralising this avoids subtle behaviour drift between
+ * the JSON and multipart upload helpers.
+ *
+ * Note: a 401 is intentionally surfaced as a regular {@link ApiError}. We do
+ * NOT redirect to /login here. Routing is enforced by `middleware.ts`; doing
+ * a hard `window.location` here would (a) break public pages that
+ * legitimately call authenticated endpoints (e.g. `useMe()` on a public
+ * profile) and (b) hide the real error from React Query's cache/error UI.
+ */
+async function toApiError(res: Response): Promise<ApiError> {
+  const payload = await res.json().catch(() => ({} as Record<string, unknown>));
+  const message =
+    (payload as { error?: string }).error ??
+    (payload as { message?: string }).message ??
+    `Request failed (${res.status})`;
+  return new ApiError(res.status, message);
+}
+
+async function parseBody<T>(res: Response): Promise<T> {
+  if (res.status === 204) return undefined as T;
+  const text = await res.text();
+  return (text ? JSON.parse(text) : undefined) as T;
 }
 
 async function request<T>(path: string, method: Method, body?: unknown): Promise<T> {
@@ -23,23 +43,8 @@ async function request<T>(path: string, method: Method, body?: unknown): Promise
     body: body !== undefined ? JSON.stringify(body) : undefined,
   });
 
-  if (res.status === 401) {
-    handleUnauthorized();
-    throw new ApiError(401, "Session expired. Redirecting to login...");
-  }
-
-  if (!res.ok) {
-    const payload = await res.json().catch(() => ({}));
-    const message = payload?.error ?? payload?.message ?? `Request failed (${res.status})`;
-    throw new ApiError(res.status, message);
-  }
-
-  if (res.status === 204) {
-    return undefined as T;
-  }
-
-  const text = await res.text();
-  return (text ? JSON.parse(text) : undefined) as T;
+  if (!res.ok) throw await toApiError(res);
+  return parseBody<T>(res);
 }
 
 async function upload<T>(path: string, formData: FormData): Promise<T> {
@@ -49,23 +54,8 @@ async function upload<T>(path: string, formData: FormData): Promise<T> {
     body: formData,
   });
 
-  if (res.status === 401) {
-    handleUnauthorized();
-    throw new ApiError(401, "Session expired. Redirecting to login...");
-  }
-
-  if (!res.ok) {
-    const payload = await res.json().catch(() => ({}));
-    const message = payload?.error ?? payload?.message ?? `Request failed (${res.status})`;
-    throw new ApiError(res.status, message);
-  }
-
-  if (res.status === 204) {
-    return undefined as T;
-  }
-
-  const text = await res.text();
-  return (text ? JSON.parse(text) : undefined) as T;
+  if (!res.ok) throw await toApiError(res);
+  return parseBody<T>(res);
 }
 
 export const api = {

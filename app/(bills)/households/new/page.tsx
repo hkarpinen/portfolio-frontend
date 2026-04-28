@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useCreateHousehold } from "@/hooks/use-bills";
 import { ApiError } from "@/lib/api-client";
+import { Button } from "@/components/ui/button";
 
 const schema = z.object({
   name: z.string().min(1, "Name is required").max(100),
@@ -127,29 +128,14 @@ export default function NewHouseholdPage() {
             />
           </div>
 
-          <button
+          <Button
             type="submit"
             disabled={isSubmitting || createHousehold.isPending}
-            style={{
-              background: "var(--accent)",
-              color: "#fff",
-              height: "40px",
-              borderRadius: "12px",
-              fontWeight: "600",
-              fontSize: "14px",
-              border: "none",
-              cursor: createHousehold.isPending ? "not-allowed" : "pointer",
-              opacity: createHousehold.isPending ? 0.6 : 1,
-              width: "100%",
-              fontFamily: "var(--ff-body)",
-            }}
-            onMouseDown={(e) => { (e.currentTarget as HTMLButtonElement).style.transform = "scale(0.97)"; }}
-            onMouseUp={(e) => { (e.currentTarget as HTMLButtonElement).style.transform = "scale(1)"; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.transform = "scale(1)"; }}
-            onMouseEnter={(e) => { if (!createHousehold.isPending) (e.currentTarget as HTMLButtonElement).style.background = "var(--accent-hi)"; }}
+            variant="primary"
+            fullWidth
           >
             {createHousehold.isPending ? "Creating..." : "Create Household"}
-          </button>
+          </Button>
         </form>
       </div>
     </div>

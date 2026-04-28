@@ -1,61 +1,17 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import Link from "next/link";
-
-import { api, ApiError } from "@/lib/api-client";
+import { useForumSearch } from "@/hooks/use-forum";
+import type { SearchResult } from "@/types/api";
 
 export const dynamic = 'force-dynamic';
 
-interface SearchResult {
-  id: string;
-  type: "thread" | "community";
-  title?: string;
-  name?: string;
-  slug?: string;
-  communitySlug?: string;
-  excerpt?: string;
-  score?: number;
-}
-
-interface SearchResponse {
-  items?: SearchResult[];
-}
-
 export default function SearchPage() {
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<SearchResult[]>([]);
-  const [loading, setLoading] = useState(false);
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    if (!query.trim()) {
-      setResults([]);
-      return;
-    }
-    debounceRef.current = setTimeout(async () => {
-      setLoading(true);
-      try {
-        const data = await api.get<SearchResponse | SearchResult[]>(
-          `/api/forum/search?q=${encodeURIComponent(query)}&type=thread`
-        );
-        const items = Array.isArray(data) ? data : data?.items ?? [];
-        setResults(items);
-      } catch (error) {
-        if (!(error instanceof ApiError)) {
-          // eslint-disable-next-line no-console
-          console.error("Search failed:", error);
-        }
-        setResults([]);
-      } finally {
-        setLoading(false);
-      }
-    }, 300);
-    return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-    };
-  }, [query]);
+  const { data, isPending } = useForumSearch(query);
+  const results: SearchResult[] = data ? (Array.isArray(data) ? data : (data.items ?? [])) : [];
+  const loading = isPending && query.trim().length > 0;
 
   return (
     <div className="page-enter" style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
@@ -140,6 +96,7 @@ export default function SearchPage() {
 }
 
 function SearchResultRow({ result, href, isLast }: { result: SearchResult; href: string; isLast: boolean }) {
+
   return (
     <Link
       href={href}

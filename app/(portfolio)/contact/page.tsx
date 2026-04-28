@@ -59,15 +59,6 @@ export default function ContactPage() {
     setSubmitted(true);
   }
 
-  const focusStyle = (el: HTMLElement) => {
-    el.style.borderColor = "var(--accent)";
-    el.style.boxShadow = "0 0 0 3px var(--accent-subtle)";
-  };
-  const blurStyle = (el: HTMLElement) => {
-    el.style.borderColor = "var(--border)";
-    el.style.boxShadow = "none";
-  };
-
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
       {/* Section header */}
@@ -142,9 +133,8 @@ export default function ContactPage() {
                     onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
                     placeholder="Your name"
                     required
+                    className="contact-input"
                     style={inputStyle()}
-                    onFocus={e => focusStyle(e.currentTarget)}
-                    onBlur={e => blurStyle(e.currentTarget)}
                   />
                 </Field>
                 <Field label="Email">
@@ -154,9 +144,8 @@ export default function ContactPage() {
                     onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
                     placeholder="you@example.com"
                     required
+                    className="contact-input"
                     style={inputStyle()}
-                    onFocus={e => focusStyle(e.currentTarget)}
-                    onBlur={e => blurStyle(e.currentTarget)}
                   />
                 </Field>
               </div>
@@ -168,9 +157,8 @@ export default function ContactPage() {
                   onChange={e => setForm(f => ({ ...f, subject: e.target.value }))}
                   placeholder="What is this about?"
                   required
+                  className="contact-input"
                   style={inputStyle()}
-                  onFocus={e => focusStyle(e.currentTarget)}
-                  onBlur={e => blurStyle(e.currentTarget)}
                 />
               </Field>
 
@@ -181,6 +169,7 @@ export default function ContactPage() {
                   placeholder="Tell me about your project…"
                   required
                   rows={6}
+                  className="contact-input"
                   style={{
                     width: "100%",
                     background: "var(--surface-2)",
@@ -195,13 +184,12 @@ export default function ContactPage() {
                     transition: "border-color 110ms, box-shadow 110ms",
                     fontFamily: "var(--ff-body)",
                   }}
-                  onFocus={e => focusStyle(e.currentTarget)}
-                  onBlur={e => blurStyle(e.currentTarget)}
                 />
               </Field>
 
               <button
                 type="submit"
+                className="contact-submit"
                 style={{
                   height: "42px", borderRadius: "12px",
                   background: "var(--accent)", color: "#fff",
@@ -209,10 +197,6 @@ export default function ContactPage() {
                   fontSize: "14px", fontWeight: "600", fontFamily: "var(--ff-display)",
                   transition: "background 110ms, transform 100ms",
                 }}
-                onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = "var(--accent-hi)"}
-                onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = "var(--accent)"}
-                onMouseDown={e => (e.currentTarget as HTMLElement).style.transform = "scale(0.97)"}
-                onMouseUp={e => (e.currentTarget as HTMLElement).style.transform = "scale(1)"}
               >
                 Send message
               </button>
@@ -234,19 +218,18 @@ export default function ContactPage() {
             </h3>
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
               {CONTACT_INFO.map(info => (
-                <a
+                  <a
                   key={info.label}
                   href={info.href}
                   target="_blank"
                   rel="noopener noreferrer"
+                  className="contact-info-link"
                   style={{
                     display: "flex", alignItems: "center", gap: "10px",
                     padding: "10px 12px", borderRadius: "10px",
                     background: "var(--surface-2)", textDecoration: "none",
                     transition: "background 110ms",
                   }}
-                  onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = "var(--surface-3)"}
-                  onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = "var(--surface-2)"}
                 >
                   <span style={{ fontSize: "18px" }}>{info.icon}</span>
                   <div>
@@ -275,6 +258,13 @@ export default function ContactPage() {
           .contact-grid { grid-template-columns: 1fr !important; }
           .name-email-grid { grid-template-columns: 1fr !important; }
         }
+        .contact-input:focus {
+          border-color: var(--accent) !important;
+          box-shadow: 0 0 0 3px var(--accent-subtle);
+        }
+        .contact-submit:hover  { background: var(--accent-hi) !important; }
+        .contact-submit:active { transform: scale(0.97); }
+        .contact-info-link:hover { background: var(--surface-3) !important; }
       `}</style>
     </div>
   );

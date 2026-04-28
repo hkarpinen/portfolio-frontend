@@ -18,8 +18,9 @@ export default function NewThreadPage({
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     createThread.mutate({ communitySlug: params.slug, title, content }, {
-      onSuccess: () => {
-        router.push(`/communities/${encodeURIComponent(params.slug)}`);
+      onSuccess: (thread) => {
+        router.refresh();
+        router.push(`/communities/${params.slug}/threads/${thread.threadId}`);
       },
     });
   }

@@ -6,25 +6,19 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { api, ApiError } from "@/lib/api-client";
-import { useDeleteHousehold, useTransferOwnership } from "@/hooks/use-bills";
-
-interface HouseholdDetail {
-  householdId: string;
-  name: string;
-  description?: string;
-  currencyCode: string;
-  ownerId: string;
-}
-
-interface MemberResponse {
-  membershipId: string;
-  userId: string;
-  displayName?: string;
-  role: string;
-  isActive: boolean;
-  invitationCode?: string;
-}
+import { Button } from "@/components/ui/button";
+import {
+  useHousehold,
+  useHouseholdMembers,
+  useUpdateHousehold,
+  useGenerateInvite,
+  useRemoveMember,
+  useChangeMemberRole,
+  useDeleteHousehold,
+  useTransferOwnership,
+} from "@/hooks/use-bills";
+import { useMe } from "@/hooks/use-identity";
+import type { Household, HouseholdMember } from "@/types/api";
 
 const SPLIT_METHODS = ["Equal", "ByIncome", "Custom", "Percentage"] as const;
 const CURRENCIES = ["USD", "EUR", "GBP", "CAD", "AUD", "JPY", "CHF", "SEK", "NOK", "DKK"] as const;
@@ -83,15 +77,16 @@ export default function HouseholdSettingsPage({
   params: { id: string };
 }) {
   const router = useRouter();
-  const [household, setHousehold] = useState<HouseholdDetail | null>(null);
-  const [members, setMembers] = useState<MemberResponse[]>([]);
-  const [me, setMe] = useState<{ id: string } | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [fetchError, setFetchError] = useState<string | null>(null);
+  const { data: household, isLoading: householdLoading, isError: householdIsError } = useHousehold(params.id);
+  const { data: membersRaw, isLoading: membersLoading } = useHouseholdMembers(params.id);
+  const { data: me, isLoading: meLoading } = useMe();
+
+  const members = (Array.isArray(membersRaw) ? membersRaw : []) as HouseholdMember[];
+  const loading = householdLoading || membersLoading || meLoading;
+
   const [saveError, setSaveError] = useState<string | null>(null);
   const [saveSuccess, setSaveSuccess] = useState(false);
 
-  const [inviting, setInviting] = useState(false);
   const [inviteResult, setInviteResult] = useState<string | null>(null);
   const [inviteError, setInviteError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
@@ -102,25 +97,25 @@ export default function HouseholdSettingsPage({
 
   const deleteHousehold = useDeleteHousehold();
   const transferOwnership = useTransferOwnership(params.id);
+  const updateHouseholdMutation = useUpdateHousehold(params.id);
+  const generateInviteMutation = useGenerateInvite(params.id);
+  const removeMemberMutation = useRemoveMember(params.id);
+  const changeMemberRoleMutation = useChangeMemberRole(params.id);
 
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<SettingsForm>({
     resolver: zodResolver(settingsSchema),
   });
 
   useEffect(() => {
-    Promise.all([
-      api.get<HouseholdDetail>(`/api/bills/households/${params.id}`),
-      api.get<MemberResponse[]>(`/api/bills/households/${params.id}/members`),
-      api.get<{ id: string }>("/api/identity/me"),
-    ]).then(([h, m, identity]) => {
-      setHousehold(h);
-      setMembers(Array.isArray(m) ? m : []);
-      setMe(identity);
-      reset({ name: h.name, description: h.description ?? "", currencyCode: h.currencyCode ?? "USD", defaultSplitMethod: (h as unknown as Record<string, unknown>).defaultSplitMethod as string ?? "Equal" });
-    }).catch((err) => {
-      setFetchError(err instanceof ApiError ? err.message : "Failed to load settings.");
-    }).finally(() => setLoading(false));
-  }, [params.id, reset]);
+    if (household) {
+      reset({
+        name: household.name,
+        description: household.description ?? "",
+        currencyCode: household.currencyCode ?? "USD",
+        defaultSplitMethod: household.defaultSplitMethod ?? "Equal",
+      });
+    }
+  }, [household, reset]);
 
   const myMembership = members.find(
     (m) => m.userId.toLowerCase() === me?.id?.toLowerCase()
@@ -132,47 +127,32 @@ export default function HouseholdSettingsPage({
     setSaveError(null);
     setSaveSuccess(false);
     try {
-      await api.put(`/api/bills/households/${params.id}`, {
-        householdId: params.id,
+      await updateHouseholdMutation.mutateAsync({
         name: data.name,
         description: data.description || undefined,
         currencyCode: data.currencyCode,
         defaultSplitMethod: data.defaultSplitMethod || undefined,
       });
       setSaveSuccess(true);
-      setHousehold((prev) => prev ? { ...prev, name: data.name, description: data.description } : prev);
       router.refresh();
     } catch (err) {
-      setSaveError(err instanceof ApiError ? err.message : "Failed to save.");
+      setSaveError(err instanceof Error ? err.message : "Failed to save.");
     }
   };
 
-  const onGenerateInvite = async () => {
+  const onGenerateInvite = () => {
     if (!me) return;
     const code = nanoid();
-    setInviting(true);
     setInviteResult(null);
     setInviteError(null);
     setCopied(false);
-    try {
-      await api.post(`/api/bills/households/${params.id}/members/invite`, {
-        householdId: params.id,
-        invitedByUserId: me.id,
-        invitationCode: code,
-      });
-      setInviteResult(code);
-      setMembers((prev) => [...prev, {
-        membershipId: crypto.randomUUID(),
-        userId: me.id,
-        role: "Member",
-        isActive: false,
-        invitationCode: code,
-      }]);
-    } catch (err) {
-      setInviteError(err instanceof ApiError ? err.message : "Failed to generate invite.");
-    } finally {
-      setInviting(false);
-    }
+    generateInviteMutation.mutate(
+      { invitedByUserId: me.id, invitationCode: code },
+      {
+        onSuccess: () => setInviteResult(code),
+        onError: (err) => setInviteError(err instanceof Error ? err.message : "Failed to generate invite."),
+      }
+    );
   };
 
   const onCopy = () => {
@@ -183,26 +163,19 @@ export default function HouseholdSettingsPage({
     });
   };
 
-  const onRemoveMember = async (membershipId: string) => {
+  const onRemoveMember = (membershipId: string) => {
     setRemovingId(membershipId);
-    try {
-      await api.post(`/api/bills/households/${params.id}/members/remove`, {
-        membershipId,
-        removedByUserId: me?.id,
-      });
-      setMembers((prev) => prev.filter((m) => m.membershipId !== membershipId));
-    } catch {
-      // silently ignore
-    } finally {
-      setRemovingId(null);
-    }
+    removeMemberMutation.mutate(
+      { membershipId, removedByUserId: me?.id },
+      { onSettled: () => setRemovingId(null) }
+    );
   };
 
   if (loading) return (
     <div style={{ padding: "32px", color: "var(--text-3)", fontSize: "13px" }}>Loading…</div>
   );
-  if (fetchError) return (
-    <div style={{ padding: "32px", color: "var(--danger)", fontSize: "13px" }}>{fetchError}</div>
+  if (householdIsError) return (
+    <div style={{ padding: "32px", color: "var(--danger)", fontSize: "13px" }}>Failed to load settings.</div>
   );
   if (!household) return (
     <div style={{ padding: "32px", color: "var(--text-3)", fontSize: "13px" }}>Household not found.</div>
@@ -314,30 +287,13 @@ export default function HouseholdSettingsPage({
                 </select>
               </div>
             </div>
-            <button
+            <Button
               type="submit"
               disabled={isSubmitting}
-              style={{
-                background: "var(--accent)",
-                color: "#fff",
-                height: "38px",
-                borderRadius: "12px",
-                fontWeight: "600",
-                fontSize: "13px",
-                border: "none",
-                cursor: isSubmitting ? "not-allowed" : "pointer",
-                opacity: isSubmitting ? 0.6 : 1,
-                alignSelf: "flex-start",
-                padding: "0 20px",
-                fontFamily: "var(--ff-body)",
-              }}
-              onMouseDown={(e) => { (e.currentTarget as HTMLButtonElement).style.transform = "scale(0.97)"; }}
-              onMouseUp={(e) => { (e.currentTarget as HTMLButtonElement).style.transform = "scale(1)"; }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.transform = "scale(1)"; }}
-              onMouseEnter={(e) => { if (!isSubmitting) (e.currentTarget as HTMLButtonElement).style.background = "var(--accent-hi)"; }}
+              variant="primary"
             >
               {isSubmitting ? "Saving…" : "Save Changes"}
-            </button>
+            </Button>
           </form>
         </section>
       )}
@@ -356,6 +312,7 @@ export default function HouseholdSettingsPage({
               .map((m) => {
                 const isSelf = m.userId.toLowerCase() === me?.id?.toLowerCase();
                 const canRemove = isOwner && !isSelf;
+                const canChangeRole = isOwner && !isSelf && m.role !== "Owner";
                 return (
                   <div
                     key={m.membershipId}
@@ -380,8 +337,32 @@ export default function HouseholdSettingsPage({
                       </p>
                       <p style={{ fontSize: "12px", color: "var(--text-3)", marginTop: "2px", textTransform: "capitalize" }}>{m.role}</p>
                     </div>
-                    {canRemove && (
-                      <div style={{ display: "flex", gap: "8px", flexDirection: "column", alignItems: "flex-end" }}>
+                    <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                      {canChangeRole && (
+                        <select
+                          value={m.role}
+                          disabled={changeMemberRoleMutation.isPending}
+                          onChange={(e) =>
+                            changeMemberRoleMutation.mutate({ membershipId: m.membershipId, role: e.target.value })
+                          }
+                          style={{
+                            height: "30px",
+                            padding: "0 8px",
+                            background: "var(--surface)",
+                            border: "1px solid var(--border)",
+                            borderRadius: "8px",
+                            fontSize: "12px",
+                            color: "var(--text-2)",
+                            cursor: "pointer",
+                            fontFamily: "var(--ff-body)",
+                          }}
+                        >
+                          <option value="Member">Member</option>
+                          <option value="Admin">Admin</option>
+                        </select>
+                      )}
+                      {canRemove && (
+                        <div style={{ display: "flex", gap: "6px", flexDirection: "column", alignItems: "flex-end" }}>
                         {transferTargetId === m.membershipId ? (
                           <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
                             <span style={{ fontSize: "12px", color: "var(--text-2)" }}>Transfer to {m.displayName || m.userId.slice(0, 8)}?</span>
@@ -449,6 +430,7 @@ export default function HouseholdSettingsPage({
                         </button>
                       </div>
                     )}
+                    </div>
                   </div>
                 );
               })}
@@ -545,30 +527,13 @@ export default function HouseholdSettingsPage({
               </button>
             </div>
           ) : (
-            <button
+            <Button
               onClick={onGenerateInvite}
-              disabled={inviting}
-              style={{
-                background: "var(--accent)",
-                color: "#fff",
-                height: "38px",
-                borderRadius: "12px",
-                fontWeight: "600",
-                fontSize: "13px",
-                border: "none",
-                cursor: inviting ? "not-allowed" : "pointer",
-                opacity: inviting ? 0.6 : 1,
-                alignSelf: "flex-start",
-                padding: "0 20px",
-                fontFamily: "var(--ff-body)",
-              }}
-              onMouseDown={(e) => { (e.currentTarget as HTMLButtonElement).style.transform = "scale(0.97)"; }}
-              onMouseUp={(e) => { (e.currentTarget as HTMLButtonElement).style.transform = "scale(1)"; }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.transform = "scale(1)"; }}
-              onMouseEnter={(e) => { if (!inviting) (e.currentTarget as HTMLButtonElement).style.background = "var(--accent-hi)"; }}
+              disabled={generateInviteMutation.isPending}
+              variant="primary"
             >
-              {inviting ? "Generating…" : "Generate Invite Code"}
-            </button>
+              {generateInviteMutation.isPending ? "Generating…" : "Generate Invite Code"}
+            </Button>
           )}
         </section>
       )}

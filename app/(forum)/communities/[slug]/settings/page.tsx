@@ -1,38 +1,15 @@
-import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { SERVER_API } from "@/lib/api-url";
+import { fetchCommunityBySlugServer } from "@/lib/api/forum";
+import { getCookieHeader } from "@/lib/server-cookies";
 import { CommunitySettingsForm } from "./settings-form";
+import { SettingsTabs } from "./settings-tabs";
+import type { CommunityDetailResponse } from "@/types/api";
 
 export const dynamic = "force-dynamic";
 
-interface Community {
-  communityId: string;
-  name: string;
-  description?: string;
-  imageUrl?: string;
-  visibility: string;
-  ownerId: string;
-}
-
-async function getCommunity(slug: string, cookieHeader: string): Promise<Community | null> {
-  try {
-    const res = await fetch(`${SERVER_API}/api/forum/communities/by-name/${encodeURIComponent(slug)}`, {
-      headers: { Cookie: cookieHeader },
-      cache: "no-store",
-    });
-    if (!res.ok) return null;
-    return res.json();
-  } catch {
-    return null;
-  }
-}
-
 export default async function CommunitySettingsPage({ params }: { params: { slug: string } }) {
-  const cookieStore = cookies();
-  const cookieHeader = cookieStore.getAll().map((c) => `${c.name}=${c.value}`).join("; ");
-
-  const community = await getCommunity(params.slug, cookieHeader);
+  const community: CommunityDetailResponse | null = await fetchCommunityBySlugServer(params.slug, await getCookieHeader());
   if (!community) notFound();
 
   return (
@@ -55,32 +32,15 @@ export default async function CommunitySettingsPage({ params }: { params: { slug
       </div>
 
       {/* Tabs */}
-      <div style={{ borderBottom: "1px solid var(--border)", display: "flex" }}>
-        <button
-          style={{
-            padding: "10px 16px", background: "none", border: "none",
-            fontWeight: 600, fontSize: "14px", color: "var(--text)",
-            borderBottom: "2px solid var(--accent)", marginBottom: "-1px",
-            cursor: "pointer", fontFamily: "var(--ff-body)",
-          }}
-        >
-          General
-        </button>
-      </div>
-
-      <div style={{
-        background: "var(--surface)", border: "1px solid var(--border)",
-        borderRadius: "16px", padding: "24px", boxShadow: "var(--shadow-sm)",
-      }}>
-        <CommunitySettingsForm
-          communityId={community.communityId}
-          slug={params.slug}
-          initialName={community.name}
-          initialDescription={community.description ?? ""}
-          initialImageUrl={community.imageUrl ?? ""}
-          initialVisibility={community.visibility}
-        />
-      </div>
+      <SettingsTabs
+        communityId={community.communityId}
+        ownerId={community.ownerId ?? ""}
+        slug={params.slug}
+        initialName={community.name}
+        initialDescription={community.description ?? ""}
+        initialImageUrl={community.imageUrl ?? ""}
+        initialVisibility={community.visibility ?? ""}
+      />
     </div>
   );
 }

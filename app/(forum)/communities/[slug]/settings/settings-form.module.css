@@ -1,0 +1,13 @@
+.deleteBtn {
+  align-self: flex-start;
+  padding: 8px 18px;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--danger);
+  border: 1px solid var(--danger);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 110ms;
+}
+.deleteBtn:hover { background: var(--danger-s); }

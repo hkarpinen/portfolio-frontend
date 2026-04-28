@@ -1,33 +1,11 @@
 import Link from "next/link";
-import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
-import { SERVER_API } from "@/lib/api-url";
 import { IncomeClient } from "./income-client";
+import { fetchHouseholdServer, fetchHouseholdIncomeServer } from "@/lib/api/bills";
+import { getCookieHeader } from "@/lib/server-cookies";
+import type { IncomeSource, Household } from "@/types/api";
 
 export const dynamic = "force-dynamic";
-
-interface IncomeSource {
-  incomeId: string;
-  source: string;
-  amount: number;
-  frequency: string;
-  currency?: string;
-}
-
-interface HouseholdDetail {
-  householdId: string;
-  name: string;
-  currencyCode: string;
-}
-
-function serverFetch<T>(path: string, cookieHeader: string): Promise<T | null> {
-  return fetch(`${SERVER_API}${path}`, {
-    headers: { Cookie: cookieHeader },
-    cache: "no-store",
-  })
-    .then((r) => (r.ok ? (r.json() as Promise<T>) : null))
-    .catch(() => null);
-}
 
 function toMonthly(amount: number, frequency: string): number {
   const f = frequency?.toUpperCase();
@@ -44,18 +22,11 @@ export default async function HouseholdIncomePage({
 }: {
   params: { id: string };
 }) {
-  const cookieStore = cookies();
-  const cookieHeader = cookieStore
-    .getAll()
-    .map((c) => `${c.name}=${c.value}`)
-    .join("; ");
+  const cookieHeader = await getCookieHeader();
 
   const [household, incomeData] = await Promise.all([
-    serverFetch<HouseholdDetail>(`/api/bills/households/${params.id}`, cookieHeader),
-    serverFetch<{ items?: IncomeSource[] }>(
-      `/api/bills/income?householdId=${params.id}`,
-      cookieHeader
-    ),
+    fetchHouseholdServer(params.id, cookieHeader),
+    fetchHouseholdIncomeServer(params.id, cookieHeader),
   ]);
 
   if (!household) notFound();

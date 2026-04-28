@@ -1,44 +1,32 @@
-import { cookies } from "next/headers";
-import { SERVER_API } from "@/lib/api-url";
+import { getSession } from "@/lib/auth/session";
 import { AppShell } from "./app-shell";
-import { NotificationsToaster } from "./notifications-toaster";
 
-function parseJwt(token: string) {
-  try {
-    return JSON.parse(Buffer.from(token.split(".")[1], "base64").toString());
-  } catch {
-    return null;
-  }
-}
-
-async function fetchProfile(token: string): Promise<{ displayName?: string; avatarUrl?: string | null } | null> {
-  try {
-    const res = await fetch(`${SERVER_API}/api/identity/me`, {
-      headers: { Cookie: `access_token=${token}` },
-      next: { revalidate: 0 },
-    });
-    if (!res.ok) return null;
-    return res.json();
-  } catch {
-    return null;
-  }
-}
-
-export async function AppShellServer({ children }: { children: React.ReactNode }) {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("access_token")?.value ?? null;
-  const payload = token ? parseJwt(token) : null;
-  const profile = token ? await fetchProfile(token) : null;
-
-  const displayName: string | null = profile?.displayName ?? payload?.displayName ?? null;
-  const avatarUrl: string | null = profile?.avatarUrl ?? null;
+/**
+ * Server-rendered application shell.
+ *
+ * Resolves the current session via the canonical `getSession()` (which calls
+ * the backend `/api/identity/me`). No JWT decoding, no fallbacks: if the
+ * backend says we're anonymous, we're anonymous. The shell renders a public
+ * appearance in that case.
+ *
+ * Real authorization lives in route-group layouts (`requireUser`,
+ * `requireRole`, membership checks); this component is shell + UX only.
+ *
+ * `getSession()` is wrapped in React.cache, so a layout calling
+ * `requireUser()` followed by this shell calling `getSession()` results in
+ * exactly one upstream `/me` call per request.
+ */
+export async function AppShellServer({ children, subnav }: { children: React.ReactNode; subnav?: React.ReactNode }) {
+  const session = await getSession();
 
   return (
-    <>
-      <AppShell displayName={displayName} avatarUrl={avatarUrl}>
-        {children}
-      </AppShell>
-      <NotificationsToaster enabled={Boolean(token)} />
-    </>
+    <AppShell
+      displayName={session?.displayName ?? null}
+      avatarUrl={session?.avatarUrl ?? null}
+      role={session?.role ?? null}
+      subnav={subnav}
+    >
+      {children}
+    </AppShell>
   );
 }

@@ -3,6 +3,7 @@
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import styles from "./page.module.css";
 import { api, ApiError } from "@/lib/api-client";
 
 function ConfirmEmailContent() {
@@ -10,10 +11,10 @@ function ConfirmEmailContent() {
   const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
   const [message, setMessage] = useState("");
 
-  useEffect(() => {
-    const token = searchParams.get("token");
-    const userId = searchParams.get("userId");
+  const token = searchParams.get("token");
+  const userId = searchParams.get("userId");
 
+  useEffect(() => {
     if (!token || !userId) {
       setStatus("error");
       setMessage("Missing token or userId in the confirmation link.");
@@ -29,7 +30,7 @@ function ConfirmEmailContent() {
         setStatus("error");
         setMessage(err instanceof ApiError ? err.message : "Network error. Please try again.");
       });
-  }, [searchParams]);
+  }, [token, userId]);
 
   return (
     <div style={{
@@ -73,15 +74,7 @@ function ConfirmEmailContent() {
           <p style={{ fontSize: "13px", color: "var(--text-3)", lineHeight: "1.6", marginBottom: "28px" }}>
             {message}
           </p>
-          <Link href="/login" style={{
-            display: "inline-flex", alignItems: "center",
-            padding: "10px 24px", borderRadius: "12px",
-            background: "var(--accent)", color: "#fff",
-            fontSize: "14px", fontWeight: "600", textDecoration: "none",
-            transition: "background 110ms",
-          }}
-          onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = "var(--accent-hi)"}
-          onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = "var(--accent)"}
+          <Link href="/login" className={styles.primaryLink}
           >
             Sign in
           </Link>

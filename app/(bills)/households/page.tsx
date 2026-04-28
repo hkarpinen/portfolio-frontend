@@ -1,63 +1,23 @@
 import Link from "next/link";
-import { cookies } from "next/headers";
-import { SERVER_API } from "@/lib/api-url";
+import { getCookieHeader } from "@/lib/server-cookies";
 import { JoinHouseholdButton } from "./join-button";
+import { fetchOverviewServer } from "@/lib/api/bills";
+import type { HouseholdSummary, UpcomingBill } from "@/types/api";
+import styles from "./households.module.css";
 
 export const dynamic = 'force-dynamic';
 
-interface HouseholdSummaryItem {
-  householdId: string;
-  name: string;
-  description?: string;
-  currencyCode: string;
-  ownerId: string;
-  memberCount: number;
-  totalBills: number;
-  totalIncome: number;
-  netBalance: number;
-  isOvercommitted: boolean;
-}
-
-interface UpcomingBillItem {
-  billId: string;
-  householdId: string;
-  householdName: string;
-  title: string;
-  amount: number;
-  currency: string;
-  dueDate: string;
-}
-
-interface UserBillsOverviewResponse {
-  households: HouseholdSummaryItem[];
-  upcomingBills: UpcomingBillItem[];
-  totalMonthlyIncome: number;
-}
-
-function serverFetch<T>(path: string, cookieHeader: string): Promise<T | null> {
-  return fetch(`${SERVER_API}${path}`, {
-    headers: { Cookie: cookieHeader },
-    cache: "no-store",
-  })
-    .then((r) => (r.ok ? (r.json() as Promise<T>) : null))
-    .catch(() => null);
-}
-
 export default async function HouseholdsPage() {
-  const cookieStore = cookies();
-  const cookieHeader = cookieStore
-    .getAll()
-    .map((c) => `${c.name}=${c.value}`)
-    .join("; ");
-
   const now = new Date();
 
-  const overview = await serverFetch<UserBillsOverviewResponse>("/api/bills/overview", cookieHeader);
-  const households = overview?.households ?? [];
-  const upcomingBills = overview?.upcomingBills ?? [];
+  const overview = await fetchOverviewServer(await getCookieHeader());
+  const households: HouseholdSummary[] = overview?.households ?? [];
+  const upcomingBills: UpcomingBill[] = overview?.upcomingBills ?? [];
   const totalIncome = overview?.totalMonthlyIncome ?? 0;
+  const totalPersonalBills = overview?.totalPersonalBillsMonthly ?? 0;
 
-  const totalObligations = households.reduce((sum, h) => sum + Number(h.totalBills), 0);
+  const householdObligations = households.reduce((sum, h) => sum + Number(h.totalBills), 0);
+  const totalObligations = householdObligations + totalPersonalBills;
   const coverageRatio = totalObligations > 0 ? Math.min(totalIncome / totalObligations, 1) : 1;
   const overcommitted = totalObligations > totalIncome && totalObligations > 0;
 
@@ -74,21 +34,6 @@ export default async function HouseholdsPage() {
           </p>
         </div>
         <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-          <Link
-            href="/contributions"
-            style={{
-              background: "var(--surface-2)",
-              border: "1px solid var(--border)",
-              color: "var(--text-2)",
-              padding: "8px 16px",
-              borderRadius: "12px",
-              fontSize: "13px",
-              fontWeight: "500",
-              textDecoration: "none",
-            }}
-          >
-            Contributions
-          </Link>
           <JoinHouseholdButton />
           <Link
             href="/households/new"
@@ -131,7 +76,11 @@ export default async function HouseholdsPage() {
             <p style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "28px", letterSpacing: "-0.025em", color: "var(--text)", lineHeight: 1 }}>
               ${totalObligations.toFixed(2)}
             </p>
-            <p style={{ fontSize: "12px", color: "var(--text-3)", marginTop: "6px" }}>Combined bills this month</p>
+            <p style={{ fontSize: "12px", color: "var(--text-3)", marginTop: "6px" }}>
+              {totalPersonalBills > 0
+                ? `$${householdObligations.toFixed(2)} household + $${totalPersonalBills.toFixed(2)} personal`
+                : "Combined household bills this month"}
+            </p>
           </div>
 
           {/* Your Income */}
@@ -275,7 +224,7 @@ export default async function HouseholdsPage() {
                   href={`/households/${h.householdId}`}
                   style={{ textDecoration: "none" }}
                 >
-                  <div className="card-hover" style={{
+                  <div className={styles.cardHover} style={{
                     background: "var(--surface)",
                     border: "1px solid var(--border)",
                     borderRadius: "16px",

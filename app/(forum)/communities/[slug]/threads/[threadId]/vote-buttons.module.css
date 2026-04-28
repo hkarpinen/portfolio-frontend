@@ -1,0 +1,16 @@
+.voteBtn {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  background: transparent;
+  color: var(--text-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 110ms, color 110ms;
+  font-size: 12px;
+}
+.voteBtnUp:not([data-voted]):hover   { background: var(--surface-2); color: var(--success); }
+.voteBtnDown:not([data-voted]):hover { background: var(--surface-2); color: var(--danger); }

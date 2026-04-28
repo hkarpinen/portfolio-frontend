@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { api } from "@/lib/api-client";
+import { useLogout } from "@/hooks/use-identity";
+import styles from "./nav-auth.module.css";
 
 type NavAuthProps = {
   displayName: string | null;
@@ -10,17 +10,7 @@ type NavAuthProps = {
 };
 
 export function NavAuth({ displayName, avatarUrl = null }: NavAuthProps) {
-  const router = useRouter();
-
-  async function logout() {
-    try {
-      await api.post("/api/identity/logout");
-    } catch {
-      /* ignore */
-    }
-    router.push("/login");
-    router.refresh();
-  }
+  const logout = useLogout();
 
   if (!displayName) {
     return (
@@ -47,13 +37,7 @@ export function NavAuth({ displayName, avatarUrl = null }: NavAuthProps) {
       <Link
         href="/settings/profile"
         aria-label="Your profile"
-        style={{
-          display: "flex", alignItems: "center", gap: "8px",
-          textDecoration: "none", padding: "4px 8px 4px 4px", borderRadius: "10px",
-          transition: "background 110ms",
-        }}
-        onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = "var(--surface-2)"}
-        onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = "transparent"}
+        className={styles.profileLink}
       >
         {avatarUrl ? (
           // eslint-disable-next-line @next/next/no-img-element

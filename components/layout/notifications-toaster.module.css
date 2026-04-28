@@ -1,0 +1,12 @@
+.dismissBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  opacity: 0.6;
+  font-size: 13px;
+  padding: 0;
+  flex-shrink: 0;
+  transition: opacity 110ms;
+}
+.dismissBtn:hover { opacity: 1; }

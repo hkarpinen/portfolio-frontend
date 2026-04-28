@@ -1,71 +1,23 @@
-import Link from "next/link";
-import { cookies } from "next/headers";
-import { SERVER_API } from "@/lib/api-url";
-import { ContributionsView, type ContributionPeriodSummary } from "./contributions-view";
+import { getCookieHeader } from "@/lib/server-cookies";
+import { BudgetView } from "./contributions-view";
+import { fetchOverviewServer } from "@/lib/api/bills";
+import type { ContributionPeriodSummary } from "@/types/api";
 
 export const dynamic = "force-dynamic";
 
-interface OverviewResponse {
-  contributionsByMonth?: ContributionPeriodSummary[];
-  totalMonthlyIncome?: number;
-}
-
-export default async function ContributionsPage() {
-  const cookieStore = cookies();
-  const cookieHeader = cookieStore.getAll().map((c) => `${c.name}=${c.value}`).join("; ");
-
-  const res = await fetch(`${SERVER_API}/api/bills/overview`, {
-    headers: { Cookie: cookieHeader },
-    cache: "no-store",
-  }).catch(() => null);
-
-  const overview: OverviewResponse | null = res && res.ok ? await res.json() : null;
-  const months = overview?.contributionsByMonth ?? [];
+export default async function BudgetPage() {
+  const overview = await fetchOverviewServer(await getCookieHeader());
+  const months: ContributionPeriodSummary[] = overview?.contributionsByMonth ?? [];
 
   return (
     <div className="page-enter" style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
-      {/* Header */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "12px" }}>
-        <div>
-          <h1 style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "28px", letterSpacing: "-0.025em", color: "var(--text)" }}>
-            Contributions
-          </h1>
-          <p style={{ color: "var(--text-3)", marginTop: "4px", fontSize: "13px" }}>
-            Your splits across all households, scheduled against your income.
-          </p>
-        </div>
-        <div style={{ display: "flex", gap: "8px" }}>
-          <Link
-            href="/households"
-            style={{
-              background: "var(--surface-2)",
-              border: "1px solid var(--border)",
-              color: "var(--text-2)",
-              padding: "8px 16px",
-              borderRadius: "12px",
-              fontSize: "13px",
-              fontWeight: "500",
-              textDecoration: "none",
-            }}
-          >
-            Households
-          </Link>
-          <Link
-            href="/income"
-            style={{
-              background: "var(--surface-2)",
-              border: "1px solid var(--border)",
-              color: "var(--text-2)",
-              padding: "8px 16px",
-              borderRadius: "12px",
-              fontSize: "13px",
-              fontWeight: "500",
-              textDecoration: "none",
-            }}
-          >
-            Income
-          </Link>
-        </div>
+      <div>
+        <h1 style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "28px", letterSpacing: "-0.025em", color: "var(--text)" }}>
+          Budget
+        </h1>
+        <p style={{ color: "var(--text-3)", marginTop: "4px", fontSize: "13px" }}>
+          All obligations — household splits and personal bills — scheduled against your income.
+        </p>
       </div>
 
       {months.length === 0 ? (
@@ -87,14 +39,14 @@ export default async function ContributionsPage() {
             </svg>
           </div>
           <p style={{ fontFamily: "var(--ff-display)", fontWeight: "700", fontSize: "15px", color: "var(--text)" }}>
-            No contributions scheduled
+            No obligations scheduled
           </p>
           <p style={{ fontSize: "13px", color: "var(--text-3)", maxWidth: "320px" }}>
-            When bills are split and assigned to you, your monthly obligations will show up here.
+            Add income sources and bills to see your budget timeline here.
           </p>
         </div>
       ) : (
-        <ContributionsView months={months} />
+        <BudgetView months={months} />
       )}
     </div>
   );

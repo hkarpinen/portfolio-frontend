@@ -1,67 +1,17 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { SERVER_API } from "@/lib/api-url";
+import { fetchCommunityBySlugServer, fetchThreadsServer } from "@/lib/api/forum";
+import { getSession } from "@/lib/auth/session";
 import { CommunityActions } from "./community-actions";
+import { timeAgo } from "@/lib/utils";
+import type { CommunityDetailResponse, ThreadSummaryResponse } from "@/types/api";
 
 export const dynamic = 'force-dynamic';
 
-const API_BASE = SERVER_API;
-
-interface Community {
-  communityId: string;
-  slug: string;
-  name: string;
-  description?: string;
-  imageUrl?: string;
-  memberCount?: number;
-}
-
-interface Thread {
-  threadId: string;
-  title: string;
-  authorUsername?: string;
-  authorDisplayName?: string;
-  authorAvatarUrl?: string;
-  voteScore?: number;
-  commentCount?: number;
-  createdAt: string;
-}
-
-function timeAgo(dateStr: string): string {
-  const diff = Date.now() - new Date(dateStr).getTime();
-  const minutes = Math.floor(diff / 60000);
-  if (minutes < 60) return `${minutes}m ago`;
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h ago`;
-  return `${Math.floor(hours / 24)}d ago`;
-}
-
-async function getCommunity(slug: string): Promise<Community | null> {
-  try {
-    const res = await fetch(`${API_BASE}/api/forum/communities/by-name/${encodeURIComponent(slug)}`, {
-      cache: "no-store",
-    });
-    if (res.status === 404) return null;
-    if (!res.ok) return null;
-    return res.json();
-  } catch {
-    return null;
-  }
-}
-
-async function getThreads(communityId: string): Promise<Thread[]> {
-  try {
-    const res = await fetch(
-      `${API_BASE}/api/forum/threads?communityId=${communityId}&page=1&pageSize=30`,
-      { cache: "no-store" }
-    );
-    if (!res.ok) return [];
-    const data = await res.json();
-    return data?.items ?? data ?? [];
-  } catch {
-    return [];
-  }
+async function getThreads(communityId: string): Promise<ThreadSummaryResponse[]> {
+  const page = await fetchThreadsServer({ communityId, pageSize: 30 });
+  return page?.items ?? [];
 }
 
 export default async function CommunityPage({
@@ -69,9 +19,15 @@ export default async function CommunityPage({
 }: {
   params: { slug: string };
 }) {
-  const community = await getCommunity(params.slug);
+  const community = await fetchCommunityBySlugServer(params.slug);
   if (!community) notFound();
-  const threads = await getThreads(community.communityId);
+  // getThreads depends on community.communityId; getSession is independent —
+  // run them in parallel to cut ~one round-trip from the waterfall.
+  const [threads, session] = await Promise.all([
+    getThreads(community.communityId),
+    getSession(),
+  ]);
+  const isAuthed = !!session;
 
   return (
     <div className="page-enter" style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
@@ -107,14 +63,9 @@ export default async function CommunityPage({
               {community.description && (
                 <p style={{ color: "var(--text-2)", marginTop: "4px", fontSize: "14px" }}>{community.description}</p>
               )}
-              {community.memberCount !== undefined && (
-                <p style={{ fontSize: "12px", color: "var(--text-3)", marginTop: "4px" }}>
-                  {community.memberCount.toLocaleString()} members
-                </p>
-              )}
             </div>
           </div>
-          <CommunityActions communityId={community.communityId} slug={params.slug} />
+          <CommunityActions communityId={community.communityId} slug={params.slug} isAuthed={isAuthed} />
         </div>
       </div>
 
@@ -123,17 +74,6 @@ export default async function CommunityPage({
         <span style={{ fontSize: "10px", fontWeight: 700, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
           Threads
         </span>
-        <Link
-          href={`/communities/${params.slug}/threads/new`}
-          style={{
-            background: "var(--accent)", color: "#fff",
-            padding: "6px 14px", borderRadius: "12px",
-            fontSize: "12px", fontWeight: 600,
-            textDecoration: "none",
-          }}
-        >
-          + New Thread
-        </Link>
       </div>
 
       {threads.length === 0 ? (
@@ -166,7 +106,7 @@ export default async function CommunityPage({
           borderRadius: "16px", overflow: "hidden", boxShadow: "var(--shadow-sm)",
         }}>
           {threads.map((thread, i) => {
-            const authorName = thread.authorDisplayName ?? thread.authorUsername;
+            const authorName = thread.authorDisplayName;
             return (
               <ThreadRow
                 key={thread.threadId}
@@ -184,45 +124,42 @@ export default async function CommunityPage({
 }
 
 function ThreadRow({ thread, authorName, slug, isLast }: {
-  thread: Thread;
+  thread: ThreadSummaryResponse;
   authorName: string | undefined;
   slug: string;
   isLast: boolean;
 }) {
-  function timeAgoLocal(dateStr: string): string {
-    const diff = Date.now() - new Date(dateStr).getTime();
-    const minutes = Math.floor(diff / 60000);
-    if (minutes < 60) return `${minutes}m ago`;
-    const hours = Math.floor(minutes / 60);
-    if (hours < 24) return `${hours}h ago`;
-    return `${Math.floor(hours / 24)}d ago`;
-  }
-
   return (
-    <Link
-      href={`/communities/${slug}/threads/${thread.threadId}`}
-      style={{
-        display: "flex", alignItems: "flex-start", gap: "0",
-        borderBottom: isLast ? "none" : "1px solid var(--border)",
-        textDecoration: "none",
-      }}
-    >
+    <div style={{
+      display: "flex", alignItems: "flex-start", gap: "0",
+      borderBottom: isLast ? "none" : "1px solid var(--border)",
+    }}>
       {/* Vote score column */}
-      <div style={{
-        width: "48px", flexShrink: 0,
-        display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-        padding: "16px 8px", gap: "2px",
-        borderRight: "1px solid var(--border)",
-      }}>
+      <Link
+        href={`/communities/${slug}/threads/${thread.threadId}`}
+        style={{
+          width: "48px", flexShrink: 0,
+          display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+          padding: "16px 8px", gap: "2px",
+          borderRight: "1px solid var(--border)",
+          textDecoration: "none",
+          alignSelf: "stretch",
+        }}
+      >
         <span style={{ fontSize: "13px", fontWeight: 700, color: "var(--text)" }}>{thread.voteScore ?? 0}</span>
         <span style={{ fontSize: "10px", color: "var(--text-3)" }}>pts</span>
-      </div>
+      </Link>
 
       {/* Content */}
       <div style={{ flex: 1, minWidth: 0, padding: "14px 16px" }}>
-        <p style={{ fontFamily: "var(--ff-display)", fontWeight: 600, fontSize: "14px", color: "var(--text)", margin: 0 }}>
-          {thread.title}
-        </p>
+        <Link
+          href={`/communities/${slug}/threads/${thread.threadId}`}
+          style={{ textDecoration: "none" }}
+        >
+          <p style={{ fontFamily: "var(--ff-display)", fontWeight: 600, fontSize: "14px", color: "var(--text)", margin: 0 }}>
+            {thread.title}
+          </p>
+        </Link>
         <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "6px" }}>
           {authorName && (
             <span style={{ display: "flex", alignItems: "center", gap: "5px" }}>
@@ -243,19 +180,20 @@ function ThreadRow({ thread, authorName, slug, isLast }: {
                   {authorName[0].toUpperCase()}
                 </span>
               )}
-              <span style={{ fontSize: "12px", color: "var(--text-3)" }}>{authorName}</span>
+              {thread.authorId ? (
+                <Link
+                  href={`/profile/${thread.authorId}`}
+                  style={{ fontSize: "12px", color: "var(--text-3)", textDecoration: "none" }}
+                >{authorName}</Link>
+              ) : (
+                <span style={{ fontSize: "12px", color: "var(--text-3)" }}>{authorName}</span>
+              )}
             </span>
           )}
-          {thread.commentCount !== undefined && (
-            <>
-              <span style={{ fontSize: "12px", color: "var(--text-3)" }}>·</span>
-              <span style={{ fontSize: "12px", color: "var(--text-3)" }}>{thread.commentCount} comments</span>
-            </>
-          )}
           <span style={{ fontSize: "12px", color: "var(--text-3)" }}>·</span>
-          <span style={{ fontSize: "12px", color: "var(--text-3)" }}>{timeAgoLocal(thread.createdAt)}</span>
+          <span style={{ fontSize: "12px", color: "var(--text-3)" }}>{timeAgo(thread.createdAt)}</span>
         </div>
       </div>
-    </Link>
+    </div>
   );
 }

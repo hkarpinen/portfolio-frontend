@@ -7,6 +7,7 @@ import { z } from "zod";
 import Link from "next/link";
 import { useJoinHousehold } from "@/hooks/use-bills";
 import { ApiError } from "@/lib/api-client";
+import { Button } from "@/components/ui/button";
 
 const joinSchema = z.object({
   invitationCode: z.string().min(1, "Invitation code is required").trim(),
@@ -98,29 +99,14 @@ export default function JoinHouseholdPage() {
             )}
           </div>
 
-          <button
+          <Button
             type="submit"
             disabled={joinHousehold.isPending}
-            style={{
-              background: "var(--accent)",
-              color: "#fff",
-              height: "40px",
-              borderRadius: "12px",
-              fontWeight: "600",
-              fontSize: "14px",
-              border: "none",
-              cursor: joinHousehold.isPending ? "not-allowed" : "pointer",
-              opacity: joinHousehold.isPending ? 0.6 : 1,
-              width: "100%",
-              fontFamily: "var(--ff-body)",
-            }}
-            onMouseDown={(e) => { (e.currentTarget as HTMLButtonElement).style.transform = "scale(0.97)"; }}
-            onMouseUp={(e) => { (e.currentTarget as HTMLButtonElement).style.transform = "scale(1)"; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.transform = "scale(1)"; }}
-            onMouseEnter={(e) => { if (!joinHousehold.isPending) (e.currentTarget as HTMLButtonElement).style.background = "var(--accent-hi)"; }}
+            variant="primary"
+            fullWidth
           >
             {joinHousehold.isPending ? "Joining…" : "Join Household"}
-          </button>
+          </Button>
         </form>
       </div>
     </div>

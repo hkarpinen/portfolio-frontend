@@ -1,9 +1,14 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ── Dark Theme (default) ───────────────────────────────────────────────────── */
+/* ─────────────────────────────────────────────────────────────────────────────
+   Design Tokens — CSS custom properties
+   Kept outside @layer so they are unconditionally in scope at full specificity.
+   Font families (--ff-display, --ff-body) are injected by next/font/google via
+   the className on <html> in app/layout.tsx — no @import needed.
+   ───────────────────────────────────────────────────────────────────────────── */
+
 :root,
 [data-theme="dark"] {
   /* Backgrounds — layered dark navy */
@@ -26,12 +31,12 @@
   --text-3:    oklch(46%  0.010 255);
 
   /* Accent */
-  --accent:         oklch(63%  0.22 252);
-  --accent-hi:      oklch(72%  0.22 252);
-  --accent-v:       oklch(63%  0.22 292);
-  --accent-glow:    oklch(63%  0.22 252 / 0.30);
-  --accent-subtle:  oklch(63%  0.22 252 / 0.10);
-  --accent-v-subtle:oklch(63%  0.22 292 / 0.10);
+  --accent:          oklch(63%  0.22 252);
+  --accent-hi:       oklch(72%  0.22 252);
+  --accent-v:        oklch(63%  0.22 292);
+  --accent-glow:     oklch(63%  0.22 252 / 0.30);
+  --accent-subtle:   oklch(63%  0.22 252 / 0.10);
+  --accent-v-subtle: oklch(63%  0.22 292 / 0.10);
 
   /* Semantic */
   --success:   oklch(68%  0.18 152);
@@ -46,13 +51,8 @@
   --shadow-md:   0 4px 20px oklch(0% 0 0 / .55);
   --shadow-lg:   0 12px 48px oklch(0% 0 0 / .65);
   --shadow-glow: 0 0 40px oklch(63% 0.22 252 / .25);
-
-  /* Font families */
-  --ff-display: 'Plus Jakarta Sans', sans-serif;
-  --ff-body:    'Inter', sans-serif;
 }
 
-/* ── Light Theme ────────────────────────────────────────────────────────────── */
 [data-theme="light"] {
   --bg:        oklch(97%  0.005 255);
   --bg-2:      oklch(93%  0.008 255);
@@ -69,12 +69,12 @@
   --text-2:    oklch(36%  0.015 255);
   --text-3:    oklch(56%  0.010 255);
 
-  --accent:         oklch(52%  0.22 252);
-  --accent-hi:      oklch(44%  0.22 252);
-  --accent-v:       oklch(52%  0.22 292);
-  --accent-glow:    oklch(52%  0.22 252 / 0.18);
-  --accent-subtle:  oklch(52%  0.22 252 / 0.07);
-  --accent-v-subtle:oklch(52%  0.22 292 / 0.07);
+  --accent:          oklch(52%  0.22 252);
+  --accent-hi:       oklch(44%  0.22 252);
+  --accent-v:        oklch(52%  0.22 292);
+  --accent-glow:     oklch(52%  0.22 252 / 0.18);
+  --accent-subtle:   oklch(52%  0.22 252 / 0.07);
+  --accent-v-subtle: oklch(52%  0.22 292 / 0.07);
 
   --success:   oklch(50%  0.18 152);
   --warning:   oklch(55%  0.17  88);
@@ -89,66 +89,13 @@
   --shadow-glow: 0 0 40px oklch(52% 0.22 252 / .15);
 }
 
-/* ── Base Reset ─────────────────────────────────────────────────────────────── */
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+/* ─────────────────────────────────────────────────────────────────────────────
+   Keyframes
+   Defined here (outside @layer) so they are always emitted and available both
+   to the component classes below and to Tailwind's animate-* utilities, which
+   reference these names via theme.animation in tailwind.config.ts.
+   ───────────────────────────────────────────────────────────────────────────── */
 
-html {
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-}
-
-body {
-  font-family: var(--ff-body);
-  background: var(--bg);
-  color: var(--text);
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-/* ── Scrollbar ──────────────────────────────────────────────────────────────── */
-::-webkit-scrollbar       { width: 5px; height: 5px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--border-2); }
-
-/* ── Focus ──────────────────────────────────────────────────────────────────── */
-:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-  border-radius: 6px;
-}
-
-/* ── Dot grid texture ────────────────────────────────────────────────────────── */
-.dot-grid {
-  background-image: radial-gradient(var(--border) 1px, transparent 1px);
-  background-size: 28px 28px;
-}
-
-/* ── Gradient text ───────────────────────────────────────────────────────────── */
-.grad-text {
-  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-v) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* ── Page entrance animation ─────────────────────────────────────────────────── */
-.page-enter {
-  animation: fadeUp 320ms cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-/* ── Glass surface ───────────────────────────────────────────────────────────── */
-.glass {
-  background: oklch(from var(--surface) l c h / 0.6);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-
-/* ── Keyframes ───────────────────────────────────────────────────────────────── */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(16px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -181,102 +128,144 @@ body {
   50%      { transform: translate(-50px,60px) scale(1.05); }
 }
 
-/* ── Skeleton shimmer ────────────────────────────────────────────────────────── */
-.skeleton {
-  background: linear-gradient(
-    90deg,
-    var(--surface-2) 25%,
-    var(--surface-3) 50%,
-    var(--surface-2) 75%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.6s ease-in-out infinite;
-  border-radius: 6px;
-}
+/* ─────────────────────────────────────────────────────────────────────────────
+   Base layer — resets, html/body defaults, scrollbar, focus ring
+   ───────────────────────────────────────────────────────────────────────────── */
 
-/* ── CSS hover utilities (for server components that can't use JS handlers) ─── */
-
-/* Card with lift effect on hover */
-.card-hover {
-  transition: transform 200ms cubic-bezier(0.16,1,0.3,1), box-shadow 200ms, border-color 110ms;
-}
-.card-hover:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-  border-color: var(--border-2) !important;
-}
-
-/* Card with glow on hover */
-.card-glow:hover {
-  border-color: var(--accent) !important;
-  box-shadow: var(--shadow-glow) !important;
-}
-
-/* Surface row hover (lists, nav items) */
-.row-hover {
-  transition: background 110ms;
-}
-.row-hover:hover {
-  background: var(--surface-2) !important;
-}
-
-/* Button primary hover */
-.btn-primary {
-  transition: background 110ms, transform 100ms, box-shadow 110ms;
-}
-.btn-primary:hover { background: var(--accent-hi) !important; }
-.btn-primary:active { transform: scale(0.97); }
-
-/* Button secondary hover */
-.btn-secondary {
-  transition: background 110ms;
-}
-.btn-secondary:hover { background: var(--surface-3) !important; }
-
-/* Link ghost hover */
-.link-ghost {
-  transition: background 110ms, color 110ms;
-}
-.link-ghost:hover {
-  background: var(--surface-3) !important;
-  color: var(--text) !important;
-}
-
-/* ── App main: extra bottom padding only on mobile for bottom nav ────────────── */
-.app-main {
-  padding-bottom: 96px !important; /* room for mobile bottom nav */
-}
-@media (min-width: 1024px) {
-  .app-main {
-    padding-bottom: 28px !important;
-  }
-}
-
-/* ── Responsive display helpers (safe against inline style override) ────────── */
-/* Use these classes instead of lg:hidden when element also has inline display: */
-.mobile-only {
-  display: flex;
-}
-@media (min-width: 1024px) {
-  .mobile-only {
-    display: none !important;
-  }
-}
-
-.desktop-only {
-  display: none;
-}
-@media (min-width: 1024px) {
-  .desktop-only {
-    display: flex !important;
-  }
-}
-
-/* ── Reduced motion ──────────────────────────────────────────────────────────── */
-@media (prefers-reduced-motion: reduce) {
+@layer base {
   *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    font-family: var(--ff-body);
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  ::-webkit-scrollbar       { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--border-2); }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Utilities layer — single-purpose visual helpers
+   ───────────────────────────────────────────────────────────────────────────── */
+
+@layer utilities {
+  /* Dot grid texture */
+  .dot-grid {
+    background-image: radial-gradient(var(--border) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+
+  /* Gradient text */
+  .grad-text {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-v) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Page entrance animation */
+  .page-enter {
+    animation: fadeUp 320ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  /* Glass surface */
+  .glass {
+    background: oklch(from var(--surface) l c h / 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  /* Skeleton shimmer */
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      var(--surface-2) 25%,
+      var(--surface-3) 50%,
+      var(--surface-2) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.6s ease-in-out infinite;
+    border-radius: 6px;
+  }
+
+  /* App main — extra bottom padding on mobile for the bottom nav */
+  .app-main {
+    padding-bottom: 96px;
+  }
+  @media (min-width: 1024px) {
+    .app-main {
+      padding-bottom: 28px;
+    }
+  }
+
+  /*
+   * Responsive display helpers.
+   * Use these when an element also carries an inline display: value that would
+   * prevent Tailwind's lg:hidden / lg:flex from winning the cascade.
+   */
+  .mobile-only {
+    display: flex;
+  }
+  @media (min-width: 1024px) {
+    .mobile-only {
+      display: none;
+    }
+  }
+
+  .desktop-only {
+    display: none;
+  }
+  @media (min-width: 1024px) {
+    .desktop-only {
+      display: flex;
+    }
+  }
+
+  /* ── Cross-cutting interaction utilities ────────────────────────────────── */
+
+  /* Card lift on hover — used in server-rendered listing pages */
+  .card-hover {
+    transition: transform 200ms cubic-bezier(0.16,1,0.3,1), box-shadow 200ms, border-color 110ms;
+  }
+  .card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--border-2);
+  }
+
+  /* Row highlight on hover — used in data-table rows */
+  .row-hover {
+    transition: background 110ms;
+  }
+  .row-hover:hover {
+    background: var(--surface-2);
   }
 }
