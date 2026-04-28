@@ -39,18 +39,47 @@
   --accent-v-subtle: oklch(63%  0.22 292 / 0.10);
 
   /* Semantic */
-  --success:   oklch(68%  0.18 152);
-  --warning:   oklch(76%  0.17  88);
-  --danger:    oklch(62%  0.21  22);
-  --success-s: oklch(68%  0.18 152 / 0.12);
-  --warning-s: oklch(76%  0.17  88 / 0.12);
-  --danger-s:  oklch(62%  0.21  22 / 0.12);
+  --success:    oklch(68%  0.18 152);
+  --success-hi: oklch(74%  0.18 152);
+  --warning:    oklch(76%  0.17  88);
+  --warning-hi: oklch(82%  0.17  88);
+  --danger:     oklch(62%  0.21  22);
+  --danger-hi:  oklch(68%  0.21  22);
+  --success-s:      oklch(68%  0.18 152 / 0.12);
+  --warning-s:      oklch(76%  0.17  88 / 0.12);
+  --danger-s:       oklch(62%  0.21  22 / 0.12);
+  --success-border: oklch(68%  0.18 152 / 0.30);
+  --danger-border:  oklch(62%  0.21  22 / 0.30);
+  --accent-border:  oklch(63%  0.22 252 / 0.25);
+  --overlay:        oklch(0%   0    0   / 0.60);
 
   /* Elevation */
   --shadow-sm:   0 1px 4px oklch(0% 0 0 / .45);
   --shadow-md:   0 4px 20px oklch(0% 0 0 / .55);
   --shadow-lg:   0 12px 48px oklch(0% 0 0 / .65);
-  --shadow-glow: 0 0 40px oklch(63% 0.22 252 / .25);
+  --shadow-glow: 0 0 40px var(--accent-glow);
+}
+
+:root {
+  /* Border radius tokens */
+  --r-xs:   4px;
+  --r-sm:   8px;
+  --r-md:   12px;
+  --r-lg:   16px;
+  --r-xl:   24px;
+  --r-2xl:  32px;
+  --r-full: 9999px;
+
+  /* Motion — easing */
+  --ease-spring:  cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out:     cubic-bezier(0.2, 0, 0, 1);
+  --ease-in-out:  cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Motion — duration */
+  --dur-fast: 110ms;
+  --dur-mid:  220ms;
+  --dur-slow: 380ms;
+  --dur-page: 500ms;
 }
 
 [data-theme="light"] {
@@ -86,7 +115,7 @@
   --shadow-sm:   0 1px 4px oklch(0% 0 0 / .07);
   --shadow-md:   0 4px 20px oklch(0% 0 0 / .09);
   --shadow-lg:   0 12px 48px oklch(0% 0 0 / .11);
-  --shadow-glow: 0 0 40px oklch(52% 0.22 252 / .15);
+  --shadow-glow: 0 0 40px var(--accent-glow);
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -126,6 +155,14 @@
 @keyframes meshMove2 {
   0%, 100% { transform: translate(0,0) scale(1); }
   50%      { transform: translate(-50px,60px) scale(1.05); }
+}
+@keyframes meshMove3 {
+  0%, 100% { transform: translate(0,0) scale(1); }
+  50%      { transform: translate(40px,50px) scale(1.06); }
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -220,7 +257,7 @@
   .app-main {
     padding-bottom: 96px;
   }
-  @media (min-width: 1024px) {
+  @media (min-width: 768px) {
     .app-main {
       padding-bottom: 28px;
     }
@@ -234,7 +271,7 @@
   .mobile-only {
     display: flex;
   }
-  @media (min-width: 1024px) {
+  @media (min-width: 768px) {
     .mobile-only {
       display: none;
     }
@@ -243,7 +280,7 @@
   .desktop-only {
     display: none;
   }
-  @media (min-width: 1024px) {
+  @media (min-width: 768px) {
     .desktop-only {
       display: flex;
     }
@@ -267,5 +304,64 @@
   }
   .row-hover:hover {
     background: var(--surface-2);
+  }
+
+  /* ── Responsive main-content horizontal padding ─────────────────────────── */
+  .app-main {
+    padding-top: 20px;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  @media (min-width: 640px) {
+    .app-main {
+      padding-top: 24px;
+      padding-left: 24px;
+      padding-right: 24px;
+    }
+  }
+  @media (min-width: 1024px) {
+    .app-main {
+      padding-top: 28px;
+      padding-left: 32px;
+      padding-right: 32px;
+    }
+  }
+
+  /* ── Responsive sidebar layout (main column + 280px sidebar) ───────────── */
+  .sidebar-grid {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 24px;
+    align-items: start;
+  }
+  @media (max-width: 767px) {
+    .sidebar-grid {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+  }
+
+  /* ── Responsive 2-column form fields ───────────────────────────────────── */
+  .form-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  @media (max-width: 599px) {
+    .form-grid-2 {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ── Responsive 3-column stats grid ────────────────────────────────────── */
+  .stats-grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+  }
+  @media (max-width: 599px) {
+    .stats-grid-3 {
+      grid-template-columns: 1fr;
+    }
   }
 }

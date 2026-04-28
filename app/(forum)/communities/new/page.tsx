@@ -61,47 +61,46 @@ export default function NewCommunityPage() {
           )}
 
           {/* Image upload */}
-          <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-            {imageUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={imageUrl} alt="" style={{ width: "52px", height: "52px", borderRadius: "12px", objectFit: "cover", border: "1px solid var(--border)", flexShrink: 0 }} />
-            ) : (
-              <div style={{
-                width: "52px", height: "52px", borderRadius: "12px",
-                background: "var(--surface-3)", flexShrink: 0,
+          <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/gif"
+              style={{ display: "none" }}
+              onChange={handleImageChange}
+            />
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploadImage.isPending}
+              style={{
+                width: "72px", height: "72px", borderRadius: "14px",
+                background: "var(--surface-2)",
+                border: imageUrl ? "2px solid var(--accent)" : "2px dashed var(--border)",
+                flexShrink: 0, overflow: "hidden",
                 display: "flex", alignItems: "center", justifyContent: "center",
-                fontSize: "22px", color: "var(--text-3)",
-              }}>🖼</div>
-            )}
+                cursor: uploadImage.isPending ? "not-allowed" : "pointer",
+                padding: 0, transition: "border-color 0.15s",
+              }}
+            >
+              {imageUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={imageUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              ) : (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" strokeWidth="1.5">
+                  <rect x="3" y="3" width="18" height="18" rx="4" />
+                  <circle cx="8.5" cy="8.5" r="1.5" />
+                  <path d="m21 15-5-5L5 21" />
+                </svg>
+              )}
+            </button>
             <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/jpeg,image/png,image/webp,image/gif"
-                style={{ display: "none" }}
-                onChange={handleImageChange}
-              />
-              <div style={{ display: "flex", gap: "8px" }}>
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={uploadImage.isPending}
-                  style={{
-                    padding: "6px 12px", borderRadius: "8px",
-                    background: "var(--surface-2)", color: "var(--text-2)",
-                    border: "1px solid var(--border)", fontSize: "12px", fontWeight: "500",
-                    cursor: uploadImage.isPending ? "not-allowed" : "pointer",
-                    opacity: uploadImage.isPending ? 0.6 : 1,
-                  }}
-                >
-                  {uploadImage.isPending ? "Uploading…" : "Add image"}
+              <span style={{ fontSize: "13px", fontWeight: 500, color: "var(--text-2)" }}>Community image</span>
+              {imageUrl ? (
+                <button type="button" onClick={() => setImageUrl("")} style={{ alignSelf: "flex-start", padding: "4px 10px", borderRadius: "8px", background: "transparent", color: "var(--text-3)", border: "1px solid var(--border)", fontSize: "12px", cursor: "pointer" }}>
+                  Remove
                 </button>
-                {imageUrl && (
-                  <button type="button" onClick={() => setImageUrl("")} style={{ padding: "6px 10px", borderRadius: "8px", background: "transparent", color: "var(--text-3)", border: "1px solid var(--border)", fontSize: "12px", cursor: "pointer" }}>
-                    Remove
-                  </button>
-                )}
-              </div>
+              ) : null}
               {uploadImage.isError && (
                 <span style={{ fontSize: "11px", color: "var(--danger)" }}>
                   {uploadImage.error instanceof ApiError ? uploadImage.error.message : "Upload failed."}
@@ -130,6 +129,7 @@ export default function NewCommunityPage() {
                 outline: "none", boxSizing: "border-box",
               }}
             />
+            <span style={{ fontSize: "11px", color: "var(--text-3)" }}>Lowercase letters, numbers, underscores only.</span>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
             <label style={{ fontSize: "10px", fontWeight: 700, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
@@ -173,20 +173,34 @@ export default function NewCommunityPage() {
               <option value="Restricted">Restricted</option>
             </select>
           </div>
-          <button
-            type="submit"
-            disabled={createCommunity.isPending}
-            style={{
-              background: "var(--accent)", color: "#fff",
-              border: "none", borderRadius: "12px",
-              padding: "10px 20px", fontWeight: 600, fontSize: "14px",
-              cursor: createCommunity.isPending ? "not-allowed" : "pointer",
-              opacity: createCommunity.isPending ? 0.6 : 1,
-              fontFamily: "var(--ff-body)",
-            }}
-          >
-            {createCommunity.isPending ? "Creating…" : "Create Community"}
-          </button>
+          <div style={{ display: "flex", gap: "10px" }}>
+            <button
+              type="button"
+              onClick={() => router.back()}
+              style={{
+                flex: 1, background: "var(--surface-2)", color: "var(--text-2)",
+                border: "1px solid var(--border)", borderRadius: "12px",
+                padding: "10px 20px", fontWeight: 600, fontSize: "14px",
+                cursor: "pointer", fontFamily: "var(--ff-body)",
+              }}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={createCommunity.isPending}
+              style={{
+                flex: 2, background: "var(--accent)", color: "#fff",
+                border: "none", borderRadius: "12px",
+                padding: "10px 20px", fontWeight: 600, fontSize: "14px",
+                cursor: createCommunity.isPending ? "not-allowed" : "pointer",
+                opacity: createCommunity.isPending ? 0.6 : 1,
+                fontFamily: "var(--ff-body)",
+              }}
+            >
+              {createCommunity.isPending ? "Creating…" : "Create Community"}
+            </button>
+          </div>
         </form>
       </div>
     </div>

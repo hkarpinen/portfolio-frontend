@@ -10,6 +10,21 @@ import type { PersonalBillPage } from "@/types/bills";
 import type { PersonalBill } from "@/types/bills";
 import { DeleteIconButton } from "@/components/ui/delete-icon-button";
 
+const CATEGORY_COLORS: Record<string, string> = {
+  Housing: "var(--accent)",
+  Rent: "var(--accent)",
+  Utilities: "var(--accent-v)",
+  Phone: "var(--success)",
+  Internet: "var(--accent-v)",
+  Healthcare: "var(--success)",
+  Subscriptions: "var(--warning)",
+  Entertainment: "var(--warning)",
+  Groceries: "var(--success)",
+  Transportation: "var(--accent)",
+  Insurance: "var(--danger)",
+  Other: "var(--text-3)",
+};
+
 const CATEGORY_ICONS: Record<string, string> = {
   Rent: "M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10",
   Utilities: "M13 2L3 14h9l-1 8 10-12h-9l1-8z",
@@ -91,6 +106,7 @@ function PersonalBillRow({
   isDeleting: boolean;
 }) {
   const iconPath = CATEGORY_ICONS[bill.category] ?? CATEGORY_ICONS.Other;
+  const catColor = CATEGORY_COLORS[bill.category] ?? "var(--text-3)";
   const due = new Date(bill.dueDate);
   const isOverdue = due < new Date();
   const updateBill = useUpdatePersonalBill();
@@ -143,36 +159,59 @@ function PersonalBillRow({
       }}>
         {/* Category icon */}
         <div style={{
-          width: "36px", height: "36px", borderRadius: "10px",
-          background: "var(--accent-subtle)",
+          width: "40px", height: "40px", borderRadius: "var(--r-md)",
+          background: `color-mix(in oklch, ${catColor} 12%, transparent)`,
+          border: `1px solid color-mix(in oklch, ${catColor} 22%, transparent)`,
           display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
         }}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={catColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d={iconPath} />
           </svg>
         </div>
 
         {/* Details */}
         <div style={{ flex: 1, minWidth: 0 }}>
-          <p style={{ fontWeight: "600", fontSize: "14px", color: "var(--text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-            {bill.title}
-          </p>
-          <p style={{ fontSize: "12px", color: "var(--text-3)", marginTop: "2px" }}>
-            {bill.category}
+          <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap" }}>
+            <span style={{ fontFamily: "var(--ff-display)", fontWeight: 600, fontSize: "14px", color: "var(--text)" }}>{bill.title}</span>
+            <span style={{
+              fontSize: "10px", fontWeight: 600, padding: "1px 6px",
+              borderRadius: "var(--r-full)",
+              background: "var(--surface-3)", color: "var(--text-3)",
+              border: "1px solid var(--border)",
+            }}>{bill.category}</span>
+            {isOverdue && (
+              <span style={{
+                fontSize: "10px", fontWeight: 600, padding: "1px 6px",
+                borderRadius: "var(--r-full)",
+                background: "var(--danger-s)", color: "var(--danger)",
+                border: "1px solid color-mix(in oklch, var(--danger) 25%, transparent)",
+                display: "flex", alignItems: "center", gap: "4px",
+              }}>
+                <span style={{ width: 5, height: 5, borderRadius: "50%", background: "var(--danger)", display: "inline-block" }} />
+                Overdue
+              </span>
+            )}
+          </div>
+          <p style={{ fontSize: "11px", color: "var(--text-3)", marginTop: "3px" }}>
+            Due {due.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
             {bill.recurrenceFrequency ? ` · ${bill.recurrenceFrequency.toLowerCase()}` : " · one-time"}
-            {" · "}
-            <span style={{ color: isOverdue ? "var(--danger)" : "var(--text-3)" }}>
-              {isOverdue ? "overdue " : "due "}
-              {due.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-            </span>
           </p>
         </div>
 
-        {/* Amount + actions */}
+        {/* Amount + status + actions */}
         <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
-          <span style={{ fontFamily: "var(--ff-display)", fontWeight: "700", fontSize: "16px", color: "var(--text)" }}>
-            {bill.currency} {bill.amount.toFixed(2)}
-          </span>
+          <div style={{ textAlign: "right" }}>
+            <div style={{ fontFamily: "var(--ff-display)", fontWeight: "700", fontSize: "16px", color: isOverdue ? "var(--danger)" : "var(--text)" }}>
+              {bill.currency} {bill.amount.toFixed(2)}
+            </div>
+            <span style={{
+              fontSize: "10px", fontWeight: 600, padding: "1px 6px",
+              borderRadius: "var(--r-full)",
+              background: isOverdue ? "var(--danger-s)" : "color-mix(in oklch, var(--warning) 12%, transparent)",
+              color: isOverdue ? "var(--danger)" : "var(--warning)",
+              border: `1px solid color-mix(in oklch, ${isOverdue ? "var(--danger)" : "var(--warning)"} 25%, transparent)`,
+            }}>{isOverdue ? "Overdue" : "Unpaid"}</span>
+          </div>
           <button
             onClick={onEditToggle}
             style={{
@@ -210,7 +249,7 @@ function PersonalBillRow({
                 {updateBill.error instanceof ApiError ? updateBill.error.message : "Something went wrong."}
               </div>
             )}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
+            <div className="form-grid-2" style={{ gap: "8px" }}>
               <div style={{ gridColumn: "1 / -1", display: "flex", flexDirection: "column", gap: "4px" }}>
                 <label style={{ fontSize: "11px", fontWeight: "500", color: "var(--text-2)" }}>Title</label>
                 <input {...register("title")} style={{ ...iStyle, border: errors.title ? "1px solid var(--danger)" : "1px solid var(--border)" }} />

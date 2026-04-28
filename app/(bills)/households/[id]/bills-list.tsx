@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useDeleteBill } from "@/hooks/use-bills";
+import { MarkPaidButton } from "./mark-paid-button";
 import styles from "./bills-list.module.css";
 import type { Bill } from "@/types/bills";
 
@@ -73,14 +74,23 @@ export function BillsList({ householdId, initialBills, canDelete }: BillsListPro
 
         return (
           <div key={bill.billId} style={{ position: "relative" }} className="bills-list-item">
-            <Link
+            <div style={{ display: "flex", alignItems: "center", gap: "10px",
+              background: "var(--surface)", border: "1px solid var(--border)",
+              borderRadius: "12px", overflow: "hidden",
+            }}>
+              {/* Status colour dot */}
+              <div style={{
+                width: "4px", alignSelf: "stretch", flexShrink: 0,
+                background: isOverdue ? "var(--danger)" : isDueSoon ? "var(--warning)" : "var(--accent)",
+              }} />
+
+              <Link
               href={`/households/${householdId}/bills/${bill.billId}`}
               className={styles.link}
               style={{
                 display: "flex", alignItems: "center", justifyContent: "space-between",
-                gap: "16px", padding: "14px 16px",
-                background: "var(--surface)", border: "1px solid var(--border)",
-                borderRadius: "12px", textDecoration: "none",
+                gap: "16px", padding: "14px 12px 14px 8px",
+                flex: 1, textDecoration: "none",
               }}
             >
               {/* Left: icon + info */}
@@ -132,7 +142,7 @@ export function BillsList({ householdId, initialBills, canDelete }: BillsListPro
               <div style={{ display: "flex", alignItems: "center", gap: "12px", flexShrink: 0 }}>
                 <span style={{
                   fontFamily: "var(--ff-display)", fontWeight: "700",
-                  fontSize: "15px", color: "var(--text)",
+                  fontSize: "15px", color: isOverdue ? "var(--danger)" : "var(--text)",
                 }}>
                   {bill.currency} {Number(bill.amount).toFixed(2)}
                 </span>
@@ -154,6 +164,11 @@ export function BillsList({ householdId, initialBills, canDelete }: BillsListPro
                 )}
               </div>
             </Link>
+            {/* Mark paid — outside Link so click doesn't navigate */}
+            <div style={{ paddingRight: "12px", flexShrink: 0 }} onClick={(e) => e.stopPropagation()}>
+              <MarkPaidButton householdId={householdId} billId={bill.billId} />
+            </div>
+          </div>
           </div>
         );
       })}

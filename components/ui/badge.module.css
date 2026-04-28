@@ -1,0 +1,68 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: var(--r-full);
+  font-weight: 500;
+  font-family: var(--ff-body);
+  white-space: nowrap;
+  flex-shrink: 0;
+  border: 1px solid transparent;
+}
+
+/* Sizes */
+.sm {
+  font-size: 11px;
+  padding: 2px 7px;
+}
+.md {
+  font-size: 12px;
+  padding: 3px 9px;
+}
+
+/* Variants */
+.default {
+  background: var(--surface-3);
+  color: var(--text-2);
+  border-color: var(--border);
+}
+.primary,
+.accent {
+  background: var(--accent-subtle);
+  color: var(--accent);
+  border-color: color-mix(in oklch, var(--accent) 30%, transparent);
+}
+.violet {
+  background: var(--accent-v-subtle);
+  color: var(--accent-v);
+  border-color: color-mix(in oklch, var(--accent-v) 25%, transparent);
+}
+.success {
+  background: var(--success-s);
+  color: var(--success);
+  border-color: color-mix(in oklch, var(--success) 25%, transparent);
+}
+.warning {
+  background: var(--warning-s);
+  color: var(--warning);
+  border-color: color-mix(in oklch, var(--warning) 25%, transparent);
+}
+.danger {
+  background: var(--danger-s);
+  color: var(--danger);
+  border-color: color-mix(in oklch, var(--danger) 25%, transparent);
+}
+.outline {
+  background: transparent;
+  color: var(--text-2);
+  border-color: var(--border-2);
+}
+
+.dot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}

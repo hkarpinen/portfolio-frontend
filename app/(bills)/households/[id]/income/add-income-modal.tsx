@@ -85,7 +85,7 @@ export function AddHouseholdIncomeModal({
           <Field label="Source" error={errors.source?.message}>
             <input {...register("source")} style={iStyle} placeholder="e.g. Salary, Freelance" onFocus={onFocusField} onBlur={onBlurField} />
           </Field>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+          <div className="form-grid-2">
             <Field label="Amount" error={errors.amount?.message}>
               <input {...register("amount")} type="number" step="0.01" style={iStyle} placeholder="0.00" onFocus={onFocusField} onBlur={onBlurField} />
             </Field>
@@ -93,7 +93,7 @@ export function AddHouseholdIncomeModal({
               <input {...register("currency")} style={iStyle} placeholder="USD" onFocus={onFocusField} onBlur={onBlurField} />
             </Field>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+          <div className="form-grid-2">
             <Field label="Frequency" error={errors.frequency?.message}>
               <select {...register("frequency")} style={{ ...iStyle, appearance: "none", cursor: "pointer" }} onFocus={onFocusField} onBlur={onBlurField}>
                 {FREQUENCIES.map((f) => <option key={f} value={f}>{f}</option>)}

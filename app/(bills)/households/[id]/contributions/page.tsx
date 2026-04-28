@@ -69,6 +69,7 @@ export default async function HouseholdContributionsPage({
           { label: "Bills", href: `/households/${params.id}` },
           { label: "Contributions", href: `/households/${params.id}/contributions` },
           { label: "Income", href: `/households/${params.id}/income` },
+          { label: "Settings", href: `/households/${params.id}/settings` },
         ].map((tab) => (
           <Link
             key={tab.label}

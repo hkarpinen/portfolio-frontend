@@ -25,7 +25,7 @@ const ICONS = {
   personalBills:"M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2m-6 9l2 2 4-4",
   forum:        "M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z",
   settings:     "M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm6.16-2.4.34-1.02a1 1 0 0 0-.54-1.2l-1.2-.48a5.1 5.1 0 0 0-.52-.86l.22-1.26a1 1 0 0 0-.64-1.1l-1.06-.36a1 1 0 0 0-1.12.38l-.7 1.06a5 5 0 0 0-1 0l-.7-1.06a1 1 0 0 0-1.12-.38l-1.06.36a1 1 0 0 0-.64 1.1l.22 1.26a5.1 5.1 0 0 0-.52.86l-1.2.48a1 1 0 0 0-.54 1.2l.34 1.02a1 1 0 0 0 .96.68h.06a5 5 0 0 0 .7 1.2l-.2 1.26a1 1 0 0 0 .64 1.1l1.06.36a1 1 0 0 0 1.12-.38l.7-1.06a5 5 0 0 0 1 0l.7 1.06a1 1 0 0 0 1.12.38l1.06-.36a1 1 0 0 0 .64-1.1l-.2-1.26a5 5 0 0 0 .7-1.2h.06a1 1 0 0 0 .96-.68z",
-  bell:         "M15 17h5l-1.405-1.405A2.032 2.032 0 0 1 18 14.158V11a6 6 0 0 0-9.33-5.004M12 21a2 2 0 0 1-2-2h4a2 2 0 0 1-2 2zM6 11a6 6 0 0 1 6-6",
+  bell:         "M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0",
   chevronRight: "M9 18l6-6-6-6",
   chevronLeft:  "M15 18l-6-6 6-6",
   menu:         "M3 12h18M3 6h18M3 18h18",
@@ -96,6 +96,8 @@ function NavItem({
 function Sidebar({
   collapsed,
   onToggle,
+  onToggleTheme,
+  theme,
   displayName,
   avatarUrl,
   pathname,
@@ -103,6 +105,8 @@ function Sidebar({
 }: {
   collapsed: boolean;
   onToggle: () => void;
+  onToggleTheme: () => void;
+  theme: "dark" | "light";
   displayName: string | null;
   avatarUrl: string | null;
   pathname: string;
@@ -117,47 +121,15 @@ function Sidebar({
     <aside style={{
       width: collapsed ? "60px" : "220px",
       minWidth: collapsed ? "60px" : "220px",
-      height: "100vh",
+      height: "100%",
       display: "flex",
       flexDirection: "column",
       background: "var(--surface)",
       borderRight: "1px solid var(--border)",
       transition: "width 240ms cubic-bezier(0.16,1,0.3,1), min-width 240ms cubic-bezier(0.16,1,0.3,1)",
       overflow: "hidden",
-      position: "sticky",
-      top: 0,
       flexShrink: 0,
     }}>
-      {/* Logo */}
-      <Link href="/" className={styles.sidebarLogoLink}
-      style={{
-        height: "56px",
-        display: "flex",
-        alignItems: "center",
-        padding: collapsed ? "0 14px" : "0 16px",
-        gap: "10px",
-        borderBottom: "1px solid var(--border)",
-        flexShrink: 0,
-        textDecoration: "none",
-      }}
-      >
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
-          <path d="M12 2L2 7l10 5 10-5-10-5z" />
-          <path d="M2 17l10 5 10-5" />
-          <path d="M2 12l10 5 10-5" />
-        </svg>
-        {!collapsed && (
-          <span style={{
-            fontFamily: "var(--ff-display)",
-            fontWeight: "700",
-            fontSize: "15px",
-            color: "var(--text)",
-            letterSpacing: "-0.015em",
-          }}>
-            Portfolio
-          </span>
-        )}
-      </Link>
 
       {/* Nav */}
       <nav style={{ flex: 1, padding: "12px 8px", overflowY: "auto", overflowX: "hidden" }}>
@@ -231,6 +203,21 @@ function Sidebar({
         flexDirection: "column",
         gap: "4px",
       }}>
+        {/* Theme toggle */}
+        <button
+          onClick={onToggleTheme}
+          title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+          className={styles.sidebarToggleBtn}
+          style={{
+            justifyContent: collapsed ? "center" : "flex-start",
+            background: "var(--surface-2)",
+            border: "1px solid var(--border)",
+            marginBottom: "4px",
+          }}
+        >
+          <Icon path={theme === "dark" ? ICONS.sun : ICONS.moon} size={16} />
+          {!collapsed && <span>{theme === "dark" ? "Light mode" : "Dark mode"}</span>}
+        </button>
         {/* Logout */}
         {displayName && (
           <button
@@ -332,10 +319,10 @@ function TopBar({
       gap: "12px",
       flexShrink: 0,
     }}>
-      {/* Mobile menu button */}
+      {/* Mobile hamburger — visible below md (sidebar is hidden there) */}
       <button
         onClick={onMenuClick}
-        className="mobile-only"
+        className="flex md:hidden"
         style={{
           alignItems: "center",
           justifyContent: "center",
@@ -351,24 +338,26 @@ function TopBar({
         <Icon path={ICONS.menu} size={16} />
       </button>
 
-      {/* Mobile brand */}
+      {/* Brand — always visible in topbar (desktop: logo left of content; mobile: shown since sidebar is hidden) */}
       <Link
         href="/"
-        className="mobile-only"
         style={{
+          display: "flex",
           alignItems: "center",
-          gap: "8px",
+          gap: "10px",
           textDecoration: "none",
         }}
       >
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M12 2L2 7l10 5 10-5-10-5z" />
-          <path d="M2 17l10 5 10-5" />
-          <path d="M2 12l10 5 10-5" />
-        </svg>
+        <div style={{ width: "28px", height: "28px", borderRadius: "8px", background: "linear-gradient(135deg, var(--accent), var(--accent-v))", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 2L2 7l10 5 10-5-10-5z" />
+            <path d="M2 17l10 5 10-5" />
+            <path d="M2 12l10 5 10-5" />
+          </svg>
+        </div>
         <span style={{
           fontFamily: "var(--ff-display)",
-          fontWeight: "700",
+          fontWeight: "800",
           fontSize: "15px",
           color: "var(--text)",
           letterSpacing: "-0.015em",
@@ -419,10 +408,10 @@ function TopBar({
           <div
             ref={dropdownRef}
             style={{
-              position: "absolute",
-              top: "calc(100% + 8px)",
-              right: 0,
-              width: "320px",
+              position: "fixed",
+              top: "64px",
+              right: "16px",
+              width: "min(320px, calc(100vw - 32px))",
               background: "var(--surface)",
               border: "1px solid var(--border)",
               borderRadius: "16px",
@@ -583,8 +572,7 @@ function TopBar({
 }
 
 /* ── Bottom nav for mobile ────────────────────────────────────────────────── */
-function BottomNav({ pathname, displayName }: { pathname: string; displayName: string | null }) {
-  const logout = useLogout();
+function BottomNav({ pathname }: { pathname: string }) {
   const items = [
     { label: "Home",      href: "/",                 icon: "home" as const },
     { label: "Portfolio", href: "/about",             icon: "portfolio" as const },
@@ -595,19 +583,21 @@ function BottomNav({ pathname, displayName }: { pathname: string; displayName: s
 
   return (
     <nav
+      role="navigation"
+      aria-label="Mobile navigation"
       className="mobile-only"
       style={{
         position: "fixed",
         bottom: 0,
         left: 0,
         right: 0,
-        height: "80px",
         background: "var(--surface)",
         borderTop: "1px solid var(--border)",
-        alignItems: "center",
+        alignItems: "stretch",
         justifyContent: "space-around",
-        padding: "0 8px",
-        zIndex: 50,
+        padding: "0",
+        paddingBottom: "env(safe-area-inset-bottom, 6px)",
+        zIndex: 80,
       }}
     >
       {items.map(item => {
@@ -620,48 +610,44 @@ function BottomNav({ pathname, displayName }: { pathname: string; displayName: s
           <Link
             key={item.href}
             href={item.href}
+            aria-current={active ? "page" : undefined}
             style={{
+              flex: 1,
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              gap: "4px",
-              padding: "8px 16px",
-              borderRadius: "12px",
+              gap: "2px",
+              padding: "6px 4px",
               textDecoration: "none",
               color: active ? "var(--accent)" : "var(--text-3)",
-              minWidth: "44px",
               minHeight: "44px",
               justifyContent: "center",
+              background: "none",
+              border: "none",
+              cursor: "pointer",
             }}
           >
-            <Icon path={ICONS[item.icon]} size={20} />
-            <span style={{ fontSize: "10px", fontWeight: active ? "600" : "400" }}>{item.label}</span>
+            {/* Active pill indicator */}
+            <div style={{
+              width: "44px",
+              height: "26px",
+              borderRadius: "var(--r-full)",
+              background: active ? "var(--accent-subtle)" : "transparent",
+              transition: "background 200ms",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}>
+              <Icon path={ICONS[item.icon]} size={18} />
+            </div>
+            <span style={{
+              fontSize: "10px",
+              fontWeight: active ? "600" : "400",
+              fontFamily: "var(--ff-body)",
+            }}>{item.label}</span>
           </Link>
         );
       })}
-      {displayName && (
-        <button
-          onClick={logout}
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: "4px",
-            padding: "8px 16px",
-            borderRadius: "12px",
-            border: "none",
-            background: "transparent",
-            cursor: "pointer",
-            color: "var(--danger)",
-            minWidth: "44px",
-            minHeight: "44px",
-            justifyContent: "center",
-          }}
-        >
-          <Icon path={ICONS.logout} size={20} />
-          <span style={{ fontSize: "10px", fontWeight: "400" }}>Log out</span>
-        </button>
-      )}
     </nav>
   );
 }
@@ -679,84 +665,118 @@ export function AppShell({ children, displayName, avatarUrl, role, subnav }: App
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
   const { notifications, removeNotification, markRead, markAllRead } = useNotificationsContext();
 
+  // Load persisted collapsed + theme state
+  useEffect(() => {
+    const saved = localStorage.getItem("sidebar-collapsed");
+    // On tablet (768–1023px) always start collapsed per spec
+    const isTablet = window.innerWidth >= 768 && window.innerWidth < 1024;
+    if (saved === "true" || isTablet) setCollapsed(true);
+    const savedTheme = localStorage.getItem("theme") as "dark" | "light" | null;
+    if (savedTheme) {
+      setTheme(savedTheme);
+      document.documentElement.setAttribute("data-theme", savedTheme);
+    }
+  }, []);
+
+  function toggleCollapsed() {
+    const next = !collapsed;
+    setCollapsed(next);
+    localStorage.setItem("sidebar-collapsed", String(next));
+  }
+
+  function toggleTheme() {
+    const next = theme === "dark" ? "light" : "dark";
+    setTheme(next);
+    document.documentElement.setAttribute("data-theme", next);
+    localStorage.setItem("theme", next);
+  }
+
   return (
-    <div style={{ display: "flex", height: "100vh", overflow: "hidden" }}>
-      {/* Desktop sidebar */}
-      <div className="hidden lg:block">
-        <Sidebar
-          collapsed={collapsed}
-          onToggle={() => setCollapsed(c => !c)}
-          displayName={displayName}
-          avatarUrl={avatarUrl}
-          pathname={pathname}
-          role={role}
-        />
-      </div>
+    <div style={{ display: "flex", flexDirection: "column", height: "100vh", overflow: "hidden" }}>
+      {/* Full-width top bar */}
+      <TopBar
+        displayName={displayName}
+        avatarUrl={avatarUrl}
+        onMenuClick={() => setMobileOpen(o => !o)}
+        notifications={notifications}
+        removeNotification={removeNotification}
+        markRead={markRead}
+        markAllRead={markAllRead}
+      />
+      {subnav}
 
-      {/* Mobile sidebar drawer */}
-      {mobileOpen && (
-        <>
-          <div
-            className="lg:hidden"
-            onClick={() => setMobileOpen(false)}
-            style={{
-              position: "fixed",
-              inset: 0,
-              background: "oklch(0% 0 0 / 0.6)",
-              backdropFilter: "blur(4px)",
-              zIndex: 40,
-            }}
+      {/* Row: sidebar + main */}
+      <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
+        {/* Desktop / tablet sidebar */}
+        <div className="hidden md:block" style={{ height: "100%" }}>
+          <Sidebar
+            collapsed={collapsed}
+            onToggle={toggleCollapsed}
+            onToggleTheme={toggleTheme}
+            theme={theme}
+            displayName={displayName}
+            avatarUrl={avatarUrl}
+            pathname={pathname}
+            role={role}
           />
-          <div
-            className="lg:hidden"
-            style={{
-              position: "fixed",
-              left: 0,
-              top: 0,
-              bottom: 0,
-              zIndex: 50,
-            }}
-          >
-            <Sidebar
-              collapsed={false}
-              onToggle={() => setMobileOpen(false)}
-              displayName={displayName}
-              avatarUrl={avatarUrl}
-              pathname={pathname}
-              role={role}
-            />
-          </div>
-        </>
-      )}
+        </div>
 
-      {/* Content area */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-        <TopBar
-          displayName={displayName}
-          avatarUrl={avatarUrl}
-          onMenuClick={() => setMobileOpen(o => !o)}
-          notifications={notifications}
-          removeNotification={removeNotification}
-          markRead={markRead}
-          markAllRead={markAllRead}
-        />
-        {subnav}
+        {/* Mobile sidebar drawer — fixed below topbar */}
+        {mobileOpen && (
+          <>
+            <div
+              className="md:hidden"
+              onClick={() => setMobileOpen(false)}
+              style={{
+                position: "fixed",
+                inset: 0,
+                top: "56px",
+                background: "oklch(0% 0 0 / 0.6)",
+                backdropFilter: "blur(4px)",
+                zIndex: 40,
+              }}
+            />
+            <div
+              className="md:hidden"
+              style={{
+                position: "fixed",
+                left: 0,
+                top: "56px",
+                bottom: 0,
+                zIndex: 50,
+              }}
+            >
+              <Sidebar
+                collapsed={false}
+                onToggle={() => setMobileOpen(false)}
+                onToggleTheme={toggleTheme}
+                theme={theme}
+                displayName={displayName}
+                avatarUrl={avatarUrl}
+                pathname={pathname}
+                role={role}
+              />
+            </div>
+          </>
+        )}
+
         <main className="app-main" style={{
           flex: 1,
           overflowY: "auto",
-          padding: "28px 32px",
+          overflowX: "clip",
           background: "var(--bg)",
         }}>
-          <div style={{ maxWidth: "1200px", margin: "0 auto" }} className="page-enter">
+          <div style={{ maxWidth: "1200px", margin: "0 auto", position: "relative" }} className="page-enter">
             {children}
           </div>
         </main>
       </div>
 
       {/* Mobile bottom nav */}
-      <BottomNav pathname={pathname} displayName={displayName} />
+      <BottomNav pathname={pathname} />
 
       <NotificationsToaster />
     </div>

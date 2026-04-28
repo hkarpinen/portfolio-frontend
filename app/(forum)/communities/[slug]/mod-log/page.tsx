@@ -8,7 +8,7 @@ export default function ModLogPage({ params }: { params: { slug: string } }) {
           marginBottom: "4px",
         }}>Moderation Log</h1>
         <p style={{ fontSize: "13px", color: "var(--text-3)" }}>
-          r/{params.slug}
+          {params.slug}
         </p>
       </div>
 

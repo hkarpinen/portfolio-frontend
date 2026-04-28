@@ -31,7 +31,7 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
           borderRadius: "9999px",
           background: "var(--accent-subtle)",
           filter: "blur(120px)",
-          animation: "meshMove 18s ease-in-out infinite",
+          animation: "meshMove1 18s ease-in-out infinite",
         }} />
         <div style={{
           position: "absolute",
@@ -42,7 +42,7 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
           borderRadius: "9999px",
           background: "var(--accent-v-subtle)",
           filter: "blur(100px)",
-          animation: "meshMove 22s ease-in-out infinite reverse",
+          animation: "meshMove2 22s ease-in-out infinite reverse",
         }} />
       </div>
 

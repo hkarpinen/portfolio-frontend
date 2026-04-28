@@ -108,7 +108,7 @@ export default function NewBillPage({ params }: { params: { id: string } }) {
             {errors.title && <p style={{ color: "var(--danger)", fontSize: "12px" }}>{errors.title.message}</p>}
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+          <div className="form-grid-2">
             <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
               <label style={labelStyle}>Amount</label>
               <input type="number" step="0.01" {...register("amount")} placeholder="0.00" style={inputStyle} onFocus={handleFocus} onBlur={handleBlur} />

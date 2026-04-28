@@ -22,284 +22,228 @@ export default async function HouseholdsPage() {
   const overcommitted = totalObligations > totalIncome && totalObligations > 0;
 
   return (
-    <div className="page-enter" style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
-      {/* Header */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "12px" }}>
-        <div>
-          <h1 style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "28px", letterSpacing: "-0.025em", color: "var(--text)" }}>
-            Bills
-          </h1>
-          <p style={{ color: "var(--text-3)", marginTop: "4px", fontSize: "13px" }}>
-            {households.length} household{households.length !== 1 ? "s" : ""} · {new Date(now).toLocaleString("default", { month: "long", year: "numeric" })}
-          </p>
+    <div className="page-enter" style={{ display: "flex", flexDirection: "column", gap: "28px" }}>
+
+      {/* ── Header row ─────────────────────────────────────────────────────── */}
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: "16px" }}>
+        {/* Title + inline stats */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+          <div>
+            <h1 style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "28px", letterSpacing: "-0.025em", color: "var(--text)", lineHeight: 1 }}>
+              Bills
+            </h1>
+            <p style={{ color: "var(--text-3)", marginTop: "4px", fontSize: "13px" }}>
+              {new Date(now).toLocaleString("default", { month: "long", year: "numeric" })}
+            </p>
+          </div>
+          {/* Compact stat pill strip */}
+          {households.length > 0 && (
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+              {[
+                {
+                  label: "Balance",
+                  value: `$${(totalIncome - totalObligations).toFixed(0)}`,
+                  color: overcommitted ? "var(--warning)" : "var(--success)",
+                },
+                {
+                  label: "Obligations",
+                  value: `$${totalObligations.toFixed(0)}/mo`,
+                  color: "var(--text)",
+                },
+                {
+                  label: `${households.length} household${households.length !== 1 ? "s" : ""}`,
+                  value: null,
+                  color: "var(--text-2)",
+                },
+              ].map((s) => (
+                <span key={s.label} style={{
+                  display: "inline-flex", alignItems: "center", gap: "5px",
+                  background: "var(--surface)", border: "1px solid var(--border)",
+                  borderRadius: "var(--r-full)", padding: "4px 10px",
+                  fontSize: "12px", color: "var(--text-3)",
+                }}>
+                  {s.value && (
+                    <span style={{ fontFamily: "var(--ff-display)", fontWeight: "700", color: s.color, fontSize: "13px" }}>{s.value}</span>
+                  )}
+                  {s.label}
+                  {overcommitted && s.label === "Balance" && (
+                    <span style={{ fontSize: "10px", color: "var(--warning)", fontWeight: "600" }}>· over budget</span>
+                  )}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
-        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+
+        {/* Actions — primary + demoted join */}
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
           <JoinHouseholdButton />
           <Link
             href="/households/new"
             style={{
-              background: "var(--accent)",
-              color: "#fff",
-              padding: "8px 16px",
-              borderRadius: "12px",
-              fontSize: "13px",
-              fontWeight: "600",
-              textDecoration: "none",
+              background: "var(--accent)", color: "#fff",
+              padding: "8px 16px", borderRadius: "12px",
+              fontSize: "13px", fontWeight: "600", textDecoration: "none",
             }}
           >
-            + New Household
+            + New household
           </Link>
         </div>
       </div>
 
-      {/* Summary stat cards — only shown when there's at least one household */}
-      {households.length > 0 && (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px" }}>
-          {/* Monthly Obligations */}
-          <div style={{
-            background: "var(--surface)",
-            border: "1px solid var(--border)",
-            borderRadius: "16px",
-            padding: "20px",
-            boxShadow: "var(--shadow-sm)",
-          }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
-              <span style={{ fontSize: "10px", fontWeight: "700", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
-                Monthly Obligations
-              </span>
-              <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "var(--accent-subtle)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/>
-                </svg>
-              </div>
-            </div>
-            <p style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "28px", letterSpacing: "-0.025em", color: "var(--text)", lineHeight: 1 }}>
-              ${totalObligations.toFixed(2)}
-            </p>
-            <p style={{ fontSize: "12px", color: "var(--text-3)", marginTop: "6px" }}>
-              {totalPersonalBills > 0
-                ? `$${householdObligations.toFixed(2)} household + $${totalPersonalBills.toFixed(2)} personal`
-                : "Combined household bills this month"}
-            </p>
-          </div>
-
-          {/* Your Income */}
-          <div style={{
-            background: "var(--surface)",
-            border: "1px solid var(--border)",
-            borderRadius: "16px",
-            padding: "20px",
-            boxShadow: "var(--shadow-sm)",
-          }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
-              <span style={{ fontSize: "10px", fontWeight: "700", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
-                Your Income
-              </span>
-              <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "var(--accent-subtle)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>
-                </svg>
-              </div>
-            </div>
-            <p style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "28px", letterSpacing: "-0.025em", color: "var(--text)", lineHeight: 1 }}>
-              ${totalIncome.toFixed(2)}
-            </p>
-            <p style={{ fontSize: "12px", color: "var(--text-3)", marginTop: "6px" }}>
-              {totalIncome === 0 ? (
-                <Link href="/income" style={{ color: "var(--accent)", textDecoration: "none" }}>Add income sources</Link>
-              ) : "Active income sources"}
-            </p>
-          </div>
-
-          {/* Coverage */}
-          <div style={{
-            background: "var(--surface)",
-            border: `1px solid ${overcommitted ? "var(--warning)" : "var(--border)"}`,
-            borderRadius: "16px",
-            padding: "20px",
-            boxShadow: "var(--shadow-sm)",
-          }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
-              <span style={{ fontSize: "10px", fontWeight: "700", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
-                Coverage
-              </span>
-              <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "var(--accent-subtle)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                </svg>
-              </div>
-            </div>
-            <p style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "28px", letterSpacing: "-0.025em", color: overcommitted ? "var(--warning)" : "var(--success)", lineHeight: 1 }}>
-              {totalObligations > 0 ? `${(coverageRatio * 100).toFixed(0)}%` : "—"}
-            </p>
-            <p style={{ fontSize: "12px", color: "var(--text-3)", marginTop: "6px" }}>
-              {overcommitted ? "Income doesn't cover obligations" : totalObligations === 0 ? "No bills this month" : "Income covers obligations"}
-            </p>
-          </div>
-        </div>
-      )}
-
-      {/* Upcoming bills */}
+      {/* ── Upcoming bills banner (collapsed to single line) ───────────────── */}
       {upcomingBills.length > 0 && (
-        <div>
-          <p style={{ fontSize: "10px", fontWeight: "700", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "12px" }}>
-            Due in 7 Days
-          </p>
-          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-            {upcomingBills.map((bill) => (
-              <div key={bill.billId} style={{
-                background: "var(--surface)",
-                border: "1px solid var(--border)",
-                borderRadius: "12px",
-                padding: "12px 16px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}>
-                <div>
-                  <p style={{ fontWeight: "600", fontSize: "13px", color: "var(--text)" }}>{bill.title}</p>
-                  <p style={{ fontSize: "12px", color: "var(--text-3)", marginTop: "2px" }}>
-                    {bill.householdName} · due {new Date(bill.dueDate).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
-                  </p>
-                </div>
-                <p style={{ fontWeight: "700", fontSize: "13px", color: "var(--text)", fontFamily: "var(--ff-display)" }}>
-                  {bill.currency} {Number(bill.amount).toFixed(2)}
-                </p>
-              </div>
+        <div style={{
+          background: "var(--warning-s)", border: "1px solid color-mix(in oklch, var(--warning) 30%, transparent)",
+          borderRadius: "var(--r-lg)", padding: "12px 16px",
+          display: "flex", alignItems: "center", gap: "12px",
+        }}>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--warning)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+            <circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/>
+          </svg>
+          <p style={{ flex: 1, fontSize: "13px", color: "var(--text-2)", margin: 0 }}>
+            <span style={{ fontWeight: "600", color: "var(--warning)" }}>{upcomingBills.length} bill{upcomingBills.length !== 1 ? "s" : ""} due in 7 days</span>
+            {" — "}
+            {upcomingBills.slice(0, 2).map((b, i) => (
+              <span key={b.billId}>
+                {i > 0 && ", "}
+                <span style={{ fontWeight: "500" }}>{b.title}</span>
+                <span style={{ color: "var(--text-3)" }}> ({b.householdName})</span>
+              </span>
             ))}
-          </div>
+            {upcomingBills.length > 2 && <span style={{ color: "var(--text-3)" }}> +{upcomingBills.length - 2} more</span>}
+          </p>
         </div>
       )}
 
-      {/* Households grid */}
-      <div>
-        <p style={{ fontSize: "10px", fontWeight: "700", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "16px" }}>
-          Households
-        </p>
-        {households.length === 0 ? (
-          <div style={{
-            background: "var(--surface)",
-            border: "1px solid var(--border)",
-            borderRadius: "16px",
-            padding: "48px 24px",
-            textAlign: "center",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: "12px",
-          }}>
-            <div style={{ width: "56px", height: "56px", borderRadius: "16px", background: "var(--accent-subtle)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
-              </svg>
-            </div>
-            <p style={{ fontFamily: "var(--ff-display)", fontWeight: "700", fontSize: "15px", color: "var(--text)" }}>No households yet</p>
-            <p style={{ fontSize: "13px", color: "var(--text-3)" }}>Create your first household to start tracking bills</p>
-            <Link
-              href="/households/new"
-              style={{
-                background: "var(--accent)",
-                color: "#fff",
-                padding: "10px 24px",
-                borderRadius: "12px",
-                fontWeight: "600",
-                fontSize: "13px",
-                textDecoration: "none",
-                marginTop: "4px",
-              }}
-            >
-              Create your first household
-            </Link>
+      {/* ── Households grid ────────────────────────────────────────────────── */}
+      {households.length === 0 ? (
+        <div style={{
+          background: "var(--surface)", border: "1px solid var(--border)",
+          borderRadius: "16px", padding: "48px 24px", textAlign: "center",
+          display: "flex", flexDirection: "column", alignItems: "center", gap: "12px",
+        }}>
+          <div style={{ width: "56px", height: "56px", borderRadius: "16px", background: "var(--accent-subtle)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
           </div>
-        ) : (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "16px" }}>
-            {households.map((h) => {
-              const over = h.netBalance < 0;
-              const hCoverageRatio = Number(h.totalIncome) > 0 && Number(h.totalBills) > 0
-                ? Math.min(Number(h.totalIncome) / Number(h.totalBills), 1)
-                : Number(h.totalBills) === 0 ? 1 : 0;
-              return (
-                <Link
-                  key={h.householdId}
-                  href={`/households/${h.householdId}`}
-                  style={{ textDecoration: "none" }}
-                >
-                  <div className={styles.cardHover} style={{
-                    background: "var(--surface)",
-                    border: "1px solid var(--border)",
-                    borderRadius: "16px",
-                    padding: "20px",
-                    boxShadow: "var(--shadow-sm)",
-                    cursor: "pointer",
-                  }}>
-                    {/* Name + description */}
-                    <p style={{ fontFamily: "var(--ff-display)", fontWeight: "700", fontSize: "15px", color: "var(--text)" }}>{h.name}</p>
-                    {h.description && (
-                      <p style={{ fontSize: "13px", color: "var(--text-2)", marginTop: "4px", overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>
-                        {h.description}
-                      </p>
-                    )}
-
-                    {/* Badges row */}
-                    <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginTop: "12px" }}>
-                      <span style={{
-                        background: "var(--accent-subtle)",
-                        color: "var(--accent)",
-                        borderRadius: "9999px",
-                        padding: "2px 8px",
-                        fontSize: "11px",
-                        fontWeight: "600",
-                      }}>
-                        {h.memberCount} member{h.memberCount !== 1 ? "s" : ""}
-                      </span>
-                      <span style={{
-                        background: "var(--surface-2)",
-                        color: "var(--text-2)",
-                        border: "1px solid var(--border)",
-                        borderRadius: "9999px",
-                        padding: "2px 8px",
-                        fontSize: "11px",
-                        fontWeight: "600",
-                      }}>
-                        {h.totalBills} bill{Number(h.totalBills) !== 1 ? "s" : ""}
-                      </span>
-                    </div>
-
-                    {/* Net balance */}
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "16px" }}>
-                      <span style={{ fontSize: "12px", color: "var(--text-3)" }}>Monthly</span>
-                      <span style={{
-                        fontFamily: "var(--ff-display)",
-                        fontWeight: "700",
-                        fontSize: "14px",
-                        color: over ? "var(--danger)" : "var(--success)",
-                      }}>
-                        {h.currencyCode} {Number(h.netBalance).toFixed(2)}
-                      </span>
-                    </div>
-
-                    {/* Coverage progress bar */}
-                    <div style={{ marginTop: "10px" }}>
-                      <div style={{ background: "var(--surface-3)", borderRadius: "9999px", height: "6px", overflow: "hidden" }}>
-                        <div style={{
-                          background: "var(--accent)",
-                          borderRadius: "9999px",
-                          height: "6px",
-                          width: `${hCoverageRatio * 100}%`,
-                          transition: "width 400ms ease",
-                        }} />
-                      </div>
-                      <p style={{ fontSize: "11px", color: "var(--text-3)", marginTop: "4px" }}>
-                        {(hCoverageRatio * 100).toFixed(0)}% income coverage
+          <p style={{ fontFamily: "var(--ff-display)", fontWeight: "700", fontSize: "15px", color: "var(--text)" }}>No households yet</p>
+          <p style={{ fontSize: "13px", color: "var(--text-3)" }}>Create your first household to start tracking shared bills</p>
+          <Link
+            href="/households/new"
+            style={{
+              background: "var(--accent)", color: "#fff",
+              padding: "10px 24px", borderRadius: "12px",
+              fontWeight: "600", fontSize: "13px", textDecoration: "none", marginTop: "4px",
+            }}
+          >
+            Create a household
+          </Link>
+        </div>
+      ) : (
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "14px" }}>
+          {households.map((h, i) => {
+            const over = h.netBalance < 0;
+            const HOUSEHOLD_COLORS = ["var(--accent)", "var(--accent-v)", "var(--success)", "var(--warning)"];
+            const cardColor = HOUSEHOLD_COLORS[i % HOUSEHOLD_COLORS.length];
+            const hCoverageRatio = Number(h.totalIncome) > 0 && Number(h.totalBills) > 0
+              ? Math.min(Number(h.totalIncome) / Number(h.totalBills), 1)
+              : Number(h.totalBills) === 0 ? 1 : 0;
+            return (
+              <Link
+                key={h.householdId}
+                href={`/households/${h.householdId}`}
+                style={{ textDecoration: "none" }}
+              >
+                <div className={styles.cardHover} style={{
+                  background: "var(--surface)", border: "1px solid var(--border)",
+                  borderRadius: "16px", padding: "20px",
+                  boxShadow: "var(--shadow-sm)", cursor: "pointer",
+                  display: "flex", flexDirection: "column", gap: "0",
+                }}>
+                  {/* Name + meta */}
+                  <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "8px" }}>
+                    <div style={{ minWidth: 0 }}>
+                      <p style={{ fontFamily: "var(--ff-display)", fontWeight: "700", fontSize: "17px", color: "var(--text)", margin: 0, lineHeight: 1.2 }}>{h.name}</p>
+                      <p style={{ fontSize: "12px", color: "var(--text-3)", marginTop: "4px" }}>
+                        {h.memberCount} member{h.memberCount !== 1 ? "s" : ""} · {h.totalBills} bill{Number(h.totalBills) !== 1 ? "s" : ""}
                       </p>
                     </div>
+                    {/* Balance badge */}
+                    <span style={{
+                      fontFamily: "var(--ff-display)", fontWeight: "700", fontSize: "14px",
+                      color: over ? "var(--danger)" : "var(--success)",
+                      background: over ? "var(--danger-s)" : "var(--success-s)",
+                      borderRadius: "var(--r-full)", padding: "3px 10px",
+                      flexShrink: 0, whiteSpace: "nowrap",
+                    }}>
+                      {over ? "–" : "+"}{h.currencyCode} {Math.abs(Number(h.netBalance)).toFixed(0)}
+                    </span>
                   </div>
-                </Link>
-              );
-            })}
+
+                  {/* Progress bar */}
+                  <div style={{ marginTop: "16px" }}>
+                    <div style={{ background: "var(--surface-3)", borderRadius: "9999px", height: "4px", overflow: "hidden" }}>
+                      <div style={{
+                        background: cardColor, borderRadius: "9999px", height: "4px",
+                        width: `${hCoverageRatio * 100}%`, transition: "width 400ms ease",
+                      }} />
+                    </div>
+                    <p style={{ fontSize: "11px", color: "var(--text-3)", marginTop: "5px" }}>
+                      Your share: <span style={{ color: cardColor, fontWeight: "600" }}>${Number(h.totalBills).toFixed(0)}/mo</span>
+                    </p>
+                  </div>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      )}
+
+      {/* ── Personal bills ─────────────────────────────────────────────────── */}
+      <div style={{ borderTop: "1px solid var(--border)", paddingTop: "20px", display: "flex", flexDirection: "column", gap: "10px" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <div style={{ width: "30px", height: "30px", borderRadius: "8px", background: "var(--accent-subtle)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <div>
+              <p style={{ fontFamily: "var(--ff-display)", fontWeight: "700", fontSize: "14px", color: "var(--text)", margin: 0 }}>Personal bills</p>
+              <p style={{ fontSize: "12px", color: "var(--text-3)", margin: 0 }}>
+                {totalPersonalBills > 0
+                  ? `$${totalPersonalBills.toFixed(0)}/mo — phone, gym, subscriptions`
+                  : "Phone, gym, subscriptions — yours alone"}
+              </p>
+            </div>
           </div>
-        )}
+          <Link href="/personal-bills" style={{
+            display: "inline-flex", alignItems: "center", gap: "5px",
+            background: totalPersonalBills === 0 ? "var(--accent)" : "var(--surface-2)",
+            color: totalPersonalBills === 0 ? "#fff" : "var(--text-2)",
+            border: totalPersonalBills === 0 ? "none" : "1px solid var(--border)",
+            padding: "7px 14px", borderRadius: "10px",
+            fontSize: "13px", fontWeight: "600", textDecoration: "none",
+            transition: "opacity 110ms",
+            flexShrink: 0,
+          }}>
+            {totalPersonalBills === 0 ? "Add bills" : "View"}
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </Link>
+        </div>
+
+        {/* Household splits link — lower priority, plain text */}
+        <Link href="/contributions" style={{
+          display: "inline-flex", alignItems: "center", gap: "6px",
+          padding: "5px 10px", borderRadius: "var(--r-md)", alignSelf: "flex-start",
+          fontSize: "12px", color: "var(--text-3)", textDecoration: "none",
+          transition: "background 110ms, color 110ms",
+        }} className={styles.secondaryLink}>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+          Household splits
+        </Link>
       </div>
+
     </div>
   );
 }

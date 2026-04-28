@@ -83,7 +83,7 @@ export function AddPersonalBillForm() {
           />
         </Field>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+        <div className="form-grid-2">
           <Field label="Amount" error={errors.amount?.message}>
             <input
               type="number"
@@ -105,7 +105,7 @@ export function AddPersonalBillForm() {
           </Field>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+        <div className="form-grid-2">
           <Field label="Category">
             <select {...register("category")} style={iStyle} onFocus={onFocusField} onBlur={onBlurField}>
               {BILL_CATEGORIES.map((c) => (

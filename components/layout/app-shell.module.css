@@ -58,10 +58,11 @@
   position: relative;
   display: flex;
   align-items: center;
+  justify-content: center;
   width: 34px;
   height: 34px;
   border-radius: 12px;
-  border: none;
+  border: 1px solid var(--border);
   cursor: pointer;
   background: transparent;
   color: var(--text-2);

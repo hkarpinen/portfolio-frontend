@@ -13,7 +13,7 @@ export default async function CommunitySettingsPage({ params }: { params: { slug
   if (!community) notFound();
 
   return (
-    <div className="page-enter" style={{ maxWidth: "560px", display: "flex", flexDirection: "column", gap: "24px" }}>
+    <div className="page-enter" style={{ maxWidth: "520px", display: "flex", flexDirection: "column", gap: "24px" }}>
       {/* Back link */}
       <Link
         href={`/communities/${params.slug}`}

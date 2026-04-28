@@ -24,6 +24,13 @@ export default function SearchPage() {
 
       {/* Search input */}
       <div style={{ position: "relative" }}>
+        <svg
+          width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="var(--text-3)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+          style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", pointerEvents: "none", flexShrink: 0 }}
+        >
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
         <input
           type="text"
           value={query}
@@ -32,9 +39,10 @@ export default function SearchPage() {
           placeholder="Search threads…"
           style={{
             width: "100%", padding: "12px 16px",
+            paddingLeft: "40px",
             paddingRight: loading ? "44px" : "16px",
             background: "var(--surface)", border: "1px solid var(--border)",
-            borderRadius: "12px", color: "var(--text)", fontSize: "14px",
+            borderRadius: "12px", color: "var(--text)", fontSize: "16px",
             outline: "none", boxSizing: "border-box",
             boxShadow: "var(--shadow-sm)",
           }}
@@ -51,6 +59,12 @@ export default function SearchPage() {
 
       {!query.trim() && (
         <p style={{ fontSize: "13px", color: "var(--text-3)" }}>Start typing to search…</p>
+      )}
+
+      {query.trim() && !loading && results.length > 0 && (
+        <p style={{ fontSize: "13px", color: "var(--text-3)" }}>
+          {results.length} result{results.length !== 1 ? "s" : ""} for &ldquo;{query}&rdquo;
+        </p>
       )}
 
       {query.trim() && !loading && results.length === 0 && (

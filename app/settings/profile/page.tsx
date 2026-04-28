@@ -264,7 +264,7 @@ export default function ProfileSettingsPage() {
           <p style={{ color: "var(--text-3)", fontSize: "14px" }}>Loading...</p>
         </div>
       ) : (
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 280px", gap: "20px", alignItems: "start" }}>
+        <div className="sidebar-grid" style={{ gap: "20px" }}>
           {/* Left column — forms */}
           <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
             {/* Account form */}

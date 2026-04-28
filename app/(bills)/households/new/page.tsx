@@ -50,6 +50,11 @@ export default function NewHouseholdPage() {
         padding: "24px",
         boxShadow: "var(--shadow-sm)",
       }}>
+        {/* Info alert */}
+        <div style={{ display: "flex", gap: "12px", background: "var(--accent-subtle)", border: "1px solid var(--accent-border)", borderRadius: "var(--r-md)", padding: "12px 14px", marginBottom: "20px" }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: "1px" }}><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <p style={{ fontSize: "13px", color: "var(--accent)", lineHeight: "1.5", margin: 0 }}>You can invite members after creating the household using a shareable invite code.</p>
+        </div>
         <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
           {createHousehold.isError && (
             <div style={{
@@ -128,14 +133,24 @@ export default function NewHouseholdPage() {
             />
           </div>
 
-          <Button
-            type="submit"
-            disabled={isSubmitting || createHousehold.isPending}
-            variant="primary"
-            fullWidth
-          >
-            {createHousehold.isPending ? "Creating..." : "Create Household"}
-          </Button>
+          <div style={{ display: "flex", gap: "10px" }}>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => router.back()}
+              style={{ flex: 1 }}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              disabled={isSubmitting || createHousehold.isPending}
+              variant="primary"
+              style={{ flex: 2 }}
+            >
+              {createHousehold.isPending ? "Creating..." : "Create Household"}
+            </Button>
+          </div>
         </form>
       </div>
     </div>

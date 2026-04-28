@@ -4,5 +4,10 @@
 .cardHover:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
-  border-color: var(--border-2) !important;
+  border-color: var(--accent) !important;
+}
+
+.secondaryLink:hover {
+  background: var(--surface-2);
+  color: var(--text-2);
 }

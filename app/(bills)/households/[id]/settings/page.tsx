@@ -258,7 +258,7 @@ export default function HouseholdSettingsPage({
             </div>
 
             {/* Currency + Default Split row */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+            <div className="form-grid-2">
               <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                 <label style={labelStyle}>Currency</label>
                 <select

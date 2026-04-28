@@ -185,7 +185,7 @@ export default function BillPage({ params }: { params: { id: string; billId: str
                 {updateBillMutation.error instanceof ApiError ? updateBillMutation.error.message : "Something went wrong."}
               </div>
             )}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+            <div className="form-grid-2">
               <div style={{ display: "flex", flexDirection: "column", gap: "6px", gridColumn: "1 / -1" }}>
                 <label style={{ fontSize: "12px", fontWeight: "500", color: "var(--text-2)" }}>Title</label>
                 <input {...registerEdit("title")} style={{ height: "38px", background: "var(--surface-2)", border: `1px solid ${editErrors.title ? "var(--danger)" : "var(--border)"}`, borderRadius: "12px", padding: "0 12px", fontSize: "13px", color: "var(--text)", outline: "none" }} />
@@ -238,7 +238,7 @@ export default function BillPage({ params }: { params: { id: string; billId: str
       )}
 
       {/* Stats */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px" }}>
+      <div className="stats-grid-3">
         <StatCard label="Total" value={`${bill.currency} ${Number(bill.amount).toFixed(2)}`} />
         <StatCard label="Allocated" value={`${bill.currency} ${splitTotal.toFixed(2)}`} color={splitTotal > 0 ? "var(--success)" : undefined} />
         <StatCard

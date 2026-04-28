@@ -7,6 +7,7 @@ import { VoteButtons } from "./vote-buttons";
 import Link from "next/link";
 
 import { fetchThreadServer, fetchCommentsServer } from "@/lib/api/forum";
+import { fetchCommunityBySlugServer } from "@/lib/api/communities";
 import { getSession } from "@/lib/auth/session";
 import type { Thread, Comment } from "@/types/forum";
 
@@ -17,21 +18,22 @@ export default async function ThreadPage({
 }: {
   params: { slug: string; threadId: string };
 }) {
-  const [thread, commentsData] = await Promise.all([
+  const [thread, commentsData, community] = await Promise.all([
     fetchThreadServer(params.threadId),
     fetchCommentsServer(params.threadId),
+    fetchCommunityBySlugServer(params.slug),
   ]);
 
   if (!thread) notFound();
 
   const comments: Comment[] = commentsData?.items ?? [];
   const bodyHtml = await parseMarkdown(thread.content ?? thread.body ?? "");
-  // Truthful auth signal from the backend rather than "is a cookie present".
   const session = await getSession();
   const isAuthed = !!session;
 
   return (
-    <div className="page-enter" style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+    <div className="page-enter sidebar-grid" style={{ gap: "24px" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
       {/* Breadcrumb */}
       <nav style={{ display: "flex", alignItems: "center", gap: "8px" }}>
         <Link href="/communities" style={{ fontSize: "13px", color: "var(--text-3)", textDecoration: "none" }}>
@@ -122,6 +124,54 @@ export default async function ThreadPage({
 
       {/* Comments — card header + list rendered inside CommentTree */}
       <CommentTree comments={comments} depth={0} threadId={params.threadId} isAuthed={isAuthed} />
+    </div>
+
+    {/* Right sidebar */}
+    <aside style={{ display: "flex", flexDirection: "column", gap: "16px", position: "sticky", top: "16px", alignSelf: "start" }}>
+      {community && (
+        <div style={{
+          background: "var(--surface)", border: "1px solid var(--border)",
+          borderRadius: "var(--r-lg)", overflow: "hidden", boxShadow: "var(--shadow-sm)",
+        }}>
+          {/* Banner strip */}
+          <div style={{
+            height: "40px",
+            background: community.color
+              ? `linear-gradient(135deg, ${community.color}22, ${community.color}44)`
+              : "linear-gradient(135deg, var(--accent-subtle), color-mix(in oklch, var(--accent) 22%, transparent))",
+          }} />
+          <div style={{ padding: "0 16px 16px" }}>
+            <p style={{ fontFamily: "var(--ff-display)", fontWeight: 800, fontSize: "14px", color: "var(--text)", margin: "12px 0 6px" }}>
+              About {community.name}
+            </p>
+            {community.description && (
+              <p style={{ fontSize: "13px", color: "var(--text-2)", lineHeight: 1.5, margin: "0 0 12px" }}>{community.description}</p>
+            )}
+            <div style={{ display: "flex", gap: "16px", marginBottom: "12px" }}>
+              <div>
+                <p style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "16px", color: "var(--text)", margin: 0 }}>{community.memberCount.toLocaleString()}</p>
+                <p style={{ fontSize: "11px", color: "var(--text-3)", margin: 0 }}>Members</p>
+              </div>
+              <div>
+                <p style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "16px", color: "var(--text)", margin: 0 }}>{community.threadCount.toLocaleString()}</p>
+                <p style={{ fontSize: "11px", color: "var(--text-3)", margin: 0 }}>Posts</p>
+              </div>
+            </div>
+            <Link
+              href={`/communities/${params.slug}`}
+              style={{
+                display: "block", textAlign: "center",
+                background: "var(--accent)", color: "#fff",
+                borderRadius: "var(--r-md)", padding: "8px 12px",
+                fontSize: "13px", fontWeight: 600, textDecoration: "none",
+              }}
+            >
+              Visit community
+            </Link>
+          </div>
+        </div>
+      )}
+    </aside>
     </div>
   );
 }

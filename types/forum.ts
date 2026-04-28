@@ -16,6 +16,8 @@ export interface CommunitySummaryResponse {
   name: string;
   description?: string;
   imageUrl?: string;
+  color?: string;
+  icon?: string;
   visibility?: string;
   ownerId: string;
   createdAt: string;
@@ -164,6 +166,8 @@ export interface ThreadMutationResponse {
 export interface ThreadSummaryResponse {
   threadId: string;
   communityId: string;
+  communitySlug?: string;
+  communityName?: string;
   authorId: string;
   authorDisplayName?: string;
   authorAvatarUrl?: string;
@@ -171,6 +175,9 @@ export interface ThreadSummaryResponse {
   createdAt: string;
   hotScore: number;
   voteScore: number;
+  commentCount?: number;
+  isPinned?: boolean;
+  flair?: string;
 }
 
 export interface CommunityPage {

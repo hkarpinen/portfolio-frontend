@@ -96,7 +96,7 @@ export default async function ForumFeedPage({
       </div>
 
       {/* Two-column layout */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 280px", gap: "24px", alignItems: "start" }}>
+      <div className="sidebar-grid" style={{ gap: "24px" }}>
         {/* Main content */}
         <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
           {tab === "communities" ? (

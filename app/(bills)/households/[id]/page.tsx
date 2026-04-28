@@ -204,6 +204,7 @@ export default async function HouseholdPage({ params }: { params: { id: string }
           { label: "Bills", href: `/households/${params.id}` },
           { label: "Contributions", href: `/households/${params.id}/contributions` },
           { label: "Income", href: `/households/${params.id}/income` },
+          ...(isOwner ? [{ label: "Settings", href: `/households/${params.id}/settings` }] : []),
         ].map((tab) => (
           <Link
             key={tab.label}

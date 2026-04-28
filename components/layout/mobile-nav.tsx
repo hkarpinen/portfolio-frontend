@@ -54,6 +54,7 @@ export function MobileNav({ displayName, avatarUrl, initials }: MobileNavProps) 
         >
           {[
             { href: "/about",       label: "About" },
+            { href: "/contact",     label: "Contact" },
             { href: "/communities", label: "Forum" },
             { href: "/households",  label: "Bills" },
           ].map(item => (

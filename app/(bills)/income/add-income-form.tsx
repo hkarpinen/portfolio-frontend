@@ -59,7 +59,7 @@ export function AddIncomeForm() {
           <input type="text" {...register("source")} placeholder="Salary, Freelance, etc." style={{ ...iStyle, borderColor: errors.source ? "var(--danger)" : "var(--border)" }} onFocus={onFocusField} onBlur={onBlurField} />
         </Field>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+        <div className="form-grid-2">
           <Field label="Amount" error={errors.amount?.message}>
             <input type="number" step="0.01" {...register("amount")} placeholder="0.00" style={{ ...iStyle, borderColor: errors.amount ? "var(--danger)" : "var(--border)" }} onFocus={onFocusField} onBlur={onBlurField} />
           </Field>
@@ -73,7 +73,7 @@ export function AddIncomeForm() {
           </Field>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+        <div className="form-grid-2">
           <Field label="Frequency">
             <select {...register("frequency")} style={iStyle} onFocus={onFocusField} onBlur={onBlurField}>
               {FREQUENCIES.map((f) => <option key={f} value={f}>{f.charAt(0) + f.slice(1).toLowerCase()}</option>)}
