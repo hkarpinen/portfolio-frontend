@@ -14,22 +14,24 @@ interface ForumTabsProps {
   communitySlugMap: Record<string, string>; // communityId -> slug
 }
 
-const tabTriggerStyle = (active: boolean): React.CSSProperties => ({
+const tabTriggerStyle: React.CSSProperties = {
   padding: "10px 16px",
   fontSize: "13px",
-  fontWeight: active ? 600 : 400,
-  color: active ? "var(--text)" : "var(--text-3)",
-  borderBottom: active ? "2px solid var(--accent)" : "2px solid transparent",
+  fontWeight: 400,
+  color: "var(--text-3)",
+  borderBottom: "2px solid transparent",
+  borderTop: "none",
+  borderLeft: "none",
+  borderRight: "none",
   marginBottom: "-1px",
   background: "none",
-  border: "none",
   cursor: "pointer",
   display: "flex",
   alignItems: "center",
   gap: "6px",
   fontFamily: "var(--ff-body)",
-  transition: "color 110ms",
-});
+  transition: "color 110ms, border-color 110ms",
+};
 
 export function ForumTabs({
   communities,
@@ -45,8 +47,7 @@ export function ForumTabs({
           <RadixTabs.Trigger
             key={label}
             value={label}
-            style={tabTriggerStyle(false)}
-            data-active-style="true"
+            style={tabTriggerStyle}
           >
             {label}
             {label === "Communities" && (
@@ -160,13 +161,13 @@ export function ForumTabs({
           transform: translateY(-2px);
           box-shadow: var(--shadow-md);
         }
-        [data-radix-tabs-trigger][data-state="active"] {
-          color: var(--text);
-          font-weight: 600;
+        [role="tab"][data-state="active"] {
+          color: var(--text) !important;
+          font-weight: 600 !important;
           border-bottom: 2px solid var(--accent) !important;
         }
-        [data-radix-tabs-trigger]:hover {
-          color: var(--text);
+        [role="tab"]:hover {
+          color: var(--text) !important;
         }
       `}</style>
     </RadixTabs.Root>

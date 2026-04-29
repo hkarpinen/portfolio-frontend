@@ -15,13 +15,21 @@ import type {
 // ─── Threads ─────────────────────────────────────────────────────────────────
 
 export const fetchThreads = (params: { communityId?: string; sort?: string; page?: number; pageSize?: number } = {}) => {
+  if (params.communityId) {
+    const qs = new URLSearchParams({
+      page: String(params.page ?? 1),
+      pageSize: String(params.pageSize ?? 30),
+      communityId: params.communityId,
+      ...(params.sort ? { sort: params.sort } : {}),
+    });
+    return api.get<ThreadPage>(`/api/forum/threads?${qs}`);
+  }
   const qs = new URLSearchParams({
     page: String(params.page ?? 1),
     pageSize: String(params.pageSize ?? 30),
-    ...(params.communityId ? { communityId: params.communityId } : {}),
     ...(params.sort ? { sort: params.sort } : {}),
   });
-  return api.get<ThreadPage>(`/api/forum/threads?${qs}`);
+  return api.get<ThreadPage>(`/api/forum/threads/feed?${qs}`);
 };
 
 export const fetchThread = (threadId: string) =>
@@ -113,13 +121,24 @@ export const fetchThreadsServer = (
   params: { communityId?: string; sort?: string; page?: number; pageSize?: number } = {},
   cookieHeader?: string,
 ) => {
+  if (params.communityId) {
+    // Community-scoped list
+    const qs = new URLSearchParams({
+      page: String(params.page ?? 1),
+      pageSize: String(params.pageSize ?? 30),
+      communityId: params.communityId,
+      ...(params.sort ? { sort: params.sort } : {}),
+    });
+    return serverFetch<ThreadPage>(`/api/forum/threads?${qs}`, cookieHeader);
+  }
+
+  // Global feed endpoint
   const qs = new URLSearchParams({
     page: String(params.page ?? 1),
     pageSize: String(params.pageSize ?? 30),
-    ...(params.communityId ? { communityId: params.communityId } : {}),
     ...(params.sort ? { sort: params.sort } : {}),
   });
-  return serverFetch<ThreadPage>(`/api/forum/threads?${qs}`, cookieHeader);
+  return serverFetch<ThreadPage>(`/api/forum/threads/feed?${qs}`, cookieHeader);
 };
 
 export const fetchThreadServer = (threadId: string, cookieHeader?: string) =>
