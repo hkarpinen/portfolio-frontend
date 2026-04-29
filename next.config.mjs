@@ -20,8 +20,8 @@ const nextConfig = {
         destination: "http://localhost:8082/api/forum/:path*",
       },
       {
-        source: "/api/bills/:path*",
-        destination: "http://localhost:8083/api/bills/:path*",
+        source: "/api/finance/:path*",
+        destination: "http://localhost:8083/api/finance/:path*",
       },
       {
         source: "/api/notifications/:path*",

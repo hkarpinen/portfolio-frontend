@@ -22,13 +22,14 @@ export interface Notification {
 export type ToastNotification = Notification;
 
 const AUTO_DISMISS_MS = 5000;
-// Use an absolute URL so the EventSource always goes through nginx (which has
-// proxy_buffering off) rather than through Next.js rewrites, which buffer SSE.
-const API_BASE =
-  typeof process !== "undefined" && process.env.NEXT_PUBLIC_API_URL
-    ? process.env.NEXT_PUBLIC_API_URL
-    : "";
-const STREAM_URL = `${API_BASE}/api/notifications/stream`;
+// Next.js buffers response bodies, which breaks SSE. In dev the stream connects
+// directly to the notifications container to avoid that. In production nginx
+// is same-origin so no base URL is needed.
+const DEV_NOTIFICATIONS_BASE = "http://localhost:8084";
+const STREAM_URL =
+  process.env.NODE_ENV === "development"
+    ? `${DEV_NOTIFICATIONS_BASE}/api/notifications/stream`
+    : "/api/notifications/stream";
 const RECONNECT_BASE_MS = 1_000;
 const RECONNECT_MAX_MS = 30_000;
 
