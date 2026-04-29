@@ -40,7 +40,7 @@ const ICONS = {
 const NAV_MODULES = [
   { label: "Home",      href: "/",            icon: "home" as const },
   { label: "About",     href: "/about",       icon: "about" as const },
-  { label: "Bills",     href: "/households",  icon: "bills" as const },
+  { label: "Finance",   href: "/households",  icon: "bills" as const },
   { label: "Forum",     href: "/communities", icon: "forum" as const },
 ];
 
@@ -549,7 +549,7 @@ function BottomNav({ pathname }: { pathname: string }) {
   const items = [
     { label: "Home",      href: "/",                 icon: "home" as const },
     { label: "About",     href: "/about",             icon: "about" as const },
-    { label: "Bills",     href: "/households",        icon: "bills" as const },
+    { label: "Finance",   href: "/households",        icon: "bills" as const },
     { label: "Forum",     href: "/communities",       icon: "forum" as const },
     { label: "Settings",  href: "/settings/profile",  icon: "settings" as const },
   ];
