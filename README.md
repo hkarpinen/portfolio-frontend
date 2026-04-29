@@ -1,6 +1,6 @@
 # portfolio-frontend
 
-Next.js 15 App Router frontend for the portfolio. Provides UI for the Identity, Forum, and Bills services.
+Next.js 15 App Router frontend for the portfolio. Provides UI for the Identity, Forum, and Finance services.
 
 ## Stack
 
@@ -25,16 +25,16 @@ Requires the backend services running (see `portfolio-infra`).
 ```
 app/
   (auth)/          Login, register, email confirmation, 2FA
-  (bills)/         Household, bill, split, income pages
+  (bills)/         Household, bill, split, income pages (routes to /api/finance/*)
   (forum)/         Communities, threads, comments, voting
   (portfolio)/     Portfolio landing pages
   settings/        User profile and account settings
 components/
   layout/          Shell, nav, sidebar
   ui/              Design system primitives
-hooks/             TanStack Query data hooks (use-bills, use-forum, use-identity, use-notifications)
+hooks/             TanStack Query data hooks (use-bills, use-forum, use-household, use-income, use-identity, use-notifications)
 lib/               API client, URL helpers, markdown, query keys
-schemas/           Zod schemas (auth, bills, forum)
+schemas/           Zod schemas (auth, bills, forum) — bills schemas call the Finance service
 types/             Shared API types
 ```
 
