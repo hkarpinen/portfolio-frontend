@@ -4,6 +4,7 @@ import * as RadixTabs from "@radix-ui/react-tabs";
 import Link from "next/link";
 import { ThreadCard } from "@/components/ui/thread-card";
 import { CommunityAvatar } from "@/components/ui/community-avatar";
+import { JoinButton } from "./join-button";
 import type { CommunitySummaryResponse, ThreadSummaryResponse } from "@/types/forum";
 
 interface ForumTabsProps {
@@ -102,13 +103,7 @@ export function ForumTabs({
                     <p style={{ fontSize: "13px", fontWeight: 700, color: "var(--text)", margin: 0 }}>{community.memberCount.toLocaleString()}</p>
                     <p style={{ fontSize: "10px", color: "var(--text-3)", marginTop: "2px" }}>members</p>
                   </div>
-                  <Link
-                    href={`/communities/${community.slug}`}
-                    onClick={(e) => e.stopPropagation()}
-                    style={{ padding: "6px 12px", borderRadius: "var(--r-md)", fontSize: "12px", fontWeight: 600, color: "var(--text-2)", border: "1px solid var(--border)", background: "var(--surface-2)", textDecoration: "none", flexShrink: 0 }}
-                  >
-                    Join
-                  </Link>
+                  <JoinButton communityId={community.communityId} />
                 </div>
               </Link>
             ))
