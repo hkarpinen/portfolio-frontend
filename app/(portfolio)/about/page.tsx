@@ -9,8 +9,8 @@ export const metadata: Metadata = {
 const PROJECTS = [
   {
     icon: "📋",
-    title: "Bills Splitter",
-    description: "A full-stack household expense management app. Track shared bills, split costs fairly, and visualize contributions over time.",
+    title: "Finance",
+    description: "A full-stack personal finance app. Track income, manage shared household bills, split costs fairly, and visualize budget coverage over time.",
     tech: ["ASP.NET Core", "C#", "EF Core", "PostgreSQL", "RabbitMQ", "MassTransit", "React Query", "Docker"],
     href: "/households",
   },

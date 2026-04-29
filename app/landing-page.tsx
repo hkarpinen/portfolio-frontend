@@ -35,7 +35,7 @@ const FEATURES = [
   },
   {
     icon: "bills" as const,
-    title: "Bills & Splits",
+    title: "Finance & Splits",
     description: "Shared household expense tracking with equal/custom splits, contribution history, income logging, and per-bill payment status.",
     accent: "var(--accent)",
     href: "/households",
@@ -64,7 +64,7 @@ const ARCH_PILLARS = [
     accent: "var(--accent)",
     icon: "M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z",
     title: "Microservices architecture",
-    body: "Five independent services — Identity, Bills, Forum, Notifications, and the Next.js frontend — each with its own database and deployment boundary.",
+    body: "Five independent services — Identity, Finance, Forum, Notifications, and the Next.js frontend — each with its own database and deployment boundary.",
     tags: ["ASP.NET Core", "Docker Compose", "Nginx"],
   },
   {
@@ -247,7 +247,7 @@ export async function LandingPage() {
             textAlign: "center",
             animation: "fadeUp 700ms var(--ease-spring) both", animationDelay: "160ms",
           }}>
-            Identity, Bills, Forum, and Notifications — each a standalone microservice, each with its own repo. The frontend is a separate Next.js app that ties it all together.
+            Identity, Finance, Forum, and Notifications — each a standalone microservice, each with its own repo. The frontend is a separate Next.js app that ties it all together.
           </p>
 
           {/* CTA buttons */}
