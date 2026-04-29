@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Toggle } from "@/components/ui/toggle";
 
 const PREFS_KEY = "notification_prefs";
 
@@ -26,51 +27,6 @@ const TAB_HREFS: Record<Tab, string> = {
   Security: "/settings/security",
   Notifications: "/settings/notifications",
 };
-
-/* ── CSS Toggle Switch ────────────────────────────────────────────────────── */
-
-function Toggle({
-  checked,
-  onChange,
-}: {
-  checked: boolean;
-  onChange: (v: boolean) => void;
-}) {
-  return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={checked}
-      onClick={() => onChange(!checked)}
-      style={{
-        position: "relative",
-        width: "40px",
-        height: "22px",
-        borderRadius: "9999px",
-        background: checked ? "var(--accent)" : "var(--surface-3)",
-        border: "none",
-        cursor: "pointer",
-        padding: 0,
-        transition: "background 180ms",
-        flexShrink: 0,
-      }}
-    >
-      <span
-        style={{
-          position: "absolute",
-          top: "2px",
-          left: checked ? "19px" : "1px",
-          width: "18px",
-          height: "18px",
-          borderRadius: "9999px",
-          background: "#fff",
-          boxShadow: "0 1px 4px rgba(0,0,0,0.3)",
-          transition: "left 180ms",
-        }}
-      />
-    </button>
-  );
-}
 
 /* ── Notification row ─────────────────────────────────────────────────────── */
 

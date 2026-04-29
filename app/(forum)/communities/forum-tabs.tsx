@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import * as RadixTabs from "@radix-ui/react-tabs";
 import Link from "next/link";
 import { ThreadCard } from "@/components/ui/thread-card";
 import { CommunityAvatar } from "@/components/ui/community-avatar";
@@ -13,56 +13,52 @@ interface ForumTabsProps {
   communitySlugMap: Record<string, string>; // communityId -> slug
 }
 
+const tabTriggerStyle = (active: boolean): React.CSSProperties => ({
+  padding: "10px 16px",
+  fontSize: "13px",
+  fontWeight: active ? 600 : 400,
+  color: active ? "var(--text)" : "var(--text-3)",
+  borderBottom: active ? "2px solid var(--accent)" : "2px solid transparent",
+  marginBottom: "-1px",
+  background: "none",
+  border: "none",
+  cursor: "pointer",
+  display: "flex",
+  alignItems: "center",
+  gap: "6px",
+  fontFamily: "var(--ff-body)",
+  transition: "color 110ms",
+});
+
 export function ForumTabs({
   communities,
   feedThreads,
   hotThreads,
   communitySlugMap,
 }: ForumTabsProps) {
-  const [tab, setTab] = useState<"Communities" | "Feed" | "Hot">("Feed");
-
-  const tabs: Array<{ label: "Communities" | "Feed" | "Hot"; count?: number }> = [
-    { label: "Feed" },
-    { label: "Hot" },
-    { label: "Communities", count: communities.length },
-  ];
-
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+    <RadixTabs.Root defaultValue="Feed" style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
       {/* Tab bar */}
-      <div style={{ borderBottom: "1px solid var(--border)", display: "flex", gap: "0" }}>
-        {tabs.map((t) => (
-          <button
-            key={t.label}
-            onClick={() => setTab(t.label)}
-            style={{
-              padding: "10px 16px",
-              fontSize: "13px",
-              fontWeight: tab === t.label ? 600 : 400,
-              color: tab === t.label ? "var(--text)" : "var(--text-3)",
-              borderBottom: tab === t.label ? "2px solid var(--accent)" : "2px solid transparent",
-              marginBottom: "-1px",
-              background: "none",
-              border: "none",
-              borderBottom: tab === t.label ? "2px solid var(--accent)" : "2px solid transparent",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              gap: "6px",
-            }}
+      <RadixTabs.List style={{ borderBottom: "1px solid var(--border)", display: "flex", gap: "0" }}>
+        {(["Feed", "Hot", "Communities"] as const).map((label) => (
+          <RadixTabs.Trigger
+            key={label}
+            value={label}
+            style={tabTriggerStyle(false)}
+            data-active-style="true"
           >
-            {t.label}
-            {t.count !== undefined && (
+            {label}
+            {label === "Communities" && (
               <span style={{ fontSize: "11px", background: "var(--surface-2)", borderRadius: "9999px", padding: "1px 6px", color: "var(--text-3)" }}>
-                {t.count}
+                {communities.length}
               </span>
             )}
-          </button>
+          </RadixTabs.Trigger>
         ))}
-      </div>
+      </RadixTabs.List>
 
       {/* Communities tab */}
-      {tab === "Communities" && (
+      <RadixTabs.Content value="Communities">
         <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
           {communities.length === 0 ? (
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "64px 24px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--r-lg)", gap: "12px" }}>
@@ -118,10 +114,10 @@ export function ForumTabs({
             ))
           )}
         </div>
-      )}
+      </RadixTabs.Content>
 
       {/* Feed tab */}
-      {tab === "Feed" && (
+      <RadixTabs.Content value="Feed">
         <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
           {feedThreads.length === 0 ? (
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "64px 24px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--r-lg)", gap: "12px" }}>
@@ -140,10 +136,10 @@ export function ForumTabs({
             ))
           )}
         </div>
-      )}
+      </RadixTabs.Content>
 
       {/* Hot tab */}
-      {tab === "Hot" && (
+      <RadixTabs.Content value="Hot">
         <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
           {hotThreads.length === 0 ? (
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "64px 24px", background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--r-lg)", gap: "12px" }}>
@@ -162,14 +158,23 @@ export function ForumTabs({
             ))
           )}
         </div>
-      )}
+      </RadixTabs.Content>
 
       <style>{`
         .community-card:hover {
           transform: translateY(-2px);
           box-shadow: var(--shadow-md);
         }
+        [data-radix-tabs-trigger][data-state="active"] {
+          color: var(--text);
+          font-weight: 600;
+          border-bottom: 2px solid var(--accent) !important;
+        }
+        [data-radix-tabs-trigger]:hover {
+          color: var(--text);
+        }
       `}</style>
-    </div>
+    </RadixTabs.Root>
   );
 }
+

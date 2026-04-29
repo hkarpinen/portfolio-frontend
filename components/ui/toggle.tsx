@@ -1,5 +1,6 @@
 "use client";
 
+import * as Switch from "@radix-ui/react-switch";
 import { cn } from "@/lib/utils";
 import styles from "./toggle.module.css";
 
@@ -25,17 +26,15 @@ export function Toggle({
   const toggleId = id ?? (label ? `toggle-${label.toLowerCase().replace(/\s+/g, "-")}` : undefined);
   return (
     <div className={cn(styles.container, className)}>
-      <button
-        type="button"
-        role="switch"
+      <Switch.Root
         id={toggleId}
-        aria-checked={checked}
+        checked={checked}
+        onCheckedChange={onChange}
         disabled={disabled}
-        onClick={() => onChange(!checked)}
         className={cn(styles.track, styles[size], checked && styles.checked)}
       >
-        <span className={cn(styles.knob, checked && styles.knobChecked)} />
-      </button>
+        <Switch.Thumb className={cn(styles.knob, checked && styles.knobChecked)} />
+      </Switch.Root>
       {label && (
         <label htmlFor={toggleId} className={styles.label}>
           {label}

@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import * as Popover from "@radix-ui/react-popover";
 import { useNotificationsContext } from "@/components/layout/notifications-provider";
 import { NotificationsToaster } from "@/components/layout/notifications-toaster";
 import { useLogout } from "@/hooks/use-identity";
@@ -285,25 +286,6 @@ function TopBar({
   markRead: (id: string) => void;
   markAllRead: () => void;
 }) {
-  const [bellOpen, setBellOpen] = useState(false);
-  const bellRef = useRef<HTMLButtonElement>(null);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  // Close on outside click
-  useEffect(() => {
-    if (!bellOpen) return;
-    const handler = (e: MouseEvent) => {
-      if (
-        bellRef.current && !bellRef.current.contains(e.target as Node) &&
-        dropdownRef.current && !dropdownRef.current.contains(e.target as Node)
-      ) {
-        setBellOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, [bellOpen]);
-
   const initials = displayName
     ? displayName.split(/\s+/).map(p => p[0]).filter(Boolean).slice(0, 2).join("").toUpperCase()
     : "?";
@@ -366,51 +348,42 @@ function TopBar({
 
       <div style={{ flex: 1 }} />
 
-      {/* Notification bell */}
-      <div style={{ position: "relative" }}>
-        <button
-          ref={bellRef}
-          onClick={() => setBellOpen(o => !o)}
-          data-open={bellOpen ? "true" : undefined}
-          className={styles.topbarBellBtn}
-          style={{
-            background: bellOpen ? "var(--surface-2)" : undefined,
-            color: bellOpen ? "var(--text)" : undefined,
-          }}
-          aria-label={`Notifications${notifications.length > 0 ? ` (${notifications.length})` : ""}`}
-        >
-          <Icon path={ICONS.bell} size={16} />
-          {notifications.length > 0 && (
-            <span style={{
-              position: "absolute",
-              top: "5px",
-              right: "5px",
-              minWidth: "14px",
-              height: "14px",
-              borderRadius: "9999px",
-              background: "var(--accent)",
-              border: "1.5px solid var(--surface)",
-              fontSize: "9px",
-              fontWeight: "700",
-              color: "#fff",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              padding: "0 2px",
-            }}>
-              {notifications.length > 9 ? "9+" : notifications.length}
-            </span>
-          )}
-        </button>
-
-        {/* Dropdown panel */}
-        {bellOpen && (
-          <div
-            ref={dropdownRef}
+      {/* Notification bell — Radix Popover */}
+      <Popover.Root>
+        <Popover.Trigger asChild>
+          <button
+            className={styles.topbarBellBtn}
+            aria-label={`Notifications${notifications.length > 0 ? ` (${notifications.length})` : ""}`}
+          >
+            <Icon path={ICONS.bell} size={16} />
+            {notifications.length > 0 && (
+              <span style={{
+                position: "absolute",
+                top: "5px",
+                right: "5px",
+                minWidth: "14px",
+                height: "14px",
+                borderRadius: "9999px",
+                background: "var(--accent)",
+                border: "1.5px solid var(--surface)",
+                fontSize: "9px",
+                fontWeight: "700",
+                color: "#fff",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: "0 2px",
+              }}>
+                {notifications.length > 9 ? "9+" : notifications.length}
+              </span>
+            )}
+          </button>
+        </Popover.Trigger>
+        <Popover.Portal>
+          <Popover.Content
+            align="end"
+            sideOffset={8}
             style={{
-              position: "fixed",
-              top: "64px",
-              right: "16px",
               width: "min(320px, calc(100vw - 32px))",
               background: "var(--surface)",
               border: "1px solid var(--border)",
@@ -473,7 +446,7 @@ function TopBar({
                       {n.deepLink && (
                         <Link
                           href={n.deepLink}
-                          onClick={() => { markRead(n.id); removeNotification(n.id); setBellOpen(false); }}
+                          onClick={() => { markRead(n.id); removeNotification(n.id); }}
                           style={{
                             marginTop: "4px",
                             display: "inline-block",
@@ -503,9 +476,9 @@ function TopBar({
                 ))
               )}
             </div>
-          </div>
-        )}
-      </div>
+          </Popover.Content>
+        </Popover.Portal>
+      </Popover.Root>
 
       {/* Avatar / login */}
       {displayName ? (

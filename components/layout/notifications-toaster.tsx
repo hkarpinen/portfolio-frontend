@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import * as Toast from "@radix-ui/react-toast";
 import { useNotificationsContext } from "@/components/layout/notifications-provider";
 import styles from "./notifications-toaster.module.css";
 
@@ -25,70 +26,80 @@ const typeStyles: Record<"success" | "error" | "info", React.CSSProperties> = {
 export function NotificationsToaster() {
   const { toasts, removeToast, markRead } = useNotificationsContext();
 
-  if (toasts.length === 0) return null;
-
   return (
-    <div
-      style={{
-        position: "fixed",
-        bottom: "20px",
-        right: "20px",
-        zIndex: 100,
-        display: "flex",
-        flexDirection: "column",
-        gap: "8px",
-        width: "320px",
-      }}
-      role="region"
-      aria-label="Notifications"
-      aria-live="polite"
-    >
+    <Toast.Provider swipeDirection="right" duration={6000}>
       {toasts.map((n) => (
-        <div
+        <Toast.Root
           key={n.id}
-          role={n.type === "error" ? "alert" : "status"}
+          open
+          onOpenChange={(open) => {
+            if (!open) {
+              markRead(n.id);
+              removeToast(n.id);
+            }
+          }}
           style={{
             ...typeStyles[n.type],
             borderRadius: "12px",
             padding: "12px 14px",
             boxShadow: "var(--shadow-md)",
-            animation: "scaleIn 220ms cubic-bezier(0.16,1,0.3,1) both",
           }}
         >
           <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "8px" }}>
             <div style={{ flex: 1 }}>
               {n.title && (
-                <div style={{
-                  fontSize: "13px", fontWeight: "600",
-                  fontFamily: "var(--ff-display)", marginBottom: "2px",
-                }}>{n.title}</div>
+                <Toast.Title style={{ fontSize: "13px", fontWeight: "600", fontFamily: "var(--ff-display)", marginBottom: "2px", display: "block" }}>
+                  {n.title}
+                </Toast.Title>
               )}
-              <div style={{ fontSize: "13px", lineHeight: "1.4" }}>{n.message}</div>
+              <Toast.Description style={{ fontSize: "13px", lineHeight: "1.4" }}>
+                {n.message}
+              </Toast.Description>
               {n.deepLink && (
-                <Link
-                  href={n.deepLink}
-                  onClick={() => { markRead(n.id); removeToast(n.id); }}
-                  style={{
-                    marginTop: "4px", display: "inline-block",
-                    fontSize: "11px", fontWeight: "500",
-                    color: "var(--accent)", textDecoration: "underline",
-                  }}
-                >
-                  View
-                </Link>
+                <Toast.Action altText="View" asChild>
+                  <Link
+                    href={n.deepLink}
+                    onClick={() => { markRead(n.id); removeToast(n.id); }}
+                    style={{
+                      marginTop: "4px", display: "inline-block",
+                      fontSize: "11px", fontWeight: "500",
+                      color: "var(--accent)", textDecoration: "underline",
+                    }}
+                  >
+                    View
+                  </Link>
+                </Toast.Action>
               )}
             </div>
-            <button
-              type="button"
-              onClick={() => removeToast(n.id)}
-              aria-label="Dismiss"
-              className={styles.dismissBtn}
-            >
-              ✕
-            </button>
+            <Toast.Close asChild>
+              <button
+                type="button"
+                aria-label="Dismiss"
+                className={styles.dismissBtn}
+              >
+                ✕
+              </button>
+            </Toast.Close>
           </div>
-        </div>
+        </Toast.Root>
       ))}
-    </div>
+      <Toast.Viewport
+        style={{
+          position: "fixed",
+          bottom: "20px",
+          right: "20px",
+          display: "flex",
+          flexDirection: "column",
+          gap: "8px",
+          width: "320px",
+          maxWidth: "calc(100vw - 32px)",
+          zIndex: 100,
+          listStyle: "none",
+          padding: 0,
+          margin: 0,
+          outline: "none",
+        }}
+      />
+    </Toast.Provider>
   );
 }

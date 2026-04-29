@@ -5,7 +5,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { api, ApiError } from "@/lib/api-client";
+import * as Collapsible from "@radix-ui/react-collapsible";
 import { Button } from "@/components/ui/button";
+import { Toggle } from "@/components/ui/toggle";
 
 const passwordSchema = z
   .object({
@@ -121,51 +123,6 @@ function DangerButton({
   );
 }
 
-/* ── CSS Toggle Switch ────────────────────────────────────────────────────── */
-
-function Toggle({
-  checked,
-  onChange,
-}: {
-  checked: boolean;
-  onChange: (v: boolean) => void;
-}) {
-  return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={checked}
-      onClick={() => onChange(!checked)}
-      style={{
-        position: "relative",
-        width: "40px",
-        height: "22px",
-        borderRadius: "9999px",
-        background: checked ? "var(--accent)" : "var(--surface-3)",
-        border: "none",
-        cursor: "pointer",
-        padding: 0,
-        transition: "background 180ms",
-        flexShrink: 0,
-      }}
-    >
-      <span
-        style={{
-          position: "absolute",
-          top: "2px",
-          left: checked ? "19px" : "1px",
-          width: "18px",
-          height: "18px",
-          borderRadius: "9999px",
-          background: "#fff",
-          boxShadow: "0 1px 4px rgba(0,0,0,0.3)",
-          transition: "left 180ms",
-        }}
-      />
-    </button>
-  );
-}
-
 /* ── Page ─────────────────────────────────────────────────────────────────── */
 
 export default function SecuritySettingsPage() {
@@ -176,7 +133,7 @@ export default function SecuritySettingsPage() {
   const [totpCode, setTotpCode] = useState("");
   const [totpError, setTotpError] = useState<string | null>(null);
   const [totpLoading, setTotpLoading] = useState(false);
-  const [passwordOpen, setPasswordOpen] = useState(false);
+
 
   const {
     register,
@@ -272,33 +229,45 @@ export default function SecuritySettingsPage() {
 
       <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
         {/* Password card — expandable */}
-        <div style={cardStyle}>
-          <button
-            type="button"
-            onClick={() => { setPasswordOpen((o) => !o); setPasswordSaved(false); setPasswordError(null); }}
-            style={{
-              width: "100%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              padding: 0,
-            }}
-          >
-            <div>
-              <p style={sectionLabelStyle}>Password</p>
-              <p style={{ fontSize: "14px", color: "var(--text-2)", marginTop: "4px" }}>
-                Change your account password
-              </p>
-            </div>
-            <span style={{ color: "var(--text-3)", fontSize: "18px", lineHeight: 1 }}>
-              {passwordOpen ? "−" : "+"}
-            </span>
-          </button>
+        <style>{`
+          [data-collapsible-plus] { display: inline; }
+          button[data-state="open"] [data-collapsible-plus] { display: none; }
+          [data-collapsible-minus] { display: none; }
+          button[data-state="open"] [data-collapsible-minus] { display: inline; }
+        `}</style>
+        <Collapsible.Root
+          style={cardStyle}
+          onOpenChange={(open) => { if (!open) { setPasswordSaved(false); setPasswordError(null); } }}
+        >
+          <Collapsible.Trigger asChild>
+            <button
+              type="button"
+              style={{
+                width: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                padding: 0,
+              }}
+            >
+              <div>
+                <p style={sectionLabelStyle}>Password</p>
+                <p style={{ fontSize: "14px", color: "var(--text-2)", marginTop: "4px" }}>
+                  Change your account password
+                </p>
+              </div>
+              <span style={{ color: "var(--text-3)", fontSize: "18px", lineHeight: 1 }}>
+                <span data-collapsible-plus>+</span>
+                <span data-collapsible-minus>−</span>
+              </span>
+            </button>
+          </Collapsible.Trigger>
 
-          {passwordOpen && (
+          <Collapsible.Content>
+
             <form
               onSubmit={handleSubmit(onPasswordSubmit)}
               style={{ display: "flex", flexDirection: "column", gap: "14px", marginTop: "20px", paddingTop: "20px", borderTop: "1px solid var(--border)" }}
@@ -338,8 +307,8 @@ export default function SecuritySettingsPage() {
                 {isSubmitting ? "Updating…" : "Update Password"}
               </PrimaryButton>
             </form>
-          )}
-        </div>
+          </Collapsible.Content>
+        </Collapsible.Root>
 
         {/* 2FA card */}
         <div style={cardStyle}>

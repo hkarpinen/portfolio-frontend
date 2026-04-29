@@ -1,3 +1,4 @@
+import * as RadixAvatar from "@radix-ui/react-avatar";
 import { cn } from "@/lib/utils";
 import styles from "./avatar.module.css";
 
@@ -35,23 +36,19 @@ export function Avatar({ name, src, size = "md", online, className }: AvatarProp
   const fontSize = Math.round(px * 0.4);
 
   return (
-    <span
+    <RadixAvatar.Root
       className={cn(styles.wrapper, className)}
       style={{ width: px, height: px, fontSize }}
     >
-      {src ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={src}
-          alt={name ?? "Avatar"}
-          className={styles.img}
-          width={px}
-          height={px}
-        />
-      ) : (
-        <span className={styles.initials}>{getInitials(name)}</span>
-      )}
+      <RadixAvatar.Image
+        src={src ?? undefined}
+        alt={name ?? "Avatar"}
+        className={styles.img}
+      />
+      <RadixAvatar.Fallback className={styles.initials} delayMs={0}>
+        {getInitials(name)}
+      </RadixAvatar.Fallback>
       {online && <span className={styles.onlineDot} aria-label="Online" />}
-    </span>
+    </RadixAvatar.Root>
   );
 }

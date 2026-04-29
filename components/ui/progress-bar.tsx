@@ -1,3 +1,4 @@
+import * as Progress from "@radix-ui/react-progress";
 import { cn } from "@/lib/utils";
 import styles from "./progress-bar.module.css";
 
@@ -20,18 +21,15 @@ export function ProgressBar({
 }: ProgressBarProps) {
   const clamped = Math.min(100, Math.max(0, value));
   return (
-    <div
+    <Progress.Root
       className={cn(styles.track, className)}
       style={{ height }}
-      role="progressbar"
-      aria-valuenow={clamped}
-      aria-valuemin={0}
-      aria-valuemax={100}
+      value={clamped}
     >
-      <div
+      <Progress.Indicator
         className={cn(styles.fill, styles[color], animated && styles.animated)}
-        style={{ width: `${clamped}%` }}
+        style={{ width: `${clamped}%`, transform: "none" }}
       />
-    </div>
+    </Progress.Root>
   );
 }

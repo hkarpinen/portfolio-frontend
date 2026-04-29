@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 
 function Icon({ path, size = 16 }: { path: string; size?: number }) {
   return (
@@ -11,8 +11,7 @@ function Icon({ path, size = 16 }: { path: string; size?: number }) {
   );
 }
 
-const MENU_ICON  = "M3 12h18M3 6h18M3 18h18";
-const CLOSE_ICON = "M18 6L6 18M6 6l12 12";
+const MENU_ICON = "M3 12h18M3 6h18M3 18h18";
 
 interface MobileNavProps {
   displayName?: string | null;
@@ -21,34 +20,30 @@ interface MobileNavProps {
 }
 
 export function MobileNav({ displayName, avatarUrl, initials }: MobileNavProps) {
-  const [open, setOpen] = useState(false);
-
   return (
-    <>
-      {/* Toggle button (visible on mobile only) */}
-      <button
-        className="md:hidden"
-        onClick={() => setOpen(o => !o)}
-        style={{ background: "transparent", border: "none", cursor: "pointer", color: "var(--text-2)", padding: "4px" }}
-      >
-        <Icon path={open ? CLOSE_ICON : MENU_ICON} size={20} />
-      </button>
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger asChild>
+        <button
+          className="md:hidden"
+          style={{ background: "transparent", border: "none", cursor: "pointer", color: "var(--text-2)", padding: "4px" }}
+          aria-label="Open navigation menu"
+        >
+          <Icon path={MENU_ICON} size={20} />
+        </button>
+      </DropdownMenu.Trigger>
 
-      {/* Dropdown */}
-      {open && (
-        <div
+      <DropdownMenu.Portal>
+        <DropdownMenu.Content
+          align="end"
+          sideOffset={8}
           style={{
-            position: "absolute",
-            top: "100%",
-            left: 0,
-            right: 0,
-            borderTop: "1px solid var(--border)",
-            padding: "16px 24px",
-            display: "flex",
-            flexDirection: "column",
-            gap: "8px",
+            borderRadius: "12px",
+            padding: "8px",
             background: "oklch(from var(--surface) l c h / 0.95)",
             backdropFilter: "blur(12px)",
+            border: "1px solid var(--border)",
+            boxShadow: "var(--shadow-lg)",
+            minWidth: "200px",
             zIndex: 50,
           }}
         >
@@ -57,53 +52,74 @@ export function MobileNav({ displayName, avatarUrl, initials }: MobileNavProps) 
             { href: "/contact",     label: "Contact" },
             { href: "/communities", label: "Forum" },
             { href: "/households",  label: "Bills" },
-          ].map(item => (
-            <Link key={item.href} href={item.href} onClick={() => setOpen(false)} style={{
-              padding: "10px 12px", borderRadius: "8px", fontSize: "14px",
-              color: "var(--text-2)", textDecoration: "none",
-            }}>
-              {item.label}
-            </Link>
+          ].map((item) => (
+            <DropdownMenu.Item key={item.href} asChild>
+              <Link
+                href={item.href}
+                style={{
+                  display: "block",
+                  padding: "10px 12px",
+                  borderRadius: "8px",
+                  fontSize: "14px",
+                  color: "var(--text-2)",
+                  textDecoration: "none",
+                  outline: "none",
+                  cursor: "pointer",
+                }}
+              >
+                {item.label}
+              </Link>
+            </DropdownMenu.Item>
           ))}
 
-          <div style={{ height: "1px", background: "var(--border)", margin: "4px 0" }} />
+          <DropdownMenu.Separator style={{ height: "1px", background: "var(--border)", margin: "4px 0" }} />
 
           {displayName ? (
-            <Link href="/settings/profile" onClick={() => setOpen(false)} style={{
-              display: "flex", alignItems: "center", gap: "8px",
-              padding: "10px 12px", borderRadius: "8px", textDecoration: "none",
-            }}>
-              {avatarUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={avatarUrl} alt="" style={{ width: "24px", height: "24px", borderRadius: "9999px", objectFit: "cover" }} />
-              ) : (
-                <span style={{
-                  width: "24px", height: "24px", borderRadius: "9999px",
-                  background: "var(--accent-subtle)", color: "var(--accent)",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: "10px", fontWeight: "700",
-                }}>{initials ?? "?"}</span>
-              )}
-              <span style={{ fontSize: "14px", color: "var(--text)" }}>{displayName}</span>
-            </Link>
+            <DropdownMenu.Item asChild>
+              <Link
+                href="/settings/profile"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  padding: "10px 12px",
+                  borderRadius: "8px",
+                  textDecoration: "none",
+                  outline: "none",
+                  cursor: "pointer",
+                }}
+              >
+                {avatarUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={avatarUrl} alt="" style={{ width: "24px", height: "24px", borderRadius: "9999px", objectFit: "cover" }} />
+                ) : (
+                  <span style={{
+                    width: "24px", height: "24px", borderRadius: "9999px",
+                    background: "var(--accent-subtle)", color: "var(--accent)",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: "10px", fontWeight: "700",
+                  }}>{initials ?? "?"}</span>
+                )}
+                <span style={{ fontSize: "14px", color: "var(--text)" }}>{displayName}</span>
+              </Link>
+            </DropdownMenu.Item>
           ) : (
             <>
-              <Link href="/login" onClick={() => setOpen(false)} style={{
-                padding: "10px 12px", borderRadius: "8px", fontSize: "14px",
-                color: "var(--text-2)", textDecoration: "none",
-              }}>
-                Sign in
-              </Link>
-              <Link href="/register" onClick={() => setOpen(false)} style={{
-                padding: "10px 12px", borderRadius: "8px", fontSize: "14px", fontWeight: "600",
-                color: "#fff", background: "var(--accent)", textDecoration: "none", textAlign: "center",
-              }}>
-                Get started
-              </Link>
+              <DropdownMenu.Item asChild>
+                <Link href="/login" style={{ display: "block", padding: "10px 12px", borderRadius: "8px", fontSize: "14px", color: "var(--text-2)", textDecoration: "none", outline: "none", cursor: "pointer" }}>
+                  Sign in
+                </Link>
+              </DropdownMenu.Item>
+              <DropdownMenu.Item asChild>
+                <Link href="/register" style={{ display: "block", padding: "10px 12px", borderRadius: "8px", fontSize: "14px", fontWeight: "600", color: "#fff", background: "var(--accent)", textDecoration: "none", textAlign: "center", outline: "none", cursor: "pointer" }}>
+                  Get started
+                </Link>
+              </DropdownMenu.Item>
             </>
           )}
-        </div>
-      )}
-    </>
+        </DropdownMenu.Content>
+      </DropdownMenu.Portal>
+    </DropdownMenu.Root>
   );
 }
+
