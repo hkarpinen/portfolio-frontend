@@ -6,7 +6,7 @@ import type {
 } from "@/types/bills";
 
 export const fetchBillDetail = (householdId: string, billId: string) =>
-  api.get<BillPageResponse>(`/api/bills/households/${householdId}/bills/${billId}/detail`);
+  api.get<BillPageResponse>(`/api/finance/households/${householdId}/bills/${billId}/detail`);
 
 export const updateBill = (
   householdId: string,
@@ -20,22 +20,22 @@ export const updateBill = (
     description?: string;
     recurrenceFrequency?: string;
   }
-) => api.put<Bill>(`/api/bills/households/${householdId}/bills/${billId}`, { billId, ...body });
+) => api.put<Bill>(`/api/finance/households/${householdId}/bills/${billId}`, { billId, ...body });
 
 export const deleteBill = (householdId: string, billId: string) =>
-  api.delete(`/api/bills/households/${householdId}/bills/${billId}`);
+  api.delete(`/api/finance/households/${householdId}/bills/${billId}`);
 
 export const payBill = (householdId: string, billId: string) =>
-  api.post(`/api/bills/households/${householdId}/bills/${billId}/pay`);
+  api.post(`/api/finance/households/${householdId}/bills/${billId}/pay`);
 
 export const addSplit = (
   householdId: string,
   billId: string,
   body: { membershipId: string; amount: number; currency: string }
-) => api.post<BillSplit>(`/api/bills/households/${householdId}/bills/${billId}/splits`, body);
+) => api.post<BillSplit>(`/api/finance/households/${householdId}/bills/${billId}/splits`, body);
 
 export const removeSplit = (householdId: string, billId: string, splitId: string) =>
-  api.delete(`/api/bills/households/${householdId}/bills/${billId}/splits/${splitId}`);
+  api.delete(`/api/finance/households/${householdId}/bills/${billId}/splits/${splitId}`);
 
 export const createBill = (
   householdId: string,
@@ -48,4 +48,4 @@ export const createBill = (
     description?: string;
     recurrenceFrequency?: string;
   }
-) => api.post<Bill>(`/api/bills/households/${householdId}/bills`, body);
+) => api.post<Bill>(`/api/finance/households/${householdId}/bills`, body);

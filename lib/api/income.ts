@@ -3,10 +3,10 @@ import { serverFetch } from "@/lib/server-api-client";
 import type { IncomeSource, IncomePage } from "@/types/bills";
 
 export const fetchIncome = () =>
-  api.get<IncomePage>("/api/bills/income");
+  api.get<IncomePage>("/api/finance/income");
 
 export const fetchHouseholdIncome = (householdId: string) =>
-  api.get<IncomePage>(`/api/bills/households/${householdId}/income`);
+  api.get<IncomePage>(`/api/finance/households/${householdId}/income`);
 
 export const createIncomeSource = (body: {
   source: string;
@@ -15,13 +15,13 @@ export const createIncomeSource = (body: {
   frequency: string;
   startDate: string;
   householdId?: string;
-}) => api.post<IncomeSource>("/api/bills/income", body);
+}) => api.post<IncomeSource>("/api/finance/income", body);
 
 export const deleteIncomeSource = (incomeId: string) =>
-  api.delete(`/api/bills/income/${incomeId}`);
+  api.delete(`/api/finance/income/${incomeId}`);
 
 export const fetchIncomeServer = (cookieHeader: string) =>
-  serverFetch<IncomePage>("/api/bills/income", cookieHeader);
+  serverFetch<IncomePage>("/api/finance/income", cookieHeader);
 
 export const fetchHouseholdIncomeServer = (householdId: string, cookieHeader: string) =>
-  serverFetch<IncomePage>(`/api/bills/income?householdId=${householdId}`, cookieHeader);
+  serverFetch<IncomePage>(`/api/finance/income?householdId=${householdId}`, cookieHeader);

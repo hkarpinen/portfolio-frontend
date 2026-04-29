@@ -3,7 +3,7 @@ import { serverFetch } from "@/lib/server-api-client";
 import type { PersonalBill, PersonalBillPage } from "@/types/bills";
 
 export const fetchPersonalBills = () =>
-  api.get<PersonalBillPage>("/api/bills/personal-bills");
+  api.get<PersonalBillPage>("/api/finance/personal-bills");
 
 export const createPersonalBill = (body: {
   title: string;
@@ -14,7 +14,7 @@ export const createPersonalBill = (body: {
   recurrenceFrequency?: string;
   recurrenceStartDate?: string;
   description?: string;
-}) => api.post<PersonalBill>("/api/bills/personal-bills", body);
+}) => api.post<PersonalBill>("/api/finance/personal-bills", body);
 
 export const updatePersonalBill = (id: string, body: {
   title: string;
@@ -25,10 +25,10 @@ export const updatePersonalBill = (id: string, body: {
   recurrenceFrequency?: string;
   recurrenceStartDate?: string;
   description?: string;
-}) => api.put<PersonalBill>(`/api/bills/personal-bills/${id}`, body);
+}) => api.put<PersonalBill>(`/api/finance/personal-bills/${id}`, body);
 
 export const deletePersonalBill = (id: string) =>
-  api.delete(`/api/bills/personal-bills/${id}`);
+  api.delete(`/api/finance/personal-bills/${id}`);
 
 export const fetchPersonalBillsServer = (cookieHeader: string) =>
-  serverFetch<PersonalBillPage>("/api/bills/personal-bills", cookieHeader);
+  serverFetch<PersonalBillPage>("/api/finance/personal-bills", cookieHeader);
