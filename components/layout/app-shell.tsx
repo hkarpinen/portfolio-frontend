@@ -21,7 +21,7 @@ function Icon({ path, size = 16 }: { path: string; size?: number }) {
 
 const ICONS = {
   home:         "M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10",
-  portfolio:    "M4 5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5zm10 0a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1V5zm0 7a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-7zM4 14a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-5z",
+  about:        "M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z",
   bills:        "M14 2H6a2 2 0 0 0-2 2v16l3-2 2 2 2-2 2 2 2-2 3 2V4a2 2 0 0 0-2-2zm-1 7H9m6 4H9",
   personalBills:"M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2m-6 9l2 2 4-4",
   forum:        "M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z",
@@ -39,7 +39,7 @@ const ICONS = {
 /* ── Nav items config ─────────────────────────────────────────────────────── */
 const NAV_MODULES = [
   { label: "Home",      href: "/",            icon: "home" as const },
-  { label: "Portfolio", href: "/about",       icon: "portfolio" as const },
+  { label: "About",     href: "/about",       icon: "about" as const },
   { label: "Bills",     href: "/households",  icon: "bills" as const },
   { label: "Forum",     href: "/communities", icon: "forum" as const },
 ];
@@ -548,7 +548,7 @@ function TopBar({
 function BottomNav({ pathname }: { pathname: string }) {
   const items = [
     { label: "Home",      href: "/",                 icon: "home" as const },
-    { label: "Portfolio", href: "/about",             icon: "portfolio" as const },
+    { label: "About",     href: "/about",             icon: "about" as const },
     { label: "Bills",     href: "/households",        icon: "bills" as const },
     { label: "Forum",     href: "/communities",       icon: "forum" as const },
     { label: "Settings",  href: "/settings/profile",  icon: "settings" as const },

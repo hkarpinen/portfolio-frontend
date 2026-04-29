@@ -39,14 +39,14 @@ const CONTACT_INFO = [
   {
     icon: "💼",
     label: "LinkedIn",
-    value: "linkedin.com/in/example",
-    href: "https://linkedin.com",
+    value: "linkedin.com/in/hank-karpinen",
+    href: "https://www.linkedin.com/in/hank-karpinen/",
   },
   {
     icon: "🐙",
     label: "GitHub",
-    value: "github.com/example",
-    href: "https://github.com",
+    value: "github.com/hkarpinen",
+    href: "https://github.com/hkarpinen",
   },
 ];
 

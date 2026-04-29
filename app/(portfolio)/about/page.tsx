@@ -1,5 +1,10 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import styles from "./about.module.css";
+
+export const metadata: Metadata = {
+  title: "About",
+};
 
 const PROJECTS = [
   {
@@ -98,8 +103,8 @@ export default function AboutPage() {
               </Link>
               {[
                 { label: "CV", href: "/cv.pdf" },
-                { label: "GitHub", href: "https://github.com" },
-                { label: "LinkedIn", href: "https://linkedin.com" },
+                { label: "GitHub", href: "https://github.com/hkarpinen" },
+                { label: "LinkedIn", href: "https://www.linkedin.com/in/hank-karpinen/" },
               ].map(btn => (
                 <a key={btn.label} href={btn.href} target="_blank" rel="noopener noreferrer"
                   className={styles.btnSecondary}

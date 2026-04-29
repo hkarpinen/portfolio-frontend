@@ -598,7 +598,8 @@ export async function LandingPage() {
             {["Privacy", "Terms", "Docs"].map(label => (
               <span key={label} className="lp-footer-link" style={{ fontSize: "12px", color: "var(--text-3)", cursor: "pointer", transition: "color 110ms" }}>{label}</span>
             ))}
-            <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="lp-footer-link" style={{ fontSize: "12px", color: "var(--text-3)", cursor: "pointer", textDecoration: "none", transition: "color 110ms" }}>GitHub</a>
+            <a href="https://github.com/hkarpinen" target="_blank" rel="noopener noreferrer" className="lp-footer-link" style={{ fontSize: "12px", color: "var(--text-3)", cursor: "pointer", textDecoration: "none", transition: "color 110ms" }}>GitHub</a>
+            <a href="https://www.linkedin.com/in/hank-karpinen/" target="_blank" rel="noopener noreferrer" className="lp-footer-link" style={{ fontSize: "12px", color: "var(--text-3)", cursor: "pointer", textDecoration: "none", transition: "color 110ms" }}>LinkedIn</a>
           </nav>
           {/* Right: copyright */}
           <p style={{ fontSize: "12px", color: "var(--text-3)" }}>
