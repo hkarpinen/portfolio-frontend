@@ -17,8 +17,9 @@ interface AggregatedPeriod {
   totalDue: number;          // household splits
   totalPaid: number;
   personalBillsDue: number;  // personal bills
-  projectedIncome: number;
-  net: number;               // income - splits - personal
+  projectedIncome: number;   // gross
+  projectedNetIncome: number; // net after deductions
+  net: number;               // net income - splits - personal
   contributions: ContributionItem[];
   personalBills: PersonalBillItem[];
   isCurrent?: boolean;
@@ -31,13 +32,14 @@ function aggregateByYear(months: ContributionPeriodSummary[]): AggregatedPeriod[
     const bucket = map.get(y) ?? {
       label: String(y),
       totalDue: 0, totalPaid: 0, personalBillsDue: 0,
-      projectedIncome: 0, net: 0,
+      projectedIncome: 0, projectedNetIncome: 0, net: 0,
       contributions: [], personalBills: [],
     };
     bucket.totalDue += m.totalDue;
     bucket.totalPaid += m.totalPaid;
     bucket.personalBillsDue += m.personalBillsDue ?? 0;
     bucket.projectedIncome += m.projectedIncome;
+    bucket.projectedNetIncome += m.projectedNetIncome ?? m.projectedIncome;
     bucket.net += m.netAfterContributions;
     bucket.contributions.push(...m.contributions);
     bucket.personalBills.push(...(m.personalBills ?? []));
@@ -57,7 +59,7 @@ function aggregateByQuarter(months: ContributionPeriodSummary[]): AggregatedPeri
     const bucket = map.get(key) ?? {
       label: `Q${q} ${y}`,
       totalDue: 0, totalPaid: 0, personalBillsDue: 0,
-      projectedIncome: 0, net: 0,
+      projectedIncome: 0, projectedNetIncome: 0, net: 0,
       contributions: [], personalBills: [],
       isCurrent: false,
     };
@@ -65,6 +67,7 @@ function aggregateByQuarter(months: ContributionPeriodSummary[]): AggregatedPeri
     bucket.totalPaid += m.totalPaid;
     bucket.personalBillsDue += m.personalBillsDue ?? 0;
     bucket.projectedIncome += m.projectedIncome;
+    bucket.projectedNetIncome += m.projectedNetIncome ?? m.projectedIncome;
     bucket.net += m.netAfterContributions;
     bucket.contributions.push(...m.contributions);
     bucket.personalBills.push(...(m.personalBills ?? []));
@@ -82,6 +85,7 @@ function toMonthlyPeriods(months: ContributionPeriodSummary[]): AggregatedPeriod
     totalPaid: m.totalPaid,
     personalBillsDue: m.personalBillsDue ?? 0,
     projectedIncome: m.projectedIncome,
+    projectedNetIncome: m.projectedNetIncome ?? m.projectedIncome,
     net: m.netAfterContributions,
     contributions: m.contributions,
     personalBills: m.personalBills ?? [],
@@ -198,7 +202,8 @@ function PeriodCard({ p }: { p: AggregatedPeriod }) {
           { label: "Household splits", val: fmt(p.totalDue) },
           { label: "Personal bills", val: fmt(p.personalBillsDue) },
           { label: "Total obligations", val: fmt(totalObligations) },
-          { label: "Projected income", val: fmt(p.projectedIncome) },
+          { label: "Gross income", val: fmt(p.projectedIncome) },
+          ...(p.projectedNetIncome !== p.projectedIncome ? [{ label: "Net income", val: fmt(p.projectedNetIncome) }] : []),
         ].map(({ label, val }) => (
           <div key={label}>
             <p style={{ fontSize: "10px", fontWeight: "700", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>{label}</p>

@@ -3,6 +3,7 @@ import { AddPersonalBillForm } from "./add-personal-bill-form";
 import { PersonalBillList } from "./personal-bill-list";
 import { fetchPersonalBillsServer } from "@/lib/api/personal-bills";
 import { Alert } from "@/components/ui/alert";
+import { toMonthlyAmount } from "@/lib/utils";
 import type { PersonalBill } from "@/types/bills";
 
 export const dynamic = "force-dynamic";
@@ -13,17 +14,8 @@ export default async function PersonalBillsPage() {
 
   const now = new Date();
 
-  // Monthly total — recurring bills counted per their frequency
-  const monthlyTotal = bills.reduce((sum, b) => {
-    const freq = b.recurrenceFrequency?.toUpperCase();
-    if (freq === "WEEKLY") return sum + b.amount * 52 / 12;
-    if (freq === "BIWEEKLY") return sum + b.amount * 26 / 12;
-    if (freq === "QUARTERLY") return sum + b.amount / 3;
-    if (freq === "SEMIANNUALLY") return sum + b.amount / 6;
-    if (freq === "ANNUALLY") return sum + b.amount / 12;
-    if (freq === "MONTHLY") return sum + b.amount;
-    return sum;
-  }, 0);
+  // Monthly total — recurring bills normalised to monthly equivalent
+  const monthlyTotal = bills.reduce((sum, b) => sum + toMonthlyAmount(b.amount, b.recurrenceFrequency), 0);
 
   const overdueBills = bills.filter((b) => new Date(b.dueDate) < now);
   const unpaidBills = bills.filter((b) => new Date(b.dueDate) >= now);

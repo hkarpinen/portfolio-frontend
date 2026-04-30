@@ -4,6 +4,7 @@ import { useState } from "react";
 import { AddHouseholdIncomeModal } from "./add-income-modal";
 import type { IncomeSource } from "@/types/bills";
 import { Button } from "@/components/ui/button";
+import { toMonthlyAmount } from "@/lib/utils";
 
 interface IncomeClientProps {
   householdId: string;
@@ -14,15 +15,7 @@ interface IncomeClientProps {
   sourceCount: number;
 }
 
-function MonthlyAmount(amount: number, frequency: string): number {
-  const f = frequency?.toUpperCase();
-  if (f === "WEEKLY") return (amount * 52) / 12;
-  if (f === "BIWEEKLY") return (amount * 26) / 12;
-  if (f === "ANNUALLY") return amount / 12;
-  if (f === "QUARTERLY") return amount / 3;
-  if (f === "SEMIANNUALLY") return amount / 6;
-  return amount;
-}
+const MonthlyAmount = (amount: number, frequency: string) => toMonthlyAmount(amount, frequency);
 
 export function IncomeClient({
   householdId,

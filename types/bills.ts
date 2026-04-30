@@ -7,6 +7,67 @@ export interface Household {
   defaultSplitMethod?: string;
 }
 
+// ── Payroll deductions ────────────────────────────────────────────────────────
+
+export type FilingStatus =
+  | "Single"
+  | "MarriedFilingJointly"
+  | "MarriedFilingSeparately"
+  | "HeadOfHousehold";
+
+export type DeductionType =
+  | "FederalIncomeTax"
+  | "StateIncomeTax"
+  | "SocialSecurity"
+  | "Medicare"
+  | "HealthInsurance"
+  | "DentalInsurance"
+  | "VisionInsurance"
+  | "LifeInsurance"
+  | "Retirement401k"
+  | "Roth401k"
+  | "HSA"
+  | "FSA"
+  | "Other";
+
+export type DeductionCalculationMethod = "PercentOfGross" | "FixedAmount";
+
+export interface TaxWithholdingProfile {
+  filingStatus: FilingStatus;
+  stateCode: string;
+  federalAllowances: number;
+  stateAllowances: number;
+}
+
+export interface PayrollDeduction {
+  type: DeductionType;
+  label: string;
+  method: DeductionCalculationMethod;
+  value: number;
+  isEmployerSponsored: boolean;
+  frequency: string; // Weekly | BiWeekly | Monthly | Quarterly | SemiAnnually | Annually
+  isTaxExempt: boolean;
+}
+
+export interface DeductionLineItem {
+  type: DeductionType;
+  label: string;
+  isEmployerSponsored: boolean;
+  amount: number;
+  currency: string;
+}
+
+export interface NetPayBreakdown {
+  incomeId: string;
+  grossPay: number;
+  currency: string;
+  deductions: DeductionLineItem[];
+  totalDeductions: number;
+  netPay: number;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+
 export interface HouseholdSummary extends Household {
   memberCount: number;
   totalBills: number;
@@ -77,6 +138,8 @@ export interface IncomeSource {
   currency?: string;
   startDate?: string;
   householdId?: string;
+  taxProfile?: TaxWithholdingProfile | null;
+  deductions?: PayrollDeduction[];
 }
 
 export interface ContributionItem {
@@ -109,6 +172,7 @@ export interface ContributionPeriod {
   totalDue: number;
   totalPaid: number;
   projectedIncome: number;
+  projectedNetIncome: number;
   netAfterContributions: number;
   contributions: ContributionItem[];
   personalBillsDue?: number;
@@ -132,6 +196,7 @@ export interface UserBillsOverview {
   households: HouseholdSummary[];
   upcomingBills: UpcomingBill[];
   totalMonthlyIncome: number;
+  totalMonthlyNetIncome: number;
   totalPersonalBillsMonthly: number;
   contributionsByMonth?: ContributionPeriod[];
 }

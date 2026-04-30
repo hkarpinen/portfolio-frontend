@@ -1,6 +1,6 @@
 import { api } from "@/lib/api-client";
 import { serverFetch } from "@/lib/server-api-client";
-import type { IncomeSource, IncomePage } from "@/types/bills";
+import type { IncomeSource, IncomePage, NetPayBreakdown, TaxWithholdingProfile, PayrollDeduction } from "@/types/bills";
 
 export const fetchIncome = () =>
   api.get<IncomePage>("/api/finance/income");
@@ -15,10 +15,54 @@ export const createIncomeSource = (body: {
   frequency: string;
   startDate: string;
   householdId?: string;
+  initialDeductions?: PayrollDeduction[];
 }) => api.post<IncomeSource>("/api/finance/income", body);
 
 export const deleteIncomeSource = (incomeId: string) =>
   api.delete(`/api/finance/income/${incomeId}`);
+
+export const setTaxProfile = (incomeId: string, taxProfile: TaxWithholdingProfile | null) =>
+  api.put<IncomeSource>(`/api/finance/income/${incomeId}/tax-profile`, {
+    incomeId,
+    taxProfile: taxProfile
+      ? {
+          filingStatus: taxProfile.filingStatus,
+          stateCode: taxProfile.stateCode,
+          federalAllowances: taxProfile.federalAllowances,
+          stateAllowances: taxProfile.stateAllowances,
+        }
+      : null,
+  });
+
+export const addDeduction = (incomeId: string, deduction: PayrollDeduction) =>
+  api.post<IncomeSource>(`/api/finance/income/${incomeId}/deductions`, {
+    incomeId,
+    deduction: {
+      type: deduction.type,
+      label: deduction.label,
+      method: deduction.method,
+      value: deduction.value,
+      isEmployerSponsored: deduction.isEmployerSponsored,
+      frequency: deduction.frequency ?? "Monthly",
+      isTaxExempt: deduction.isTaxExempt,
+    },
+  });
+
+export const removeDeduction = (incomeId: string, type: string, label: string) =>
+  api.delete<IncomeSource>(`/api/finance/income/${incomeId}/deductions`, {
+    incomeId,
+    deductionType: type,
+    label,
+  });
+
+export const fetchNetPayBreakdown = (incomeId: string, year?: number, month?: number) => {
+  const now = new Date();
+  const y = year ?? now.getFullYear();
+  const m = month ?? now.getMonth() + 1;
+  return api.get<NetPayBreakdown>(
+    `/api/finance/income/${incomeId}/net-pay?year=${y}&month=${m}`
+  );
+};
 
 export const fetchIncomeServer = (cookieHeader: string) =>
   serverFetch<IncomePage>("/api/finance/income", cookieHeader);

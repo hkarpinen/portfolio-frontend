@@ -4,19 +4,12 @@ import { IncomeClient } from "./income-client";
 import { fetchHouseholdServer } from "@/lib/api/households";
 import { fetchHouseholdIncomeServer } from "@/lib/api/income";
 import { getCookieHeader } from "@/lib/server-cookies";
+import { toMonthlyAmount } from "@/lib/utils";
 import type { IncomeSource, Household } from "@/types/bills";
 
 export const dynamic = "force-dynamic";
 
-function toMonthly(amount: number, frequency: string): number {
-  const f = frequency?.toUpperCase();
-  if (f === "WEEKLY") return (amount * 52) / 12;
-  if (f === "BIWEEKLY") return (amount * 26) / 12;
-  if (f === "ANNUALLY") return amount / 12;
-  if (f === "QUARTERLY") return amount / 3;
-  if (f === "SEMIANNUALLY") return amount / 6;
-  return amount;
-}
+// toMonthly is provided by @/lib/utils toMonthlyAmount
 
 export default async function HouseholdIncomePage({
   params,
@@ -33,7 +26,7 @@ export default async function HouseholdIncomePage({
   if (!household) notFound();
 
   const sources: IncomeSource[] = incomeData?.items ?? [];
-  const monthlyTotal = sources.reduce((sum, s) => sum + toMonthly(s.amount, s.frequency), 0);
+  const monthlyTotal = sources.reduce((sum, s) => sum + toMonthlyAmount(s.amount, s.frequency), 0);
   const annualTotal = monthlyTotal * 12;
 
   return (

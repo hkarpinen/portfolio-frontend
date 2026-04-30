@@ -353,6 +353,159 @@
     }
   }
 
+  /* ── Income / deductions modal — responsive sheet ───────────────────────
+   *
+   * On mobile  (<640 px): full-screen bottom sheet that slides up from the
+   *   bottom edge. Top corners are rounded; bottom corners are flush.
+   * On desktop (≥640 px): centred floating panel, all corners rounded.
+   * ──────────────────────────────────────────────────────────────────────── */
+
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: var(--overlay);
+    display: flex;
+    align-items: flex-end;       /* sheet anchors to bottom on mobile */
+    justify-content: center;
+    padding: 0;
+    animation: fadeIn var(--dur-fast) var(--ease-out) both;
+  }
+
+  .modal-sheet {
+    background: var(--surface);
+    box-shadow: var(--shadow-lg);
+    width: 100%;
+    max-height: 92dvh;            /* dynamic viewport — accounts for mobile chrome */
+    border-radius: var(--r-xl) var(--r-xl) 0 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    animation: slideUpSheet var(--dur-mid) var(--ease-spring) both;
+  }
+
+  @keyframes slideUpSheet {
+    from { transform: translateY(40px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+
+  @media (min-width: 640px) {
+    .modal-overlay {
+      align-items: center;
+      padding: 16px;
+    }
+    .modal-sheet {
+      max-width: 540px;
+      max-height: 90vh;
+      border-radius: var(--r-xl);
+      animation: scaleIn var(--dur-mid) var(--ease-spring) both;
+    }
+  }
+
+  /* ── Segmented-control (iOS-style tab bar) ───────────────────────────────── */
+  .seg-control {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3px;
+    padding: 3px;
+    background: var(--surface-2);
+    border-radius: var(--r-md);
+  }
+
+  .seg-btn {
+    padding: 9px 0;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    border-radius: var(--r-sm);
+    cursor: pointer;
+    transition: background var(--dur-fast) var(--ease-out),
+                color var(--dur-fast) var(--ease-out),
+                box-shadow var(--dur-fast) var(--ease-out);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .seg-btn-active {
+    background: var(--accent);
+    color: #fff;
+    box-shadow: 0 1px 6px oklch(63% 0.22 252 / 0.35);
+  }
+
+  .seg-btn-inactive {
+    background: transparent;
+    color: var(--text-3);
+  }
+
+  /* ── Income card ──────────────────────────────────────────────────────── */
+  /* On narrow phones the card header becomes two rows: name top, actions bottom */
+  .income-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .income-card-meta {
+    /* name + frequency block — must not shrink away */
+    flex: 1 1 120px;
+    min-width: 0;
+  }
+
+  .income-card-meta p {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .income-card-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  /* Hide the "Deductions" text label; show icon only on small phones */
+  .income-deduct-label {
+    display: none;
+  }
+
+  /* Amounts: slightly smaller on very small screens */
+  .income-amounts-gross {
+    font-size: 14px;
+  }
+
+  .income-amounts-net {
+    font-size: 13px;
+  }
+
+  @media (min-width: 420px) {
+    .income-deduct-label {
+      display: inline;
+    }
+
+    .income-card-actions {
+      gap: 10px;
+    }
+
+    .income-amounts-gross {
+      font-size: 15px;
+    }
+
+    .income-amounts-net {
+      font-size: 14px;
+    }
+  }
+
+  .seg-btn-inactive:hover {
+    background: var(--surface-3);
+    color: var(--text-2);
+  }
+
   /* ── Responsive 3-column stats grid ────────────────────────────────────── */
   .stats-grid-3 {
     display: grid;

@@ -2,6 +2,7 @@ import { getCookieHeader } from "@/lib/server-cookies";
 import { AddIncomeForm } from "./add-income-form";
 import { IncomeList } from "./income-list";
 import { fetchIncomeServer } from "@/lib/api/income";
+import { toMonthlyAmount } from "@/lib/utils";
 import type { IncomeSource } from "@/types/bills";
 
 export const dynamic = 'force-dynamic';
@@ -10,22 +11,15 @@ export default async function IncomePage() {
   const incomePage = await fetchIncomeServer(await getCookieHeader()) ?? { items: [] as IncomeSource[] };
   const sources: IncomeSource[] = incomePage.items ?? [];
 
-  const toMonthly = (s: IncomeSource) => {
-    const freq = s.frequency?.toUpperCase();
-    if (freq === "WEEKLY") return s.amount * 52 / 12;
-    if (freq === "BIWEEKLY") return s.amount * 26 / 12;
-    if (freq === "ANNUALLY") return s.amount / 12;
-    return s.amount;
-  };
+  const toMonthly = (s: IncomeSource) => toMonthlyAmount(s.amount, s.frequency);
 
   const isRecurring = (s: IncomeSource) => {
     const freq = s.frequency?.toUpperCase();
     return freq && freq !== "ONCE" && freq !== "ONE_TIME" && freq !== "ONETIME";
   };
 
-  const monthlyTotal = sources.reduce((sum, s) => sum + toMonthly(s), 0);
+  const monthlyGross = sources.reduce((sum, s) => sum + toMonthly(s), 0);
   const recurringTotal = sources.filter(isRecurring).reduce((sum, s) => sum + toMonthly(s), 0);
-  const oneTimeTotal = sources.filter((s) => !isRecurring(s)).reduce((sum, s) => sum + toMonthly(s), 0);
 
   return (
     <div className="page-enter" style={{ display: "flex", flexDirection: "column", gap: "28px" }}>
@@ -39,12 +33,12 @@ export default async function IncomePage() {
         </p>
       </div>
 
-      {/* Stats grid — 3 cards always visible */}
+      {/* Stats grid */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: "14px" }}>
         {[
-          { label: "This month", value: `$${monthlyTotal.toFixed(2)}`, icon: <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>, accent: "var(--accent)", bg: "var(--accent-subtle)" },
+          { label: "Gross Monthly", value: `$${monthlyGross.toFixed(2)}`, icon: <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>, accent: "var(--accent)", bg: "var(--accent-subtle)" },
           { label: "Recurring", value: `$${recurringTotal.toFixed(2)}`, icon: <path d="M1 4v6h6M23 20v-6h-6M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4-4.64 4.36A9 9 0 0 1 3.51 15"/>, accent: "var(--success)", bg: "var(--success-s)" },
-          { label: "One-time", value: `$${oneTimeTotal.toFixed(2)}`, icon: <><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></>, accent: "var(--warning)", bg: "var(--warning-s)" },
+          { label: "Sources", value: String(sources.length), icon: <><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></>, accent: "var(--warning)", bg: "var(--warning-s)" },
         ].map(({ label, value, icon, accent, bg }) => (
           <div key={label} style={{
             background: "var(--surface)", border: "1px solid var(--border)",
