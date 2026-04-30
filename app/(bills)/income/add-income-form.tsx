@@ -61,6 +61,7 @@ export function AddIncomeForm() {
     setDeductions((prev) => [...prev, {
       type: dType, label, method: dMethod,
       value: val, isEmployerSponsored: dEmployer, frequency: dFrequency,
+      isTaxExempt: false
     }]);
     setDLabel(""); setDValue(""); setDEmployer(false);
   }

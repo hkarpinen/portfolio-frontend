@@ -74,6 +74,3 @@ export function SettingsTabs({
     </RadixTabs.Root>
   );
 }
-
-
-}
