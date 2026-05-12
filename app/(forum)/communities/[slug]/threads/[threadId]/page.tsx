@@ -66,6 +66,17 @@ export default async function ThreadPage({
             <h1 style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "22px", color: "var(--text)", lineHeight: 1.3, margin: 0 }}>
               {thread.title}
             </h1>
+            {thread.flair && thread.flair !== "None" && (
+              <span style={{
+                display: "inline-block", marginTop: "8px",
+                padding: "2px 10px", borderRadius: "9999px",
+                fontSize: "11px", fontWeight: 600, letterSpacing: "0.03em",
+                background: "var(--accent-subtle)", color: "var(--accent)",
+                border: "1px solid var(--accent-border)",
+              }}>
+                {thread.flair}
+              </span>
+            )}
             <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "8px" }}>
               {(thread.authorDisplayName || thread.authorUsername) && (
                 <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>

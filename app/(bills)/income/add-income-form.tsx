@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCreateIncomeSource } from "@/hooks/use-income";
@@ -31,6 +32,7 @@ const DEDUCTION_FREQUENCIES = [
 ];
 
 export function AddIncomeForm() {
+  const router = useRouter();
   const createIncome = useCreateIncomeSource();
   const {
     register, handleSubmit, reset,
@@ -89,6 +91,7 @@ export function AddIncomeForm() {
           reset();
           setDeductions([]);
           setShowDeductionForm(false);
+          router.push("/income");
         },
       }
     );

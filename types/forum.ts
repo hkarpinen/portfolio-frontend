@@ -70,7 +70,7 @@ export interface Thread {
   authorUsername?: string; // not in ThreadResponse
   communityName?: string;  // not in ThreadResponse
   communitySlug?: string;  // not in ThreadResponse
-  flair?: string;          // not in ThreadResponse
+  flair?: string;
   commentCount?: number;   // not in ThreadResponse
 }
 

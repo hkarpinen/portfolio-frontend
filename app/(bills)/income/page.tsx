@@ -1,9 +1,9 @@
 import { getCookieHeader } from "@/lib/server-cookies";
-import { AddIncomeForm } from "./add-income-form";
 import { IncomeList } from "./income-list";
 import { fetchIncomeServer } from "@/lib/api/income";
 import { toMonthlyAmount } from "@/lib/utils";
 import type { IncomeSource } from "@/types/finance";
+import Link from "next/link";
 
 export const dynamic = 'force-dynamic';
 
@@ -24,13 +24,28 @@ export default async function IncomePage() {
   return (
     <div className="page-enter" style={{ display: "flex", flexDirection: "column", gap: "28px" }}>
       {/* Header */}
-      <div>
-        <h1 style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "28px", letterSpacing: "-0.025em", color: "var(--text)" }}>
-          Income
-        </h1>
-        <p style={{ color: "var(--text-3)", marginTop: "4px", fontSize: "13px" }}>
-          Manage your personal income sources
-        </p>
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "16px" }}>
+        <div>
+          <h1 style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "28px", letterSpacing: "-0.025em", color: "var(--text)" }}>
+            Income
+          </h1>
+          <p style={{ color: "var(--text-3)", marginTop: "4px", fontSize: "13px" }}>
+            Manage your personal income sources
+          </p>
+        </div>
+        <Link
+          href="/income/new"
+          style={{
+            display: "inline-flex", alignItems: "center", gap: "6px",
+            padding: "9px 18px", borderRadius: "10px",
+            background: "var(--accent)", color: "#fff",
+            fontSize: "13px", fontWeight: "600", textDecoration: "none",
+            flexShrink: 0, marginTop: "4px",
+          }}
+        >
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add income source
+        </Link>
       </div>
 
       {/* Stats grid */}
@@ -63,8 +78,6 @@ export default async function IncomePage() {
         </p>
         <IncomeList initialData={incomePage} />
       </div>
-
-      <AddIncomeForm />
     </div>
   );
 }

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useOverview } from "@/hooks/use-household";
 import { BudgetView } from "../contributions/contributions-view";
 import { ExpenseList } from "./expense-list";
-import { AddExpenseForm } from "./add-expense-form";
+import Link from "next/link";
 import type { ExpensePage, ContributionPeriodSummary } from "@/types/finance";
 
 
@@ -118,11 +118,25 @@ export function ExpensesClient({
         <BudgetView months={initialMonths} />
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-          <p style={{ fontSize: "13px", color: "var(--text-3)", margin: 0 }}>
-            Manage your recurring personal expense definitions — phone, gym, streaming, insurance.
-          </p>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <p style={{ fontSize: "13px", color: "var(--text-3)", margin: 0 }}>
+              Manage your recurring personal expense definitions — phone, gym, streaming, insurance.
+            </p>
+            <Link
+              href="/expenses/new"
+              style={{
+                display: "inline-flex", alignItems: "center", gap: "6px",
+                padding: "8px 16px", borderRadius: "10px",
+                background: "var(--accent)", color: "#fff",
+                fontSize: "13px", fontWeight: "600", textDecoration: "none",
+                flexShrink: 0,
+              }}
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add expense
+            </Link>
+          </div>
           <ExpenseList initialData={initialExpenses} />
-          <AddExpenseForm />
         </div>
       )}
     </div>

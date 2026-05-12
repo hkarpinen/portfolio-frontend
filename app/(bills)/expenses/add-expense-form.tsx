@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCreateExpense } from "@/hooks/use-expenses";
@@ -16,6 +17,7 @@ import {
 } from "./_expense-form-shared";
 
 export function AddExpenseForm() {
+  const router = useRouter();
   const create = useCreateExpense();
   const {
     register,
@@ -44,7 +46,7 @@ export function AddExpenseForm() {
         recurrenceStartDate: data.recurrenceFrequency ? new Date(data.dueDate).toISOString() : undefined,
         description: data.description || undefined,
       },
-      { onSuccess: () => reset() }
+      { onSuccess: () => { reset(); router.push("/expenses"); } }
     );
   };
 
