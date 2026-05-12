@@ -3,7 +3,7 @@ import { AddIncomeForm } from "./add-income-form";
 import { IncomeList } from "./income-list";
 import { fetchIncomeServer } from "@/lib/api/income";
 import { toMonthlyAmount } from "@/lib/utils";
-import type { IncomeSource } from "@/types/bills";
+import type { IncomeSource } from "@/types/finance";
 
 export const dynamic = 'force-dynamic';
 
@@ -11,10 +11,10 @@ export default async function IncomePage() {
   const incomePage = await fetchIncomeServer(await getCookieHeader()) ?? { items: [] as IncomeSource[] };
   const sources: IncomeSource[] = incomePage.items ?? [];
 
-  const toMonthly = (s: IncomeSource) => toMonthlyAmount(s.amount, s.frequency);
+  const toMonthly = (s: IncomeSource) => toMonthlyAmount(s.amount, s.quotedAs);
 
   const isRecurring = (s: IncomeSource) => {
-    const freq = s.frequency?.toUpperCase();
+    const freq = s.paidEvery?.toUpperCase();
     return freq && freq !== "ONCE" && freq !== "ONE_TIME" && freq !== "ONETIME";
   };
 

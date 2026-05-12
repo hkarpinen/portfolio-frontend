@@ -42,11 +42,11 @@ export function Button({
       {loading ? (
         <Spinner />
       ) : icon ? (
-        <span style={{ display: "flex", alignItems: "center", flexShrink: 0 }}>{icon}</span>
+        <span className="flex items-center shrink-0">{icon}</span>
       ) : null}
       {children}
       {!loading && iconRight && (
-        <span style={{ display: "flex", alignItems: "center", flexShrink: 0 }}>{iconRight}</span>
+        <span className="flex items-center shrink-0">{iconRight}</span>
       )}
     </button>
   );
@@ -62,7 +62,7 @@ function Spinner() {
       stroke="currentColor"
       strokeWidth="2.5"
       strokeLinecap="round"
-      style={{ animation: "spin 0.8s linear infinite", flexShrink: 0 }}
+      className="animate-spin shrink-0"
     >
       <circle cx="12" cy="12" r="10" strokeOpacity="0.25" />
       <path d="M12 2a10 10 0 0 1 10 10" />

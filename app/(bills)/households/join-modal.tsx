@@ -1,18 +1,23 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useJoinHousehold } from "@/hooks/use-household";
 import { ApiError } from "@/lib/api-client";
 import { Button } from "@/components/ui/button";
 
 export function JoinHouseholdModal({ onClose }: { onClose: () => void }) {
+  const router = useRouter();
   const joinMutation = useJoinHousehold();
   const [code, setCode] = useState("");
 
   function handleJoin() {
     if (!code.trim()) return;
     joinMutation.mutate(code.trim(), {
-      onSuccess: () => onClose(),
+      onSuccess: () => {
+        onClose();
+        router.refresh();
+      },
     });
   }
 

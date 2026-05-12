@@ -14,7 +14,7 @@ const ICONS = {
   arrowRight:   "M5 12h14M12 5l7 7-7 7",
   check:        "M20 6L9 17l-5-5",
   forum:        "M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z",
-  bills:        "M14 2H6a2 2 0 0 0-2 2v16l3-2 2 2 2-2 2 2 2-2 3 2V4a2 2 0 0 0-2-2zm-1 7H9m6 4H9",
+  expenses:     "M14 2H6a2 2 0 0 0-2 2v16l3-2 2 2 2-2 2 2 2-2 3 2V4a2 2 0 0 0-2-2zm-1 7H9m6 4H9",
   portfolio:    "M4 5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5zm10 0a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1V5zm0 7a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-7zM4 14a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-5z",
   settings:     "M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm6.16-2.4.34-1.02a1 1 0 0 0-.54-1.2l-1.2-.48a5.1 5.1 0 0 0-.52-.86l.22-1.26a1 1 0 0 0-.64-1.1l-1.06-.36a1 1 0 0 0-1.12.38l-.7 1.06a5 5 0 0 0-1 0l-.7-1.06a1 1 0 0 0-1.12-.38l-1.06.36a1 1 0 0 0-.64 1.1l.22 1.26a5.1 5.1 0 0 0-.52.86l-1.2.48a1 1 0 0 0-.54 1.2l.34 1.02a1 1 0 0 0 .96.68h.06a5 5 0 0 0 .7 1.2l-.2 1.26a1 1 0 0 0 .64 1.1l1.06.36a1 1 0 0 0 1.12-.38l.7-1.06a5 5 0 0 0 1 0l.7 1.06a1 1 0 0 0 1.12.38l1.06-.36a1 1 0 0 0 .64-1.1l-.2-1.26a5 5 0 0 0 .7-1.2h.06a1 1 0 0 0 .96-.68z",
   star:         "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z",
@@ -34,9 +34,9 @@ const FEATURES = [
     tags: ["Next.js 14", "TypeScript", "Tailwind CSS"],
   },
   {
-    icon: "bills" as const,
+    icon: "expenses" as const,
     title: "Finance & Splits",
-    description: "Shared household expense tracking with equal/custom splits, contribution history, income logging, and per-bill payment status.",
+    description: "Shared household expense tracking with equal/custom splits, contribution history, income logging, and per-expense payment status.",
     accent: "var(--accent)",
     href: "/households",
     tags: ["ASP.NET Core", "PostgreSQL", "React Query"],
@@ -341,7 +341,7 @@ export async function LandingPage() {
               <div style={{ flex: 1, background: "var(--bg)", padding: "20px", display: "flex", flexDirection: "column", gap: "16px", overflow: "hidden" }}>
                 {/* Stat cards */}
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px" }}>
-                  {[{ label: "Balance", value: "$1,240" }, { label: "Bills due", value: "3" }, { label: "Households", value: "2" }].map(card => (
+                  {[{ label: "Balance", value: "$1,240" }, { label: "Expenses due", value: "3" }, { label: "Households", value: "2" }].map(card => (
                     <div key={card.label} style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "10px", padding: "12px 14px" }}>
                       <div style={{ fontSize: "10px", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em" }}>{card.label}</div>
                       <div style={{ fontFamily: "var(--ff-display)", fontWeight: 800, fontSize: "18px", color: "var(--text)", marginTop: "4px" }}>{card.value}</div>

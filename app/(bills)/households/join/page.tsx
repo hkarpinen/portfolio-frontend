@@ -26,6 +26,7 @@ export default function JoinHouseholdPage() {
     joinHousehold.mutate(data.invitationCode, {
       onSuccess: (result) => {
         router.push(`/households/${result.householdId}`);
+        router.refresh();
       },
     });
   };

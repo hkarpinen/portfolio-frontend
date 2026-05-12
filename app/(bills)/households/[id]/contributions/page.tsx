@@ -7,10 +7,10 @@ import {
 import { getCookieHeader } from "@/lib/server-cookies";
 import type {
   Household,
-  HouseholdContributionsResponse,
+  HouseholdMonthlyContributions,
   MemberContribution,
   HouseholdContributionItem,
-} from "@/types/bills";
+} from "@/types/finance";
 
 export const dynamic = "force-dynamic";
 
@@ -59,14 +59,14 @@ export default async function HouseholdContributionsPage({
           Contributions
         </h1>
         <p style={{ color: "var(--text-3)", marginTop: "4px", fontSize: "13px" }}>
-          Per-member bill splits by month
+          Per-member expense splits by month
         </p>
       </div>
 
       {/* Tabs */}
       <div style={{ borderBottom: "1px solid var(--border)", display: "flex" }}>
         {[
-          { label: "Bills", href: `/households/${params.id}` },
+          { label: "Expenses", href: `/households/${params.id}` },
           { label: "Contributions", href: `/households/${params.id}/contributions` },
           { label: "Income", href: `/households/${params.id}/income` },
           { label: "Settings", href: `/households/${params.id}/settings` },
@@ -107,13 +107,13 @@ export default async function HouseholdContributionsPage({
             No contributions yet
           </p>
           <p style={{ fontSize: "13px", color: "var(--text-3)", maxWidth: "320px" }}>
-            Add bills with member splits to see monthly contributions here.
+            Add expenses with member splits to see monthly contributions here.
           </p>
           <Link
-            href={`/households/${params.id}/bills/new`}
+            href={`/households/${params.id}/expenses/new`}
             style={{ background: "var(--accent)", color: "#fff", padding: "8px 20px", borderRadius: "12px", fontSize: "13px", fontWeight: 600, textDecoration: "none" }}
           >
-            Add a Bill
+            Add an Expense
           </Link>
         </div>
       ) : (

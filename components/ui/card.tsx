@@ -30,10 +30,10 @@ export function Card({
         styles[variant],
         styles[`pad-${padding}`],
         glow && styles.glow,
+        onClick && "cursor-pointer",
         className
       )}
       onClick={onClick}
-      style={onClick ? { cursor: "pointer" } : undefined}
     >
       {children}
     </Tag>

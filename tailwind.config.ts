@@ -150,7 +150,6 @@ const config: Config = {
         'slide-in': 'slideIn 220ms cubic-bezier(0.16,1,0.3,1) both',
         shimmer:    'shimmer 1.6s ease-in-out infinite',
         spin:       'spin 0.8s linear infinite',
-        mesh:       'meshMove 14s ease-in-out infinite',
       },
     },
   },

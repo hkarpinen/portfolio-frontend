@@ -5,7 +5,7 @@ export const createHouseholdSchema = z.object({
   description: z.string().max(500).optional(),
 });
 
-export const createBillSchema = z.object({
+export const createHouseholdExpenseSchema = z.object({
   title: z.string().min(1).max(300),
   amount: z.number().positive(),
   dueDate: z.string().min(1),
@@ -18,5 +18,5 @@ export const updateIncomeSchema = z.object({
 });
 
 export type CreateHouseholdInput = z.infer<typeof createHouseholdSchema>;
-export type CreateBillInput = z.infer<typeof createBillSchema>;
+export type CreateHouseholdExpenseInput = z.infer<typeof createHouseholdExpenseSchema>;
 export type UpdateIncomeInput = z.infer<typeof updateIncomeSchema>;

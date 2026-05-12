@@ -2,28 +2,28 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useCreatePersonalBill } from "@/hooks/use-personal-bills";
+import { useCreateExpense } from "@/hooks/use-expenses";
 import { ApiError } from "@/lib/api-client";
 import {
   BILL_CATEGORIES,
   FREQUENCIES,
-  personalBillSchema,
-  PersonalBillFormData,
+  expenseSchema,
+  ExpenseFormData,
   iStyle,
   Field,
   onFocusField,
   onBlurField,
-} from "./_personal-bill-form-shared";
+} from "./_expense-form-shared";
 
-export function AddPersonalBillForm() {
-  const create = useCreatePersonalBill();
+export function AddExpenseForm() {
+  const create = useCreateExpense();
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<PersonalBillFormData>({
-    resolver: zodResolver(personalBillSchema),
+  } = useForm<ExpenseFormData>({
+    resolver: zodResolver(expenseSchema),
     defaultValues: {
       currency: "USD",
       category: "Other",
@@ -32,7 +32,7 @@ export function AddPersonalBillForm() {
     },
   });
 
-  const onSubmit = (data: PersonalBillFormData) => {
+  const onSubmit = (data: ExpenseFormData) => {
     create.mutate(
       {
         title: data.title,
@@ -57,7 +57,7 @@ export function AddPersonalBillForm() {
       boxShadow: "var(--shadow-sm)",
     }}>
       <h2 style={{ fontFamily: "var(--ff-display)", fontWeight: "700", fontSize: "16px", color: "var(--text)", marginBottom: "16px" }}>
-        Add Personal Bill
+        Add Personal Expense
       </h2>
 
       <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
@@ -68,7 +68,7 @@ export function AddPersonalBillForm() {
         )}
         {create.isSuccess && (
           <div style={{ padding: "10px 14px", borderRadius: "10px", background: "var(--success-s)", border: "1px solid oklch(68% 0.18 152 / 0.25)", fontSize: "13px", color: "var(--success)" }}>
-            Bill added!
+            Expense added!
           </div>
         )}
 
@@ -166,7 +166,7 @@ export function AddPersonalBillForm() {
             transition: "background 110ms",
           }}
         >
-          {create.isPending ? "Adding…" : "Add Bill"}
+          {create.isPending ? "Adding…" : "Add Expense"}
         </button>
       </form>
     </div>

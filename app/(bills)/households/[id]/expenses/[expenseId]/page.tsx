@@ -6,10 +6,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { ApiError } from "@/lib/api-client";
-import { useBillDetail, useAddSplit, useRemoveSplit, useUpdateBill } from "@/hooks/use-bills";
+import { useHouseholdExpenseDetail, useAddExpenseSplit, useRemoveExpenseSplit, useUpdateHouseholdExpense } from "@/hooks/use-expenses";
 import { useMe } from "@/hooks/use-identity";
 import { Button } from "@/components/ui/button";
-import type { BillPageResponse } from "@/types/bills";
+import type { HouseholdExpenseDetailResponse } from "@/types/finance";
 
 const splitSchema = z.object({
   membershipId: z.string().optional(),
@@ -46,12 +46,12 @@ function StatCard({ label, value, color }: { label: string; value: string; color
   );
 }
 
-export default function BillPage({ params }: { params: { id: string; billId: string } }) {
-  const { data: page, isLoading, error: fetchError } = useBillDetail(params.id, params.billId);
+export default function ExpensePage({ params }: { params: { id: string; expenseId: string } }) {
+  const { data: page, isLoading, error: fetchError } = useHouseholdExpenseDetail(params.id, params.expenseId);
   const { data: me } = useMe();
   const [editOpen, setEditOpen] = useState(false);
 
-  const bill = page?.bill;
+  const expense = page?.expense;
   const splits = page?.splits ?? [];
   const members = page?.members ?? [];
   const currentMembership = members.find(
@@ -59,9 +59,9 @@ export default function BillPage({ params }: { params: { id: string; billId: str
   ) ?? null;
   const isPrivileged = currentMembership?.role === "Owner" || currentMembership?.role === "Admin";
 
-  const addSplitMutation = useAddSplit(params.id, params.billId);
-  const removeSplitMutation = useRemoveSplit(params.id, params.billId);
-  const updateBillMutation = useUpdateBill(params.id, params.billId);
+  const addExpenseSplitMutation = useAddExpenseSplit(params.id, params.expenseId);
+  const removeSplitMutation = useRemoveExpenseSplit(params.id, params.expenseId);
+  const updateExpenseMutation = useUpdateHouseholdExpense(params.id, params.expenseId);
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(splitSchema),
@@ -73,19 +73,19 @@ export default function BillPage({ params }: { params: { id: string; billId: str
     formState: { errors: editErrors },
   } = useForm<EditBillData>({
     resolver: zodResolver(editBillSchema),
-    values: bill ? {
-      title: bill.title,
-      amount: String(bill.amount),
-      currency: bill.currency,
-      category: String(bill.category),
-      dueDate: bill.dueDate ? new Date(bill.dueDate).toISOString().slice(0, 10) : "",
-      recurrenceFrequency: bill.recurrenceFrequency ?? "",
-      description: bill.description ?? "",
+    values: expense ? {
+      title: expense.title,
+      amount: String(expense.amount),
+      currency: expense.currency,
+      category: String(expense.category),
+      dueDate: expense.dueDate ? new Date(expense.dueDate).toISOString().slice(0, 10) : "",
+      recurrenceFrequency: expense.recurrenceFrequency ?? "",
+      description: expense.description ?? "",
     } : undefined,
   });
 
   const onEditBill = (data: EditBillData) => {
-    updateBillMutation.mutate(
+    updateExpenseMutation.mutate(
       {
         title: data.title,
         amount: Number(data.amount),
@@ -102,14 +102,14 @@ export default function BillPage({ params }: { params: { id: string; billId: str
   const onAddSplit = (data: FormData) => {
     const membershipId = isPrivileged ? data.membershipId : currentMembership?.membershipId;
     if (!membershipId) return;
-    addSplitMutation.mutate(
-      { membershipId, amount: Number(data.amount), currency: bill?.currency ?? "USD" },
+    addExpenseSplitMutation.mutate(
+      { membershipId, amount: Number(data.amount), currency: expense?.currency ?? "USD" },
       { onSuccess: () => reset() }
     );
   };
 
   const splitTotal = splits.reduce((sum, s) => sum + Number(s.amount), 0);
-  const remaining = bill ? Number(bill.amount) - splitTotal : 0;
+  const remaining = expense ? Number(expense.amount) - splitTotal : 0;
 
   if (isLoading) return (
     <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "200px" }}>
@@ -125,10 +125,10 @@ export default function BillPage({ params }: { params: { id: string; billId: str
     <div style={{
       background: "var(--danger-s)", border: "1px solid oklch(62% 0.21 22 / 0.3)",
       borderRadius: "16px", padding: "16px", color: "var(--danger)", fontSize: "14px",
-    }}>{fetchError instanceof ApiError ? fetchError.message : "Failed to load bill."}</div>
+    }}>{fetchError instanceof ApiError ? fetchError.message : "Failed to load expense."}</div>
   );
 
-  if (!bill) return null;
+  if (!expense) return null;
 
   return (
     <div style={{ maxWidth: "720px", display: "flex", flexDirection: "column", gap: "24px" }} className="page-enter">
@@ -146,13 +146,13 @@ export default function BillPage({ params }: { params: { id: string; billId: str
               fontFamily: "var(--ff-display)", fontWeight: "800",
               fontSize: "28px", letterSpacing: "-0.025em", color: "var(--text)",
               marginBottom: "4px",
-            }}>{bill.title}</h1>
+            }}>{expense.title}</h1>
             <p style={{ fontSize: "13px", color: "var(--text-3)" }}>
-              Due {new Date(bill.dueDate).toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" })}
-              {bill.recurrenceFrequency && ` · ${bill.recurrenceFrequency}`}
-              {bill.category != null && ` · ${String(bill.category)}`}
+              Due {new Date(expense.dueDate).toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" })}
+              {expense.recurrenceFrequency && ` · ${expense.recurrenceFrequency}`}
+              {expense.category != null && ` · ${String(expense.category)}`}
             </p>
-            {bill.description && <p style={{ fontSize: "13px", color: "var(--text-2)", marginTop: "6px", lineHeight: "1.6" }}>{bill.description}</p>}
+            {expense.description && <p style={{ fontSize: "13px", color: "var(--text-2)", marginTop: "6px", lineHeight: "1.6" }}>{expense.description}</p>}
           </div>
           {isPrivileged && (
             <button
@@ -177,12 +177,12 @@ export default function BillPage({ params }: { params: { id: string; billId: str
           borderRadius: "16px", padding: "24px",
         }}>
           <h2 style={{ fontFamily: "var(--ff-display)", fontWeight: "700", fontSize: "16px", color: "var(--text)", marginBottom: "16px" }}>
-            Edit Bill
+            Edit Expense
           </h2>
           <form onSubmit={handleSubmitEdit(onEditBill)} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-            {updateBillMutation.isError && (
+            {updateExpenseMutation.isError && (
               <div style={{ padding: "10px 14px", borderRadius: "10px", background: "var(--danger-s)", border: "1px solid oklch(62% 0.21 22 / 0.3)", fontSize: "13px", color: "var(--danger)" }}>
-                {updateBillMutation.error instanceof ApiError ? updateBillMutation.error.message : "Something went wrong."}
+                {updateExpenseMutation.error instanceof ApiError ? updateExpenseMutation.error.message : "Something went wrong."}
               </div>
             )}
             <div className="form-grid-2">
@@ -228,10 +228,10 @@ export default function BillPage({ params }: { params: { id: string; billId: str
             </div>
             <button
               type="submit"
-              disabled={updateBillMutation.isPending}
-              style={{ alignSelf: "flex-end", padding: "8px 20px", borderRadius: "12px", background: updateBillMutation.isPending ? "var(--surface-3)" : "var(--accent)", color: updateBillMutation.isPending ? "var(--text-3)" : "#fff", border: "none", cursor: updateBillMutation.isPending ? "not-allowed" : "pointer", fontSize: "13px", fontWeight: "600", fontFamily: "var(--ff-display)" }}
+              disabled={updateExpenseMutation.isPending}
+              style={{ alignSelf: "flex-end", padding: "8px 20px", borderRadius: "12px", background: updateExpenseMutation.isPending ? "var(--surface-3)" : "var(--accent)", color: updateExpenseMutation.isPending ? "var(--text-3)" : "#fff", border: "none", cursor: updateExpenseMutation.isPending ? "not-allowed" : "pointer", fontSize: "13px", fontWeight: "600", fontFamily: "var(--ff-display)" }}
             >
-              {updateBillMutation.isPending ? "Saving…" : "Save Changes"}
+              {updateExpenseMutation.isPending ? "Saving…" : "Save Changes"}
             </button>
           </form>
         </div>
@@ -239,17 +239,17 @@ export default function BillPage({ params }: { params: { id: string; billId: str
 
       {/* Stats */}
       <div className="stats-grid-3">
-        <StatCard label="Total" value={`${bill.currency} ${Number(bill.amount).toFixed(2)}`} />
-        <StatCard label="Allocated" value={`${bill.currency} ${splitTotal.toFixed(2)}`} color={splitTotal > 0 ? "var(--success)" : undefined} />
+        <StatCard label="Total" value={`${expense.currency} ${Number(expense.amount).toFixed(2)}`} />
+        <StatCard label="Allocated" value={`${expense.currency} ${splitTotal.toFixed(2)}`} color={splitTotal > 0 ? "var(--success)" : undefined} />
         <StatCard
           label="Unallocated"
-          value={`${bill.currency} ${remaining.toFixed(2)}`}
+          value={`${expense.currency} ${remaining.toFixed(2)}`}
           color={remaining > 0.001 ? "var(--warning)" : "var(--success)"}
         />
       </div>
 
       {/* Progress bar */}
-      {bill.amount > 0 && (
+      {expense.amount > 0 && (
         <div style={{
           background: "var(--surface)", border: "1px solid var(--border)",
           borderRadius: "16px", padding: "16px 20px",
@@ -257,14 +257,14 @@ export default function BillPage({ params }: { params: { id: string; billId: str
           <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
             <span style={{ fontSize: "12px", color: "var(--text-3)" }}>Allocation progress</span>
             <span style={{ fontSize: "12px", fontWeight: "600", color: "var(--text)" }}>
-              {((splitTotal / Number(bill.amount)) * 100).toFixed(0)}%
+              {((splitTotal / Number(expense.amount)) * 100).toFixed(0)}%
             </span>
           </div>
           <div style={{ height: "6px", background: "var(--surface-3)", borderRadius: "9999px", overflow: "hidden" }}>
             <div style={{
               height: "100%", borderRadius: "9999px",
               background: remaining > 0.001 ? "var(--warning)" : "var(--success)",
-              width: `${Math.min((splitTotal / Number(bill.amount)) * 100, 100)}%`,
+              width: `${Math.min((splitTotal / Number(expense.amount)) * 100, 100)}%`,
               transition: "width 500ms cubic-bezier(0.16,1,0.3,1)",
             }} />
           </div>
@@ -361,14 +361,14 @@ export default function BillPage({ params }: { params: { id: string; billId: str
             <p style={{ fontSize: "13px", color: "var(--text-3)" }}>You are not a member of this household.</p>
           ) : (
             <form onSubmit={handleSubmit(onAddSplit)} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-              {addSplitMutation.isError && (
+              {addExpenseSplitMutation.isError && (
                 <div style={{
                   padding: "10px 14px", borderRadius: "10px",
                   background: "var(--danger-s)", border: "1px solid oklch(62% 0.21 22 / 0.3)",
                   fontSize: "13px", color: "var(--danger)",
                 }}>
-                  {addSplitMutation.error instanceof ApiError
-                    ? addSplitMutation.error.message
+                  {addExpenseSplitMutation.error instanceof ApiError
+                    ? addExpenseSplitMutation.error.message
                     : "Something went wrong."}
                 </div>
               )}
@@ -405,7 +405,7 @@ export default function BillPage({ params }: { params: { id: string; billId: str
 
               <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                 <label style={{ fontSize: "12px", fontWeight: "500", color: "var(--text-2)", letterSpacing: "0.02em" }}>
-                  Amount ({bill.currency})
+                  Amount ({expense.currency})
                 </label>
                 <input
                   type="number"
@@ -424,10 +424,10 @@ export default function BillPage({ params }: { params: { id: string; billId: str
 
               <Button
                 type="submit"
-                disabled={addSplitMutation.isPending}
+                disabled={addExpenseSplitMutation.isPending}
                 variant="primary"
               >
-                {addSplitMutation.isPending ? "Adding…" : "Add Split"}
+                {addExpenseSplitMutation.isPending ? "Adding…" : "Add Split"}
               </Button>
             </form>
           )}

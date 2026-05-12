@@ -7,7 +7,7 @@ export const BILL_CATEGORIES = [
 
 export const FREQUENCIES = ["Monthly", "Weekly", "BiWeekly", "Quarterly", "SemiAnnually", "Annually"] as const;
 
-export const personalBillSchema = z.object({
+export const expenseSchema = z.object({
   title: z.string().min(1, "Title is required").max(300),
   amount: z.string().min(1, "Amount is required").refine((v) => !isNaN(Number(v)) && Number(v) > 0, "Amount must be positive"),
   currency: z.string().min(1),
@@ -17,7 +17,7 @@ export const personalBillSchema = z.object({
   description: z.string().max(2000).optional(),
 });
 
-export type PersonalBillFormData = z.infer<typeof personalBillSchema>;
+export type ExpenseFormData = z.infer<typeof expenseSchema>;
 
 export const iStyle: React.CSSProperties = {
   height: "38px", width: "100%",

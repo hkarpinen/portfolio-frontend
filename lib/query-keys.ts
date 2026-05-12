@@ -1,33 +1,34 @@
-export const billsKeys = {
-  all: ["bills"] as const,
+export const financeKeys = {
+  all: ["finance"] as const,
 
   // Households
-  households: () => [...billsKeys.all, "households"] as const,
-  household: (id: string) => [...billsKeys.households(), id] as const,
-  householdDetail: (id: string) => [...billsKeys.household(id), "detail"] as const,
-  householdMembers: (id: string) => [...billsKeys.household(id), "members"] as const,
-  householdDashboard: (id: string) => [...billsKeys.household(id), "dashboard"] as const,
+  households: () => [...financeKeys.all, "households"] as const,
+  household: (id: string) => [...financeKeys.households(), id] as const,
+  householdDetail: (id: string) => [...financeKeys.household(id), "detail"] as const,
+  householdMembers: (id: string) => [...financeKeys.household(id), "members"] as const,
+  householdDashboard: (id: string) => [...financeKeys.household(id), "dashboard"] as const,
 
-  // Bills
-  bills: (householdId: string) => [...billsKeys.household(householdId), "bills"] as const,
-  bill: (householdId: string, billId: string) => [...billsKeys.bills(householdId), billId] as const,
-  billDetail: (householdId: string, billId: string) => [...billsKeys.bill(householdId, billId), "detail"] as const,
-  billSplits: (householdId: string, billId: string) => [...billsKeys.bill(householdId, billId), "splits"] as const,
+  // Shared Expenses
+  householdExpenses: (householdId: string) => [...financeKeys.household(householdId), "shared-expenses"] as const,
+  householdExpense: (householdId: string, householdExpenseId: string) => [...financeKeys.householdExpenses(householdId), householdExpenseId] as const,
+  householdExpenseDetail: (householdId: string, householdExpenseId: string) => [...financeKeys.householdExpense(householdId, householdExpenseId), "detail"] as const,
+  householdExpenseSplits: (householdId: string, householdExpenseId: string) => [...financeKeys.householdExpense(householdId, householdExpenseId), "splits"] as const,
 
   // Income
-  income: () => [...billsKeys.all, "income"] as const,
-  householdIncome: (id: string) => [...billsKeys.income(), id] as const,
+  income: () => [...financeKeys.all, "income"] as const,
+  householdIncome: (id: string) => [...financeKeys.income(), id] as const,
 
   // Overview / contributions
-  overview: () => [...billsKeys.all, "overview"] as const,
-  contributions: (householdId?: string) =>
+  overview: () => [...financeKeys.all, "overview"] as const,
+  householdContributions: (householdId?: string) =>
     householdId
-      ? [...billsKeys.all, "contributions", householdId]
-      : [...billsKeys.all, "contributions"],
+      ? [...financeKeys.all, "contributions", householdId]
+      : [...financeKeys.all, "contributions"],
+  accountBalance: () => [...financeKeys.all, "account-balance"] as const,
 
-  // Personal Bills
-  personalBills: () => [...billsKeys.all, "personal-bills"] as const,
-  personalBill: (id: string) => [...billsKeys.personalBills(), id] as const,
+  // Expenses (personal)
+  expenses: () => [...financeKeys.all, "expenses"] as const,
+  expense: (id: string) => [...financeKeys.expenses(), id] as const,
 } as const;
 
 export const forumKeys = {

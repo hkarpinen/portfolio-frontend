@@ -51,21 +51,13 @@ export function MobileNav({ displayName, avatarUrl, initials }: MobileNavProps) 
             { href: "/about",       label: "About" },
             { href: "/contact",     label: "Contact" },
             { href: "/communities", label: "Forum" },
-            { href: "/households",  label: "Bills" },
+            { href: "/households",  label: "Expenses" },
           ].map((item) => (
             <DropdownMenu.Item key={item.href} asChild>
               <Link
                 href={item.href}
-                style={{
-                  display: "block",
-                  padding: "10px 12px",
-                  borderRadius: "8px",
-                  fontSize: "14px",
-                  color: "var(--text-2)",
-                  textDecoration: "none",
-                  outline: "none",
-                  cursor: "pointer",
-                }}
+                className="block px-3 py-[10px] rounded-lg text-sm no-underline outline-none cursor-pointer transition-colors data-[highlighted]:bg-surface-2"
+                style={{ color: "var(--text-2)" }}
               >
                 {item.label}
               </Link>
@@ -78,16 +70,7 @@ export function MobileNav({ displayName, avatarUrl, initials }: MobileNavProps) 
             <DropdownMenu.Item asChild>
               <Link
                 href="/settings/profile"
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  padding: "10px 12px",
-                  borderRadius: "8px",
-                  textDecoration: "none",
-                  outline: "none",
-                  cursor: "pointer",
-                }}
+                className="flex items-center gap-2 px-3 py-[10px] rounded-lg no-underline outline-none cursor-pointer transition-colors data-[highlighted]:bg-surface-2"
               >
                 {avatarUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
@@ -106,12 +89,12 @@ export function MobileNav({ displayName, avatarUrl, initials }: MobileNavProps) 
           ) : (
             <>
               <DropdownMenu.Item asChild>
-                <Link href="/login" style={{ display: "block", padding: "10px 12px", borderRadius: "8px", fontSize: "14px", color: "var(--text-2)", textDecoration: "none", outline: "none", cursor: "pointer" }}>
+                <Link href="/login" className="block px-3 py-[10px] rounded-lg text-sm no-underline outline-none cursor-pointer transition-colors data-[highlighted]:bg-surface-2" style={{ color: "var(--text-2)" }}>
                   Sign in
                 </Link>
               </DropdownMenu.Item>
               <DropdownMenu.Item asChild>
-                <Link href="/register" style={{ display: "block", padding: "10px 12px", borderRadius: "8px", fontSize: "14px", fontWeight: "600", color: "#fff", background: "var(--accent)", textDecoration: "none", textAlign: "center", outline: "none", cursor: "pointer" }}>
+                <Link href="/register" className="block px-3 py-[10px] rounded-lg text-sm font-semibold text-center no-underline outline-none cursor-pointer transition-colors data-[highlighted]:brightness-110" style={{ color: "#fff", background: "var(--accent)" }}>
                   Get started
                 </Link>
               </DropdownMenu.Item>

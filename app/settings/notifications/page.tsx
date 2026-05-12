@@ -19,13 +19,14 @@ const DEFAULT_PREFS: Prefs = {
   newMemberAlerts: true,
 };
 
-const TABS = ["Profile", "Security", "Notifications"] as const;
+const TABS = ["Profile", "Security", "Notifications", "Connections"] as const;
 type Tab = (typeof TABS)[number];
 
 const TAB_HREFS: Record<Tab, string> = {
   Profile: "/settings/profile",
   Security: "/settings/security",
   Notifications: "/settings/notifications",
+  Connections: "/settings/connections",
 };
 
 /* ── Notification row ─────────────────────────────────────────────────────── */
@@ -112,12 +113,12 @@ export default function NotificationsSettingsPage() {
     items: { key: keyof Prefs; label: string; description: string }[];
   }[] = [
     {
-      category: "Bills",
+      category: "Expenses",
       items: [
         {
           key: "billsDueReminders",
-          label: "Bills Due Reminders",
-          description: "Get reminded when bills are coming due",
+          label: "Expense Due Reminders",
+          description: "Get reminded when expenses are coming due",
         },
       ],
     },

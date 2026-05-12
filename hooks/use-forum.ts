@@ -19,6 +19,7 @@ export function useThreads(params: { communityId?: string; sort?: string; page?:
   return useQuery({
     queryKey: forumKeys.threads(params.communityId, params.sort),
     queryFn: () => fetchThreads(params),
+    staleTime: 60_000,
   });
 }
 
@@ -26,6 +27,7 @@ export function useThread(threadId: string) {
   return useQuery({
     queryKey: forumKeys.thread(threadId),
     queryFn: () => fetchThread(threadId),
+    staleTime: 60_000,
     enabled: !!threadId,
   });
 }
@@ -34,6 +36,7 @@ export function useComments(threadId: string) {
   return useQuery({
     queryKey: forumKeys.comments(threadId),
     queryFn: () => fetchComments(threadId),
+    staleTime: 60_000,
     enabled: !!threadId,
   });
 }

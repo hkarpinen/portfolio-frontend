@@ -1,27 +1,33 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { BillsList } from "./bills-list";
+import { ExpensesList } from "./expenses-list";
 import { fetchHouseholdDetailServer } from "@/lib/api/households";
+import { fetchHouseholdExpensesServer } from "@/lib/api/household-expenses";
 import { getSession } from "@/lib/auth/session";
 import { getCookieHeader } from "@/lib/server-cookies";
-import type { Bill, Household, HouseholdDashboard, HouseholdMember, HouseholdPageResponse } from "@/types/bills";
+import type { HouseholdExpense, HouseholdExpenseListResponse, Household, HouseholdDashboard, MembershipResponse, HouseholdDetailResponse } from "@/types/finance";
 
 export const dynamic = 'force-dynamic';
 
 export default async function HouseholdPage({ params }: { params: { id: string } }) {
   const cookieHeader = await getCookieHeader();
 
-  // The (bills) layout has already called requireUser(), so getSession()
+  // The finance layout has already called requireUser(), so getSession()
   // is guaranteed to return a session here. Both calls share one /me
   // request thanks to React.cache.
-  const [page, session] = await Promise.all([
+  const [page, billsPage, session] = await Promise.all([
     fetchHouseholdDetailServer(params.id, cookieHeader),
+    fetchHouseholdExpensesServer(params.id, cookieHeader),
     getSession(),
   ]);
 
   if (!page) notFound();
 
-  const { household, members, bills, dashboard } = page;
+  const { household, members, bills: householdExpenses, dashboard } = page;
+  // Prefer the expenses list from the dedicated endpoint (includes callerIsPaid/currentOccurrenceDate).
+  // Fall back to the household detail expenses if the dedicated fetch failed.
+  const expenses = billsPage?.items ?? householdExpenses;
+  const initialBillsData: HouseholdExpenseListResponse = billsPage ?? { items: householdExpenses, totalCount: householdExpenses.length };
 
   const memberCount = members.length;
   const isOwner = session?.userId?.toLowerCase() === household.ownerId?.toLowerCase();
@@ -70,7 +76,7 @@ export default async function HouseholdPage({ params }: { params: { id: string }
             </Link>
           )}
           <Link
-            href={`/households/${params.id}/bills/new`}
+            href={`/households/${params.id}/expenses/new`}
             style={{
               background: "var(--accent)",
               color: "#fff",
@@ -81,14 +87,14 @@ export default async function HouseholdPage({ params }: { params: { id: string }
               textDecoration: "none",
             }}
           >
-            + Add Bill
+            + Add Expense
           </Link>
         </div>
       </div>
 
       {/* Stat cards */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: "16px" }}>
-        {/* Monthly Bills */}
+        {/* Monthly Expenses */}
         <div style={{
           background: "var(--surface)",
           border: "1px solid var(--border)",
@@ -98,7 +104,7 @@ export default async function HouseholdPage({ params }: { params: { id: string }
         }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
             <span style={{ fontSize: "10px", fontWeight: "700", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
-              Monthly Bills
+              Monthly Expenses
             </span>
             <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "var(--accent-subtle)", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -120,7 +126,7 @@ export default async function HouseholdPage({ params }: { params: { id: string }
 
         {/* Full picture → Budget tab */}
         <Link
-          href="/contributions"
+          href="/expenses"
           style={{
             background: "var(--surface)",
             border: "1px solid var(--border)",
@@ -142,12 +148,12 @@ export default async function HouseholdPage({ params }: { params: { id: string }
             </div>
           </div>
           <p style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "18px", letterSpacing: "-0.02em", color: "var(--accent)", lineHeight: 1 }}>
-            Budget tab →
+            Expenses →
           </p>
           <p style={{ fontSize: "12px", color: "var(--text-3)", marginTop: "6px" }}>All obligations vs income</p>
         </Link>
 
-        {/* Total Bills */}
+        {/* Total Expenses */}
         <div style={{
           background: "var(--surface)",
           border: "1px solid var(--border)",
@@ -157,7 +163,7 @@ export default async function HouseholdPage({ params }: { params: { id: string }
         }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
             <span style={{ fontSize: "10px", fontWeight: "700", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
-              Total Bills
+              Total Expenses
             </span>
             <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "var(--accent-subtle)", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -166,9 +172,9 @@ export default async function HouseholdPage({ params }: { params: { id: string }
             </div>
           </div>
           <p style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "28px", letterSpacing: "-0.025em", color: "var(--text)", lineHeight: 1 }}>
-            {bills.length}
+            {expenses.length}
           </p>
-          <p style={{ fontSize: "12px", color: "var(--text-3)", marginTop: "6px" }}>Active bill entries</p>
+          <p style={{ fontSize: "12px", color: "var(--text-3)", marginTop: "6px" }}>Active expense entries</p>
         </div>
 
         {/* Members */}
@@ -201,9 +207,8 @@ export default async function HouseholdPage({ params }: { params: { id: string }
       {/* Tabs */}
       <div style={{ borderBottom: "1px solid var(--border)", display: "flex", gap: "0" }}>
         {[
-          { label: "Bills", href: `/households/${params.id}` },
+          { label: "Expenses", href: `/households/${params.id}` },
           { label: "Contributions", href: `/households/${params.id}/contributions` },
-          { label: "Income", href: `/households/${params.id}/income` },
           ...(isOwner ? [{ label: "Settings", href: `/households/${params.id}/settings` }] : []),
         ].map((tab) => (
           <Link
@@ -212,9 +217,9 @@ export default async function HouseholdPage({ params }: { params: { id: string }
             style={{
               padding: "10px 16px",
               fontSize: "13px",
-              fontWeight: tab.label === "Bills" ? 600 : 400,
-              color: tab.label === "Bills" ? "var(--text)" : "var(--text-3)",
-              borderBottom: tab.label === "Bills" ? "2px solid var(--accent)" : "2px solid transparent",
+              fontWeight: tab.label === "Expenses" ? 600 : 400,
+              color: tab.label === "Expenses" ? "var(--text)" : "var(--text-3)",
+              borderBottom: tab.label === "Expenses" ? "2px solid var(--accent)" : "2px solid transparent",
               marginBottom: "-1px",
               textDecoration: "none",
               transition: "color 110ms",
@@ -225,11 +230,11 @@ export default async function HouseholdPage({ params }: { params: { id: string }
         ))}
       </div>
 
-      {/* Bills list */}
+      {/* Expenses list */}
       <div>
-        <BillsList
+        <ExpensesList
           householdId={params.id}
-          initialBills={bills}
+          initialData={initialBillsData}
           canDelete={canDelete}
         />
       </div>

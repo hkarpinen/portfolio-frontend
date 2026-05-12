@@ -1,15 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { useDeleteIncomeSource, useIncome, useNetPayBreakdown } from "@/hooks/use-income";
-import type { IncomePage, IncomeSource } from "@/types/bills";
+import { useDeleteIncomeSource, useIncome, useNetPayBreakdown, useUpdateIncomeSource } from "@/hooks/use-income";
+import type { IncomeListResponse, IncomeSource } from "@/types/finance";
 import { DeleteIconButton } from "@/components/ui/delete-icon-button";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { IncomeDetailPanel, PERIODS, type Period } from "./income-detail-panel";
 import { ManageDeductionsModal } from "./manage-deductions-modal";
 import { toMonthlyAmount } from "@/lib/utils";
+import { incomeSchema, FREQUENCIES, FREQUENCY_LABELS, iStyle, Field, onFocusField, onBlurField, type IncomeFormData } from "./_income-form-shared";
 
 function toMonthly(s: IncomeSource): number {
-  return toMonthlyAmount(s.amount, s.frequency);
+  return toMonthlyAmount(s.amount, s.quotedAs);
 }
 
 // Per-card component so each card can safely call its own hook
@@ -23,8 +26,30 @@ function IncomeCard({
   deleteDisabled: boolean;
 }) {
   const [expanded, setExpanded] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [period, setPeriod] = useState<Period>("monthly");
+  const updateIncome = useUpdateIncomeSource();
+
+  const { register, handleSubmit, reset: resetForm, formState: { errors: editErrors } } = useForm<IncomeFormData>({
+    resolver: zodResolver(incomeSchema),
+    values: {
+      source: source.source,
+      amount: String(source.amount),
+      currency: source.currency ?? "USD",
+      quotedAs: (source.quotedAs as IncomeFormData["quotedAs"]) ?? "Annually",
+      paidEvery: (source.paidEvery as IncomeFormData["paidEvery"]) ?? "BiWeekly",
+      startDate: source.startDate ? source.startDate.slice(0, 10) : "",
+      lastPaycheckDate: source.lastPaycheckDate ? source.lastPaycheckDate.slice(0, 10) : new Date().toISOString().slice(0, 10),
+    },
+  });
+
+  const onEditSubmit = (data: IncomeFormData) => {
+    updateIncome.mutate(
+      { incomeId: source.incomeId, body: { ...data, amount: Number(data.amount) } },
+      { onSuccess: () => { setEditOpen(false); } }
+    );
+  };
   const now = new Date();
   const { data: breakdown } = useNetPayBreakdown(
     source.incomeId,
@@ -59,7 +84,7 @@ function IncomeCard({
               {source.source}
             </p>
             <p style={{ fontSize: "12px", color: "var(--text-3)", marginTop: "2px", textTransform: "capitalize" }}>
-              {source.frequency?.toLowerCase() ?? "monthly"}{source.currency ? ` · ${source.currency}` : ""}
+              {source.paidEvery?.toLowerCase() ?? "biweekly"}{source.currency ? ` · ${source.currency}` : ""}
             </p>
           </div>
 
@@ -88,6 +113,24 @@ function IncomeCard({
 
           {/* Icon actions — stopPropagation so they don't toggle expand */}
           <div style={{ display: "flex", alignItems: "center", gap: "4px", flexShrink: 0 }} onClick={(e) => e.stopPropagation()}>
+            {/* Edit icon button */}
+            <button
+              onClick={() => { setEditOpen((v) => !v); setExpanded(false); }}
+              title="Edit income"
+              style={{
+                width: "32px", height: "32px", borderRadius: "8px", border: "none",
+                background: editOpen ? "var(--accent-subtle)" : "var(--surface-2)",
+                color: editOpen ? "var(--accent)" : "var(--text-3)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                cursor: "pointer", flexShrink: 0,
+              }}
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+              </svg>
+            </button>
+
             {/* Deductions icon button */}
             <button
               onClick={() => setModalOpen(true)}
@@ -120,8 +163,57 @@ function IncomeCard({
           </svg>
         </div>
 
-        {/* Row 2: action buttons */}
-        <div style={{ display: "none" }} />
+        {/* Inline edit form */}
+        {editOpen && (
+          <form
+            onSubmit={handleSubmit(onEditSubmit)}
+            style={{ marginTop: "14px", paddingTop: "14px", borderTop: "1px solid var(--border)", display: "flex", flexDirection: "column", gap: "10px" }}
+          >
+            <p style={{ fontSize: "11px", fontWeight: "700", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.08em", margin: 0 }}>Edit income source</p>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+              <Field label="Source name" error={editErrors.source?.message}>
+                <input {...register("source")} style={iStyle} onFocus={onFocusField} onBlur={onBlurField} />
+              </Field>
+              <Field label="Currency" error={editErrors.currency?.message}>
+                <input {...register("currency")} style={iStyle} onFocus={onFocusField} onBlur={onBlurField} />
+              </Field>
+              <Field label="Amount" error={editErrors.amount?.message}>
+                <input type="number" step="0.01" {...register("amount")} style={iStyle} onFocus={onFocusField} onBlur={onBlurField} />
+              </Field>
+              <Field label="Amount quoted as" error={editErrors.quotedAs?.message}>
+                <select {...register("quotedAs")} style={iStyle} onFocus={onFocusField} onBlur={onBlurField}>
+                  {FREQUENCIES.map((f) => <option key={f} value={f}>{FREQUENCY_LABELS[f]}</option>)}
+                </select>
+              </Field>
+              <Field label="Paid every" error={editErrors.paidEvery?.message}>
+                <select {...register("paidEvery")} style={iStyle} onFocus={onFocusField} onBlur={onBlurField}>
+                  {FREQUENCIES.map((f) => <option key={f} value={f}>{FREQUENCY_LABELS[f]}</option>)}
+                </select>
+              </Field>
+              <Field label="Start date" error={editErrors.startDate?.message}>
+                <input type="date" {...register("startDate")} style={iStyle} onFocus={onFocusField} onBlur={onBlurField} />
+              </Field>
+              <Field label="Last paycheck date" error={editErrors.lastPaycheckDate?.message}>
+                <input type="date" {...register("lastPaycheckDate")} style={iStyle} onFocus={onFocusField} onBlur={onBlurField} />
+              </Field>
+            </div>
+
+            {updateIncome.isError && (
+              <p style={{ fontSize: "12px", color: "var(--danger)", margin: 0 }}>Failed to save. Please try again.</p>
+            )}
+            <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
+              <button type="button" onClick={() => { setEditOpen(false); resetForm(); }}
+                style={{ padding: "6px 14px", borderRadius: "10px", background: "var(--surface-2)", border: "1px solid var(--border)", fontSize: "12px", fontWeight: "600", color: "var(--text-2)", cursor: "pointer" }}>
+                Cancel
+              </button>
+              <button type="submit" disabled={updateIncome.isPending}
+                style={{ padding: "6px 14px", borderRadius: "10px", background: "var(--accent)", border: "none", fontSize: "12px", fontWeight: "600", color: "#fff", cursor: "pointer", opacity: updateIncome.isPending ? 0.6 : 1 }}>
+                {updateIncome.isPending ? "Saving…" : "Save"}
+              </button>
+            </div>
+          </form>
+        )}
 
         {/* Expandable net-pay breakdown */}
         {expanded && <IncomeDetailPanel incomeId={source.incomeId} period={period} onPeriodChange={setPeriod} />}
@@ -134,7 +226,7 @@ function IncomeCard({
   );
 }
 
-export function IncomeList({ initialData }: { initialData: IncomePage }) {
+export function IncomeList({ initialData }: { initialData: IncomeListResponse }) {
   const { data } = useIncome(initialData);
   const sources: IncomeSource[] = data?.items ?? [];
   const deleteIncome = useDeleteIncomeSource();

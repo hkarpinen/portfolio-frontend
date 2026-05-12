@@ -253,13 +253,31 @@
     border-radius: 6px;
   }
 
-  /* App main — extra bottom padding on mobile for the bottom nav */
+  /* Responsive main-content padding — top/sides scale up at larger breakpoints;
+   * bottom accounts for the fixed mobile bottom nav (cleared at md). */
   .app-main {
+    padding-top: 20px;
+    padding-left: 16px;
+    padding-right: 16px;
     padding-bottom: 96px;
+  }
+  @media (min-width: 640px) {
+    .app-main {
+      padding-top: 24px;
+      padding-left: 24px;
+      padding-right: 24px;
+    }
   }
   @media (min-width: 768px) {
     .app-main {
       padding-bottom: 28px;
+    }
+  }
+  @media (min-width: 1024px) {
+    .app-main {
+      padding-top: 28px;
+      padding-left: 32px;
+      padding-right: 32px;
     }
   }
 
@@ -304,27 +322,6 @@
   }
   .row-hover:hover {
     background: var(--surface-2);
-  }
-
-  /* ── Responsive main-content horizontal padding ─────────────────────────── */
-  .app-main {
-    padding-top: 20px;
-    padding-left: 16px;
-    padding-right: 16px;
-  }
-  @media (min-width: 640px) {
-    .app-main {
-      padding-top: 24px;
-      padding-left: 24px;
-      padding-right: 24px;
-    }
-  }
-  @media (min-width: 1024px) {
-    .app-main {
-      padding-top: 28px;
-      padding-left: 32px;
-      padding-right: 32px;
-    }
   }
 
   /* ── Responsive sidebar layout (main column + 280px sidebar) ───────────── */

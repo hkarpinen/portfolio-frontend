@@ -2,7 +2,7 @@ import Link from "next/link";
 import { getCookieHeader } from "@/lib/server-cookies";
 import { JoinHouseholdButton } from "./join-button";
 import { fetchOverviewServer } from "@/lib/api/households";
-import type { HouseholdSummary, UpcomingBill } from "@/types/bills";
+import type { HouseholdSummary, UpcomingHouseholdExpense } from "@/types/finance";
 import styles from "./households.module.css";
 
 export const dynamic = 'force-dynamic';
@@ -12,7 +12,7 @@ export default async function HouseholdsPage() {
 
   const overview = await fetchOverviewServer(await getCookieHeader());
   const households: HouseholdSummary[] = overview?.households ?? [];
-  const upcomingBills: UpcomingBill[] = overview?.upcomingBills ?? [];
+  const upcomingBills: UpcomingHouseholdExpense[] = overview?.upcomingBills ?? [];
   const totalIncome = overview?.totalMonthlyIncome ?? 0;
   const totalPersonalBills = overview?.totalPersonalBillsMonthly ?? 0;
 
@@ -30,7 +30,7 @@ export default async function HouseholdsPage() {
         <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
           <div>
             <h1 style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "28px", letterSpacing: "-0.025em", color: "var(--text)", lineHeight: 1 }}>
-              Bills
+              Households
             </h1>
             <p style={{ color: "var(--text-3)", marginTop: "4px", fontSize: "13px" }}>
               {new Date(now).toLocaleString("default", { month: "long", year: "numeric" })}
@@ -91,7 +91,7 @@ export default async function HouseholdsPage() {
         </div>
       </div>
 
-      {/* ── Upcoming bills banner (collapsed to single line) ───────────────── */}
+      {/* ── Upcoming expenses banner (collapsed to single line) ───────────────── */}
       {upcomingBills.length > 0 && (
         <div style={{
           background: "var(--warning-s)", border: "1px solid color-mix(in oklch, var(--warning) 30%, transparent)",
@@ -102,7 +102,7 @@ export default async function HouseholdsPage() {
             <circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/>
           </svg>
           <p style={{ flex: 1, fontSize: "13px", color: "var(--text-2)", margin: 0 }}>
-            <span style={{ fontWeight: "600", color: "var(--warning)" }}>{upcomingBills.length} bill{upcomingBills.length !== 1 ? "s" : ""} due in 7 days</span>
+            <span style={{ fontWeight: "600", color: "var(--warning)" }}>{upcomingBills.length} shared expense{upcomingBills.length !== 1 ? "s" : ""} due in 7 days</span>
             {" — "}
             {upcomingBills.slice(0, 2).map((b, i) => (
               <span key={b.billId}>
@@ -129,7 +129,7 @@ export default async function HouseholdsPage() {
             </svg>
           </div>
           <p style={{ fontFamily: "var(--ff-display)", fontWeight: "700", fontSize: "15px", color: "var(--text)" }}>No households yet</p>
-          <p style={{ fontSize: "13px", color: "var(--text-3)" }}>Create your first household to start tracking shared bills</p>
+          <p style={{ fontSize: "13px", color: "var(--text-3)" }}>Create your first household to start tracking shared expenses</p>
           <Link
             href="/households/new"
             style={{
@@ -147,8 +147,8 @@ export default async function HouseholdsPage() {
             const over = h.netBalance < 0;
             const HOUSEHOLD_COLORS = ["var(--accent)", "var(--accent-v)", "var(--success)", "var(--warning)"];
             const cardColor = HOUSEHOLD_COLORS[i % HOUSEHOLD_COLORS.length];
-            const hCoverageRatio = Number(h.totalIncome) > 0 && Number(h.totalBills) > 0
-              ? Math.min(Number(h.totalIncome) / Number(h.totalBills), 1)
+            const hCoverageRatio = Number(h.totalGrossIncome) > 0 && Number(h.totalBills) > 0
+              ? Math.min(Number(h.totalGrossIncome) / Number(h.totalBills), 1)
               : Number(h.totalBills) === 0 ? 1 : 0;
             return (
               <Link
@@ -167,7 +167,7 @@ export default async function HouseholdsPage() {
                     <div style={{ minWidth: 0 }}>
                       <p style={{ fontFamily: "var(--ff-display)", fontWeight: "700", fontSize: "17px", color: "var(--text)", margin: 0, lineHeight: 1.2 }}>{h.name}</p>
                       <p style={{ fontSize: "12px", color: "var(--text-3)", marginTop: "4px" }}>
-                        {h.memberCount} member{h.memberCount !== 1 ? "s" : ""} · {h.totalBills} bill{Number(h.totalBills) !== 1 ? "s" : ""}
+                        {h.memberCount} member{h.memberCount !== 1 ? "s" : ""} · {h.totalBills} expense{Number(h.totalBills) !== 1 ? "s" : ""}
                       </p>
                     </div>
                     {/* Balance badge */}
@@ -200,49 +200,6 @@ export default async function HouseholdsPage() {
           })}
         </div>
       )}
-
-      {/* ── Personal bills ─────────────────────────────────────────────────── */}
-      <div style={{ borderTop: "1px solid var(--border)", paddingTop: "20px", display: "flex", flexDirection: "column", gap: "10px" }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <div style={{ width: "30px", height: "30px", borderRadius: "8px", background: "var(--accent-subtle)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            </div>
-            <div>
-              <p style={{ fontFamily: "var(--ff-display)", fontWeight: "700", fontSize: "14px", color: "var(--text)", margin: 0 }}>Personal bills</p>
-              <p style={{ fontSize: "12px", color: "var(--text-3)", margin: 0 }}>
-                {totalPersonalBills > 0
-                  ? `$${totalPersonalBills.toFixed(0)}/mo — phone, gym, subscriptions`
-                  : "Phone, gym, subscriptions — yours alone"}
-              </p>
-            </div>
-          </div>
-          <Link href="/personal-bills" style={{
-            display: "inline-flex", alignItems: "center", gap: "5px",
-            background: totalPersonalBills === 0 ? "var(--accent)" : "var(--surface-2)",
-            color: totalPersonalBills === 0 ? "#fff" : "var(--text-2)",
-            border: totalPersonalBills === 0 ? "none" : "1px solid var(--border)",
-            padding: "7px 14px", borderRadius: "10px",
-            fontSize: "13px", fontWeight: "600", textDecoration: "none",
-            transition: "opacity 110ms",
-            flexShrink: 0,
-          }}>
-            {totalPersonalBills === 0 ? "Add bills" : "View"}
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6"/></svg>
-          </Link>
-        </div>
-
-        {/* Household splits link — lower priority, plain text */}
-        <Link href="/contributions" style={{
-          display: "inline-flex", alignItems: "center", gap: "6px",
-          padding: "5px 10px", borderRadius: "var(--r-md)", alignSelf: "flex-start",
-          fontSize: "12px", color: "var(--text-3)", textDecoration: "none",
-          transition: "background 110ms, color 110ms",
-        }} className={styles.secondaryLink}>
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
-          Household splits
-        </Link>
-      </div>
 
     </div>
   );

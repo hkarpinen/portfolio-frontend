@@ -2,16 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import styles from "./bills-sub-nav.module.css";
+import styles from "./finance-sub-nav.module.css";
 
 const TABS = [
   { label: "Households",  href: "/households" },
-  { label: "Personal",    href: "/personal-bills" },
+  { label: "Expenses",    href: "/expenses" },
   { label: "Income",      href: "/income" },
-  { label: "Budget",      href: "/contributions" },
 ] as const;
 
-export function BillsSubNav() {
+export function FinanceSubNav() {
   const pathname = usePathname();
 
   return (

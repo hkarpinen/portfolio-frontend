@@ -20,6 +20,7 @@ export function useCommunities(page = 1, pageSize = 20) {
   return useQuery({
     queryKey: forumKeys.communities(),
     queryFn: () => fetchCommunities(page, pageSize),
+    staleTime: 60_000,
   });
 }
 
@@ -27,6 +28,7 @@ export function useCommunity(slug: string) {
   return useQuery({
     queryKey: forumKeys.community(slug),
     queryFn: () => fetchCommunityBySlug(slug),
+    staleTime: 60_000,
     enabled: !!slug,
   });
 }
@@ -44,6 +46,7 @@ export function useMyMemberships() {
   return useQuery({
     queryKey: forumKeys.memberships(),
     queryFn: fetchMyMemberships,
+    staleTime: 60_000,
   });
 }
 
@@ -51,6 +54,7 @@ export function useCommunityMembers(communityId: string) {
   return useQuery({
     queryKey: forumKeys.communityMembers(communityId),
     queryFn: () => fetchCommunityMembers(communityId),
+    staleTime: 60_000,
     enabled: !!communityId,
   });
 }

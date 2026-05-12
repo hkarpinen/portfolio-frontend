@@ -28,6 +28,7 @@ export default function NewHouseholdPage() {
     createHousehold.mutate(data, {
       onSuccess: (created) => {
         router.push(`/households/${created.householdId}`);
+        router.refresh();
       },
     });
   };

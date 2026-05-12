@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
 import {
   createHouseholdSchema,
-  createBillSchema,
+  createHouseholdExpenseSchema,
   updateIncomeSchema,
-} from "@/schemas/bills";
+} from "@/schemas/finance";
 
 describe("createHouseholdSchema", () => {
   it("passes with a valid name", () => {
@@ -38,7 +38,7 @@ describe("createHouseholdSchema", () => {
   });
 });
 
-describe("createBillSchema", () => {
+describe("createHouseholdExpenseSchema", () => {
   const valid = {
     title: "Electricity",
     amount: 120.5,
@@ -47,31 +47,31 @@ describe("createBillSchema", () => {
   };
 
   it("passes with valid input", () => {
-    expect(createBillSchema.safeParse(valid).success).toBe(true);
+    expect(createHouseholdExpenseSchema.safeParse(valid).success).toBe(true);
   });
 
   it("fails with empty title", () => {
-    expect(createBillSchema.safeParse({ ...valid, title: "" }).success).toBe(false);
+    expect(createHouseholdExpenseSchema.safeParse({ ...valid, title: "" }).success).toBe(false);
   });
 
   it("fails with title longer than 300 characters", () => {
     expect(
-      createBillSchema.safeParse({ ...valid, title: "a".repeat(301) }).success
+      createHouseholdExpenseSchema.safeParse({ ...valid, title: "a".repeat(301) }).success
     ).toBe(false);
   });
 
   it("fails with non-positive amount", () => {
-    expect(createBillSchema.safeParse({ ...valid, amount: 0 }).success).toBe(false);
-    expect(createBillSchema.safeParse({ ...valid, amount: -5 }).success).toBe(false);
+    expect(createHouseholdExpenseSchema.safeParse({ ...valid, amount: 0 }).success).toBe(false);
+    expect(createHouseholdExpenseSchema.safeParse({ ...valid, amount: -5 }).success).toBe(false);
   });
 
   it("fails with empty dueDate", () => {
-    expect(createBillSchema.safeParse({ ...valid, dueDate: "" }).success).toBe(false);
+    expect(createHouseholdExpenseSchema.safeParse({ ...valid, dueDate: "" }).success).toBe(false);
   });
 
   it("fails with invalid householdId (not a UUID)", () => {
     expect(
-      createBillSchema.safeParse({ ...valid, householdId: "not-a-uuid" }).success
+      createHouseholdExpenseSchema.safeParse({ ...valid, householdId: "not-a-uuid" }).success
     ).toBe(false);
   });
 });

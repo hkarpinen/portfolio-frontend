@@ -5,9 +5,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCreateIncomeSource } from "@/hooks/use-income";
 import { ApiError } from "@/lib/api-client";
-import { FREQUENCIES, incomeSchema, IncomeFormData, iStyle, Field, onFocusField, onBlurField } from "./_income-form-shared";
+import { FREQUENCIES, FREQUENCY_LABELS, incomeSchema, IncomeFormData, iStyle, Field, onFocusField, onBlurField } from "./_income-form-shared";
 import { Button } from "@/components/ui/button";
-import type { DeductionType, DeductionCalculationMethod, PayrollDeduction } from "@/types/bills";
+import type { DeductionType, DeductionCalculationMethod, PayrollDeduction } from "@/types/finance";
 
 const DEDUCTION_TYPES: { value: DeductionType; label: string }[] = [
   { value: "HealthInsurance", label: "Health Insurance" },
@@ -39,8 +39,10 @@ export function AddIncomeForm() {
     resolver: zodResolver(incomeSchema),
     defaultValues: {
       currency: "USD",
-      frequency: "Monthly",
+      quotedAs: "Annually",
+      paidEvery: "BiWeekly",
       startDate: new Date().toISOString().slice(0, 10),
+      lastPaycheckDate: new Date().toISOString().slice(0, 10),
     },
   });
 
@@ -76,8 +78,10 @@ export function AddIncomeForm() {
         source: data.source,
         amount: Number(data.amount),
         currency: data.currency,
-        frequency: data.frequency,
+        quotedAs: data.quotedAs,
+        paidEvery: data.paidEvery,
         startDate: new Date(data.startDate).toISOString(),
+        lastPaycheckDate: new Date(data.lastPaycheckDate).toISOString(),
         initialDeductions: deductions.length > 0 ? deductions : undefined,
       },
       {
@@ -130,17 +134,27 @@ export function AddIncomeForm() {
         </div>
 
         <div className="form-grid-2">
-          <Field label="Frequency">
-            <select {...register("frequency")} style={iStyle} onFocus={onFocusField} onBlur={onBlurField}>
-              {FREQUENCIES.map((f) => <option key={f} value={f}>{f.charAt(0) + f.slice(1).toLowerCase()}</option>)}
+          <Field label="Amount quoted as" error={errors.quotedAs?.message}>
+            <select {...register("quotedAs")} style={iStyle} onFocus={onFocusField} onBlur={onBlurField}>
+              {FREQUENCIES.map((f) => <option key={f} value={f}>{FREQUENCY_LABELS[f]}</option>)}
             </select>
           </Field>
-          <Field label="Start Date" error={errors.startDate?.message}>
-            <input type="date" {...register("startDate")} style={{ ...iStyle, borderColor: errors.startDate ? "var(--danger)" : "var(--border)" }} onFocus={onFocusField} onBlur={onBlurField} />
+          <Field label="Paid every" error={errors.paidEvery?.message}>
+            <select {...register("paidEvery")} style={iStyle} onFocus={onFocusField} onBlur={onBlurField}>
+              {FREQUENCIES.map((f) => <option key={f} value={f}>{FREQUENCY_LABELS[f]}</option>)}
+            </select>
           </Field>
         </div>
 
-        {/* ── Deductions ───────────────────────────────────────────────────── */}
+        <div className="form-grid-2">
+          <Field label="Income start date" error={errors.startDate?.message}>
+            <input type="date" {...register("startDate")} style={{ ...iStyle, borderColor: errors.startDate ? "var(--danger)" : "var(--border)" }} onFocus={onFocusField} onBlur={onBlurField} />
+          </Field>
+          <Field label="Last paycheck date" error={errors.lastPaycheckDate?.message}>
+            <input type="date" {...register("lastPaycheckDate")} style={{ ...iStyle, borderColor: errors.lastPaycheckDate ? "var(--danger)" : "var(--border)" }} onFocus={onFocusField} onBlur={onBlurField} />
+          </Field>
+        </div>
+
         <div>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "10px" }}>
             <span style={{ fontSize: "11px", fontWeight: "700", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.08em" }}>

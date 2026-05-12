@@ -5,7 +5,7 @@ import { useSetTaxProfile, useAddDeduction, useRemoveDeduction } from "@/hooks/u
 import type {
   IncomeSource, TaxWithholdingProfile, PayrollDeduction,
   DeductionType, DeductionCalculationMethod, FilingStatus,
-} from "@/types/bills";
+} from "@/types/finance";
 
 // ── US States ────────────────────────────────────────────────────────────────
 const US_STATES = [

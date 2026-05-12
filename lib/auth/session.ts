@@ -52,7 +52,7 @@ export const getSession = cache(async (): Promise<Session | null> => {
     cache: "no-store",
   });
 
-  if (res.status === 401 || res.status === 403) return null;
+  if (res.status === 401 || res.status === 403 || res.status === 404) return null;
   if (!res.ok) {
     throw new Error(`identity/me failed with status ${res.status}`);
   }

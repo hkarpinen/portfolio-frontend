@@ -1,25 +1,40 @@
 import { api } from "@/lib/api-client";
 import { serverFetch } from "@/lib/server-api-client";
-import type { IncomeSource, IncomePage, NetPayBreakdown, TaxWithholdingProfile, PayrollDeduction } from "@/types/bills";
+import type { IncomeSource, IncomeListResponse, NetPayBreakdown, TaxWithholdingProfile, PayrollDeduction } from "@/types/finance";
 
 export const fetchIncome = () =>
-  api.get<IncomePage>("/api/finance/income");
+  api.get<IncomeListResponse>("/api/finance/income");
 
 export const fetchHouseholdIncome = (householdId: string) =>
-  api.get<IncomePage>(`/api/finance/households/${householdId}/income`);
+  api.get<IncomeListResponse>(`/api/finance/households/${householdId}/income`);
 
 export const createIncomeSource = (body: {
   source: string;
   amount: number;
   currency: string;
-  frequency: string;
+  quotedAs: string;
+  paidEvery: string;
   startDate: string;
+  lastPaycheckDate?: string;
   householdId?: string;
   initialDeductions?: PayrollDeduction[];
 }) => api.post<IncomeSource>("/api/finance/income", body);
 
 export const deleteIncomeSource = (incomeId: string) =>
   api.delete(`/api/finance/income/${incomeId}`);
+
+export const updateIncomeSource = (
+  incomeId: string,
+  body: {
+    source: string;
+    amount: number;
+    currency: string;
+    quotedAs: string;
+    paidEvery: string;
+    startDate: string;
+    lastPaycheckDate?: string;
+  }
+) => api.put<IncomeSource>(`/api/finance/income/${incomeId}`, { incomeId, ...body });
 
 export const setTaxProfile = (incomeId: string, taxProfile: TaxWithholdingProfile | null) =>
   api.put<IncomeSource>(`/api/finance/income/${incomeId}/tax-profile`, {
@@ -65,7 +80,7 @@ export const fetchNetPayBreakdown = (incomeId: string, year?: number, month?: nu
 };
 
 export const fetchIncomeServer = (cookieHeader: string) =>
-  serverFetch<IncomePage>("/api/finance/income", cookieHeader);
+  serverFetch<IncomeListResponse>("/api/finance/income", cookieHeader);
 
 export const fetchHouseholdIncomeServer = (householdId: string, cookieHeader: string) =>
-  serverFetch<IncomePage>(`/api/finance/income?householdId=${householdId}`, cookieHeader);
+  serverFetch<IncomeListResponse>(`/api/finance/income?householdId=${householdId}`, cookieHeader);

@@ -40,9 +40,22 @@ function severityFor(eventType: string | undefined): NotificationType {
   return "info";
 }
 
-export function useNotifications(options?: { connect?: boolean }) {
+export function useNotifications(options?: { connect?: boolean; initialNotifications?: NotificationItem[] }) {
   const connect = options?.connect ?? true;
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const initialItems = options?.initialNotifications ?? [];
+  const [notifications, setNotifications] = useState<Notification[]>(() =>
+    initialItems
+      .filter((item) => !item.isRead)
+      .reverse()
+      .map((item) => ({
+        id: item.eventId,
+        message: item.message ?? "",
+        type: severityFor(item.eventType),
+        title: item.title,
+        deepLink: item.deepLink,
+        isRead: item.isRead,
+      }))
+  );
   const [toasts, setToasts] = useState<ToastNotification[]>([]);
   const dismissTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
@@ -163,26 +176,6 @@ export function useNotifications(options?: { connect?: boolean }) {
       if (cancelled) return;
 
       source = new EventSource(STREAM_URL, { withCredentials: true });
-
-      // On every (re)connect, fetch history to pick up any notifications that
-      // were dispatched while the SSE was down. The backend also replays unread
-      // history on connect, but calling fetchNotifications here covers the race
-      // where the DB has been updated but the replay hasn't streamed yet.
-      fetchNotifications()
-        .then((res) => {
-          if (cancelled) return;
-          for (const item of (res?.items ?? []).filter((n) => !n.isRead).reverse()) {
-            upsertNotificationRef.current({
-              id: item.eventId,
-              message: item.message ?? "",
-              type: severityFor(item.eventType),
-              title: item.title,
-              deepLink: item.deepLink,
-              isRead: item.isRead,
-            });
-          }
-        })
-        .catch(() => {/* SSE stream will carry new items */});
 
       const handle = (event: MessageEvent) => {
         // Reset backoff on a successful message.

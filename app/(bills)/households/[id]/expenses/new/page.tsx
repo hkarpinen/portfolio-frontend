@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import Link from "next/link";
-import { useCreateBill } from "@/hooks/use-bills";
+import { useCreateHouseholdExpense } from "@/hooks/use-expenses";
 import { ApiError } from "@/lib/api-client";
 import { Button } from "@/components/ui/button";
 
@@ -50,9 +50,9 @@ function handleBlur(e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | H
   e.currentTarget.style.boxShadow = "none";
 }
 
-export default function NewBillPage({ params }: { params: { id: string } }) {
+export default function NewExpensePage({ params }: { params: { id: string } }) {
   const router = useRouter();
-  const createBill = useCreateBill(params.id);
+  const createExpense = useCreateHouseholdExpense(params.id);
   const {
     register, handleSubmit, watch,
     formState: { errors },
@@ -64,7 +64,7 @@ export default function NewBillPage({ params }: { params: { id: string } }) {
   const isRecurring = watch("isRecurring");
 
   const onSubmit = (data: FormData) => {
-    createBill.mutate(
+    createExpense.mutate(
       {
         title: data.title,
         amount: Number(data.amount),
@@ -87,18 +87,18 @@ export default function NewBillPage({ params }: { params: { id: string } }) {
           ← Back to Household
         </Link>
         <h1 style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "28px", letterSpacing: "-0.025em", color: "var(--text)", marginTop: "6px" }}>
-          Add Bill
+          Add Expense
         </h1>
         <p style={{ color: "var(--text-3)", fontSize: "13px", marginTop: "4px" }}>
-          Add a new bill to this household
+          Add a new expense to this household
         </p>
       </div>
 
       <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "16px", padding: "24px", boxShadow: "var(--shadow-sm)" }}>
         <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-          {createBill.isError && (
+          {createExpense.isError && (
             <div style={{ background: "var(--danger-s)", border: "1px solid var(--danger)", borderRadius: "10px", padding: "10px 14px", fontSize: "13px", color: "var(--danger)" }}>
-              {createBill.error instanceof ApiError ? createBill.error.message : "Something went wrong. Please try again."}
+              {createExpense.error instanceof ApiError ? createExpense.error.message : "Something went wrong. Please try again."}
             </div>
           )}
 
@@ -147,7 +147,7 @@ export default function NewBillPage({ params }: { params: { id: string } }) {
 
           <label style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer" }}>
             <input id="isRecurring" type="checkbox" {...register("isRecurring")} style={{ width: "16px", height: "16px", accentColor: "var(--accent)" }} />
-            <span style={{ fontSize: "13px", fontWeight: "500", color: "var(--text-2)" }}>Recurring bill</span>
+            <span style={{ fontSize: "13px", fontWeight: "500", color: "var(--text-2)" }}>Recurring expense</span>
           </label>
 
           {isRecurring && (
@@ -161,11 +161,11 @@ export default function NewBillPage({ params }: { params: { id: string } }) {
 
           <Button
             type="submit"
-            disabled={createBill.isPending}
+            disabled={createExpense.isPending}
             variant="primary"
             fullWidth
           >
-            {createBill.isPending ? "Adding..." : "Add Bill"}
+            {createExpense.isPending ? "Adding..." : "Add Expense"}
           </Button>
         </form>
       </div>

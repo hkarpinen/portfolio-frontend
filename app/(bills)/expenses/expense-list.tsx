@@ -1,16 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { useDeletePersonalBill, usePersonalBills, useUpdatePersonalBill } from "@/hooks/use-personal-bills";
-import { BILL_CATEGORIES, FREQUENCIES, personalBillSchema, type PersonalBillFormData } from "./_personal-bill-form-shared";
+import { useDeleteExpense, useExpenses, useUpdateExpense, usePayExpense, useUnpayExpense } from "@/hooks/use-expenses";
+import { BILL_CATEGORIES, FREQUENCIES, expenseSchema, type ExpenseFormData } from "./_expense-form-shared";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ApiError } from "@/lib/api-client";
-import type { PersonalBillPage } from "@/types/bills";
-import type { PersonalBill } from "@/types/bills";
+import type { ExpensePage } from "@/types/finance";
+import type { Expense } from "@/types/finance";
 import { DeleteIconButton } from "@/components/ui/delete-icon-button";
 
-const CATEGORY_COLORS: Record<string, string> = {
+export const CATEGORY_COLORS: Record<string, string> = {
   Housing: "var(--accent)",
   Rent: "var(--accent)",
   Utilities: "var(--accent-v)",
@@ -25,7 +25,7 @@ const CATEGORY_COLORS: Record<string, string> = {
   Other: "var(--text-3)",
 };
 
-const CATEGORY_ICONS: Record<string, string> = {
+export const CATEGORY_ICONS: Record<string, string> = {
   Rent: "M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10",
   Utilities: "M13 2L3 14h9l-1 8 10-12h-9l1-8z",
   Groceries: "M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4zM3 6h18M16 10a4 4 0 0 1-8 0",
@@ -39,13 +39,13 @@ const CATEGORY_ICONS: Record<string, string> = {
   Other: "M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2zm0 6v4m0 4h.01",
 };
 
-export function PersonalBillList({ initialData }: { initialData: PersonalBillPage }) {
-  const { data } = usePersonalBills(initialData);
-  const bills: PersonalBill[] = data?.items ?? [];
-  const deleteBill = useDeletePersonalBill();
+export function ExpenseList({ initialData }: { initialData: ExpensePage }) {
+  const { data } = useExpenses(initialData);
+  const expenses: Expense[] = data?.items ?? [];
+  const deleteExpense = useDeleteExpense();
   const [editingId, setEditingId] = useState<string | null>(null);
 
-  if (bills.length === 0) {
+  if (expenses.length === 0) {
     return (
       <div style={{
         background: "var(--surface)",
@@ -66,7 +66,7 @@ export function PersonalBillList({ initialData }: { initialData: PersonalBillPag
           </svg>
         </div>
         <p style={{ fontFamily: "var(--ff-display)", fontWeight: "700", fontSize: "15px", color: "var(--text)" }}>
-          No personal bills yet
+          No personal expenses yet
         </p>
         <p style={{ fontSize: "13px", color: "var(--text-3)" }}>Add your recurring expenses below.</p>
       </div>
@@ -75,59 +75,71 @@ export function PersonalBillList({ initialData }: { initialData: PersonalBillPag
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginBottom: "24px" }}>
-      {bills.map((bill) => (
-        <PersonalBillRow
-          key={bill.personalBillId}
-          bill={bill}
-          isEditing={editingId === bill.personalBillId}
-          onEditToggle={() => setEditingId(editingId === bill.personalBillId ? null : bill.personalBillId)}
+      {expenses.map((expense) => (
+        <ExpenseRow
+          key={expense.expenseId}
+          expense={expense}
+          isEditing={editingId === expense.expenseId}
+          onEditToggle={() => setEditingId(editingId === expense.expenseId ? null : expense.expenseId)}
           onEditDone={() => setEditingId(null)}
-          onDelete={() => deleteBill.mutate(bill.personalBillId)}
-          isDeleting={deleteBill.isPending}
+          onDelete={() => deleteExpense.mutate(expense.expenseId)}
+          isDeleting={deleteExpense.isPending}
         />
       ))}
     </div>
   );
 }
 
-function PersonalBillRow({
-  bill,
+function ExpenseRow({
+  expense,
   isEditing,
   onEditToggle,
   onEditDone,
   onDelete,
   isDeleting,
 }: {
-  bill: PersonalBill;
+  expense: Expense;
   isEditing: boolean;
   onEditToggle: () => void;
   onEditDone: () => void;
   onDelete: () => void;
   isDeleting: boolean;
 }) {
-  const iconPath = CATEGORY_ICONS[bill.category] ?? CATEGORY_ICONS.Other;
-  const catColor = CATEGORY_COLORS[bill.category] ?? "var(--text-3)";
-  const due = new Date(bill.dueDate);
-  const isOverdue = due < new Date();
-  const updateBill = useUpdatePersonalBill();
+  const iconPath = CATEGORY_ICONS[expense.category ?? "Other"] ?? CATEGORY_ICONS.Other;
+  const catColor = CATEGORY_COLORS[expense.category ?? "Other"] ?? "var(--text-3)";
+  const due = new Date(expense.dueDate);
+  const isOverdue = due < new Date() && !expense.isPaid;
+  const updateBill = useUpdateExpense();
+  const payExpense = usePayExpense();
+  const unpayExpense = useUnpayExpense();
+  const isPayPending = payExpense.isPending || unpayExpense.isPending;
 
-  const { register, handleSubmit, formState: { errors } } = useForm<PersonalBillFormData>({
-    resolver: zodResolver(personalBillSchema),
+  const handleTogglePaid = () => {
+    const occurrenceDate = expense.currentOccurrenceDate ?? expense.dueDate;
+    if (expense.isPaid) {
+      unpayExpense.mutate({ id: expense.expenseId, occurrenceDate });
+    } else {
+      payExpense.mutate({ id: expense.expenseId, occurrenceDate });
+    }
+  };
+
+  const { register, handleSubmit, formState: { errors } } = useForm<ExpenseFormData>({
+    resolver: zodResolver(expenseSchema),
     values: {
-      title: bill.title,
-      amount: String(bill.amount),
-      currency: bill.currency,
-      category: bill.category as PersonalBillFormData["category"],
-      dueDate: bill.dueDate ? new Date(bill.dueDate).toISOString().slice(0, 10) : "",
-      recurrenceFrequency: (bill.recurrenceFrequency ?? "") as PersonalBillFormData["recurrenceFrequency"],
-      description: bill.description ?? "",
+      title: expense.title,
+      amount: String(expense.amount),
+      currency: expense.currency,
+      category: expense.category as ExpenseFormData["category"],
+      dueDate: expense.dueDate ? new Date(expense.dueDate).toISOString().slice(0, 10) : "",
+      recurrenceFrequency: (expense.recurrenceFrequency ?? "") as ExpenseFormData["recurrenceFrequency"],
+      description: expense.description ?? "",
     },
   });
 
-  const onSubmit = (data: PersonalBillFormData) => {
+  const onSubmit = (data: ExpenseFormData) => {
     updateBill.mutate(
       {
-        id: bill.personalBillId,
+        id: expense.expenseId,
         body: {
           title: data.title,
           amount: Number(data.amount),
@@ -172,13 +184,13 @@ function PersonalBillRow({
         {/* Details */}
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap" }}>
-            <span style={{ fontFamily: "var(--ff-display)", fontWeight: 600, fontSize: "14px", color: "var(--text)" }}>{bill.title}</span>
+            <span style={{ fontFamily: "var(--ff-display)", fontWeight: 600, fontSize: "14px", color: "var(--text)" }}>{expense.title}</span>
             <span style={{
               fontSize: "10px", fontWeight: 600, padding: "1px 6px",
               borderRadius: "var(--r-full)",
               background: "var(--surface-3)", color: "var(--text-3)",
               border: "1px solid var(--border)",
-            }}>{bill.category}</span>
+            }}>{expense.category}</span>
             {isOverdue && (
               <span style={{
                 fontSize: "10px", fontWeight: 600, padding: "1px 6px",
@@ -194,7 +206,7 @@ function PersonalBillRow({
           </div>
           <p style={{ fontSize: "11px", color: "var(--text-3)", marginTop: "3px" }}>
             Due {due.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-            {bill.recurrenceFrequency ? ` · ${bill.recurrenceFrequency.toLowerCase()}` : " · one-time"}
+            {expense.recurrenceFrequency ? ` · ${expense.recurrenceFrequency.toLowerCase()}` : " · one-time"}
           </p>
         </div>
 
@@ -202,15 +214,28 @@ function PersonalBillRow({
         <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
           <div style={{ textAlign: "right" }}>
             <div style={{ fontFamily: "var(--ff-display)", fontWeight: "700", fontSize: "16px", color: isOverdue ? "var(--danger)" : "var(--text)" }}>
-              {bill.currency} {bill.amount.toFixed(2)}
+              {expense.currency} {expense.amount.toFixed(2)}
             </div>
-            <span style={{
-              fontSize: "10px", fontWeight: 600, padding: "1px 6px",
-              borderRadius: "var(--r-full)",
-              background: isOverdue ? "var(--danger-s)" : "color-mix(in oklch, var(--warning) 12%, transparent)",
-              color: isOverdue ? "var(--danger)" : "var(--warning)",
-              border: `1px solid color-mix(in oklch, ${isOverdue ? "var(--danger)" : "var(--warning)"} 25%, transparent)`,
-            }}>{isOverdue ? "Overdue" : "Unpaid"}</span>
+            <button
+              onClick={handleTogglePaid}
+              disabled={isPayPending}
+              title={expense.isPaid ? "Click to mark unpaid" : "Click to mark paid"}
+              style={{
+                fontSize: "10px", fontWeight: 600, padding: "1px 8px",
+                borderRadius: "var(--r-full)", cursor: isPayPending ? "not-allowed" : "pointer",
+                border: `1px solid color-mix(in oklch, ${expense.isPaid ? "var(--success)" : isOverdue ? "var(--danger)" : "var(--warning)"} 25%, transparent)`,
+                background: expense.isPaid
+                  ? "color-mix(in oklch, var(--success) 12%, transparent)"
+                  : isOverdue
+                    ? "var(--danger-s)"
+                    : "color-mix(in oklch, var(--warning) 12%, transparent)",
+                color: expense.isPaid ? "var(--success)" : isOverdue ? "var(--danger)" : "var(--warning)",
+                transition: "background 110ms",
+                opacity: isPayPending ? 0.6 : 1,
+              }}
+            >
+              {isPayPending ? "…" : expense.isPaid ? "✓ Paid" : isOverdue ? "Overdue" : "Unpaid"}
+            </button>
           </div>
           <button
             onClick={onEditToggle}
@@ -232,7 +257,7 @@ function PersonalBillRow({
           <DeleteIconButton
             onClick={onDelete}
             disabled={isDeleting}
-            label={`Remove ${bill.title}`}
+            label={`Remove ${expense.title}`}
           />
         </div>
       </div>

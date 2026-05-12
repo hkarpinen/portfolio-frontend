@@ -8,6 +8,10 @@
   animation: fadeIn 150ms var(--ease-out) both;
 }
 
+.backdrop[data-state="closed"] {
+  animation: fadeOut 150ms var(--ease-out) both;
+}
+
 .panel {
   position: fixed;
   top: 50%;
@@ -23,6 +27,20 @@
   max-height: 90vh;
   animation: scaleIn 200ms var(--ease-spring) both;
   overflow: hidden;
+}
+
+.panel[data-state="closed"] {
+  animation: scaleOut 200ms var(--ease-spring) both;
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+@keyframes scaleOut {
+  from { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  to   { opacity: 0; transform: translate(-50%, -50%) scale(0.95); }
 }
 
 .header {

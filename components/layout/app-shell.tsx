@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import * as Popover from "@radix-ui/react-popover";
-import { useNotificationsContext } from "@/components/layout/notifications-provider";
+import { useNotificationsContext, NotificationsProvider } from "@/components/layout/notifications-provider";
 import { NotificationsToaster } from "@/components/layout/notifications-toaster";
 import { useLogout } from "@/hooks/use-identity";
 import type { Notification } from "@/hooks/use-notifications";
@@ -22,7 +22,7 @@ function Icon({ path, size = 16 }: { path: string; size?: number }) {
 const ICONS = {
   home:         "M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10",
   about:        "M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z",
-  bills:        "M14 2H6a2 2 0 0 0-2 2v16l3-2 2 2 2-2 2 2 2-2 3 2V4a2 2 0 0 0-2-2zm-1 7H9m6 4H9",
+  expenses:     "M14 2H6a2 2 0 0 0-2 2v16l3-2 2 2 2-2 2 2 2-2 3 2V4a2 2 0 0 0-2-2zm-1 7H9m6 4H9",
   personalBills:"M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2m-6 9l2 2 4-4",
   forum:        "M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z",
   settings:     "M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm6.16-2.4.34-1.02a1 1 0 0 0-.54-1.2l-1.2-.48a5.1 5.1 0 0 0-.52-.86l.22-1.26a1 1 0 0 0-.64-1.1l-1.06-.36a1 1 0 0 0-1.12.38l-.7 1.06a5 5 0 0 0-1 0l-.7-1.06a1 1 0 0 0-1.12-.38l-1.06.36a1 1 0 0 0-.64 1.1l.22 1.26a5.1 5.1 0 0 0-.52.86l-1.2.48a1 1 0 0 0-.54 1.2l.34 1.02a1 1 0 0 0 .96.68h.06a5 5 0 0 0 .7 1.2l-.2 1.26a1 1 0 0 0 .64 1.1l1.06.36a1 1 0 0 0 1.12-.38l.7-1.06a5 5 0 0 0 1 0l.7 1.06a1 1 0 0 0 1.12.38l1.06-.36a1 1 0 0 0 .64-1.1l-.2-1.26a5 5 0 0 0 .7-1.2h.06a1 1 0 0 0 .96-.68z",
@@ -40,7 +40,7 @@ const ICONS = {
 const NAV_MODULES = [
   { label: "Home",      href: "/",            icon: "home" as const },
   { label: "About",     href: "/about",       icon: "about" as const },
-  { label: "Finance",   href: "/households",  icon: "bills" as const },
+  { label: "Finance",   href: "/households",  icon: "expenses" as const },
   { label: "Forum",     href: "/communities", icon: "forum" as const },
 ];
 
@@ -549,7 +549,7 @@ function BottomNav({ pathname }: { pathname: string }) {
   const items = [
     { label: "Home",      href: "/",                 icon: "home" as const },
     { label: "About",     href: "/about",             icon: "about" as const },
-    { label: "Finance",   href: "/households",        icon: "bills" as const },
+    { label: "Finance",   href: "/households",        icon: "expenses" as const },
     { label: "Forum",     href: "/communities",       icon: "forum" as const },
     { label: "Settings",  href: "/settings/profile",  icon: "settings" as const },
   ];
@@ -635,6 +635,21 @@ export type AppShellProps = {
 };
 
 export function AppShell({ children, displayName, avatarUrl, role, subnav }: AppShellProps) {
+  return (
+    <NotificationsProvider>
+      <AppShellInner
+        displayName={displayName}
+        avatarUrl={avatarUrl}
+        role={role}
+        subnav={subnav}
+      >
+        {children}
+      </AppShellInner>
+    </NotificationsProvider>
+  );
+}
+
+function AppShellInner({ children, displayName, avatarUrl, role, subnav }: AppShellProps) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);

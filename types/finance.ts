@@ -4,7 +4,6 @@ export interface Household {
   description?: string;
   currencyCode: string;
   ownerId: string;
-  defaultSplitMethod?: string;
 }
 
 // ── Payroll deductions ────────────────────────────────────────────────────────
@@ -71,12 +70,12 @@ export interface NetPayBreakdown {
 export interface HouseholdSummary extends Household {
   memberCount: number;
   totalBills: number;
-  totalIncome: number;
+  totalGrossIncome: number;
   netBalance: number;
   isOvercommitted: boolean;
 }
 
-export interface HouseholdMember {
+export interface MembershipResponse {
   membershipId: string;
   userId: string;
   displayName?: string;
@@ -85,8 +84,11 @@ export interface HouseholdMember {
   invitationCode?: string;
 }
 
-export interface Bill {
-  billId: string;
+/** @deprecated Use MembershipResponse */
+export type HouseholdMember = MembershipResponse;
+
+export interface HouseholdExpense {
+  expenseId: string;
   title: string;
   amount: number;
   currency: string;
@@ -95,9 +97,11 @@ export interface Bill {
   recurrenceFrequency?: string;
   isActive?: boolean;
   description?: string;
+  currentOccurrenceDate?: string;
+  callerIsPaid?: boolean;
 }
 
-export interface BillSplit {
+export interface ExpenseSplit {
   splitId: string;
   membershipId: string;
   userId: string;
@@ -109,34 +113,50 @@ export interface BillSplit {
   isClaimed: boolean;
 }
 
-export interface BillPageResponse {
-  bill: Bill;
-  splits: BillSplit[];
+export interface HouseholdExpenseListResponse {
+  items: HouseholdExpense[];
+  totalCount: number;
+}
+
+export interface HouseholdExpenseDetailResponse {
+  expense: HouseholdExpense;
+  splits: ExpenseSplit[];
   members: HouseholdMember[];
   currentUserRole?: string;
 }
 
-export interface HouseholdPageResponse {
+export interface HouseholdDetailResponse {
   household: Household;
-  members: HouseholdMember[];
-  bills: Bill[];
+  members: MembershipResponse[];
+  bills: HouseholdExpense[];
   dashboard: HouseholdDashboard;
 }
 
+/** @deprecated Use HouseholdDetailResponse */
+export type HouseholdPageResponse = HouseholdDetailResponse;
+
 export interface HouseholdDashboard {
   totalBills: number;
-  totalIncome: number;
+  totalGrossIncome: number;
+  totalNetIncome: number;
   netBalance: number;
   isOvercommitted: boolean;
+  availableBalance?: number | null;
+  balanceAsOf?: string | null;
 }
 
 export interface IncomeSource {
   incomeId: string;
   source: string;
   amount: number;
-  frequency: string;
+  /** The period the amount is quoted in (e.g. "Annually" for a $80k salary). */
+  quotedAs: string;
+  /** How often a paycheck actually arrives (e.g. "BiWeekly"). */
+  paidEvery: string;
   currency?: string;
   startDate?: string;
+  /** Date of the most recent paycheck — used as recurrence anchor on the backend. */
+  lastPaycheckDate?: string;
   householdId?: string;
   taxProfile?: TaxWithholdingProfile | null;
   deductions?: PayrollDeduction[];
@@ -156,13 +176,14 @@ export interface ContributionItem {
   claimedAt: string | null;
 }
 
-export interface PersonalBillItem {
-  personalBillId: string;
+export interface ExpenseItem {
+  expenseId: string;
   title: string;
   category: string;
   amount: number;
   currency: string;
   dueDate: string;
+  isPaid?: boolean;
 }
 
 export interface ContributionPeriod {
@@ -173,16 +194,20 @@ export interface ContributionPeriod {
   totalPaid: number;
   projectedIncome: number;
   projectedNetIncome: number;
-  netAfterContributions: number;
   contributions: ContributionItem[];
   personalBillsDue?: number;
-  personalBills?: PersonalBillItem[];
+  personalBills?: ExpenseItem[];
+  personalBillsPaid?: number;
+  /** Discretionary income for the period. Past/current months: income-math or real balance. Future: null. */
+  disposableIncome?: number | null;
+  /** How disposableIncome was derived: "balance" | "estimate" | null. */
+  disposableIncomeSource?: "balance" | "estimate" | null;
 }
 
 /** Alias used by the budget/contributions view */
 export type ContributionPeriodSummary = ContributionPeriod;
 
-export interface UpcomingBill {
+export interface UpcomingHouseholdExpense {
   billId: string;
   householdId: string;
   householdName: string;
@@ -192,43 +217,34 @@ export interface UpcomingBill {
   dueDate: string;
 }
 
-export interface UserBillsOverview {
+export interface UserOverview {
   households: HouseholdSummary[];
-  upcomingBills: UpcomingBill[];
+  upcomingBills: UpcomingHouseholdExpense[];
   totalMonthlyIncome: number;
   totalMonthlyNetIncome: number;
   totalPersonalBillsMonthly: number;
   contributionsByMonth?: ContributionPeriod[];
 }
 
-export interface PersonalBill {
-  personalBillId: string;
-  userId: string;
-  title: string;
-  description?: string;
-  amount: number;
-  currency: string;
-  category: string;
-  dueDate: string;
-  recurrenceFrequency?: string;
-  recurrenceStartDate?: string;
-  recurrenceEndDate?: string;
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
+/** @deprecated Use UserOverview */
+export type UserExpensesOverview = UserOverview;
+/** @deprecated Use UserOverview */
+export type UserFinanceOverview = UserOverview;
 
-export interface PersonalBillListResponse {
-  items: PersonalBill[];
+export interface ExpenseListResponse {
+  items: Expense[];
   totalCount: number;
 }
 
-export interface IncomePage {
+export interface IncomeListResponse {
   items: IncomeSource[];
 }
 
-export interface PersonalBillPage {
-  items: PersonalBill[];
+/** @deprecated Use IncomeListResponse */
+export type IncomePage = IncomeListResponse;
+
+export interface ExpensePage {
+  items: Expense[];
   totalCount: number;
 }
 
@@ -251,10 +267,35 @@ export interface MemberContribution {
   contributions: HouseholdContributionItem[];
 }
 
-export interface HouseholdContributionsResponse {
+export interface HouseholdMonthlyContributions {
   periodLabel: string;
   periodStart: string;
   total: number;
   currency: string;
   members: MemberContribution[];
+}
+
+/** @deprecated Use HouseholdMonthlyContributions */
+export type HouseholdContributionsResponse = HouseholdMonthlyContributions;
+
+/** Alias used by the contributions/budget view for personal expense occurrences within a period. */
+export type PersonalBillItem = ExpenseItem;
+
+export interface Expense {  expenseId: string;
+  userId: string;
+  householdId?: string;
+  title: string;
+  description?: string;
+  amount: number;
+  currency: string;
+  category?: string;
+  dueDate: string;
+  recurrenceFrequency?: string;
+  recurrenceStartDate?: string;
+  recurrenceEndDate?: string;
+  isActive?: boolean;
+  createdAt: string;
+  updatedAt: string;
+  isPaid?: boolean;
+  currentOccurrenceDate?: string;
 }

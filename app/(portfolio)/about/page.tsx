@@ -10,7 +10,7 @@ const PROJECTS = [
   {
     icon: "📋",
     title: "Finance",
-    description: "A full-stack personal finance app. Track income, manage shared household bills, split costs fairly, and visualize budget coverage over time.",
+    description: "A full-stack personal finance app. Track income, manage shared household expenses, split costs fairly, and visualize budget coverage over time.",
     tech: ["ASP.NET Core", "C#", "EF Core", "PostgreSQL", "RabbitMQ", "MassTransit", "React Query", "Docker"],
     href: "/households",
   },
@@ -24,7 +24,7 @@ const PROJECTS = [
   {
     icon: "🎨",
     title: "Portfolio Platform",
-    description: "This very application — a unified platform combining portfolio showcase, community forum, and bill management.",
+    description: "This very application — a unified platform combining portfolio showcase, community forum, and expense management.",
     tech: ["Next.js 14", "TypeScript", "Tailwind CSS", "Nginx", "Docker Compose"],
     href: "/about",
   },

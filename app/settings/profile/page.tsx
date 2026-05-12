@@ -26,13 +26,14 @@ type ForumForm = z.infer<typeof forumSchema>;
 const MAX_AVATAR_BYTES = 5 * 1024 * 1024;
 const ACCEPTED_MIME = ["image/png", "image/jpeg", "image/webp", "image/gif"];
 
-const TABS = ["Profile", "Security", "Notifications"] as const;
+const TABS = ["Profile", "Security", "Notifications", "Connections"] as const;
 type Tab = (typeof TABS)[number];
 
 const TAB_HREFS: Record<Tab, string> = {
   Profile: "/settings/profile",
   Security: "/settings/security",
   Notifications: "/settings/notifications",
+  Connections: "/settings/connections",
 };
 
 const inputStyle: React.CSSProperties = {

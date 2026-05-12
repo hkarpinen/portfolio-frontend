@@ -7,6 +7,8 @@ import { z } from "zod";
 import { api, ApiError } from "@/lib/api-client";
 import * as Collapsible from "@radix-ui/react-collapsible";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
 import { Toggle } from "@/components/ui/toggle";
 
 const passwordSchema = z
@@ -22,13 +24,14 @@ const passwordSchema = z
 
 type PasswordFormData = z.infer<typeof passwordSchema>;
 
-const TABS = ["Profile", "Security", "Notifications"] as const;
+const TABS = ["Profile", "Security", "Notifications", "Connections"] as const;
 type Tab = (typeof TABS)[number];
 
 const TAB_HREFS: Record<Tab, string> = {
   Profile: "/settings/profile",
   Security: "/settings/security",
   Notifications: "/settings/notifications",
+  Connections: "/settings/connections",
 };
 
 /* ── Style constants ──────────────────────────────────────────────────────── */
@@ -73,30 +76,6 @@ const sectionLabelStyle: React.CSSProperties = {
 };
 
 /* ── Sub-components ───────────────────────────────────────────────────────── */
-
-function FocusInput({
-  style,
-  ...props
-}: React.InputHTMLAttributes<HTMLInputElement>) {
-  const [focused, setFocused] = useState(false);
-  return (
-    <input
-      style={{
-        ...inputStyle,
-        ...style,
-        ...(focused
-          ? {
-              borderColor: "var(--accent)",
-              boxShadow: "0 0 0 3px var(--accent-subtle)",
-            }
-          : {}),
-      }}
-      onFocus={() => setFocused(true)}
-      onBlur={() => setFocused(false)}
-      {...props}
-    />
-  );
-}
 
 function PrimaryButton({
   children,
@@ -229,39 +208,22 @@ export default function SecuritySettingsPage() {
 
       <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
         {/* Password card — expandable */}
-        <style>{`
-          [data-collapsible-plus] { display: inline; }
-          button[data-state="open"] [data-collapsible-plus] { display: none; }
-          [data-collapsible-minus] { display: none; }
-          button[data-state="open"] [data-collapsible-minus] { display: inline; }
-        `}</style>
         <Collapsible.Root
-          style={cardStyle}
+          className="bg-surface border border-border rounded-2xl p-5 shadow-sm"
           onOpenChange={(open) => { if (!open) { setPasswordSaved(false); setPasswordError(null); } }}
         >
           <Collapsible.Trigger asChild>
             <button
               type="button"
-              style={{
-                width: "100%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                padding: 0,
-              }}
+              className="group w-full flex items-center justify-between bg-transparent border-none cursor-pointer p-0"
             >
               <div>
-                <p style={sectionLabelStyle}>Password</p>
-                <p style={{ fontSize: "14px", color: "var(--text-2)", marginTop: "4px" }}>
-                  Change your account password
-                </p>
+                <p className="text-[10px] font-bold text-text-3 uppercase tracking-widest">Password</p>
+                <p className="text-sm mt-1" style={{ color: "var(--text-2)" }}>Change your account password</p>
               </div>
-              <span style={{ color: "var(--text-3)", fontSize: "18px", lineHeight: 1 }}>
-                <span data-collapsible-plus>+</span>
-                <span data-collapsible-minus>−</span>
+              <span className="text-lg leading-none" style={{ color: "var(--text-3)" }}>
+                <span className="inline group-data-[state=open]:hidden">+</span>
+                <span className="hidden group-data-[state=open]:inline">−</span>
               </span>
             </button>
           </Collapsible.Trigger>
@@ -284,21 +246,21 @@ export default function SecuritySettingsPage() {
               )}
               <div>
                 <label style={labelStyle}>Current Password</label>
-                <FocusInput type="password" {...register("currentPassword")} placeholder="••••••••" />
+                <Input type="password" {...register("currentPassword")} placeholder="••••••••" />
                 {errors.currentPassword && (
                   <p style={{ color: "var(--danger)", fontSize: "12px", marginTop: "4px" }}>{errors.currentPassword.message}</p>
                 )}
               </div>
               <div>
                 <label style={labelStyle}>New Password</label>
-                <FocusInput type="password" {...register("newPassword")} placeholder="••••••••" />
+                <Input type="password" {...register("newPassword")} placeholder="••••••••" />
                 {errors.newPassword && (
                   <p style={{ color: "var(--danger)", fontSize: "12px", marginTop: "4px" }}>{errors.newPassword.message}</p>
                 )}
               </div>
               <div>
                 <label style={labelStyle}>Confirm New Password</label>
-                <FocusInput type="password" {...register("confirmPassword")} placeholder="••••••••" />
+                <Input type="password" {...register("confirmPassword")} placeholder="••••••••" />
                 {errors.confirmPassword && (
                   <p style={{ color: "var(--danger)", fontSize: "12px", marginTop: "4px" }}>{errors.confirmPassword.message}</p>
                 )}
@@ -311,13 +273,11 @@ export default function SecuritySettingsPage() {
         </Collapsible.Root>
 
         {/* 2FA card */}
-        <div style={cardStyle}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
+        <Card>
+          <div className="flex items-center justify-between mb-3">
             <div>
-              <p style={sectionLabelStyle}>Two-Factor Authentication</p>
-              <p style={{ fontSize: "14px", color: "var(--text-2)", marginTop: "4px" }}>
-                Extra security via authenticator app
-              </p>
+              <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: "var(--text-3)" }}>Two-Factor Authentication</p>
+              <p className="text-sm mt-1" style={{ color: "var(--text-2)" }}>Extra security via authenticator app</p>
             </div>
             {twoFaEnabled === true && (
               <span
@@ -364,14 +324,14 @@ export default function SecuritySettingsPage() {
               {totpError && (
                 <p style={{ color: "var(--danger)", fontSize: "13px" }}>{totpError}</p>
               )}
-              <div style={{ display: "flex", gap: "10px" }}>
-                <FocusInput
+              <div className="flex gap-2">
+                <Input
                   type="text"
                   value={totpCode}
                   onChange={(e) => setTotpCode(e.target.value)}
                   placeholder="Enter 6-digit code"
                   maxLength={6}
-                  style={{ flex: 1 }}
+                  containerClassName="flex-1"
                 />
                 <PrimaryButton
                   type="button"
@@ -392,29 +352,22 @@ export default function SecuritySettingsPage() {
               <Toggle checked={true} onChange={() => {/* disable 2FA flow */}} />
             </div>
           )}
-        </div>
+        </Card>
 
         {/* Sessions placeholder */}
-        <div style={cardStyle}>
-          <p style={sectionLabelStyle}>Active Sessions</p>
-          <p style={{ fontSize: "13px", color: "var(--text-3)", marginTop: "8px" }}>
-            You are currently signed in on this device.
-          </p>
-        </div>
+        <Card>
+          <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: "var(--text-3)" }}>Active Sessions</p>
+          <p className="text-sm mt-2" style={{ color: "var(--text-3)" }}>You are currently signed in on this device.</p>
+        </Card>
 
         {/* Danger zone */}
-        <div
-          style={{
-            ...cardStyle,
-            border: "1px solid oklch(62% 0.21 22 / 0.4)",
-          }}
-        >
-          <p style={{ ...sectionLabelStyle, color: "var(--danger)" }}>Danger Zone</p>
+        <Card className="border-danger/40">
+          <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: "var(--danger)" }}>Danger Zone</p>
           <p style={{ fontSize: "13px", color: "var(--text-3)", marginTop: "8px", marginBottom: "16px" }}>
             Permanently delete your account and all associated data. This action cannot be undone.
           </p>
           <DangerButton type="button">Delete Account</DangerButton>
-        </div>
+        </Card>
       </div>
     </div>
   );

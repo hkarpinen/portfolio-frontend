@@ -1,32 +1,30 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
-import { useDeleteBill } from "@/hooks/use-bills";
+import { useHouseholdExpenses, useDeleteHouseholdExpense } from "@/hooks/use-expenses";
 import { MarkPaidButton } from "./mark-paid-button";
-import styles from "./bills-list.module.css";
-import type { Bill } from "@/types/bills";
+import styles from "./expenses-list.module.css";
+import type { HouseholdExpenseListResponse } from "@/types/finance";
 
-interface BillsListProps {
+interface ExpensesListProps {
   householdId: string;
-  initialBills: Bill[];
+  initialData: HouseholdExpenseListResponse;
   canDelete: boolean;
 }
 
-export function BillsList({ householdId, initialBills, canDelete }: BillsListProps) {
-  const [bills, setBills] = useState<Bill[]>(initialBills);
-  const deleteMutation = useDeleteBill(householdId);
+export function ExpensesList({ householdId, initialData, canDelete }: ExpensesListProps) {
+  const { data } = useHouseholdExpenses(householdId, initialData);
+  const expenses = data?.items ?? initialData.items;
+  const deleteMutation = useDeleteHouseholdExpense(householdId);
 
-  const onDelete = (e: React.MouseEvent, billId: string) => {
+  const onDelete = (e: React.MouseEvent, householdExpenseId: string) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!confirm("Delete this bill? This cannot be undone.")) return;
-    deleteMutation.mutate(billId, {
-      onSuccess: () => setBills((prev) => prev.filter((b) => b.billId !== billId)),
-    });
+    if (!confirm("Delete this expense? This cannot be undone.")) return;
+    deleteMutation.mutate(householdExpenseId);
   };
 
-  if (bills.length === 0) {
+  if (expenses.length === 0) {
     return (
       <div style={{
         background: "var(--surface)", border: "1px solid var(--border)",
@@ -43,13 +41,13 @@ export function BillsList({ householdId, initialBills, canDelete }: BillsListPro
           </svg>
         </div>
         <p style={{ fontSize: "14px", fontWeight: "600", fontFamily: "var(--ff-display)", color: "var(--text)", marginBottom: "4px" }}>
-          No bills yet
+          No expenses yet
         </p>
         <p style={{ fontSize: "12px", color: "var(--text-3)", marginBottom: "16px" }}>
-          Add your first bill to start tracking expenses.
+          Add your first expense to start tracking.
         </p>
         <Link
-          href={`/households/${householdId}/bills/new`}
+          href={`/households/${householdId}/expenses/new`}
           style={{
             display: "inline-flex", alignItems: "center",
             padding: "7px 16px", borderRadius: "10px",
@@ -58,7 +56,7 @@ export function BillsList({ householdId, initialBills, canDelete }: BillsListPro
             transition: "background 110ms",
           }}
         >
-          Add first bill
+          Add first expense
         </Link>
       </div>
     );
@@ -66,14 +64,14 @@ export function BillsList({ householdId, initialBills, canDelete }: BillsListPro
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-      {bills.map((bill) => {
-        const dueDate = new Date(bill.dueDate);
+      {expenses.map((expense) => {
+        const dueDate = new Date(expense.dueDate);
         const daysUntilDue = Math.ceil((dueDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
         const isOverdue = daysUntilDue < 0;
         const isDueSoon = daysUntilDue >= 0 && daysUntilDue <= 7;
 
         return (
-          <div key={bill.billId} style={{ position: "relative" }} className="bills-list-item">
+          <div key={expense.expenseId} style={{ position: "relative" }} className="expenses-list-item">
             <div style={{ display: "flex", alignItems: "center", gap: "10px",
               background: "var(--surface)", border: "1px solid var(--border)",
               borderRadius: "12px", overflow: "hidden",
@@ -85,7 +83,7 @@ export function BillsList({ householdId, initialBills, canDelete }: BillsListPro
               }} />
 
               <Link
-              href={`/households/${householdId}/bills/${bill.billId}`}
+              href={`/households/${householdId}/expenses/${expense.expenseId}`}
               className={styles.link}
               style={{
                 display: "flex", alignItems: "center", justifyContent: "space-between",
@@ -109,21 +107,21 @@ export function BillsList({ householdId, initialBills, canDelete }: BillsListPro
                 </div>
                 <div style={{ minWidth: 0 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap" }}>
-                    <span style={{ fontSize: "14px", fontWeight: "600", color: "var(--text)" }}>{bill.title}</span>
-                    {bill.recurrenceFrequency && (
+                    <span style={{ fontSize: "14px", fontWeight: "600", color: "var(--text)" }}>{expense.title}</span>
+                    {expense.recurrenceFrequency && (
                       <span style={{
                         padding: "1px 7px", borderRadius: "9999px",
                         background: "var(--accent-subtle)", color: "var(--accent)",
                         fontSize: "10px", fontWeight: "500",
-                      }}>{bill.recurrenceFrequency}</span>
+                      }}>{expense.recurrenceFrequency}</span>
                     )}
-                    {bill.category && (
+                    {expense.category && (
                       <span style={{
                         padding: "1px 7px", borderRadius: "9999px",
                         background: "var(--surface-3)", color: "var(--text-2)",
                         border: "1px solid var(--border)",
                         fontSize: "10px", fontWeight: "500",
-                      }}>{String(bill.category)}</span>
+                      }}>{String(expense.category)}</span>
                     )}
                   </div>
                   <p style={{ fontSize: "12px", color: "var(--text-3)", marginTop: "2px" }}>
@@ -144,29 +142,34 @@ export function BillsList({ householdId, initialBills, canDelete }: BillsListPro
                   fontFamily: "var(--ff-display)", fontWeight: "700",
                   fontSize: "15px", color: isOverdue ? "var(--danger)" : "var(--text)",
                 }}>
-                  {bill.currency} {Number(bill.amount).toFixed(2)}
+                  {expense.currency} {Number(expense.amount).toFixed(2)}
                 </span>
                 {canDelete && (
                   <button
-                    onClick={(e) => onDelete(e, bill.billId)}
-                    disabled={deleteMutation.isPending && deleteMutation.variables === bill.billId}
+                    onClick={(e) => onDelete(e, expense.expenseId)}
+                    disabled={deleteMutation.isPending && deleteMutation.variables === expense.expenseId}
                     style={{
                       padding: "4px 10px", borderRadius: "8px",
                       background: "var(--danger-s)", color: "var(--danger)",
                       border: "1px solid oklch(62% 0.21 22 / 0.25)",
                       fontSize: "11px", fontWeight: "500", cursor: "pointer",
-                      opacity: deleteMutation.isPending && deleteMutation.variables === bill.billId ? 0.5 : 1,
+                      opacity: deleteMutation.isPending && deleteMutation.variables === expense.expenseId ? 0.5 : 1,
                       transition: "opacity 110ms",
                     }}
                   >
-                    {deleteMutation.isPending && deleteMutation.variables === bill.billId ? "…" : "Delete"}
+                    {deleteMutation.isPending && deleteMutation.variables === expense.expenseId ? "…" : "Delete"}
                   </button>
                 )}
               </div>
             </Link>
             {/* Mark paid — outside Link so click doesn't navigate */}
             <div style={{ paddingRight: "12px", flexShrink: 0 }} onClick={(e) => e.stopPropagation()}>
-              <MarkPaidButton householdId={householdId} billId={bill.billId} />
+              <MarkPaidButton
+                householdId={householdId}
+                householdExpenseId={expense.expenseId}
+                isPaid={expense.callerIsPaid}
+                occurrenceDate={expense.currentOccurrenceDate}
+              />
             </div>
           </div>
           </div>
