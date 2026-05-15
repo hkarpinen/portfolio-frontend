@@ -59,7 +59,7 @@ function CommentVote({ threadId, commentId, initialScore }: { threadId: string; 
         </svg>
       </button>
       <span style={{
-        fontSize: "11px", fontWeight: "700", minWidth: "16px", textAlign: "center",
+        fontSize: "var(--ts-meta)", fontWeight: "700", minWidth: "16px", textAlign: "center",
         color: voted === 1 ? "var(--success)" : voted === -1 ? "var(--danger)" : "var(--text-3)",
         fontFamily: "var(--ff-display)",
       }}>
@@ -133,7 +133,7 @@ function InlineReplyForm({
           border: `1px solid ${errors.content ? "var(--danger)" : "var(--border)"}`,
           borderRadius: "8px",
           padding: "8px 10px",
-          fontSize: "13px",
+          fontSize: "var(--ts-body-sm)",
           color: "var(--text)",
           outline: "none",
           resize: "vertical",
@@ -151,7 +151,7 @@ function InlineReplyForm({
         }}
       />
       {errors.content && (
-        <span style={{ fontSize: "11px", color: "var(--danger)" }}>{errors.content.message}</span>
+        <span style={{ fontSize: "var(--ts-meta)", color: "var(--danger)" }}>{errors.content.message}</span>
       )}
       <div style={{ display: "flex", gap: "8px" }}>
         <button
@@ -226,13 +226,13 @@ function CommentNode({
               width: "24px", height: "24px", borderRadius: "9999px",
               background: "var(--surface-3)", color: "var(--text-2)",
               display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: "10px", fontWeight: "700", flexShrink: 0,
+              fontSize: "var(--ts-meta)", fontWeight: "700", flexShrink: 0,
               border: "1px solid var(--border)",
             }}>
               {initials}
             </span>
           )}
-          <span style={{ fontSize: "13px", fontWeight: "600", color: "var(--text)" }}>
+          <span style={{ fontSize: "var(--ts-body-sm)", fontWeight: "600", color: "var(--text)" }}>
             {comment.authorId ? (
               <Link
                 href={`/profile/${comment.authorId}`}
@@ -240,13 +240,13 @@ function CommentNode({
               >{authorName}</Link>
             ) : authorName}
           </span>
-          <span style={{ fontSize: "11px", color: "var(--text-3)" }}>·</span>
-          <span style={{ fontSize: "11px", color: "var(--text-3)" }}>{timeAgo(comment.createdAt)}</span>
+          <span style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)" }}>·</span>
+          <span style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)" }}>{timeAgo(comment.createdAt)}</span>
         </div>
 
         {/* Content */}
         <p style={{
-          fontSize: "14px", color: "var(--text-2)", lineHeight: "1.65",
+          fontSize: "var(--ts-body)", color: "var(--text-2)", lineHeight: "1.65",
           whiteSpace: "pre-wrap",
           marginBottom: "10px",
         }}>{comment.content}</p>
@@ -282,7 +282,7 @@ function CommentNode({
               <Link
                 href={`/login?from=${encodeURIComponent(pathname)}`}
                 style={{
-                  fontSize: "11px", fontWeight: "600", color: "var(--text-3)",
+                  fontSize: "var(--ts-meta)", fontWeight: "600", color: "var(--text-3)",
                   textDecoration: "none", padding: "3px 8px", borderRadius: "6px",
                   display: "flex", alignItems: "center", gap: "4px",
                 }}
@@ -352,7 +352,7 @@ export function CommentTree({
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
           <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
         </svg>
-        <span style={{ fontSize: "13px", fontWeight: "600", color: "var(--text-2)", fontFamily: "var(--ff-display)" }}>
+        <span style={{ fontSize: "var(--ts-body-sm)", fontWeight: "600", color: "var(--text-2)", fontFamily: "var(--ff-display)" }}>
           {comments.length} {comments.length === 1 ? "Comment" : "Comments"}
         </span>
       </div>
@@ -366,7 +366,7 @@ export function CommentTree({
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--border-2)" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
           </svg>
-          <p style={{ fontSize: "13px", color: "var(--text-3)" }}>No comments yet — be the first!</p>
+          <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)" }}>No comments yet — be the first!</p>
         </div>
       ) : (
         <div style={{ padding: "0 20px" }}>

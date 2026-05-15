@@ -28,6 +28,10 @@ const nextConfig = {
         destination: "http://localhost:8084/api/notifications/:path*",
       },
       {
+        source: "/api/households/:path*",
+        destination: "http://localhost:8085/api/households/:path*",
+      },
+      {
         source: "/uploads/:path*",
         destination: "http://localhost/uploads/:path*",
       },

@@ -5,7 +5,7 @@
   border-radius: 12px;
   background: var(--accent);
   color: #fff;
-  font-size: 14px;
+  font-size: var(--ts-body);
   font-weight: 600;
   text-decoration: none;
   transition: background 110ms;

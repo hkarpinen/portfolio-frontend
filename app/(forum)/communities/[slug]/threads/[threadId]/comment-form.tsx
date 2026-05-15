@@ -30,7 +30,7 @@ export function CommentForm({ threadId, isAuthed }: CommentFormProps) {
 
   if (!isAuthed) {
     return (
-      <p style={{ fontSize: "13px", color: "var(--text-3)" }}>
+      <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)" }}>
         <Link
           href={`/login?from=${encodeURIComponent(pathname)}`}
           style={{ color: "var(--accent)", textDecoration: "none", fontWeight: 500 }}
@@ -59,7 +59,7 @@ export function CommentForm({ threadId, isAuthed }: CommentFormProps) {
         <div style={{
           padding: "10px 14px", borderRadius: "10px",
           background: "var(--danger-s)", border: "1px solid oklch(62% 0.21 22 / 0.3)",
-          fontSize: "13px", color: "var(--danger)",
+          fontSize: "var(--ts-body-sm)", color: "var(--danger)",
         }}>
           {createComment.error instanceof ApiError ? createComment.error.message : "Failed to post comment. Are you logged in?"}
         </div>
@@ -68,7 +68,7 @@ export function CommentForm({ threadId, isAuthed }: CommentFormProps) {
         <div style={{
           padding: "10px 14px", borderRadius: "10px",
           background: "var(--success-s)", border: "1px solid oklch(68% 0.18 152 / 0.25)",
-          fontSize: "13px", color: "var(--success)",
+          fontSize: "var(--ts-body-sm)", color: "var(--success)",
         }}>Comment posted!</div>
       )}
       <textarea
@@ -81,7 +81,7 @@ export function CommentForm({ threadId, isAuthed }: CommentFormProps) {
           border: `1px solid ${errors.content ? "var(--danger)" : "var(--border)"}`,
           borderRadius: "12px",
           padding: "10px 12px",
-          fontSize: "13px",
+          fontSize: "var(--ts-body-sm)",
           color: "var(--text)",
           outline: "none",
           resize: "vertical",
@@ -99,7 +99,7 @@ export function CommentForm({ threadId, isAuthed }: CommentFormProps) {
         }}
       />
       {errors.content && (
-        <span style={{ fontSize: "11px", color: "var(--danger)" }}>{errors.content.message}</span>
+        <span style={{ fontSize: "var(--ts-meta)", color: "var(--danger)" }}>{errors.content.message}</span>
       )}
       <div style={{ display: "flex", gap: "8px" }}>
         <button

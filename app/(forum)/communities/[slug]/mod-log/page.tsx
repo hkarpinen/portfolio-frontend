@@ -4,10 +4,10 @@ export default function ModLogPage({ params }: { params: { slug: string } }) {
       <div>
         <h1 style={{
           fontFamily: "var(--ff-display)", fontWeight: "800",
-          fontSize: "24px", letterSpacing: "-0.025em", color: "var(--text)",
+          fontSize: "var(--ts-card-h)", letterSpacing: "-0.025em", color: "var(--text)",
           marginBottom: "4px",
         }}>Moderation Log</h1>
-        <p style={{ fontSize: "13px", color: "var(--text-3)" }}>
+        <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)" }}>
           {params.slug}
         </p>
       </div>
@@ -28,10 +28,10 @@ export default function ModLogPage({ params }: { params: { slug: string } }) {
             <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2" />
           </svg>
         </div>
-        <p style={{ fontSize: "14px", fontWeight: "600", fontFamily: "var(--ff-display)", color: "var(--text)", marginBottom: "4px" }}>
+        <p style={{ fontSize: "var(--ts-body)", fontWeight: "600", fontFamily: "var(--ff-display)", color: "var(--text)", marginBottom: "4px" }}>
           No moderation actions yet
         </p>
-        <p style={{ fontSize: "12px", color: "var(--text-3)" }}>
+        <p style={{ fontSize: "var(--ts-label)", color: "var(--text-3)" }}>
           Moderation actions will appear here.
         </p>
       </div>

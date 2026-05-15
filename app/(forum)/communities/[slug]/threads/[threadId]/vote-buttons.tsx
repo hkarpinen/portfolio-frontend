@@ -66,7 +66,7 @@ export function VoteButtons({ threadId, targetType, targetId, initialScore }: Vo
       </button>
 
       <span style={{
-        fontSize: "12px", fontWeight: "700",
+        fontSize: "var(--ts-label)", fontWeight: "700",
         color: voted === 1 ? "var(--success)" : voted === -1 ? "var(--danger)" : "var(--text-2)",
         fontFamily: "var(--ff-display)",
         lineHeight: "1",

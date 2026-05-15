@@ -3,130 +3,131 @@
 @tailwind utilities;
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   Design Tokens — CSS custom properties
-   Kept outside @layer so they are unconditionally in scope at full specificity.
-   Font families (--ff-display, --ff-body) are injected by next/font/google via
-   the className on <html> in app/layout.tsx — no @import needed.
-   ───────────────────────────────────────────────────────────────────────────── */
-
-:root,
-[data-theme="dark"] {
-  /* Backgrounds — layered dark navy */
-  --bg:        oklch(10%  0.018 255);
-  --bg-2:      oklch(13%  0.022 255);
-  --bg-3:      oklch(16%  0.022 255);
-
-  /* Surfaces */
-  --surface:   oklch(14%  0.025 255);
-  --surface-2: oklch(18%  0.022 255);
-  --surface-3: oklch(22%  0.020 255);
-
-  /* Borders */
-  --border:    oklch(26%  0.025 255);
-  --border-2:  oklch(32%  0.022 255);
-
-  /* Text */
-  --text:      oklch(95%  0.005 255);
-  --text-2:    oklch(68%  0.010 255);
-  --text-3:    oklch(46%  0.010 255);
-
-  /* Accent */
-  --accent:          oklch(63%  0.22 252);
-  --accent-hi:       oklch(72%  0.22 252);
-  --accent-v:        oklch(63%  0.22 292);
-  --accent-glow:     oklch(63%  0.22 252 / 0.30);
-  --accent-subtle:   oklch(63%  0.22 252 / 0.10);
-  --accent-v-subtle: oklch(63%  0.22 292 / 0.10);
-
-  /* Semantic */
-  --success:    oklch(68%  0.18 152);
-  --success-hi: oklch(74%  0.18 152);
-  --warning:    oklch(76%  0.17  88);
-  --warning-hi: oklch(82%  0.17  88);
-  --danger:     oklch(62%  0.21  22);
-  --danger-hi:  oklch(68%  0.21  22);
-  --success-s:      oklch(68%  0.18 152 / 0.12);
-  --warning-s:      oklch(76%  0.17  88 / 0.12);
-  --danger-s:       oklch(62%  0.21  22 / 0.12);
-  --success-border: oklch(68%  0.18 152 / 0.30);
-  --danger-border:  oklch(62%  0.21  22 / 0.30);
-  --accent-border:  oklch(63%  0.22 252 / 0.25);
-  --overlay:        oklch(0%   0    0   / 0.60);
-
-  /* Elevation */
-  --shadow-sm:   0 1px 4px oklch(0% 0 0 / .45);
-  --shadow-md:   0 4px 20px oklch(0% 0 0 / .55);
-  --shadow-lg:   0 12px 48px oklch(0% 0 0 / .65);
-  --shadow-glow: 0 0 40px var(--accent-glow);
-}
+   Editorial Design System — CSS custom properties
+   Single-mode. No light/dark swap. Paper-on-ink only.
+   ─────────────────────────────────────────────────────────────────────────────
+*/
 
 :root {
-  /* Border radius tokens */
-  --r-xs:   4px;
-  --r-sm:   8px;
-  --r-md:   12px;
-  --r-lg:   16px;
-  --r-xl:   24px;
-  --r-2xl:  32px;
+  /* ── Paper (backgrounds) ─────────────────────────────────────────────────── */
+  --paper:   #f1eadb;
+  --paper-2: #ece4d0;
+  --paper-3: #ddd2b6;
+  --paper-4: #cabf9f;
+
+  /* Semantic aliases */
+  --bg:        var(--paper);
+  --bg-2:      var(--paper-2);
+  --bg-3:      var(--paper-3);
+  --surface:   var(--paper);
+  --surface-2: var(--paper-2);
+  --surface-3: var(--paper-3);
+
+  /* ── Ink (text + structural lines) ──────────────────────────────────────── */
+  --ink:       #15120a;
+  --ink-2:     #3a3424;
+  --ink-3:     #786f56;
+  --ink-4:     #aaa088;
+  --rule:      #15120a;
+  --rule-soft: rgba(20, 17, 10, 0.22);
+
+  /* Semantic aliases */
+  --text:     var(--ink);
+  --text-2:   var(--ink-2);
+  --text-3:   var(--ink-3);
+  --border:   var(--rule-soft);
+  --border-2: var(--ink-4);
+
+  /* ── Red (the only accent) ───────────────────────────────────────────────── */
+  --red:      #b22a1a;
+  --red-deep: #7c1a0e;
+  --red-soft: rgba(178, 42, 26, 0.10);
+
+  /* Semantic aliases */
+  --accent:        var(--red);
+  --accent-hi:     var(--red-deep);
+  --accent-subtle: var(--red-soft);
+  --accent-v:      var(--red);
+  --accent-glow:   rgba(178, 42, 26, 0.30);
+  --accent-v-subtle: var(--red-soft);
+  --accent-border: rgba(178, 42, 26, 0.25);
+  --warning:       var(--red);
+  --danger:        var(--red);
+  --danger-hi:     var(--red-deep);
+  --danger-s:      var(--red-soft);
+  --warning-s:     var(--red-soft);
+
+  /* ── Green (semantic only) ───────────────────────────────────────────────── */
+  --green:      #3d6b2b;
+  --green-soft: rgba(61, 107, 43, 0.10);
+  --success:    var(--green);
+  --success-s:  var(--green-soft);
+  --success-hi: #2e5220;
+
+  /* ── Overlay ─────────────────────────────────────────────────────────────── */
+  --overlay: rgba(20, 17, 10, 0.40);
+
+  /* ── Shadows (hard offset, no blur) ─────────────────────────────────────── */
+  --shadow-card:  4px 4px 0 var(--ink);
+  --shadow-stamp: 6px 6px 0 var(--ink);
+  --shadow-modal: 8px 8px 0 var(--ink);
+  --shadow-sm: var(--shadow-card);
+  --shadow-md: var(--shadow-stamp);
+  --shadow-lg: var(--shadow-modal);
+  --shadow-glow: var(--shadow-card);
+
+  /* ── Border radius — everything square ──────────────────────────────────── */
   --r-full: 9999px;
+  --r-xs: 0; --r-sm: 0; --r-md: 0; --r-lg: 0; --r-xl: 0; --r-2xl: 0;
 
-  /* Motion — easing */
-  --ease-spring:  cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-out:     cubic-bezier(0.2, 0, 0, 1);
-  --ease-in-out:  cubic-bezier(0.4, 0, 0.2, 1);
+  /* ─── Fluid type scale ─────────────────────────────────────────────────────
+     Range: 360px viewport → 1920px viewport.
+     Past 1920 the size stops growing (good — text shouldn't
+     be 80px at 4K).                                                           */
 
-  /* Motion — duration */
+  --ts-meta:        clamp(11px,  0.55vw + 9px,   14px);   /* mono kicker, byline, date strip, breadcrumb, tag, badge */
+  --ts-label:       clamp(12px,  0.6vw + 10px,   15px);   /* button label, input label, table header */
+  --ts-body-sm:     clamp(13px,  0.55vw + 11px,  15px);   /* meta line under a list row, small caption */
+  --ts-body:        clamp(15px,  0.7vw + 12.5px, 17px);   /* default body paragraph, alert body, card description */
+  --ts-lead:        clamp(17px,  0.95vw + 13.5px,21px);   /* lede dropcap paragraph, lead post body, alert title */
+  --ts-sub:         clamp(20px,  1.3vw + 15px,   26px);   /* sidebar nav title, list-row name, modal title, comment header */
+  --ts-card-h:      clamp(22px,  1.6vw + 16px,   32px);   /* card heading, sidebar widget heading */
+  --ts-h3:          clamp(24px,  2vw + 16px,     36px);   /* Dispatch H3, thread row title, settings section H3 */
+  --ts-h2:          clamp(32px,  3.2vw + 20px,   60px);   /* SectionHeader page title, page H1 ("Forum", "Bills") */
+  --ts-numeral:     clamp(36px,  3vw + 25px,     64px);   /* ledger cell number, contribution total */
+
+  /* ─── Display tier (LANDING ONLY — do not use elsewhere) ─── */
+  --ts-h1:          clamp(48px,  6.5vw + 20px, 144px);    /* landing lede H1 */
+  --ts-nameplate:   clamp(40px,  5.5vw + 20px, 120px);    /* "The Stack." landing nameplate */
+  --ts-stamp:       clamp(56px,  3.5vw + 30px, 96px);     /* Wanted stamp */
+
+  /* Compat aliases */
+  --ts-input:       var(--ts-body);
+  --ts-input-label: var(--ts-meta);
+
+  /* ─── Line heights ──────────────────────────────────────────────────────── */
+  --lh-tight:   0.9;
+  --lh-display: 1.0;
+  --lh-snug:    1.15;
+  --lh-body:    1.55;
+  --lh-loose:   1.7;
+
+  /* ── Motion ──────────────────────────────────────────────────────────────── */
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out:    cubic-bezier(0.2, 0, 0, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
   --dur-fast: 110ms;
   --dur-mid:  220ms;
   --dur-slow: 380ms;
   --dur-page: 500ms;
 }
 
-[data-theme="light"] {
-  --bg:        oklch(97%  0.005 255);
-  --bg-2:      oklch(93%  0.008 255);
-  --bg-3:      oklch(90%  0.010 255);
-
-  --surface:   oklch(100% 0     0);
-  --surface-2: oklch(97%  0.005 255);
-  --surface-3: oklch(94%  0.008 255);
-
-  --border:    oklch(88%  0.010 255);
-  --border-2:  oklch(82%  0.014 255);
-
-  --text:      oklch(13%  0.020 255);
-  --text-2:    oklch(36%  0.015 255);
-  --text-3:    oklch(56%  0.010 255);
-
-  --accent:          oklch(52%  0.22 252);
-  --accent-hi:       oklch(44%  0.22 252);
-  --accent-v:        oklch(52%  0.22 292);
-  --accent-glow:     oklch(52%  0.22 252 / 0.18);
-  --accent-subtle:   oklch(52%  0.22 252 / 0.07);
-  --accent-v-subtle: oklch(52%  0.22 292 / 0.07);
-
-  --success:   oklch(50%  0.18 152);
-  --warning:   oklch(55%  0.17  88);
-  --danger:    oklch(50%  0.21  22);
-  --success-s: oklch(50%  0.18 152 / 0.09);
-  --warning-s: oklch(55%  0.17  88 / 0.09);
-  --danger-s:  oklch(50%  0.21  22 / 0.09);
-
-  --shadow-sm:   0 1px 4px oklch(0% 0 0 / .07);
-  --shadow-md:   0 4px 20px oklch(0% 0 0 / .09);
-  --shadow-lg:   0 12px 48px oklch(0% 0 0 / .11);
-  --shadow-glow: 0 0 40px var(--accent-glow);
-}
-
 /* ─────────────────────────────────────────────────────────────────────────────
    Keyframes
-   Defined here (outside @layer) so they are always emitted and available both
-   to the component classes below and to Tailwind's animate-* utilities, which
-   reference these names via theme.animation in tailwind.config.ts.
-   ───────────────────────────────────────────────────────────────────────────── */
-
+   ─────────────────────────────────────────────────────────────────────────────
+*/
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(16px); }
+  from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 @keyframes fadeIn {
@@ -134,41 +135,38 @@
   to   { opacity: 1; }
 }
 @keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.95); }
+  from { opacity: 0; transform: scale(0.97); }
   to   { opacity: 1; transform: scale(1); }
 }
 @keyframes slideIn {
   from { opacity: 0; transform: translateX(-12px); }
   to   { opacity: 1; transform: translateX(0); }
 }
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes pulseDot {
+  0%   { box-shadow: 0 0 0 0 rgba(178, 42, 26, 0.55); }
+  70%  { box-shadow: 0 0 0 8px rgba(178, 42, 26, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(178, 42, 26, 0); }
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@keyframes slideUpSheet {
+  from { transform: translateY(40px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
 @keyframes shimmer {
   from { background-position: -200% center; }
   to   { background-position:  200% center; }
 }
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-@keyframes meshMove1 {
-  0%, 100% { transform: translate(0,0) scale(1); }
-  50%      { transform: translate(60px,-40px) scale(1.08); }
-}
-@keyframes meshMove2 {
-  0%, 100% { transform: translate(0,0) scale(1); }
-  50%      { transform: translate(-50px,60px) scale(1.05); }
-}
-@keyframes meshMove3 {
-  0%, 100% { transform: translate(0,0) scale(1); }
-  50%      { transform: translate(40px,50px) scale(1.06); }
-}
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.4; }
-}
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   Base layer — resets, html/body defaults, scrollbar, focus ring
-   ───────────────────────────────────────────────────────────────────────────── */
-
+   Base layer
+   ─────────────────────────────────────────────────────────────────────────────
+*/
 @layer base {
   *, *::before, *::after {
     box-sizing: border-box;
@@ -182,23 +180,33 @@
   }
 
   body {
-    font-family: var(--ff-body);
-    background: var(--bg);
-    color: var(--text);
-    font-size: 14px;
-    line-height: 1.5;
+    font-family: var(--ff-body, 'Georgia', serif);
+    background: var(--paper);
+    color: var(--ink);
+    font-size: var(--ts-body);
+    line-height: 1.55;
+    background-image:
+      radial-gradient(rgba(20, 17, 10, 0.030) 1px, transparent 1.4px),
+      radial-gradient(rgba(20, 17, 10, 0.020) 1px, transparent 1.2px);
+    background-size: 3px 3px, 7px 7px;
+    background-position: 0 0, 1px 2px;
   }
 
-  ::-webkit-scrollbar       { width: 5px; height: 5px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-  ::-webkit-scrollbar-thumb:hover { background: var(--border-2); }
+  ::selection {
+    background: var(--ink);
+    color: var(--paper);
+  }
 
   :focus-visible {
-    outline: 2px solid var(--accent);
+    outline: 2px solid var(--red);
     outline-offset: 2px;
-    border-radius: 6px;
+    border-radius: 0;
   }
+
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--paper-4); border: 2px solid var(--paper); border-radius: 0; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--ink-4); }
 
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
@@ -210,121 +218,51 @@
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   Utilities layer — single-purpose visual helpers
-   ───────────────────────────────────────────────────────────────────────────── */
-
+   Utilities
+   ─────────────────────────────────────────────────────────────────────────────
+*/
 @layer utilities {
-  /* Dot grid texture */
-  .dot-grid {
-    background-image: radial-gradient(var(--border) 1px, transparent 1px);
-    background-size: 28px 28px;
-  }
 
-  /* Gradient text */
-  .grad-text {
-    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-v) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  /* Page entrance animation */
   .page-enter {
-    animation: fadeUp 320ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: fadeUp 320ms var(--ease-spring) both;
   }
 
-  /* Glass surface */
-  .glass {
-    background: oklch(from var(--surface) l c h / 0.6);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-  }
-
-  /* Skeleton shimmer */
-  .skeleton {
-    background: linear-gradient(
-      90deg,
-      var(--surface-2) 25%,
-      var(--surface-3) 50%,
-      var(--surface-2) 75%
-    );
-    background-size: 200% 100%;
-    animation: shimmer 1.6s ease-in-out infinite;
-    border-radius: 6px;
-  }
-
-  /* Responsive main-content padding — top/sides scale up at larger breakpoints;
-   * bottom accounts for the fixed mobile bottom nav (cleared at md). */
+  /* ── App main padding ───────────────────────────────────────────────────── */
   .app-main {
     padding-top: 20px;
-    padding-left: 16px;
-    padding-right: 16px;
-    padding-bottom: 96px;
-  }
-  @media (min-width: 640px) {
-    .app-main {
-      padding-top: 24px;
-      padding-left: 24px;
-      padding-right: 24px;
-    }
+    padding-left: 18px;
+    padding-right: 18px;
+    padding-bottom: 88px;
   }
   @media (min-width: 768px) {
     .app-main {
-      padding-bottom: 28px;
-    }
-  }
-  @media (min-width: 1024px) {
-    .app-main {
-      padding-top: 28px;
-      padding-left: 32px;
-      padding-right: 32px;
+      padding-top: 32px;
+      padding-left: 38px;
+      padding-right: 38px;
+      padding-bottom: 32px;
     }
   }
 
-  /*
-   * Responsive display helpers.
-   * Use these when an element also carries an inline display: value that would
-   * prevent Tailwind's lg:hidden / lg:flex from winning the cascade.
-   */
-  .mobile-only {
-    display: flex;
-  }
-  @media (min-width: 768px) {
-    .mobile-only {
-      display: none;
-    }
-  }
+  /* ── Display helpers ────────────────────────────────────────────────────── */
+  .mobile-only { display: flex; }
+  @media (min-width: 768px) { .mobile-only { display: none; } }
+  .desktop-only { display: none; }
+  @media (min-width: 768px) { .desktop-only { display: flex; } }
 
-  .desktop-only {
-    display: none;
-  }
-  @media (min-width: 768px) {
-    .desktop-only {
-      display: flex;
-    }
-  }
-
-  /* ── Cross-cutting interaction utilities ────────────────────────────────── */
-
-  /* Card lift on hover — used in server-rendered listing pages */
+  /* ── Card hover — editorial offset ──────────────────────────────────────── */
   .card-hover {
-    transition: transform 200ms cubic-bezier(0.16,1,0.3,1), box-shadow 200ms, border-color 110ms;
+    transition: transform 180ms var(--ease-spring), box-shadow 180ms var(--ease-spring);
   }
   .card-hover:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-    border-color: var(--border-2);
+    transform: translate(-2px, -2px);
+    box-shadow: var(--shadow-card);
   }
 
-  /* Row highlight on hover — used in data-table rows */
-  .row-hover {
-    transition: background 110ms;
-  }
-  .row-hover:hover {
-    background: var(--surface-2);
-  }
+  /* ── Row hover ───────────────────────────────────────────────────────────── */
+  .row-hover { transition: background var(--dur-fast); }
+  .row-hover:hover { background: var(--paper-2); }
 
-  /* ── Responsive sidebar layout (main column + 280px sidebar) ───────────── */
+  /* ── Sidebar grid ────────────────────────────────────────────────────────── */
   .sidebar-grid {
     display: grid;
     grid-template-columns: 1fr 280px;
@@ -332,186 +270,167 @@
     align-items: start;
   }
   @media (max-width: 767px) {
-    .sidebar-grid {
-      grid-template-columns: 1fr;
-      gap: 20px;
-    }
+    .sidebar-grid { grid-template-columns: 1fr; gap: 20px; }
   }
 
-  /* ── Responsive 2-column form fields ───────────────────────────────────── */
-  .form-grid-2 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
-  @media (max-width: 599px) {
-    .form-grid-2 {
-      grid-template-columns: 1fr;
-    }
-  }
+  /* ── 2-col form ──────────────────────────────────────────────────────────── */
+  .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 599px) { .form-grid-2 { grid-template-columns: 1fr; } }
 
-  /* ── Income / deductions modal — responsive sheet ───────────────────────
-   *
-   * On mobile  (<640 px): full-screen bottom sheet that slides up from the
-   *   bottom edge. Top corners are rounded; bottom corners are flush.
-   * On desktop (≥640 px): centred floating panel, all corners rounded.
-   * ──────────────────────────────────────────────────────────────────────── */
-
+  /* ── Modal overlay / sheet ───────────────────────────────────────────────── */
   .modal-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 200;
+    position: fixed; inset: 0; z-index: 200;
     background: var(--overlay);
-    display: flex;
-    align-items: flex-end;       /* sheet anchors to bottom on mobile */
-    justify-content: center;
-    padding: 0;
+    display: flex; align-items: flex-end; justify-content: center;
     animation: fadeIn var(--dur-fast) var(--ease-out) both;
   }
-
   .modal-sheet {
-    background: var(--surface);
-    box-shadow: var(--shadow-lg);
-    width: 100%;
-    max-height: 92dvh;            /* dynamic viewport — accounts for mobile chrome */
-    border-radius: var(--r-xl) var(--r-xl) 0 0;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
+    background: var(--paper);
+    border: 2px solid var(--ink);
+    box-shadow: var(--shadow-modal);
+    width: 100%; max-height: 92dvh;
+    border-radius: 0;
+    overflow: hidden; display: flex; flex-direction: column;
     animation: slideUpSheet var(--dur-mid) var(--ease-spring) both;
   }
-
-  @keyframes slideUpSheet {
-    from { transform: translateY(40px); opacity: 0; }
-    to   { transform: translateY(0);    opacity: 1; }
-  }
-
   @media (min-width: 640px) {
-    .modal-overlay {
-      align-items: center;
-      padding: 16px;
-    }
-    .modal-sheet {
-      max-width: 540px;
-      max-height: 90vh;
-      border-radius: var(--r-xl);
-      animation: scaleIn var(--dur-mid) var(--ease-spring) both;
-    }
+    .modal-overlay { align-items: center; padding: 16px; }
+    .modal-sheet { max-width: 540px; max-height: 90vh; animation: scaleIn var(--dur-mid) var(--ease-spring) both; }
   }
 
-  /* ── Segmented-control (iOS-style tab bar) ───────────────────────────────── */
+  /* ── Segmented control ───────────────────────────────────────────────────── */
   .seg-control {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 3px;
-    padding: 3px;
-    background: var(--surface-2);
-    border-radius: var(--r-md);
+    display: grid; grid-template-columns: 1fr 1fr;
+    border: 1.5px solid var(--ink);
   }
-
   .seg-btn {
-    padding: 9px 0;
-    text-align: center;
-    font-size: 13px;
-    font-weight: 600;
-    border: none;
-    border-radius: var(--r-sm);
-    cursor: pointer;
-    transition: background var(--dur-fast) var(--ease-out),
-                color var(--dur-fast) var(--ease-out),
-                box-shadow var(--dur-fast) var(--ease-out);
+    padding: 9px 0; text-align: center;
+    font-family: var(--ff-mono, monospace);
+    font-size: var(--ts-meta); font-weight: 500;
+    text-transform: uppercase; letter-spacing: 0.16em;
+    border: none; border-radius: 0; cursor: pointer;
+    transition: background var(--dur-fast), color var(--dur-fast);
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
+  .seg-btn-active { background: var(--ink); color: var(--paper); }
+  .seg-btn-inactive { background: transparent; color: var(--ink-3); }
+  .seg-btn-inactive:hover { background: var(--paper-2); color: var(--ink-2); }
 
-  .seg-btn-active {
-    background: var(--accent);
-    color: #fff;
-    box-shadow: 0 1px 6px oklch(63% 0.22 252 / 0.35);
-  }
-
-  .seg-btn-inactive {
-    background: transparent;
-    color: var(--text-3);
-  }
-
-  /* ── Income card ──────────────────────────────────────────────────────── */
-  /* On narrow phones the card header becomes two rows: name top, actions bottom */
-  .income-card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    cursor: pointer;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-
-  .income-card-meta {
-    /* name + frequency block — must not shrink away */
-    flex: 1 1 120px;
-    min-width: 0;
-  }
-
-  .income-card-meta p {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .income-card-actions {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-shrink: 0;
-  }
-
-  /* Hide the "Deductions" text label; show icon only on small phones */
-  .income-deduct-label {
-    display: none;
-  }
-
-  /* Amounts: slightly smaller on very small screens */
-  .income-amounts-gross {
-    font-size: 14px;
-  }
-
-  .income-amounts-net {
-    font-size: 13px;
-  }
-
+  /* ── Income card ─────────────────────────────────────────────────────────── */
+  .income-card-header { display: flex; align-items: center; justify-content: space-between; cursor: pointer; gap: 8px; flex-wrap: wrap; }
+  .income-card-meta { flex: 1 1 120px; min-width: 0; }
+  .income-card-meta p { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .income-card-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .income-deduct-label { display: none; }
+  .income-amounts-gross { font-size: var(--ts-body); }
+  .income-amounts-net { font-size: var(--ts-body-sm); }
   @media (min-width: 420px) {
-    .income-deduct-label {
-      display: inline;
-    }
-
-    .income-card-actions {
-      gap: 10px;
-    }
-
-    .income-amounts-gross {
-      font-size: 15px;
-    }
-
-    .income-amounts-net {
-      font-size: 14px;
-    }
+    .income-deduct-label { display: inline; }
+    .income-card-actions { gap: 10px; }
+    .income-amounts-gross { font-size: var(--ts-body); }
+    .income-amounts-net { font-size: var(--ts-body); }
   }
 
-  .seg-btn-inactive:hover {
-    background: var(--surface-3);
-    color: var(--text-2);
-  }
-
-  /* ── Responsive 3-column stats grid ────────────────────────────────────── */
+  /* ── Stats grid ──────────────────────────────────────────────────────────── */
   .stats-grid-3 {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 12px;
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    border: 1.5px solid var(--ink); border-right: none;
   }
+  .stats-grid-3 > * { border-right: 1.5px solid var(--ink); }
   @media (max-width: 599px) {
-    .stats-grid-3 {
-      grid-template-columns: 1fr;
-    }
+    .stats-grid-3 { grid-template-columns: 1fr; border-right: 1.5px solid var(--ink); }
+    .stats-grid-3 > * { border-right: none; border-bottom: 1.5px solid var(--ink); }
+  }
+
+  /* ── Skeleton — dashed frame, no shimmer ─────────────────────────────────── */
+  .skeleton { display: block; background: var(--paper-2); border: 1px dashed var(--ink-4); }
+
+  /* ── Ticker marquee ──────────────────────────────────────────────────────── */
+  .ticker-track { display: flex; gap: 32px; animation: marquee 38s linear infinite; width: max-content; }
+  @media (prefers-reduced-motion: reduce) { .ticker-track { animation: none; } }
+
+  /* ── Pulse dot ───────────────────────────────────────────────────────────── */
+  .pulse-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--red);
+    animation: pulseDot 1.8s ease-in-out infinite;
+    flex-shrink: 0; display: inline-block;
+  }
+  @media (prefers-reduced-motion: reduce) { .pulse-dot { animation: none; } }
+
+  /* ── Wanted stamp ────────────────────────────────────────────────────────── */
+  .wanted-stamp {
+    position: relative;
+    border: 3px solid var(--ink);
+    padding: 28px 24px;
+    background: var(--paper);
+    box-shadow: var(--shadow-stamp);
+    transform: rotate(-1.4deg);
+    display: inline-block;
+    text-align: center;
+  }
+  .wanted-stamp::before {
+    content: '';
+    position: absolute; inset: 6px;
+    border: 1px solid var(--ink);
+    pointer-events: none;
   }
 }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Editorial: enforce zero border-radius globally.
+   Inline styles use camelCase borderRadius which renders to CSS border-radius.
+   The !important here overrides all inline-style values (author !important beats
+   inline styles in the cascade).
+   ─────────────────────────────────────────────────────────────────────────────
+*/
+*, *::before, *::after { border-radius: 0 !important; }
+
+/* Exceptions — things that genuinely need to be circular */
+.pulse-dot                  { border-radius: 50%    !important; }
+.rounded-full,
+[class*="rounded-full"]     { border-radius: 9999px !important; }
+
+/* ── Editorial input focus — replace glow with hard outline ── */
+input:focus, input:focus-visible,
+textarea:focus, textarea:focus-visible,
+select:focus, select:focus-visible {
+  outline: 1.5px solid var(--ink) !important;
+  outline-offset: 0 !important;
+  box-shadow: none !important;
+}
+
+/* ── Landing page hover classes (CSS-only, no JS event handlers needed) ── */
+.lp-btn-primary {
+  transition: transform 140ms, box-shadow 140ms, background 140ms, color 140ms;
+}
+.lp-btn-primary:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0 var(--red) !important;
+  background: var(--red) !important;
+}
+
+.lp-btn-secondary {
+  transition: transform 140ms, box-shadow 140ms, background 140ms, color 140ms;
+}
+.lp-btn-secondary:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0 var(--red) !important;
+  background: var(--ink) !important;
+  color: var(--paper) !important;
+}
+
+.lp-nav-link {
+  transition: color var(--dur-fast), border-color var(--dur-fast);
+}
+.lp-nav-link:hover { color: var(--red) !important; border-bottom-color: var(--red) !important; }
+
+.lp-module-card {
+  transition: background var(--dur-fast);
+}
+.lp-module-card:hover { background: var(--paper-2) !important; }
+
+.lp-colophon-link {
+  transition: color var(--dur-fast);
+}
+.lp-colophon-link:hover { color: var(--red) !important; }

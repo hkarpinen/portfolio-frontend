@@ -45,7 +45,7 @@ const inputStyle: React.CSSProperties = {
   borderRadius: "12px",
   color: "var(--text)",
   fontFamily: "var(--ff-body)",
-  fontSize: "14px",
+  fontSize: "var(--ts-body)",
   outline: "none",
   transition: "border-color 150ms, box-shadow 150ms",
 };
@@ -58,7 +58,7 @@ const textareaStyle: React.CSSProperties = {
   borderRadius: "12px",
   color: "var(--text)",
   fontFamily: "var(--ff-body)",
-  fontSize: "14px",
+  fontSize: "var(--ts-body)",
   outline: "none",
   resize: "vertical",
   transition: "border-color 150ms, box-shadow 150ms",
@@ -66,7 +66,7 @@ const textareaStyle: React.CSSProperties = {
 
 const labelStyle: React.CSSProperties = {
   display: "block",
-  fontSize: "12px",
+  fontSize: "var(--ts-label)",
   fontWeight: 500,
   color: "var(--text-2)",
   letterSpacing: "0.02em",
@@ -74,7 +74,7 @@ const labelStyle: React.CSSProperties = {
 };
 
 const sectionLabelStyle: React.CSSProperties = {
-  fontSize: "10px",
+  fontSize: "var(--ts-meta)",
   fontWeight: 700,
   color: "var(--text-3)",
   textTransform: "uppercase",
@@ -227,10 +227,10 @@ export default function ProfileSettingsPage() {
     <div className="page-enter" style={{ maxWidth: "860px", margin: "0 auto", padding: "32px 24px" }}>
       {/* Header */}
       <div style={{ marginBottom: "28px" }}>
-        <h1 style={{ fontFamily: "var(--ff-display)", fontSize: "22px", fontWeight: 700, color: "var(--text)" }}>
+        <h1 style={{ fontFamily: "var(--ff-display)", fontSize: "var(--ts-h2)", lineHeight: "var(--lh-display)", letterSpacing: "-0.02em", fontWeight: 700, color: "var(--text)" }}>
           Settings
         </h1>
-        <p style={{ fontSize: "13px", color: "var(--text-3)", marginTop: "4px" }}>
+        <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)", marginTop: "4px" }}>
           Manage your account, security, and preferences
         </p>
       </div>
@@ -245,7 +245,7 @@ export default function ProfileSettingsPage() {
               href={TAB_HREFS[tab]}
               style={{
                 padding: "10px 16px",
-                fontSize: "14px",
+                fontSize: "var(--ts-body)",
                 fontWeight: active ? 600 : 400,
                 color: active ? "var(--text)" : "var(--text-3)",
                 borderBottom: active ? "2px solid var(--accent)" : "2px solid transparent",
@@ -262,7 +262,7 @@ export default function ProfileSettingsPage() {
 
       {loading ? (
         <div style={{ ...cardStyle, textAlign: "center", padding: "48px 20px" }}>
-          <p style={{ color: "var(--text-3)", fontSize: "14px" }}>Loading...</p>
+          <p style={{ color: "var(--text-3)", fontSize: "var(--ts-body)" }}>Loading...</p>
         </div>
       ) : (
         <div className="sidebar-grid" style={{ gap: "20px" }}>
@@ -273,12 +273,12 @@ export default function ProfileSettingsPage() {
               <p style={{ ...sectionLabelStyle, marginBottom: "16px" }}>Account</p>
               <form onSubmit={identityForm.handleSubmit(onIdentitySubmit)} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
                 {identityError && (
-                  <div style={{ background: "var(--danger-s)", border: "1px solid oklch(62% 0.21 22 / 0.3)", borderRadius: "10px", padding: "10px 14px", fontSize: "13px", color: "var(--danger)" }}>
+                  <div style={{ background: "var(--danger-s)", border: "1px solid oklch(62% 0.21 22 / 0.3)", borderRadius: "10px", padding: "10px 14px", fontSize: "var(--ts-body-sm)", color: "var(--danger)" }}>
                     {identityError}
                   </div>
                 )}
                 {identitySaved && (
-                  <div style={{ background: "var(--success-s)", border: "1px solid oklch(68% 0.18 152 / 0.3)", borderRadius: "10px", padding: "10px 14px", fontSize: "13px", color: "var(--success)" }}>
+                  <div style={{ background: "var(--success-s)", border: "1px solid oklch(68% 0.18 152 / 0.3)", borderRadius: "10px", padding: "10px 14px", fontSize: "var(--ts-body-sm)", color: "var(--success)" }}>
                     Account updated.
                   </div>
                 )}
@@ -290,7 +290,7 @@ export default function ProfileSettingsPage() {
                     placeholder="Your display name"
                   />
                   {identityForm.formState.errors.displayName && (
-                    <p style={{ color: "var(--danger)", fontSize: "12px", marginTop: "4px" }}>
+                    <p style={{ color: "var(--danger)", fontSize: "var(--ts-label)", marginTop: "4px" }}>
                       {identityForm.formState.errors.displayName.message}
                     </p>
                   )}
@@ -304,17 +304,17 @@ export default function ProfileSettingsPage() {
             {/* Forum profile form */}
             <div style={cardStyle}>
               <p style={{ ...sectionLabelStyle, marginBottom: "4px" }}>Forum Profile</p>
-              <p style={{ fontSize: "12px", color: "var(--text-3)", marginBottom: "16px" }}>
+              <p style={{ fontSize: "var(--ts-label)", color: "var(--text-3)", marginBottom: "16px" }}>
                 Visible on your forum posts and profile.
               </p>
               <form onSubmit={forumForm.handleSubmit(onForumSubmit)} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
                 {forumError && (
-                  <div style={{ background: "var(--danger-s)", border: "1px solid oklch(62% 0.21 22 / 0.3)", borderRadius: "10px", padding: "10px 14px", fontSize: "13px", color: "var(--danger)" }}>
+                  <div style={{ background: "var(--danger-s)", border: "1px solid oklch(62% 0.21 22 / 0.3)", borderRadius: "10px", padding: "10px 14px", fontSize: "var(--ts-body-sm)", color: "var(--danger)" }}>
                     {forumError}
                   </div>
                 )}
                 {forumSaved && (
-                  <div style={{ background: "var(--success-s)", border: "1px solid oklch(68% 0.18 152 / 0.3)", borderRadius: "10px", padding: "10px 14px", fontSize: "13px", color: "var(--success)" }}>
+                  <div style={{ background: "var(--success-s)", border: "1px solid oklch(68% 0.18 152 / 0.3)", borderRadius: "10px", padding: "10px 14px", fontSize: "var(--ts-body-sm)", color: "var(--success)" }}>
                     Forum profile updated.
                   </div>
                 )}
@@ -329,7 +329,7 @@ export default function ProfileSettingsPage() {
                     rows={4}
                   />
                   {forumForm.formState.errors.bio && (
-                    <p style={{ color: "var(--danger)", fontSize: "12px", marginTop: "4px" }}>
+                    <p style={{ color: "var(--danger)", fontSize: "var(--ts-label)", marginTop: "4px" }}>
                       {forumForm.formState.errors.bio.message}
                     </p>
                   )}
@@ -345,7 +345,7 @@ export default function ProfileSettingsPage() {
                     rows={2}
                   />
                   {forumForm.formState.errors.signature && (
-                    <p style={{ color: "var(--danger)", fontSize: "12px", marginTop: "4px" }}>
+                    <p style={{ color: "var(--danger)", fontSize: "var(--ts-label)", marginTop: "4px" }}>
                       {forumForm.formState.errors.signature.message}
                     </p>
                   )}
@@ -381,7 +381,7 @@ export default function ProfileSettingsPage() {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    fontSize: "24px",
+                    fontSize: "var(--ts-card-h)",
                     color: "var(--text-3)",
                   }}
                 >
@@ -430,9 +430,9 @@ export default function ProfileSettingsPage() {
             </div>
 
             {avatarError && (
-              <p style={{ color: "var(--danger)", fontSize: "12px", textAlign: "center" }}>{avatarError}</p>
+              <p style={{ color: "var(--danger)", fontSize: "var(--ts-label)", textAlign: "center" }}>{avatarError}</p>
             )}
-            <p style={{ fontSize: "11px", color: "var(--text-3)", textAlign: "center" }}>
+            <p style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)", textAlign: "center" }}>
               PNG, JPEG, WebP or GIF · up to 5 MB
             </p>
           </div>

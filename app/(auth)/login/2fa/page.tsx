@@ -32,21 +32,20 @@ export default function TwoFactorPage() {
 
   return (
     <div style={{
-      background: "var(--surface)",
-      border: "1px solid var(--border)",
-      borderRadius: "24px",
+      background: "var(--paper-2)",
+      border: "1.5px solid var(--ink)",
+      boxShadow: "var(--shadow-stamp)",
       padding: "32px",
-      boxShadow: "var(--shadow-lg)",
     }}>
-      <div style={{ textAlign: "center", marginBottom: "28px" }}>
+      <div style={{ marginBottom: "28px" }}>
         <h1 style={{
-          fontFamily: "var(--ff-display)", fontWeight: "800",
-          fontSize: "28px", letterSpacing: "-0.025em", color: "var(--text)",
-          marginBottom: "8px",
+          fontFamily: "var(--ff-serif)", fontStyle: "italic", fontWeight: 400,
+          fontSize: "var(--ts-h3)", letterSpacing: "-0.025em", color: "var(--ink)",
+          marginBottom: "6px",
         }}>
-          Two-factor authentication
+          Two-factor auth<span style={{ color: "var(--red)" }}>.</span>
         </h1>
-        <p style={{ fontSize: "13px", color: "var(--text-3)" }}>
+        <p style={{ fontFamily: "var(--ff-mono)", fontSize: "var(--ts-meta)", color: "var(--ink-3)", textTransform: "uppercase", letterSpacing: "0.20em" }}>
           Enter the 6-digit code from your authenticator app
         </p>
       </div>
@@ -58,7 +57,7 @@ export default function TwoFactorPage() {
             borderRadius: "10px",
             background: "var(--danger-s)",
             border: "1px solid oklch(62% 0.21 22 / 0.3)",
-            fontSize: "13px",
+            fontSize: "var(--ts-body-sm)",
             color: "var(--danger)",
           }}>
             {error}
@@ -67,7 +66,7 @@ export default function TwoFactorPage() {
 
         <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
           <label style={{
-            fontSize: "12px", fontWeight: "500", color: "var(--text-2)",
+            fontSize: "var(--ts-label)", fontWeight: "500", color: "var(--text-2)",
             letterSpacing: "0.02em",
           }}>
             Authenticator code
@@ -86,7 +85,7 @@ export default function TwoFactorPage() {
               border: `1px solid ${error ? "var(--danger)" : "var(--border)"}`,
               borderRadius: "12px",
               padding: "0 12px",
-              fontSize: "20px",
+              fontSize: "var(--ts-sub)",
               letterSpacing: "0.25em",
               color: "var(--text)",
               outline: "none",

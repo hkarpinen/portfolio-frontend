@@ -23,7 +23,7 @@ export default function ProfilePage({ params }: { params: { userId: string } }) 
   if (profileLoading) {
     return (
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "200px" }}>
-        <span style={{ fontSize: "13px", color: "var(--text-3)" }}>Loading profile…</span>
+        <span style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)" }}>Loading profile…</span>
       </div>
     );
   }
@@ -48,12 +48,12 @@ export default function ProfilePage({ params }: { params: { userId: string } }) 
             />
           ) : (
             <div style={{
-              width: "80px", height: "80px", borderRadius: "9999px",
-              background: "linear-gradient(135deg, var(--accent) 0%, var(--accent-v) 100%)",
+              width: "80px", height: "80px",
+              background: "var(--paper-3)",
+              border: "2px solid var(--ink)",
               display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: "28px", fontWeight: "800", color: "#fff",
-              fontFamily: "var(--ff-display)", flexShrink: 0,
-              border: "3px solid var(--surface)",
+              fontSize: "var(--ts-sub)", fontWeight: 700, color: "var(--ink)",
+              fontFamily: "var(--ff-mono)", flexShrink: 0,
             }}>
               {initials}
             </div>
@@ -63,22 +63,22 @@ export default function ProfilePage({ params }: { params: { userId: string } }) 
             <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
               <h1 style={{
                 fontFamily: "var(--ff-display)", fontWeight: "800",
-                fontSize: "24px", letterSpacing: "-0.025em", color: "var(--text)", margin: 0,
+                fontSize: "var(--ts-card-h)", letterSpacing: "-0.025em", color: "var(--text)", margin: 0,
               }}>{displayName}</h1>
               {isOwnProfile && (
                 <span style={{
-                  fontSize: "11px", fontWeight: "600", color: "var(--accent)",
+                  fontSize: "var(--ts-meta)", fontWeight: "600", color: "var(--accent)",
                   background: "var(--accent-subtle)", padding: "2px 8px", borderRadius: "9999px",
                 }}>You</span>
               )}
             </div>
             {profile?.bio && (
-              <p style={{ fontSize: "13px", color: "var(--text-2)", marginTop: "6px", lineHeight: 1.5 }}>
+              <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-2)", marginTop: "6px", lineHeight: 1.5 }}>
                 {profile.bio}
               </p>
             )}
             {profile?.createdAt && (
-              <p style={{ fontSize: "12px", color: "var(--text-3)", marginTop: "8px" }}>
+              <p style={{ fontSize: "var(--ts-label)", color: "var(--text-3)", marginTop: "8px" }}>
                 Member since {formatDate(profile.createdAt)}
               </p>
             )}
@@ -97,10 +97,10 @@ export default function ProfilePage({ params }: { params: { userId: string } }) 
       }}>
         <h2 style={{
           fontFamily: "var(--ff-display)", fontWeight: "700",
-          fontSize: "15px", color: "var(--text)", marginBottom: "16px",
+          fontSize: "var(--ts-body)", color: "var(--text)", marginBottom: "16px",
         }}>Communities</h2>
         {!memberships || memberships.length === 0 ? (
-          <p style={{ fontSize: "13px", color: "var(--text-3)" }}>Not a member of any communities yet.</p>
+          <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)" }}>Not a member of any communities yet.</p>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
             {memberships.map(m => (
@@ -122,18 +122,18 @@ export default function ProfilePage({ params }: { params: { userId: string } }) 
                     width: "32px", height: "32px", borderRadius: "8px",
                     background: "var(--accent-subtle)", display: "flex",
                     alignItems: "center", justifyContent: "center",
-                    fontSize: "14px", flexShrink: 0,
+                    fontSize: "var(--ts-body)", flexShrink: 0,
                   }}>💬</div>
                 )}
                 <div style={{ flex: 1 }}>
-                  <p style={{ fontSize: "13px", fontWeight: "600", color: "var(--text)", margin: 0 }}>{m.communityName}</p>
-                  <p style={{ fontSize: "11px", color: "var(--text-3)", margin: 0 }}>
+                  <p style={{ fontSize: "var(--ts-body-sm)", fontWeight: "600", color: "var(--text)", margin: 0 }}>{m.communityName}</p>
+                  <p style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)", margin: 0 }}>
                     {m.role === "Moderator" ? "Moderator" : "Member"} · Joined {formatDate(m.joinedAt)}
                   </p>
                 </div>
                 {m.role === "Moderator" && (
                   <span style={{
-                    fontSize: "10px", fontWeight: "700", color: "var(--warning)",
+                    fontSize: "var(--ts-meta)", fontWeight: "700", color: "var(--warning)",
                     background: "oklch(from var(--warning) l c h / 0.12)",
                     padding: "2px 6px", borderRadius: "9999px", flexShrink: 0,
                   }}>MOD</span>
@@ -152,12 +152,12 @@ export default function ProfilePage({ params }: { params: { userId: string } }) 
         <div style={{ padding: "20px 20px 12px" }}>
           <h2 style={{
             fontFamily: "var(--ff-display)", fontWeight: "700",
-            fontSize: "15px", color: "var(--text)", margin: 0,
+            fontSize: "var(--ts-body)", color: "var(--text)", margin: 0,
           }}>Recent Threads</h2>
         </div>
         {threads.length === 0 ? (
           <div style={{ padding: "0 20px 20px" }}>
-            <p style={{ fontSize: "13px", color: "var(--text-3)" }}>No threads posted yet.</p>
+            <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)" }}>No threads posted yet.</p>
           </div>
         ) : (
           <div>
@@ -177,14 +177,14 @@ export default function ProfilePage({ params }: { params: { userId: string } }) 
                 <div style={{
                   width: "36px", textAlign: "center", flexShrink: 0,
                 }}>
-                  <span style={{ fontSize: "13px", fontWeight: "700", color: "var(--text)" }}>{thread.voteScore ?? 0}</span>
-                  <div style={{ fontSize: "9px", color: "var(--text-3)", textTransform: "uppercase" }}>pts</div>
+                  <span style={{ fontSize: "var(--ts-body-sm)", fontWeight: "700", color: "var(--text)" }}>{thread.voteScore ?? 0}</span>
+                  <div style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)", textTransform: "uppercase" }}>pts</div>
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ fontSize: "13px", fontWeight: "600", color: "var(--text)", margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                  <p style={{ fontSize: "var(--ts-body-sm)", fontWeight: "600", color: "var(--text)", margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                     {thread.title}
                   </p>
-                  <p style={{ fontSize: "11px", color: "var(--text-3)", margin: 0 }}>
+                  <p style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)", margin: 0 }}>
                     {timeAgo(thread.createdAt)}
                   </p>
                 </div>
@@ -202,12 +202,12 @@ export default function ProfilePage({ params }: { params: { userId: string } }) 
         <div style={{ padding: "20px 20px 12px" }}>
           <h2 style={{
             fontFamily: "var(--ff-display)", fontWeight: "700",
-            fontSize: "15px", color: "var(--text)", margin: 0,
+            fontSize: "var(--ts-body)", color: "var(--text)", margin: 0,
           }}>Recent Comments</h2>
         </div>
         {comments.length === 0 ? (
           <div style={{ padding: "0 20px 20px" }}>
-            <p style={{ fontSize: "13px", color: "var(--text-3)" }}>No comments posted yet.</p>
+            <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)" }}>No comments posted yet.</p>
           </div>
         ) : (
           <div>
@@ -225,13 +225,13 @@ export default function ProfilePage({ params }: { params: { userId: string } }) 
                 }}
               >
                 <div style={{ display: "flex", alignItems: "center", gap: "8px", justifyContent: "space-between" }}>
-                  <p style={{ fontSize: "12px", color: "var(--accent)", margin: 0, fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                  <p style={{ fontSize: "var(--ts-label)", color: "var(--accent)", margin: 0, fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                     {comment.threadTitle}
                   </p>
-                  <span style={{ fontSize: "11px", color: "var(--text-3)", flexShrink: 0 }}>{timeAgo(comment.createdAt)}</span>
+                  <span style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)", flexShrink: 0 }}>{timeAgo(comment.createdAt)}</span>
                 </div>
-                <p style={{ fontSize: "13px", color: "var(--text-2)", margin: 0, lineHeight: 1.45 }}>{comment.content}</p>
-                <p style={{ fontSize: "11px", color: "var(--text-3)", margin: 0 }}>in {comment.communityName}</p>
+                <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-2)", margin: 0, lineHeight: 1.45 }}>{comment.content}</p>
+                <p style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)", margin: 0 }}>in {comment.communityName}</p>
               </Link>
             ))}
           </div>

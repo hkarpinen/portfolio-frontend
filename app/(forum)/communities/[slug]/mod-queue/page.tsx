@@ -4,10 +4,10 @@ export default function ModQueuePage({ params }: { params: { slug: string } }) {
       <div>
         <h1 style={{
           fontFamily: "var(--ff-display)", fontWeight: "800",
-          fontSize: "24px", letterSpacing: "-0.025em", color: "var(--text)",
+          fontSize: "var(--ts-card-h)", letterSpacing: "-0.025em", color: "var(--text)",
           marginBottom: "4px",
         }}>Mod Queue</h1>
-        <p style={{ fontSize: "13px", color: "var(--text-3)" }}>
+        <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)" }}>
           r/{params.slug}
         </p>
       </div>
@@ -28,10 +28,10 @@ export default function ModQueuePage({ params }: { params: { slug: string } }) {
             <path d="M20 6L9 17l-5-5" />
           </svg>
         </div>
-        <p style={{ fontSize: "14px", fontWeight: "600", fontFamily: "var(--ff-display)", color: "var(--text)", marginBottom: "4px" }}>
+        <p style={{ fontSize: "var(--ts-body)", fontWeight: "600", fontFamily: "var(--ff-display)", color: "var(--text)", marginBottom: "4px" }}>
           Queue is empty
         </p>
-        <p style={{ fontSize: "12px", color: "var(--text-3)" }}>
+        <p style={{ fontSize: "var(--ts-label)", color: "var(--text-3)" }}>
           Reported content awaiting review will appear here.
         </p>
       </div>

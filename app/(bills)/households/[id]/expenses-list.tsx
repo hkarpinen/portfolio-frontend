@@ -40,10 +40,10 @@ export function ExpensesList({ householdId, initialData, canDelete }: ExpensesLi
             <path d="M17 9V7a5 5 0 0 0-10 0v2M5 9h14l1 12H4L5 9z" />
           </svg>
         </div>
-        <p style={{ fontSize: "14px", fontWeight: "600", fontFamily: "var(--ff-display)", color: "var(--text)", marginBottom: "4px" }}>
+        <p style={{ fontSize: "var(--ts-body)", fontWeight: "600", fontFamily: "var(--ff-display)", color: "var(--text)", marginBottom: "4px" }}>
           No expenses yet
         </p>
-        <p style={{ fontSize: "12px", color: "var(--text-3)", marginBottom: "16px" }}>
+        <p style={{ fontSize: "var(--ts-label)", color: "var(--text-3)", marginBottom: "16px" }}>
           Add your first expense to start tracking.
         </p>
         <Link
@@ -52,7 +52,7 @@ export function ExpensesList({ householdId, initialData, canDelete }: ExpensesLi
             display: "inline-flex", alignItems: "center",
             padding: "7px 16px", borderRadius: "10px",
             background: "var(--accent)", color: "#fff",
-            fontSize: "13px", fontWeight: "600", textDecoration: "none",
+            fontSize: "var(--ts-body-sm)", fontWeight: "600", textDecoration: "none",
             transition: "background 110ms",
           }}
         >
@@ -107,12 +107,12 @@ export function ExpensesList({ householdId, initialData, canDelete }: ExpensesLi
                 </div>
                 <div style={{ minWidth: 0 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap" }}>
-                    <span style={{ fontSize: "14px", fontWeight: "600", color: "var(--text)" }}>{expense.title}</span>
+                    <span style={{ fontSize: "var(--ts-body)", fontWeight: "600", color: "var(--text)" }}>{expense.title}</span>
                     {expense.recurrenceFrequency && (
                       <span style={{
                         padding: "1px 7px", borderRadius: "9999px",
                         background: "var(--accent-subtle)", color: "var(--accent)",
-                        fontSize: "10px", fontWeight: "500",
+                        fontSize: "var(--ts-meta)", fontWeight: "500",
                       }}>{expense.recurrenceFrequency}</span>
                     )}
                     {expense.category && (
@@ -120,11 +120,11 @@ export function ExpensesList({ householdId, initialData, canDelete }: ExpensesLi
                         padding: "1px 7px", borderRadius: "9999px",
                         background: "var(--surface-3)", color: "var(--text-2)",
                         border: "1px solid var(--border)",
-                        fontSize: "10px", fontWeight: "500",
+                        fontSize: "var(--ts-meta)", fontWeight: "500",
                       }}>{String(expense.category)}</span>
                     )}
                   </div>
-                  <p style={{ fontSize: "12px", color: "var(--text-3)", marginTop: "2px" }}>
+                  <p style={{ fontSize: "var(--ts-label)", color: "var(--text-3)", marginTop: "2px" }}>
                     Due {dueDate.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}
                     {isOverdue && (
                       <span style={{ color: "var(--danger)", fontWeight: "500" }}> · Overdue</span>
@@ -140,7 +140,7 @@ export function ExpensesList({ householdId, initialData, canDelete }: ExpensesLi
               <div style={{ display: "flex", alignItems: "center", gap: "12px", flexShrink: 0 }}>
                 <span style={{
                   fontFamily: "var(--ff-display)", fontWeight: "700",
-                  fontSize: "15px", color: isOverdue ? "var(--danger)" : "var(--text)",
+                  fontSize: "var(--ts-body)", color: isOverdue ? "var(--danger)" : "var(--text)",
                 }}>
                   {expense.currency} {Number(expense.amount).toFixed(2)}
                 </span>
@@ -152,7 +152,7 @@ export function ExpensesList({ householdId, initialData, canDelete }: ExpensesLi
                       padding: "4px 10px", borderRadius: "8px",
                       background: "var(--danger-s)", color: "var(--danger)",
                       border: "1px solid oklch(62% 0.21 22 / 0.25)",
-                      fontSize: "11px", fontWeight: "500", cursor: "pointer",
+                      fontSize: "var(--ts-meta)", fontWeight: "500", cursor: "pointer",
                       opacity: deleteMutation.isPending && deleteMutation.variables === expense.expenseId ? 0.5 : 1,
                       transition: "opacity 110ms",
                     }}

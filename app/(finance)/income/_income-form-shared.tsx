@@ -30,7 +30,7 @@ export const iStyle: React.CSSProperties = {
   border: "1px solid var(--border)",
   borderRadius: "12px",
   padding: "0 12px",
-  fontSize: "13px",
+  fontSize: "var(--ts-body-sm)",
   color: "var(--text)",
   outline: "none",
   transition: "border-color 110ms, box-shadow 110ms",
@@ -40,11 +40,11 @@ export const iStyle: React.CSSProperties = {
 export function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-      <label style={{ fontSize: "12px", fontWeight: "500", color: "var(--text-2)", letterSpacing: "0.02em" }}>
+      <label style={{ fontSize: "var(--ts-label)", fontWeight: "500", color: "var(--text-2)", letterSpacing: "0.02em" }}>
         {label}
       </label>
       {children}
-      {error && <span style={{ fontSize: "11px", color: "var(--danger)" }}>{error}</span>}
+      {error && <span style={{ fontSize: "var(--ts-meta)", color: "var(--danger)" }}>{error}</span>}
     </div>
   );
 }

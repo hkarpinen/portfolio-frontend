@@ -8,6 +8,7 @@ import { z } from "zod";
 import { ApiError } from "@/lib/api-client";
 import { useHouseholdExpenseDetail, useAddExpenseSplit, useRemoveExpenseSplit, useUpdateHouseholdExpense } from "@/hooks/use-expenses";
 import { useMe } from "@/hooks/use-identity";
+import { useHouseholdMembers } from "@/hooks/use-household";
 import { Button } from "@/components/ui/button";
 import type { HouseholdExpenseDetailResponse } from "@/types/finance";
 
@@ -37,9 +38,9 @@ function StatCard({ label, value, color }: { label: string; value: string; color
       border: `1px solid ${color ? `oklch(from ${color} l c h / 0.3)` : "var(--border)"}`,
       borderRadius: "16px", padding: "16px 20px",
     } as React.CSSProperties}>
-      <p style={{ fontSize: "11px", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", fontWeight: "500" }}>{label}</p>
+      <p style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", fontWeight: "500" }}>{label}</p>
       <p style={{
-        fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "24px",
+        fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "var(--ts-card-h)",
         letterSpacing: "-0.025em", color: color ?? "var(--text)", marginTop: "4px",
       }}>{value}</p>
     </div>
@@ -51,11 +52,13 @@ export default function ExpensePage({ params }: { params: { id: string; expenseI
   const { data: me } = useMe();
   const [editOpen, setEditOpen] = useState(false);
 
+  const { data: householdMembers } = useHouseholdMembers(params.id);
+
   const expense = page?.expense;
   const splits = page?.splits ?? [];
-  const members = page?.members ?? [];
+  const members = householdMembers ?? [];
   const currentMembership = members.find(
-    (m) => me?.id && m.userId.toLowerCase() === me.id.toLowerCase()
+    (m) => me?.id && m.userId?.toLowerCase() === me.id.toLowerCase()
   ) ?? null;
   const isPrivileged = currentMembership?.role === "Owner" || currentMembership?.role === "Admin";
 
@@ -124,7 +127,7 @@ export default function ExpensePage({ params }: { params: { id: string; expenseI
   if (fetchError) return (
     <div style={{
       background: "var(--danger-s)", border: "1px solid oklch(62% 0.21 22 / 0.3)",
-      borderRadius: "16px", padding: "16px", color: "var(--danger)", fontSize: "14px",
+      borderRadius: "16px", padding: "16px", color: "var(--danger)", fontSize: "var(--ts-body)",
     }}>{fetchError instanceof ApiError ? fetchError.message : "Failed to load expense."}</div>
   );
 
@@ -135,7 +138,7 @@ export default function ExpensePage({ params }: { params: { id: string; expenseI
       {/* Header */}
       <div>
         <Link href={`/households/${params.id}`} style={{
-          fontSize: "12px", color: "var(--text-3)", textDecoration: "none",
+          fontSize: "var(--ts-label)", color: "var(--text-3)", textDecoration: "none",
           display: "inline-flex", alignItems: "center", gap: "4px",
         }}>
           ← Household
@@ -144,15 +147,15 @@ export default function ExpensePage({ params }: { params: { id: string; expenseI
           <div>
             <h1 style={{
               fontFamily: "var(--ff-display)", fontWeight: "800",
-              fontSize: "28px", letterSpacing: "-0.025em", color: "var(--text)",
+              fontSize: "var(--ts-card-h)", letterSpacing: "-0.025em", color: "var(--text)",
               marginBottom: "4px",
             }}>{expense.title}</h1>
-            <p style={{ fontSize: "13px", color: "var(--text-3)" }}>
+            <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)" }}>
               Due {new Date(expense.dueDate).toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" })}
               {expense.recurrenceFrequency && ` · ${expense.recurrenceFrequency}`}
               {expense.category != null && ` · ${String(expense.category)}`}
             </p>
-            {expense.description && <p style={{ fontSize: "13px", color: "var(--text-2)", marginTop: "6px", lineHeight: "1.6" }}>{expense.description}</p>}
+            {expense.description && <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-2)", marginTop: "6px", lineHeight: "1.6" }}>{expense.description}</p>}
           </div>
           {isPrivileged && (
             <button
@@ -160,7 +163,7 @@ export default function ExpensePage({ params }: { params: { id: string; expenseI
               style={{
                 padding: "6px 14px", borderRadius: "10px", flexShrink: 0,
                 background: editOpen ? "var(--surface-3)" : "var(--surface-2)",
-                border: "1px solid var(--border)", fontSize: "12px", fontWeight: "600",
+                border: "1px solid var(--border)", fontSize: "var(--ts-label)", fontWeight: "600",
                 color: "var(--text-2)", cursor: "pointer", marginTop: "4px",
               }}
             >
@@ -176,45 +179,45 @@ export default function ExpensePage({ params }: { params: { id: string; expenseI
           background: "var(--surface)", border: "1px solid var(--border)",
           borderRadius: "16px", padding: "24px",
         }}>
-          <h2 style={{ fontFamily: "var(--ff-display)", fontWeight: "700", fontSize: "16px", color: "var(--text)", marginBottom: "16px" }}>
+          <h2 style={{ fontFamily: "var(--ff-display)", fontWeight: "700", fontSize: "var(--ts-body)", color: "var(--text)", marginBottom: "16px" }}>
             Edit Expense
           </h2>
           <form onSubmit={handleSubmitEdit(onEditBill)} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
             {updateExpenseMutation.isError && (
-              <div style={{ padding: "10px 14px", borderRadius: "10px", background: "var(--danger-s)", border: "1px solid oklch(62% 0.21 22 / 0.3)", fontSize: "13px", color: "var(--danger)" }}>
+              <div style={{ padding: "10px 14px", borderRadius: "10px", background: "var(--danger-s)", border: "1px solid oklch(62% 0.21 22 / 0.3)", fontSize: "var(--ts-body-sm)", color: "var(--danger)" }}>
                 {updateExpenseMutation.error instanceof ApiError ? updateExpenseMutation.error.message : "Something went wrong."}
               </div>
             )}
             <div className="form-grid-2">
               <div style={{ display: "flex", flexDirection: "column", gap: "6px", gridColumn: "1 / -1" }}>
-                <label style={{ fontSize: "12px", fontWeight: "500", color: "var(--text-2)" }}>Title</label>
-                <input {...registerEdit("title")} style={{ height: "38px", background: "var(--surface-2)", border: `1px solid ${editErrors.title ? "var(--danger)" : "var(--border)"}`, borderRadius: "12px", padding: "0 12px", fontSize: "13px", color: "var(--text)", outline: "none" }} />
-                {editErrors.title && <span style={{ fontSize: "11px", color: "var(--danger)" }}>{editErrors.title.message}</span>}
+                <label style={{ fontSize: "var(--ts-label)", fontWeight: "500", color: "var(--text-2)" }}>Title</label>
+                <input {...registerEdit("title")} style={{ height: "38px", background: "var(--surface-2)", border: `1px solid ${editErrors.title ? "var(--danger)" : "var(--border)"}`, borderRadius: "12px", padding: "0 12px", fontSize: "var(--ts-body-sm)", color: "var(--text)", outline: "none" }} />
+                {editErrors.title && <span style={{ fontSize: "var(--ts-meta)", color: "var(--danger)" }}>{editErrors.title.message}</span>}
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={{ fontSize: "12px", fontWeight: "500", color: "var(--text-2)" }}>Amount</label>
-                <input type="number" step="0.01" {...registerEdit("amount")} style={{ height: "38px", background: "var(--surface-2)", border: `1px solid ${editErrors.amount ? "var(--danger)" : "var(--border)"}`, borderRadius: "12px", padding: "0 12px", fontSize: "13px", color: "var(--text)", outline: "none" }} />
-                {editErrors.amount && <span style={{ fontSize: "11px", color: "var(--danger)" }}>{editErrors.amount.message}</span>}
+                <label style={{ fontSize: "var(--ts-label)", fontWeight: "500", color: "var(--text-2)" }}>Amount</label>
+                <input type="number" step="0.01" {...registerEdit("amount")} style={{ height: "38px", background: "var(--surface-2)", border: `1px solid ${editErrors.amount ? "var(--danger)" : "var(--border)"}`, borderRadius: "12px", padding: "0 12px", fontSize: "var(--ts-body-sm)", color: "var(--text)", outline: "none" }} />
+                {editErrors.amount && <span style={{ fontSize: "var(--ts-meta)", color: "var(--danger)" }}>{editErrors.amount.message}</span>}
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={{ fontSize: "12px", fontWeight: "500", color: "var(--text-2)" }}>Currency</label>
-                <input {...registerEdit("currency")} placeholder="USD" style={{ height: "38px", background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: "12px", padding: "0 12px", fontSize: "13px", color: "var(--text)", outline: "none" }} />
+                <label style={{ fontSize: "var(--ts-label)", fontWeight: "500", color: "var(--text-2)" }}>Currency</label>
+                <input {...registerEdit("currency")} placeholder="USD" style={{ height: "38px", background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: "12px", padding: "0 12px", fontSize: "var(--ts-body-sm)", color: "var(--text)", outline: "none" }} />
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={{ fontSize: "12px", fontWeight: "500", color: "var(--text-2)" }}>Category</label>
-                <select {...registerEdit("category")} style={{ height: "38px", background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: "12px", padding: "0 12px", fontSize: "13px", color: "var(--text)", outline: "none" }}>
+                <label style={{ fontSize: "var(--ts-label)", fontWeight: "500", color: "var(--text-2)" }}>Category</label>
+                <select {...registerEdit("category")} style={{ height: "38px", background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: "12px", padding: "0 12px", fontSize: "var(--ts-body-sm)", color: "var(--text)", outline: "none" }}>
                   {["Rent","Utilities","Groceries","Transportation","Entertainment","Healthcare","Insurance","Subscriptions","Internet","Phone","Other"].map((c) => (
                     <option key={c} value={c}>{c}</option>
                   ))}
                 </select>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={{ fontSize: "12px", fontWeight: "500", color: "var(--text-2)" }}>Due Date</label>
-                <input type="date" {...registerEdit("dueDate")} style={{ height: "38px", background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: "12px", padding: "0 12px", fontSize: "13px", color: "var(--text)", outline: "none" }} />
+                <label style={{ fontSize: "var(--ts-label)", fontWeight: "500", color: "var(--text-2)" }}>Due Date</label>
+                <input type="date" {...registerEdit("dueDate")} style={{ height: "38px", background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: "12px", padding: "0 12px", fontSize: "var(--ts-body-sm)", color: "var(--text)", outline: "none" }} />
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={{ fontSize: "12px", fontWeight: "500", color: "var(--text-2)" }}>Recurrence</label>
-                <select {...registerEdit("recurrenceFrequency")} style={{ height: "38px", background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: "12px", padding: "0 12px", fontSize: "13px", color: "var(--text)", outline: "none" }}>
+                <label style={{ fontSize: "var(--ts-label)", fontWeight: "500", color: "var(--text-2)" }}>Recurrence</label>
+                <select {...registerEdit("recurrenceFrequency")} style={{ height: "38px", background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: "12px", padding: "0 12px", fontSize: "var(--ts-body-sm)", color: "var(--text)", outline: "none" }}>
                   <option value="">None</option>
                   {["Daily","Weekly","Biweekly","Monthly","Quarterly","Yearly"].map((f) => (
                     <option key={f} value={f}>{f}</option>
@@ -222,14 +225,14 @@ export default function ExpensePage({ params }: { params: { id: string; expenseI
                 </select>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "6px", gridColumn: "1 / -1" }}>
-                <label style={{ fontSize: "12px", fontWeight: "500", color: "var(--text-2)" }}>Description</label>
-                <textarea {...registerEdit("description")} rows={2} style={{ background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: "12px", padding: "8px 12px", fontSize: "13px", color: "var(--text)", outline: "none", resize: "vertical" }} />
+                <label style={{ fontSize: "var(--ts-label)", fontWeight: "500", color: "var(--text-2)" }}>Description</label>
+                <textarea {...registerEdit("description")} rows={2} style={{ background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: "12px", padding: "8px 12px", fontSize: "var(--ts-body-sm)", color: "var(--text)", outline: "none", resize: "vertical" }} />
               </div>
             </div>
             <button
               type="submit"
               disabled={updateExpenseMutation.isPending}
-              style={{ alignSelf: "flex-end", padding: "8px 20px", borderRadius: "12px", background: updateExpenseMutation.isPending ? "var(--surface-3)" : "var(--accent)", color: updateExpenseMutation.isPending ? "var(--text-3)" : "#fff", border: "none", cursor: updateExpenseMutation.isPending ? "not-allowed" : "pointer", fontSize: "13px", fontWeight: "600", fontFamily: "var(--ff-display)" }}
+              style={{ alignSelf: "flex-end", padding: "8px 20px", borderRadius: "12px", background: updateExpenseMutation.isPending ? "var(--surface-3)" : "var(--accent)", color: updateExpenseMutation.isPending ? "var(--text-3)" : "#fff", border: "none", cursor: updateExpenseMutation.isPending ? "not-allowed" : "pointer", fontSize: "var(--ts-body-sm)", fontWeight: "600", fontFamily: "var(--ff-display)" }}
             >
               {updateExpenseMutation.isPending ? "Saving…" : "Save Changes"}
             </button>
@@ -255,8 +258,8 @@ export default function ExpensePage({ params }: { params: { id: string; expenseI
           borderRadius: "16px", padding: "16px 20px",
         }}>
           <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
-            <span style={{ fontSize: "12px", color: "var(--text-3)" }}>Allocation progress</span>
-            <span style={{ fontSize: "12px", fontWeight: "600", color: "var(--text)" }}>
+            <span style={{ fontSize: "var(--ts-label)", color: "var(--text-3)" }}>Allocation progress</span>
+            <span style={{ fontSize: "var(--ts-label)", fontWeight: "600", color: "var(--text)" }}>
               {((splitTotal / Number(expense.amount)) * 100).toFixed(0)}%
             </span>
           </div>
@@ -275,7 +278,7 @@ export default function ExpensePage({ params }: { params: { id: string; expenseI
       <div>
         <h2 style={{
           fontFamily: "var(--ff-display)", fontWeight: "700",
-          fontSize: "18px", color: "var(--text)", marginBottom: "12px",
+          fontSize: "var(--ts-lead)", color: "var(--text)", marginBottom: "12px",
         }}>Splits</h2>
 
         {splits.length === 0 ? (
@@ -283,7 +286,7 @@ export default function ExpensePage({ params }: { params: { id: string; expenseI
             background: "var(--surface)", border: "1px solid var(--border)",
             borderRadius: "16px", padding: "32px", textAlign: "center", marginBottom: "16px",
           }}>
-            <p style={{ fontSize: "13px", color: "var(--text-3)" }}>No splits yet — the full amount is unallocated.</p>
+            <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)" }}>No splits yet — the full amount is unallocated.</p>
           </div>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginBottom: "16px" }}>
@@ -302,13 +305,13 @@ export default function ExpensePage({ params }: { params: { id: string; expenseI
                       width: "32px", height: "32px", borderRadius: "9999px",
                       background: "var(--accent-subtle)", color: "var(--accent)",
                       display: "flex", alignItems: "center", justifyContent: "center",
-                      fontSize: "11px", fontWeight: "700", fontFamily: "var(--ff-display)",
+                      fontSize: "var(--ts-meta)", fontWeight: "700", fontFamily: "var(--ff-display)",
                     }}>{initials}</span>
                     <div>
-                      <p style={{ fontSize: "13px", fontWeight: "500", color: "var(--text)" }}>
-                        {split.displayName || `${split.membershipId.slice(0, 8)}…`}
+                      <p style={{ fontSize: "var(--ts-body-sm)", fontWeight: "500", color: "var(--text)" }}>
+                        {split.displayName || `${(split.splitId ?? split.userId ?? "").slice(0, 8)}…`}
                       </p>
-                      <p style={{ fontSize: "11px", color: "var(--text-3)" }}>
+                      <p style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)" }}>
                         {split.role}{split.isClaimed ? " · Claimed" : ""}
                       </p>
                     </div>
@@ -316,13 +319,13 @@ export default function ExpensePage({ params }: { params: { id: string; expenseI
                   <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                     <span style={{
                       fontFamily: "var(--ff-display)", fontWeight: "700",
-                      fontSize: "14px", color: "var(--text)",
+                      fontSize: "var(--ts-body)", color: "var(--text)",
                     }}>{split.currency} {Number(split.amount).toFixed(2)}</span>
                     {split.isClaimed ? (
                       <span style={{
                         padding: "2px 8px", borderRadius: "9999px",
                         background: "var(--success-s)", color: "var(--success)",
-                        fontSize: "11px", fontWeight: "500",
+                        fontSize: "var(--ts-meta)", fontWeight: "500",
                       }}>Claimed</span>
                     ) : (
                       <button
@@ -332,7 +335,7 @@ export default function ExpensePage({ params }: { params: { id: string; expenseI
                           padding: "4px 10px", borderRadius: "8px",
                           background: "var(--danger-s)", color: "var(--danger)",
                           border: "1px solid oklch(62% 0.21 22 / 0.25)",
-                          fontSize: "11px", fontWeight: "500",
+                          fontSize: "var(--ts-meta)", fontWeight: "500",
                           cursor: isRemoving ? "not-allowed" : "pointer",
                           transition: "background 110ms",
                         }}
@@ -354,18 +357,18 @@ export default function ExpensePage({ params }: { params: { id: string; expenseI
         }}>
           <h3 style={{
             fontFamily: "var(--ff-display)", fontWeight: "700",
-            fontSize: "14px", color: "var(--text)", marginBottom: "16px",
+            fontSize: "var(--ts-body)", color: "var(--text)", marginBottom: "16px",
           }}>Add Split</h3>
 
           {!currentMembership ? (
-            <p style={{ fontSize: "13px", color: "var(--text-3)" }}>You are not a member of this household.</p>
+            <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)" }}>You are not a member of this household.</p>
           ) : (
             <form onSubmit={handleSubmit(onAddSplit)} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
               {addExpenseSplitMutation.isError && (
                 <div style={{
                   padding: "10px 14px", borderRadius: "10px",
                   background: "var(--danger-s)", border: "1px solid oklch(62% 0.21 22 / 0.3)",
-                  fontSize: "13px", color: "var(--danger)",
+                  fontSize: "var(--ts-body-sm)", color: "var(--danger)",
                 }}>
                   {addExpenseSplitMutation.error instanceof ApiError
                     ? addExpenseSplitMutation.error.message
@@ -375,7 +378,7 @@ export default function ExpensePage({ params }: { params: { id: string; expenseI
 
               {isPrivileged && (
                 <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                  <label style={{ fontSize: "12px", fontWeight: "500", color: "var(--text-2)", letterSpacing: "0.02em" }}>
+                  <label style={{ fontSize: "var(--ts-label)", fontWeight: "500", color: "var(--text-2)", letterSpacing: "0.02em" }}>
                     Member
                   </label>
                   <select
@@ -383,7 +386,7 @@ export default function ExpensePage({ params }: { params: { id: string; expenseI
                     style={{
                       height: "38px", background: "var(--surface-2)",
                       border: "1px solid var(--border)", borderRadius: "12px",
-                      padding: "0 12px", fontSize: "13px", color: "var(--text)", outline: "none",
+                      padding: "0 12px", fontSize: "var(--ts-body-sm)", color: "var(--text)", outline: "none",
                     }}
                   >
                     <option value="">Select member</option>
@@ -393,18 +396,18 @@ export default function ExpensePage({ params }: { params: { id: string; expenseI
                       </option>
                     ))}
                   </select>
-                  {errors.membershipId && <span style={{ fontSize: "11px", color: "var(--danger)" }}>{errors.membershipId.message}</span>}
+                  {errors.membershipId && <span style={{ fontSize: "var(--ts-meta)", color: "var(--danger)" }}>{errors.membershipId.message}</span>}
                 </div>
               )}
 
               {!isPrivileged && (
-                <p style={{ fontSize: "12px", color: "var(--text-3)" }}>
+                <p style={{ fontSize: "var(--ts-label)", color: "var(--text-3)" }}>
                   Split will be added for you ({currentMembership.role}).
                 </p>
               )}
 
               <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <label style={{ fontSize: "12px", fontWeight: "500", color: "var(--text-2)", letterSpacing: "0.02em" }}>
+                <label style={{ fontSize: "var(--ts-label)", fontWeight: "500", color: "var(--text-2)", letterSpacing: "0.02em" }}>
                   Amount ({expense.currency})
                 </label>
                 <input
@@ -416,10 +419,10 @@ export default function ExpensePage({ params }: { params: { id: string; expenseI
                     height: "38px", background: "var(--surface-2)",
                     border: `1px solid ${errors.amount ? "var(--danger)" : "var(--border)"}`,
                     borderRadius: "12px", padding: "0 12px",
-                    fontSize: "13px", color: "var(--text)", outline: "none",
+                    fontSize: "var(--ts-body-sm)", color: "var(--text)", outline: "none",
                   }}
                 />
-                {errors.amount && <span style={{ fontSize: "11px", color: "var(--danger)" }}>{errors.amount.message}</span>}
+                {errors.amount && <span style={{ fontSize: "var(--ts-meta)", color: "var(--danger)" }}>{errors.amount.message}</span>}
               </div>
 
               <Button

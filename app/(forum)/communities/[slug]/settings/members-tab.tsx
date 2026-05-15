@@ -27,7 +27,7 @@ export function CommunityMembersTab({ communityId, currentUserId }: Props) {
 
   if (!members?.length) {
     return (
-      <p style={{ fontSize: "13px", color: "var(--text-3)", textAlign: "center", padding: "32px 0" }}>
+      <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)", textAlign: "center", padding: "32px 0" }}>
         No members found.
       </p>
     );
@@ -44,7 +44,7 @@ export function CommunityMembersTab({ communityId, currentUserId }: Props) {
       <span style={{
         padding: "2px 8px", borderRadius: "9999px",
         background: bg, color: fg,
-        fontSize: "11px", fontWeight: "600",
+        fontSize: "var(--ts-meta)", fontWeight: "600",
       }}>
         {role}
       </span>
@@ -77,15 +77,15 @@ export function CommunityMembersTab({ communityId, currentUserId }: Props) {
                 width: "32px", height: "32px", borderRadius: "9999px",
                 background: "var(--accent-subtle)", color: "var(--accent)",
                 display: "flex", alignItems: "center", justifyContent: "center",
-                fontSize: "11px", fontWeight: "700",
+                fontSize: "var(--ts-meta)", fontWeight: "700",
               }}>
                 {initials}
               </span>
               <div>
-                <p style={{ fontSize: "13px", fontWeight: "500", color: "var(--text)" }}>
+                <p style={{ fontSize: "var(--ts-body-sm)", fontWeight: "500", color: "var(--text)" }}>
                   {m.displayName ?? `${m.userId.slice(0, 8)}…`}
                 </p>
-                <p style={{ fontSize: "11px", color: "var(--text-3)" }}>
+                <p style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)" }}>
                   Joined {new Date(m.joinedAt).toLocaleDateString(undefined, { month: "short", year: "numeric" })}
                 </p>
               </div>
@@ -101,7 +101,7 @@ export function CommunityMembersTab({ communityId, currentUserId }: Props) {
                       padding: "4px 10px", borderRadius: "8px",
                       background: "var(--danger-s)", color: "var(--danger)",
                       border: "1px solid oklch(62% 0.21 22 / 0.25)",
-                      fontSize: "11px", fontWeight: "500",
+                      fontSize: "var(--ts-meta)", fontWeight: "500",
                       cursor: isPending ? "not-allowed" : "pointer",
                     }}
                   >
@@ -115,7 +115,7 @@ export function CommunityMembersTab({ communityId, currentUserId }: Props) {
                       padding: "4px 10px", borderRadius: "8px",
                       background: "var(--accent-subtle)", color: "var(--accent)",
                       border: "1px solid oklch(from var(--accent) l c h / 0.25)",
-                      fontSize: "11px", fontWeight: "500",
+                      fontSize: "var(--ts-meta)", fontWeight: "500",
                       cursor: isPending ? "not-allowed" : "pointer",
                     }}
                   >

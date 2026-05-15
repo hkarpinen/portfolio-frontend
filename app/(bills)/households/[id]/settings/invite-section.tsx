@@ -42,37 +42,37 @@ export function InviteSection({ householdId }: { householdId: string }) {
 
   return (
     <section style={cardStyle}>
-      <p style={{ fontSize: "10px", fontWeight: "700", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
+      <p style={{ fontSize: "var(--ts-meta)", fontWeight: "700", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
         Invite Someone
       </p>
-      <p style={{ fontSize: "13px", color: "var(--text-2)" }}>
+      <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-2)" }}>
         Generate a one-time invite code and share it. The recipient can use it at{" "}
-        <Link href="/households/join" style={{ color: "var(--accent)", textDecoration: "none", fontFamily: "monospace", fontSize: "12px" }}>
+        <Link href="/households/join" style={{ color: "var(--accent)", textDecoration: "none", fontFamily: "monospace", fontSize: "var(--ts-label)" }}>
           /households/join
         </Link>
         .
       </p>
       {inviteError && (
-        <div style={{ background: "var(--danger-s)", border: "1px solid var(--danger)", borderRadius: "10px", padding: "10px 14px", fontSize: "13px", color: "var(--danger)" }}>
+        <div style={{ background: "var(--danger-s)", border: "1px solid var(--danger)", borderRadius: "10px", padding: "10px 14px", fontSize: "var(--ts-body-sm)", color: "var(--danger)" }}>
           {inviteError}
         </div>
       )}
       {inviteResult ? (
         <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <code style={{ flex: 1, fontFamily: "monospace", fontSize: "14px", background: "var(--surface-2)", border: "1px solid var(--border)", padding: "10px 16px", borderRadius: "12px", color: "var(--text)", wordBreak: "break-all" }}>
+            <code style={{ flex: 1, fontFamily: "monospace", fontSize: "var(--ts-body)", background: "var(--surface-2)", border: "1px solid var(--border)", padding: "10px 16px", borderRadius: "12px", color: "var(--text)", wordBreak: "break-all" }}>
               {inviteResult}
             </code>
             <button
               onClick={onCopy}
-              style={{ background: "var(--surface-2)", border: "1px solid var(--border)", color: copied ? "var(--success)" : "var(--text-2)", padding: "8px 16px", borderRadius: "12px", fontSize: "13px", fontWeight: "500", cursor: "pointer", whiteSpace: "nowrap", fontFamily: "var(--ff-body)" }}
+              style={{ background: "var(--surface-2)", border: "1px solid var(--border)", color: copied ? "var(--success)" : "var(--text-2)", padding: "8px 16px", borderRadius: "12px", fontSize: "var(--ts-body-sm)", fontWeight: "500", cursor: "pointer", whiteSpace: "nowrap", fontFamily: "var(--ff-body)" }}
             >
               {copied ? "Copied!" : "Copy"}
             </button>
           </div>
           <button
             onClick={() => setInviteResult(null)}
-            style={{ fontSize: "13px", color: "var(--text-3)", background: "none", border: "none", cursor: "pointer", padding: 0, textAlign: "left", fontFamily: "var(--ff-body)" }}
+            style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)", background: "none", border: "none", cursor: "pointer", padding: 0, textAlign: "left", fontFamily: "var(--ff-body)" }}
           >
             Generate another
           </button>

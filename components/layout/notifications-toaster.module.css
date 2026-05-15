@@ -4,7 +4,7 @@
   cursor: pointer;
   color: inherit;
   opacity: 0.6;
-  font-size: 13px;
+  font-size: var(--ts-body-sm);
   padding: 0;
   flex-shrink: 0;
   transition: opacity 110ms;

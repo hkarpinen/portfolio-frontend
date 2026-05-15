@@ -48,7 +48,7 @@ function AuthedActions({ communityId, slug }: { communityId: string; slug: strin
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "10px", flexShrink: 0 }}>
       {joinMutation.isError && (
-        <span style={{ fontSize: "12px", color: "var(--danger)" }}>
+        <span style={{ fontSize: "var(--ts-label)", color: "var(--danger)" }}>
           {joinMutation.error instanceof ApiError ? joinMutation.error.message : "Failed to join."}
         </span>
       )}

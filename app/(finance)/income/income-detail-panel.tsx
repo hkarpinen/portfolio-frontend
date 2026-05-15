@@ -33,7 +33,7 @@ export function IncomeDetailPanel({ incomeId, period, onPeriodChange }: IncomeDe
           border: "2px solid var(--accent)", borderTopColor: "transparent",
           animation: "spin 0.7s linear infinite",
         }} />
-        <span style={{ fontSize: "12px", color: "var(--text-3)" }}>Loading breakdown…</span>
+        <span style={{ fontSize: "var(--ts-label)", color: "var(--text-3)" }}>Loading breakdown…</span>
       </div>
     );
   }
@@ -62,7 +62,7 @@ export function IncomeDetailPanel({ incomeId, period, onPeriodChange }: IncomeDe
               borderColor: period === p.value ? "var(--accent)" : "var(--border)",
               background: period === p.value ? "var(--accent-subtle)" : "transparent",
               color: period === p.value ? "var(--accent)" : "var(--text-3)",
-              fontSize: "11px",
+              fontSize: "var(--ts-meta)",
               fontWeight: "600",
               cursor: "pointer",
               transition: "all 120ms",
@@ -75,8 +75,8 @@ export function IncomeDetailPanel({ incomeId, period, onPeriodChange }: IncomeDe
 
       {/* ── Gross Pay ── */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
-        <span style={{ fontSize: "12px", fontWeight: "600", color: "var(--text-2)" }}>Gross Pay</span>
-        <span style={{ fontFamily: "var(--ff-display)", fontWeight: "700", fontSize: "14px", color: "var(--text)" }}>
+        <span style={{ fontSize: "var(--ts-label)", fontWeight: "600", color: "var(--text-2)" }}>Gross Pay</span>
+        <span style={{ fontFamily: "var(--ff-display)", fontWeight: "700", fontSize: "var(--ts-body)", color: "var(--text)" }}>
           {money(grossPay * factor)}
         </span>
       </div>
@@ -85,7 +85,7 @@ export function IncomeDetailPanel({ incomeId, period, onPeriodChange }: IncomeDe
       {deductions.length > 0 ? (
         <div style={{ borderRadius: "10px", border: "1px solid var(--border)", overflow: "hidden", marginBottom: "10px" }}>
           <div style={{ padding: "6px 12px", background: "var(--surface-2)", borderBottom: "1px solid var(--border)" }}>
-            <span style={{ fontSize: "10px", fontWeight: "700", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+            <span style={{ fontSize: "var(--ts-meta)", fontWeight: "700", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
               Deductions
             </span>
           </div>
@@ -96,29 +96,29 @@ export function IncomeDetailPanel({ incomeId, period, onPeriodChange }: IncomeDe
               borderBottom: i < deductions.length - 1 ? "1px solid var(--border)" : undefined,
             }}>
               <div style={{ display: "flex", alignItems: "center", gap: "6px", minWidth: 0, flex: 1, marginRight: "10px" }}>
-                <span style={{ fontSize: "12px", color: "var(--text-2)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                <span style={{ fontSize: "var(--ts-label)", color: "var(--text-2)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                   {d.label}
                 </span>
                 {d.isEmployerSponsored && (
-                  <span style={{ flexShrink: 0, fontSize: "9px", fontWeight: "600", padding: "1px 5px", borderRadius: "9999px", background: "var(--success-s)", color: "var(--success)" }}>
+                  <span style={{ flexShrink: 0, fontSize: "var(--ts-meta)", fontWeight: "600", padding: "1px 5px", borderRadius: "9999px", background: "var(--success-s)", color: "var(--success)" }}>
                     Employer
                   </span>
                 )}
               </div>
-              <span style={{ fontFamily: "var(--ff-display)", fontWeight: "600", fontSize: "12px", color: "var(--danger)", flexShrink: 0 }}>
+              <span style={{ fontFamily: "var(--ff-display)", fontWeight: "600", fontSize: "var(--ts-label)", color: "var(--danger)", flexShrink: 0 }}>
                 -{money(d.amount * factor)}
               </span>
             </div>
           ))}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "6px 12px", background: "var(--surface-2)", borderTop: "1px solid var(--border)" }}>
-            <span style={{ fontSize: "10px", fontWeight: "700", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.08em" }}>Total</span>
-            <span style={{ fontFamily: "var(--ff-display)", fontWeight: "700", fontSize: "12px", color: "var(--danger)" }}>
+            <span style={{ fontSize: "var(--ts-meta)", fontWeight: "700", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.08em" }}>Total</span>
+            <span style={{ fontFamily: "var(--ff-display)", fontWeight: "700", fontSize: "var(--ts-label)", color: "var(--danger)" }}>
               -{money(totalDeductions * factor)}
             </span>
           </div>
         </div>
       ) : (
-        <p style={{ fontSize: "12px", color: "var(--text-3)", padding: "2px 0 10px", fontStyle: "italic" }}>No deductions configured</p>
+        <p style={{ fontSize: "var(--ts-label)", color: "var(--text-3)", padding: "2px 0 10px", fontStyle: "italic" }}>No deductions configured</p>
       )}
 
       {/* ── Net Take-Home ── */}
@@ -127,10 +127,10 @@ export function IncomeDetailPanel({ incomeId, period, onPeriodChange }: IncomeDe
         padding: "10px 14px", borderRadius: "10px",
         background: "var(--accent-subtle)", border: "1px solid var(--accent-border)",
       }}>
-        <span style={{ fontSize: "11px", fontWeight: "700", color: "var(--accent)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+        <span style={{ fontSize: "var(--ts-meta)", fontWeight: "700", color: "var(--accent)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
           Net Take-Home
         </span>
-        <span style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "15px", color: "var(--accent)" }}>
+        <span style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "var(--ts-body)", color: "var(--accent)" }}>
           {money(netPay * factor)}
         </span>
       </div>

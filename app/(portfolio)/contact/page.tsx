@@ -10,7 +10,7 @@ function inputStyle(hasError = false): React.CSSProperties {
     border: `1px solid ${hasError ? "var(--danger)" : "var(--border)"}`,
     borderRadius: "12px",
     padding: "0 12px",
-    fontSize: "13px",
+    fontSize: "var(--ts-body-sm)",
     color: "var(--text)",
     outline: "none",
     transition: "border-color 110ms, box-shadow 110ms",
@@ -20,11 +20,11 @@ function inputStyle(hasError = false): React.CSSProperties {
 function Field({ label, children, hint }: { label: string; children: React.ReactNode; hint?: string }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-      <label style={{ fontSize: "12px", fontWeight: "500", color: "var(--text-2)", letterSpacing: "0.02em" }}>
+      <label style={{ fontSize: "var(--ts-label)", fontWeight: "500", color: "var(--text-2)", letterSpacing: "0.02em" }}>
         {label}
       </label>
       {children}
-      {hint && <span style={{ fontSize: "11px", color: "var(--text-3)" }}>{hint}</span>}
+      {hint && <span style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)" }}>{hint}</span>}
     </div>
   );
 }
@@ -65,12 +65,12 @@ export default function ContactPage() {
       <div>
         <h1 style={{
           fontFamily: "var(--ff-display)", fontWeight: "800",
-          fontSize: "28px", letterSpacing: "-0.025em", color: "var(--text)",
+          fontSize: "var(--ts-card-h)", letterSpacing: "-0.025em", color: "var(--text)",
           marginBottom: "6px",
         }}>
           Get in touch
         </h1>
-        <p style={{ fontSize: "14px", color: "var(--text-3)" }}>
+        <p style={{ fontSize: "var(--ts-body)", color: "var(--text-3)" }}>
           Have a project in mind or want to collaborate? Send me a message.
         </p>
       </div>
@@ -100,9 +100,9 @@ export default function ContactPage() {
             </div>
             <h2 style={{
               fontFamily: "var(--ff-display)", fontWeight: "700",
-              fontSize: "20px", color: "var(--text)", marginBottom: "8px",
+              fontSize: "var(--ts-sub)", color: "var(--text)", marginBottom: "8px",
             }}>Message sent!</h2>
-            <p style={{ fontSize: "13px", color: "var(--text-3)", lineHeight: "1.6", marginBottom: "24px" }}>
+            <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)", lineHeight: "1.6", marginBottom: "24px" }}>
               Thanks for reaching out. I&apos;ll get back to you as soon as possible.
             </p>
             <button
@@ -111,7 +111,7 @@ export default function ContactPage() {
                 padding: "8px 20px", borderRadius: "10px",
                 background: "var(--surface-2)", color: "var(--text-2)",
                 border: "1px solid var(--border)",
-                fontSize: "13px", fontWeight: "500", cursor: "pointer",
+                fontSize: "var(--ts-body-sm)", fontWeight: "500", cursor: "pointer",
                 transition: "background 110ms",
               }}
             >
@@ -176,7 +176,7 @@ export default function ContactPage() {
                     border: "1px solid var(--border)",
                     borderRadius: "12px",
                     padding: "10px 12px",
-                    fontSize: "13px",
+                    fontSize: "var(--ts-body-sm)",
                     color: "var(--text)",
                     outline: "none",
                     resize: "vertical",
@@ -194,7 +194,7 @@ export default function ContactPage() {
                   height: "42px", borderRadius: "12px",
                   background: "var(--accent)", color: "#fff",
                   border: "none", cursor: "pointer",
-                  fontSize: "14px", fontWeight: "600", fontFamily: "var(--ff-display)",
+                  fontSize: "var(--ts-body)", fontWeight: "600", fontFamily: "var(--ff-display)",
                   transition: "background 110ms, transform 100ms",
                 }}
               >
@@ -212,7 +212,7 @@ export default function ContactPage() {
           }}>
             <h3 style={{
               fontFamily: "var(--ff-display)", fontWeight: "700",
-              fontSize: "14px", color: "var(--text)", marginBottom: "16px",
+              fontSize: "var(--ts-body)", color: "var(--text)", marginBottom: "16px",
             }}>
               Contact info
             </h3>
@@ -231,10 +231,10 @@ export default function ContactPage() {
                     transition: "background 110ms",
                   }}
                 >
-                  <span style={{ fontSize: "18px" }}>{info.icon}</span>
+                  <span style={{ fontSize: "var(--ts-lead)" }}>{info.icon}</span>
                   <div>
-                    <div style={{ fontSize: "11px", color: "var(--text-3)", fontWeight: "500" }}>{info.label}</div>
-                    <div style={{ fontSize: "12px", color: "var(--accent)" }}>{info.value}</div>
+                    <div style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)", fontWeight: "500" }}>{info.label}</div>
+                    <div style={{ fontSize: "var(--ts-label)", color: "var(--accent)" }}>{info.value}</div>
                   </div>
                 </a>
               ))}
@@ -246,7 +246,7 @@ export default function ContactPage() {
             border: "1px solid oklch(63% 0.22 252 / 0.25)",
             borderRadius: "16px", padding: "20px",
           }}>
-            <p style={{ fontSize: "13px", color: "var(--accent)", lineHeight: "1.6" }}>
+            <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--accent)", lineHeight: "1.6" }}>
               <strong>Response time:</strong> I typically reply within 24–48 hours.
             </p>
           </div>

@@ -28,33 +28,20 @@ export default async function CommunityPage({
   ]);
   const isAuthed = !!session;
 
-  const bannerColor = community.color ?? "var(--accent)";
+  // bannerColor removed — editorial design uses flat paper backgrounds
 
   return (
     <div className="page-enter" style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-      {/* Banner card — contained within the content flow, no negative-margin tricks */}
+      {/* Banner card */}
       <div style={{
-        position: "relative",
-        overflow: "hidden",
-        borderRadius: "var(--r-xl)",
-        border: "1px solid var(--border)",
-        background: `linear-gradient(150deg, var(--surface) 0%, color-mix(in oklch, ${bannerColor} 12%, var(--bg)) 100%)`,
+        border: "1.5px solid var(--ink)",
+        background: "var(--paper-2)",
         padding: "clamp(20px, 4vw, 32px) clamp(18px, 4vw, 36px) 24px",
-        boxShadow: "var(--shadow-sm)",
+        boxShadow: "var(--shadow-card)",
       }}>
-        {/* Dot grid texture */}
-        <div className="dot-grid" style={{ position: "absolute", inset: 0, opacity: 0.3, pointerEvents: "none" }} />
-        {/* Radial glow */}
-        <div style={{
-          position: "absolute", top: -80, right: -40,
-          width: 320, height: 320, borderRadius: "50%",
-          background: `radial-gradient(circle, color-mix(in oklch, ${bannerColor} 22%, transparent), transparent 65%)`,
-          pointerEvents: "none",
-        }} />
-
         {/* Breadcrumb */}
-        <div style={{ position: "relative", display: "flex", gap: "5px", alignItems: "center", marginBottom: "18px", fontSize: "12px", color: "var(--text-3)" }}>
-          <Link href="/communities" style={{ color: "var(--accent)", fontSize: "12px", textDecoration: "none", fontFamily: "var(--ff-body)" }}>Forum</Link>
+        <div style={{ position: "relative", display: "flex", gap: "5px", alignItems: "center", marginBottom: "18px", fontSize: "var(--ts-label)", color: "var(--text-3)" }}>
+          <Link href="/communities" style={{ color: "var(--accent)", fontSize: "var(--ts-label)", textDecoration: "none", fontFamily: "var(--ff-body)" }}>Forum</Link>
           <span>/</span>
           <span style={{ color: "var(--text-2)", fontWeight: 500 }}>{community.name}</span>
         </div>
@@ -64,17 +51,17 @@ export default async function CommunityPage({
           <div style={{ display: "flex", alignItems: "center", gap: "18px" }}>
             <CommunityAvatar community={community} size={60} radius="var(--r-xl)" />
             <div style={{ flex: 1, minWidth: 0 }}>
-              <h1 style={{ fontFamily: "var(--ff-display)", fontWeight: 800, fontSize: "clamp(18px, 4vw, 26px)", letterSpacing: "-0.02em", lineHeight: 1.1, color: "var(--text)", margin: 0 }}>
+              <h1 style={{ fontFamily: "var(--ff-display)", fontWeight: 800, fontSize: "var(--ts-h2)", letterSpacing: "-0.02em", lineHeight: "var(--lh-display)", color: "var(--text)", margin: 0 }}>
                 {community.name}
               </h1>
               {community.description && (
-                <p style={{ fontSize: "13px", color: "var(--text-2)", marginTop: "4px", lineHeight: 1.4 }}>{community.description}</p>
+                <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-2)", marginTop: "4px", lineHeight: 1.4 }}>{community.description}</p>
               )}
               <div style={{ display: "flex", gap: "16px", marginTop: "8px" }}>
-                <span style={{ fontSize: "12px", color: "var(--text-3)" }}>
+                <span style={{ fontSize: "var(--ts-label)", color: "var(--text-3)" }}>
                   <strong style={{ color: "var(--text)", fontWeight: 700 }}>{community.memberCount.toLocaleString()}</strong> members
                 </span>
-                <span style={{ fontSize: "12px", color: "var(--text-3)" }}>
+                <span style={{ fontSize: "var(--ts-label)", color: "var(--text-3)" }}>
                   <strong style={{ color: "var(--text)", fontWeight: 700 }}>{community.threadCount.toLocaleString()}</strong> posts
                 </span>
               </div>
@@ -83,13 +70,13 @@ export default async function CommunityPage({
           <div style={{ display: "flex", gap: "8px" }}>
             <Link
               href={`/communities/${params.slug}/settings`}
-              style={{ background: "var(--surface-2)", color: "var(--text-2)", padding: "7px 14px", borderRadius: "var(--r-md)", fontSize: "12px", fontWeight: 600, textDecoration: "none", border: "1px solid var(--border)" }}
+              style={{ background: "var(--surface-2)", color: "var(--text-2)", padding: "7px 14px", borderRadius: "var(--r-md)", fontSize: "var(--ts-label)", fontWeight: 600, textDecoration: "none", border: "1px solid var(--border)" }}
             >
               Mod tools
             </Link>
             <Link
               href={`/communities/${params.slug}/threads/new`}
-              style={{ background: "var(--accent)", color: "#fff", padding: "7px 14px", borderRadius: "var(--r-md)", fontSize: "12px", fontWeight: 600, textDecoration: "none" }}
+              style={{ background: "var(--accent)", color: "#fff", padding: "7px 14px", borderRadius: "var(--r-md)", fontSize: "var(--ts-label)", fontWeight: 600, textDecoration: "none" }}
             >
               + Post here
             </Link>
@@ -99,7 +86,7 @@ export default async function CommunityPage({
 
       {/* Thread list */}
       <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-        <span style={{ fontSize: "10px", fontWeight: 700, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>Threads</span>
+        <span style={{ fontSize: "var(--ts-meta)", fontWeight: 700, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>Threads</span>
         {threads.length === 0 ? (
           <div style={{
             display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
@@ -107,12 +94,12 @@ export default async function CommunityPage({
             background: "var(--surface)", border: "1px solid var(--border)",
             borderRadius: "var(--r-lg)", boxShadow: "var(--shadow-sm)", gap: "12px",
           }}>
-            <div style={{ width: "56px", height: "56px", borderRadius: "var(--r-lg)", background: "var(--accent-subtle)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "22px" }}>
+            <div style={{ width: "56px", height: "56px", borderRadius: "var(--r-lg)", background: "var(--accent-subtle)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "var(--ts-sub)" }}>
               💬
             </div>
-            <p style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "15px", color: "var(--text)" }}>No threads yet</p>
-            <p style={{ fontSize: "13px", color: "var(--text-3)" }}>Start the first discussion</p>
-            <Link href={`/communities/${params.slug}/threads/new`} style={{ fontSize: "13px", fontWeight: 600, color: "var(--accent)", textDecoration: "none" }}>
+            <p style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "var(--ts-body)", color: "var(--text)" }}>No threads yet</p>
+            <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)" }}>Start the first discussion</p>
+            <Link href={`/communities/${params.slug}/threads/new`} style={{ fontSize: "var(--ts-body-sm)", fontWeight: 600, color: "var(--accent)", textDecoration: "none" }}>
               Create a thread →
             </Link>
           </div>

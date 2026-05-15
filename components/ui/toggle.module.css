@@ -8,12 +8,11 @@
   position: relative;
   display: inline-flex;
   align-items: center;
-  border: none;
-  border-radius: var(--r-full);
-  background: var(--surface-3);
+  border: 1.5px solid var(--ink);
+  background: var(--paper-3);
   cursor: pointer;
   padding: 0;
-  transition: background 180ms var(--ease-spring);
+  transition: background 180ms var(--ease-spring), border-color 180ms;
   flex-shrink: 0;
 }
 
@@ -40,14 +39,14 @@
 }
 
 .checked {
-  background: var(--accent);
+  background: var(--ink);
+  border-color: var(--ink);
 }
 
 .knob {
   display: block;
-  border-radius: 50%;
-  background: #fff;
-  box-shadow: var(--shadow-sm);
+  background: var(--paper);
+  box-shadow: none;
   transition: transform 180ms var(--ease-spring);
   flex-shrink: 0;
 }
@@ -71,7 +70,7 @@
 }
 
 .label {
-  font-size: 13px;
+  font-size: var(--ts-body-sm);
   color: var(--text-2);
   font-family: var(--ff-body);
   cursor: pointer;

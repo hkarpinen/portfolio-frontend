@@ -1,59 +1,61 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ExpensesList } from "./expenses-list";
-import { fetchHouseholdDetailServer } from "@/lib/api/households";
+import { fetchHouseholdServer, fetchHouseholdMembersServer } from "@/lib/api/households";
 import { fetchHouseholdExpensesServer } from "@/lib/api/household-expenses";
 import { getSession } from "@/lib/auth/session";
 import { getCookieHeader } from "@/lib/server-cookies";
-import type { HouseholdExpense, HouseholdExpenseListResponse, Household, HouseholdDashboard, MembershipResponse, HouseholdDetailResponse } from "@/types/finance";
+import type { HouseholdExpense, HouseholdExpenseListResponse, MembershipResponse } from "@/types/finance";
 
 export const dynamic = 'force-dynamic';
 
 export default async function HouseholdPage({ params }: { params: { id: string } }) {
   const cookieHeader = await getCookieHeader();
 
-  // The finance layout has already called requireUser(), so getSession()
-  // is guaranteed to return a session here. Both calls share one /me
-  // request thanks to React.cache.
-  const [page, billsPage, session] = await Promise.all([
-    fetchHouseholdDetailServer(params.id, cookieHeader),
+  const [household, membersRaw, billsPage, session] = await Promise.all([
+    fetchHouseholdServer(params.id, cookieHeader),
+    fetchHouseholdMembersServer(params.id, cookieHeader),
     fetchHouseholdExpensesServer(params.id, cookieHeader),
     getSession(),
   ]);
 
-  if (!page) notFound();
+  if (!household) notFound();
 
-  const { household, members, bills: householdExpenses, dashboard } = page;
-  // Prefer the expenses list from the dedicated endpoint (includes callerIsPaid/currentOccurrenceDate).
-  // Fall back to the household detail expenses if the dedicated fetch failed.
-  const expenses = billsPage?.items ?? householdExpenses;
-  const initialBillsData: HouseholdExpenseListResponse = billsPage ?? { items: householdExpenses, totalCount: householdExpenses.length };
+  const members: MembershipResponse[] = (membersRaw ?? []).map((m) => ({
+    membershipId: m.membershipId,
+    userId: m.userId,
+    displayName: m.displayName ?? m.username,
+    role: m.role,
+    isActive: true,
+  }));
+  const householdExpenses: HouseholdExpense[] = billsPage?.items ?? [];
+  const initialBillsData: HouseholdExpenseListResponse = billsPage ?? { items: [], totalCount: 0 };
 
   const memberCount = members.length;
-  const isOwner = session?.userId?.toLowerCase() === household.ownerId?.toLowerCase();
+  const isOwner = session?.userId?.toLowerCase() === household.ownerId?.toString().toLowerCase();
   const myMembership = members.find((m) => m.userId?.toLowerCase() === session?.userId?.toLowerCase());
   const canDelete = isOwner || myMembership?.role === "Admin";
 
-  const monthlyObligations = dashboard?.totalBills ?? null;
-  // NOTE: we intentionally omit a cross-domain net balance here.
-  // The household dashboard is scoped to this household only.
-  // For full income-vs-obligations, users should check the Budget tab.
+  // Sum of all active expense amounts for this household as a simple monthly snapshot.
+  const monthlyObligations: number | null = householdExpenses.length > 0
+    ? householdExpenses.reduce((sum, e) => sum + (e.amount ?? 0), 0)
+    : null;
 
   return (
     <div className="page-enter" style={{ display: "flex", flexDirection: "column", gap: "28px" }}>
       {/* Header */}
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: "12px" }}>
         <div>
-          <Link href="/households" style={{ color: "var(--text-3)", fontSize: "12px", textDecoration: "none" }}>
+          <Link href="/households" style={{ color: "var(--text-3)", fontSize: "var(--ts-label)", textDecoration: "none" }}>
             ← Households
           </Link>
-          <h1 style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "28px", letterSpacing: "-0.025em", color: "var(--text)", marginTop: "4px" }}>
+          <h1 style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "var(--ts-h2)", lineHeight: "var(--lh-display)", letterSpacing: "-0.02em", letterSpacing: "-0.025em", color: "var(--text)", marginTop: "4px" }}>
             {household.name}
           </h1>
           {household.description && (
-            <p style={{ color: "var(--text-2)", marginTop: "4px", fontSize: "13px" }}>{household.description}</p>
+            <p style={{ color: "var(--text-2)", marginTop: "4px", fontSize: "var(--ts-body-sm)" }}>{household.description}</p>
           )}
-          <p style={{ fontSize: "12px", color: "var(--text-3)", marginTop: "4px" }}>
+          <p style={{ fontSize: "var(--ts-label)", color: "var(--text-3)", marginTop: "4px" }}>
             {memberCount} member{memberCount !== 1 ? "s" : ""} · {household.currencyCode}
           </p>
         </div>
@@ -67,7 +69,7 @@ export default async function HouseholdPage({ params }: { params: { id: string }
                 color: "var(--text-2)",
                 padding: "8px 16px",
                 borderRadius: "12px",
-                fontSize: "13px",
+                fontSize: "var(--ts-body-sm)",
                 fontWeight: "500",
                 textDecoration: "none",
               }}
@@ -83,7 +85,7 @@ export default async function HouseholdPage({ params }: { params: { id: string }
               padding: "8px 16px",
               borderRadius: "12px",
               fontWeight: "600",
-              fontSize: "13px",
+              fontSize: "var(--ts-body-sm)",
               textDecoration: "none",
             }}
           >
@@ -103,7 +105,7 @@ export default async function HouseholdPage({ params }: { params: { id: string }
           boxShadow: "var(--shadow-sm)",
         }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
-            <span style={{ fontSize: "10px", fontWeight: "700", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
+            <span style={{ fontSize: "var(--ts-meta)", fontWeight: "700", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
               Monthly Expenses
             </span>
             <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "var(--accent-subtle)", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -113,45 +115,16 @@ export default async function HouseholdPage({ params }: { params: { id: string }
             </div>
           </div>
           {monthlyObligations !== null ? (
-            <p style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "28px", letterSpacing: "-0.025em", color: "var(--text)", lineHeight: 1 }}>
+            <p style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "var(--ts-card-h)", letterSpacing: "-0.025em", color: "var(--text)", lineHeight: 1 }}>
               {household.currencyCode} {monthlyObligations.toFixed(2)}
             </p>
           ) : (
-            <p style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "28px", letterSpacing: "-0.025em", color: "var(--text-3)", lineHeight: 1 }}>—</p>
+            <p style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "var(--ts-card-h)", letterSpacing: "-0.025em", color: "var(--text-3)", lineHeight: 1 }}>—</p>
           )}
-          <p style={{ fontSize: "12px", color: "var(--text-3)", marginTop: "6px" }}>
+          <p style={{ fontSize: "var(--ts-label)", color: "var(--text-3)", marginTop: "6px" }}>
             This household only
           </p>
         </div>
-
-        {/* Full picture → Budget tab */}
-        <Link
-          href="/expenses"
-          style={{
-            background: "var(--surface)",
-            border: "1px solid var(--border)",
-            borderRadius: "16px",
-            padding: "20px",
-            boxShadow: "var(--shadow-sm)",
-            textDecoration: "none",
-            display: "block",
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
-            <span style={{ fontSize: "10px", fontWeight: "700", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
-              Full Picture
-            </span>
-            <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "var(--accent-subtle)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
-              </svg>
-            </div>
-          </div>
-          <p style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "18px", letterSpacing: "-0.02em", color: "var(--accent)", lineHeight: 1 }}>
-            Expenses →
-          </p>
-          <p style={{ fontSize: "12px", color: "var(--text-3)", marginTop: "6px" }}>All obligations vs income</p>
-        </Link>
 
         {/* Total Expenses */}
         <div style={{
@@ -162,7 +135,7 @@ export default async function HouseholdPage({ params }: { params: { id: string }
           boxShadow: "var(--shadow-sm)",
         }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
-            <span style={{ fontSize: "10px", fontWeight: "700", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
+            <span style={{ fontSize: "var(--ts-meta)", fontWeight: "700", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
               Total Expenses
             </span>
             <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "var(--accent-subtle)", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -171,10 +144,10 @@ export default async function HouseholdPage({ params }: { params: { id: string }
               </svg>
             </div>
           </div>
-          <p style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "28px", letterSpacing: "-0.025em", color: "var(--text)", lineHeight: 1 }}>
-            {expenses.length}
+          <p style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "var(--ts-card-h)", letterSpacing: "-0.025em", color: "var(--text)", lineHeight: 1 }}>
+            {householdExpenses.length}
           </p>
-          <p style={{ fontSize: "12px", color: "var(--text-3)", marginTop: "6px" }}>Active expense entries</p>
+          <p style={{ fontSize: "var(--ts-label)", color: "var(--text-3)", marginTop: "6px" }}>Active expense entries</p>
         </div>
 
         {/* Members */}
@@ -186,7 +159,7 @@ export default async function HouseholdPage({ params }: { params: { id: string }
           boxShadow: "var(--shadow-sm)",
         }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
-            <span style={{ fontSize: "10px", fontWeight: "700", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
+            <span style={{ fontSize: "var(--ts-meta)", fontWeight: "700", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
               Members
             </span>
             <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "var(--accent-subtle)", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -195,20 +168,22 @@ export default async function HouseholdPage({ params }: { params: { id: string }
               </svg>
             </div>
           </div>
-          <p style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "28px", letterSpacing: "-0.025em", color: "var(--text)", lineHeight: 1 }}>
+          <p style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "var(--ts-card-h)", letterSpacing: "-0.025em", color: "var(--text)", lineHeight: 1 }}>
             {memberCount}
           </p>
-          <p style={{ fontSize: "12px", color: "var(--text-3)", marginTop: "6px" }}>Household members</p>
+          <p style={{ fontSize: "var(--ts-label)", color: "var(--text-3)", marginTop: "6px" }}>Household members</p>
         </div>
       </div>
 
 
 
       {/* Tabs */}
-      <div style={{ borderBottom: "1px solid var(--border)", display: "flex", gap: "0" }}>
+      <div style={{ borderBottom: "1px solid var(--ink)", display: "flex", gap: "0", overflowX: "auto" }}>
         {[
-          { label: "Expenses", href: `/households/${params.id}` },
+          { label: "Expenses",      href: `/households/${params.id}` },
           { label: "Contributions", href: `/households/${params.id}/contributions` },
+          { label: "Chores",        href: `/households/${params.id}/chores` },
+          { label: "Calendar",      href: `/households/${params.id}/calendar` },
           ...(isOwner ? [{ label: "Settings", href: `/households/${params.id}/settings` }] : []),
         ].map((tab) => (
           <Link
@@ -216,13 +191,15 @@ export default async function HouseholdPage({ params }: { params: { id: string }
             href={tab.href}
             style={{
               padding: "10px 16px",
-              fontSize: "13px",
-              fontWeight: tab.label === "Expenses" ? 600 : 400,
-              color: tab.label === "Expenses" ? "var(--text)" : "var(--text-3)",
-              borderBottom: tab.label === "Expenses" ? "2px solid var(--accent)" : "2px solid transparent",
+              fontFamily: "var(--ff-mono)",
+              fontSize: "var(--ts-label)",
+              letterSpacing: "0.05em",
+              textTransform: "uppercase",
+              color: "var(--ink-3)",
+              borderBottom: "2px solid transparent",
               marginBottom: "-1px",
               textDecoration: "none",
-              transition: "color 110ms",
+              whiteSpace: "nowrap",
             }}
           >
             {tab.label}

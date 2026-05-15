@@ -54,10 +54,10 @@ export default async function ForumFeedPage({
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "12px" }}>
         <div>
-          <h1 style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "28px", letterSpacing: "-0.025em", color: "var(--text)", margin: 0 }}>
+          <h1 style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "var(--ts-card-h)", letterSpacing: "-0.025em", color: "var(--text)", margin: 0 }}>
             Forum
           </h1>
-          <p style={{ color: "var(--text-3)", marginTop: "4px", fontSize: "13px" }}>
+          <p style={{ color: "var(--text-3)", marginTop: "4px", fontSize: "var(--ts-body-sm)" }}>
             Discussions, communities, and ideas
           </p>
         </div>
@@ -66,7 +66,7 @@ export default async function ForumFeedPage({
           style={{
             background: "var(--accent)", color: "#fff",
             padding: "8px 16px", borderRadius: "12px",
-            fontSize: "13px", fontWeight: 600,
+            fontSize: "var(--ts-body-sm)", fontWeight: 600,
             textDecoration: "none",
           }}
         >
@@ -82,7 +82,7 @@ export default async function ForumFeedPage({
             href={`/forum?tab=${t.key}`}
             style={{
               padding: "10px 16px",
-              fontSize: "13px",
+              fontSize: "var(--ts-body-sm)",
               fontWeight: tab === t.key ? 600 : 400,
               color: tab === t.key ? "var(--text)" : "var(--text-3)",
               borderBottom: tab === t.key ? "2px solid var(--accent)" : "2px solid transparent",
@@ -113,9 +113,9 @@ export default async function ForumFeedPage({
                       <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
                     </svg>
                   </div>
-                  <p style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "15px", color: "var(--text)" }}>No communities yet</p>
-                  <p style={{ fontSize: "13px", color: "var(--text-3)" }}>Be the first to create one</p>
-                  <Link href="/communities/new" style={{ background: "var(--accent)", color: "#fff", padding: "8px 20px", borderRadius: "12px", fontSize: "13px", fontWeight: 600, textDecoration: "none" }}>
+                  <p style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "var(--ts-body)", color: "var(--text)" }}>No communities yet</p>
+                  <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)" }}>Be the first to create one</p>
+                  <Link href="/communities/new" style={{ background: "var(--accent)", color: "#fff", padding: "8px 20px", borderRadius: "12px", fontSize: "var(--ts-body-sm)", fontWeight: 600, textDecoration: "none" }}>
                     Create Community
                   </Link>
                 </div>
@@ -137,21 +137,21 @@ export default async function ForumFeedPage({
                             width: "36px", height: "36px", borderRadius: "10px",
                             background: "var(--accent-subtle)",
                             display: "flex", alignItems: "center", justifyContent: "center",
-                            fontSize: "16px", flexShrink: 0,
+                            fontSize: "var(--ts-body)", flexShrink: 0,
                           }}>
                             {c.name.charAt(0).toUpperCase()}
                           </div>
                           <div>
-                            <p style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "14px", color: "var(--text)" }}>
+                            <p style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "var(--ts-body)", color: "var(--text)" }}>
                               {c.name}
                             </p>
-                            <p style={{ fontSize: "11px", color: "var(--text-3)" }}>
+                            <p style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)" }}>
                               {c.description ?? ""}
                             </p>
                           </div>
                         </div>
                         {c.description && (
-                          <p style={{ fontSize: "12px", color: "var(--text-2)", overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>
+                          <p style={{ fontSize: "var(--ts-label)", color: "var(--text-2)", overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>
                             {c.description}
                           </p>
                         )}
@@ -172,8 +172,8 @@ export default async function ForumFeedPage({
                   <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
                 </svg>
               </div>
-              <p style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "15px", color: "var(--text)" }}>No threads yet</p>
-              <p style={{ fontSize: "13px", color: "var(--text-3)" }}>Join a community and start a discussion</p>
+              <p style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "var(--ts-body)", color: "var(--text)" }}>No threads yet</p>
+              <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)" }}>Join a community and start a discussion</p>
             </div>
           ) : (
             threads.map((thread) => (
@@ -198,11 +198,11 @@ export default async function ForumFeedPage({
                 <div style={{ flex: 1, minWidth: 0 }}>
                   {/* Meta row */}
                   <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap", marginBottom: "4px" }}>
-                    <span style={{ fontSize: "11px", color: "var(--text-3)" }}>
+                    <span style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)" }}>
                       {thread.authorDisplayName ?? "Anonymous"}
                     </span>
-                    <span style={{ fontSize: "11px", color: "var(--text-3)" }}>·</span>
-                    <span style={{ fontSize: "11px", color: "var(--text-3)" }}>
+                    <span style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)" }}>·</span>
+                    <span style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)" }}>
                       {timeAgo(thread.createdAt)}
                     </span>
                   </div>
@@ -213,7 +213,7 @@ export default async function ForumFeedPage({
                     style={{ textDecoration: "none" }}
                   >
                     <p style={{
-                      fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "14px",
+                      fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "var(--ts-body)",
                       color: "var(--text)", lineHeight: "1.4", marginBottom: "8px",
                     }}
                       className="row-hover"
@@ -226,7 +226,7 @@ export default async function ForumFeedPage({
                   <div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
                     <Link
                       href={`/communities/${thread.communityId}/threads/${thread.threadId}`}
-                      style={{ display: "flex", alignItems: "center", gap: "4px", padding: "4px 10px", borderRadius: "6px", fontSize: "12px", color: "var(--text-3)", textDecoration: "none", fontWeight: 500 }}
+                      style={{ display: "flex", alignItems: "center", gap: "4px", padding: "4px 10px", borderRadius: "6px", fontSize: "var(--ts-label)", color: "var(--text-3)", textDecoration: "none", fontWeight: 500 }}
                       className="row-hover"
                     >
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -253,11 +253,11 @@ export default async function ForumFeedPage({
             borderRadius: "14px", padding: "16px",
             boxShadow: "var(--shadow-sm)",
           }}>
-            <p style={{ fontSize: "10px", fontWeight: 700, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "12px" }}>
+            <p style={{ fontSize: "var(--ts-meta)", fontWeight: 700, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "12px" }}>
               Your Communities
             </p>
             {myCommunities.length === 0 ? (
-              <p style={{ fontSize: "13px", color: "var(--text-3)" }}>
+              <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)" }}>
                 Join communities to see them here.
               </p>
             ) : (
@@ -273,12 +273,12 @@ export default async function ForumFeedPage({
                       width: "24px", height: "24px", borderRadius: "6px",
                       background: "var(--accent-subtle)",
                       display: "flex", alignItems: "center", justifyContent: "center",
-                      fontSize: "11px", fontWeight: 700, color: "var(--accent)",
+                      fontSize: "var(--ts-meta)", fontWeight: 700, color: "var(--accent)",
                       flexShrink: 0,
                     }}>
                       {c.name.charAt(0).toUpperCase()}
                     </div>
-                    <span style={{ fontSize: "13px", color: "var(--text-2)", fontWeight: 500 }}>
+                    <span style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-2)", fontWeight: 500 }}>
                       {c.name}
                     </span>
                   </Link>
@@ -287,7 +287,7 @@ export default async function ForumFeedPage({
             )}
             <Link
               href="/communities"
-              style={{ display: "block", fontSize: "12px", color: "var(--accent)", textDecoration: "none", marginTop: "12px" }}
+              style={{ display: "block", fontSize: "var(--ts-label)", color: "var(--accent)", textDecoration: "none", marginTop: "12px" }}
             >
               Browse all communities →
             </Link>
@@ -299,12 +299,12 @@ export default async function ForumFeedPage({
             borderRadius: "14px", padding: "16px",
             boxShadow: "var(--shadow-sm)",
           }}>
-            <p style={{ fontSize: "10px", fontWeight: 700, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "12px" }}>
+            <p style={{ fontSize: "var(--ts-meta)", fontWeight: 700, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "12px" }}>
               Forum Rules
             </p>
             <ol style={{ padding: "0 0 0 16px", margin: 0, display: "flex", flexDirection: "column", gap: "6px" }}>
               {FORUM_RULES.map((rule) => (
-                <li key={rule} style={{ fontSize: "12px", color: "var(--text-2)", lineHeight: "1.5" }}>
+                <li key={rule} style={{ fontSize: "var(--ts-label)", color: "var(--text-2)", lineHeight: "1.5" }}>
                   {rule}
                 </li>
               ))}
@@ -319,7 +319,7 @@ export default async function ForumFeedPage({
               gap: "6px",
               background: "var(--accent-subtle)", border: "1px solid var(--accent)",
               borderRadius: "12px", padding: "10px 16px",
-              fontSize: "13px", fontWeight: 600, color: "var(--accent)",
+              fontSize: "var(--ts-body-sm)", fontWeight: 600, color: "var(--accent)",
               textDecoration: "none",
               transition: "background 110ms",
             }}

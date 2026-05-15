@@ -58,18 +58,18 @@ export function AddExpenseForm() {
       padding: "20px",
       boxShadow: "var(--shadow-sm)",
     }}>
-      <h2 style={{ fontFamily: "var(--ff-display)", fontWeight: "700", fontSize: "16px", color: "var(--text)", marginBottom: "16px" }}>
+      <h2 style={{ fontFamily: "var(--ff-display)", fontWeight: "700", fontSize: "var(--ts-body)", color: "var(--text)", marginBottom: "16px" }}>
         Add Personal Expense
       </h2>
 
       <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
         {create.isError && (
-          <div style={{ padding: "10px 14px", borderRadius: "10px", background: "var(--danger-s)", border: "1px solid oklch(62% 0.21 22 / 0.3)", fontSize: "13px", color: "var(--danger)" }}>
+          <div style={{ padding: "10px 14px", borderRadius: "10px", background: "var(--danger-s)", border: "1px solid oklch(62% 0.21 22 / 0.3)", fontSize: "var(--ts-body-sm)", color: "var(--danger)" }}>
             {create.error instanceof ApiError ? create.error.message : "Something went wrong. Please try again."}
           </div>
         )}
         {create.isSuccess && (
-          <div style={{ padding: "10px 14px", borderRadius: "10px", background: "var(--success-s)", border: "1px solid oklch(68% 0.18 152 / 0.25)", fontSize: "13px", color: "var(--success)" }}>
+          <div style={{ padding: "10px 14px", borderRadius: "10px", background: "var(--success-s)", border: "1px solid oklch(68% 0.18 152 / 0.25)", fontSize: "var(--ts-body-sm)", color: "var(--success)" }}>
             Expense added!
           </div>
         )}
@@ -163,7 +163,7 @@ export function AddExpenseForm() {
             color: create.isPending ? "var(--text-3)" : "white",
             fontFamily: "var(--ff-body)",
             fontWeight: "600",
-            fontSize: "13px",
+            fontSize: "var(--ts-body-sm)",
             cursor: create.isPending ? "not-allowed" : "pointer",
             transition: "background 110ms",
           }}

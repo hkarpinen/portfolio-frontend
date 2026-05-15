@@ -47,32 +47,20 @@ export default function AboutPage() {
     <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
       {/* Hero banner */}
       <div style={{
-        position: "relative",
-        overflow: "hidden",
-        borderRadius: "24px",
         padding: "40px 32px",
-        background: "var(--surface)",
-        border: "1px solid var(--border)",
-        boxShadow: "var(--shadow-sm)",
+        background: "var(--paper-2)",
+        border: "1.5px solid var(--ink)",
+        boxShadow: "var(--shadow-card)",
       }}>
-        <div className="dot-grid" style={{ position: "absolute", inset: 0, opacity: 0.4, pointerEvents: "none" }} />
-        <div style={{
-          position: "absolute", top: "-30%", right: "-5%",
-          width: "400px", height: "400px", borderRadius: "9999px",
-          background: "var(--accent-subtle)", filter: "blur(80px)",
-          pointerEvents: "none",
-        }} />
-
-        <div style={{ position: "relative", display: "flex", alignItems: "center", gap: "24px", flexWrap: "wrap" }}>
-          {/* Avatar */}
+        <div style={{ display: "flex", alignItems: "center", gap: "24px", flexWrap: "wrap" }}>
+          {/* Avatar — square stamp */}
           <div style={{
-            width: "80px", height: "80px", borderRadius: "9999px",
-            background: "linear-gradient(135deg, var(--accent) 0%, var(--accent-v) 100%)",
+            width: "80px", height: "80px",
+            background: "var(--paper-3)",
+            border: "2px solid var(--ink)",
             display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: "28px", fontWeight: "800", color: "#fff",
-            fontFamily: "var(--ff-display)", flexShrink: 0,
-            border: "3px solid var(--surface)",
-            boxShadow: "var(--shadow-md)",
+            fontSize: "var(--ts-sub)", fontWeight: 700, color: "var(--ink)",
+            fontFamily: "var(--ff-mono)", flexShrink: 0,
           }}>
             HK
           </div>
@@ -80,13 +68,13 @@ export default function AboutPage() {
           {/* Info */}
           <div style={{ flex: 1 }}>
             <h1 style={{
-              fontFamily: "var(--ff-display)", fontWeight: "800",
-              fontSize: "28px", letterSpacing: "-0.025em", color: "var(--text)",
+              fontFamily: "var(--ff-serif)", fontStyle: "italic", fontWeight: 400,
+              fontSize: "var(--ts-h3)", letterSpacing: "-0.025em", color: "var(--ink)",
               marginBottom: "4px",
             }}>
-              Hank Karpinen
+              Hank Karpinen<span style={{ color: "var(--red)" }}>.</span>
             </h1>
-            <p style={{ fontSize: "14px", color: "var(--text-2)", marginBottom: "16px" }}>
+            <p style={{ fontFamily: "var(--ff-mono)", fontSize: "var(--ts-meta)", color: "var(--ink-3)", textTransform: "uppercase", letterSpacing: "0.20em", marginBottom: "16px" }}>
               Full-Stack Developer · Building modern web applications
             </p>
 
@@ -96,7 +84,7 @@ export default function AboutPage() {
                 display: "inline-flex", alignItems: "center", gap: "6px",
                 padding: "7px 16px", borderRadius: "10px",
                 background: "var(--accent)", color: "#fff",
-                fontSize: "13px", fontWeight: "600", textDecoration: "none",
+                fontSize: "var(--ts-body-sm)", fontWeight: "600", textDecoration: "none",
                 transition: "background 110ms",
               }}>
                 Contact me
@@ -113,7 +101,7 @@ export default function AboutPage() {
                     padding: "7px 16px", borderRadius: "10px",
                     background: "var(--surface-2)", color: "var(--text-2)",
                     border: "1px solid var(--border)",
-                    fontSize: "13px", fontWeight: "500", textDecoration: "none",
+                    fontSize: "var(--ts-body-sm)", fontWeight: "500", textDecoration: "none",
                     transition: "background 110ms, color 110ms",
                   }}
                 >
@@ -129,10 +117,10 @@ export default function AboutPage() {
               <div key={f.label} style={{ textAlign: "center" }}>
                 <div style={{
                   fontFamily: "var(--ff-display)", fontWeight: "800",
-                  fontSize: "28px", letterSpacing: "-0.025em", color: "var(--text)",
+                  fontSize: "var(--ts-card-h)", letterSpacing: "-0.025em", color: "var(--text)",
                   lineHeight: "1",
                 }}>{f.value}</div>
-                <div style={{ fontSize: "11px", color: "var(--text-3)", marginTop: "4px" }}>{f.label}</div>
+                <div style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)", marginTop: "4px" }}>{f.label}</div>
               </div>
             ))}
           </div>
@@ -149,7 +137,7 @@ export default function AboutPage() {
         <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
           <h2 style={{
             fontFamily: "var(--ff-display)", fontWeight: "700",
-            fontSize: "18px", color: "var(--text)", letterSpacing: "-0.015em",
+            fontSize: "var(--ts-lead)", color: "var(--text)", letterSpacing: "-0.015em",
           }}>
             Projects
           </h2>
@@ -171,13 +159,13 @@ export default function AboutPage() {
               }}
             >
               <div style={{ display: "flex", alignItems: "flex-start", gap: "14px" }}>
-                <span style={{ fontSize: "28px", flexShrink: 0 }}>{project.icon}</span>
+                <span style={{ fontSize: "var(--ts-card-h)", flexShrink: 0 }}>{project.icon}</span>
                 <div>
                   <h3 style={{
                     fontFamily: "var(--ff-display)", fontWeight: "700",
-                    fontSize: "15px", color: "var(--text)", marginBottom: "6px",
+                    fontSize: "var(--ts-body)", color: "var(--text)", marginBottom: "6px",
                   }}>{project.title}</h3>
-                  <p style={{ fontSize: "13px", color: "var(--text-2)", lineHeight: "1.6", marginBottom: "12px" }}>
+                  <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-2)", lineHeight: "1.6", marginBottom: "12px" }}>
                     {project.description}
                   </p>
                   <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
@@ -188,7 +176,7 @@ export default function AboutPage() {
                         borderRadius: "9999px",
                         background: "var(--accent-subtle)",
                         color: "var(--accent)",
-                        fontSize: "11px",
+                        fontSize: "var(--ts-meta)",
                         fontWeight: "500",
                         border: "1px solid oklch(63% 0.22 252 / 0.25)",
                       }}>{t}</span>
@@ -209,7 +197,7 @@ export default function AboutPage() {
           }}>
             <h2 style={{
               fontFamily: "var(--ff-display)", fontWeight: "700",
-              fontSize: "15px", color: "var(--text)", marginBottom: "16px",
+              fontSize: "var(--ts-body)", color: "var(--text)", marginBottom: "16px",
             }}>
               Skills
             </h2>
@@ -217,7 +205,7 @@ export default function AboutPage() {
               {SKILLS.map(group => (
                 <div key={group.label}>
                   <p style={{
-                    fontSize: "10px", fontWeight: "700", color: "var(--text-3)",
+                    fontSize: "var(--ts-meta)", fontWeight: "700", color: "var(--text-3)",
                     textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "8px",
                   }}>{group.label}</p>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
@@ -227,7 +215,7 @@ export default function AboutPage() {
                         borderRadius: "9999px",
                         background: "var(--surface-3)",
                         color: "var(--text-2)",
-                        fontSize: "12px",
+                        fontSize: "var(--ts-label)",
                         fontWeight: "500",
                         border: "1px solid var(--border)",
                       }}>{skill}</span>
@@ -245,7 +233,7 @@ export default function AboutPage() {
           }}>
             <h2 style={{
               fontFamily: "var(--ff-display)", fontWeight: "700",
-              fontSize: "15px", color: "var(--text)", marginBottom: "12px",
+              fontSize: "var(--ts-body)", color: "var(--text)", marginBottom: "12px",
             }}>
               Quick Facts
             </h2>
@@ -259,8 +247,8 @@ export default function AboutPage() {
                   display: "flex", justifyContent: "space-between", alignItems: "center",
                   padding: "8px 10px", borderRadius: "8px", background: "var(--surface-2)",
                 }}>
-                  <span style={{ fontSize: "12px", color: "var(--text-3)" }}>{fact.label}</span>
-                  <span style={{ fontSize: "12px", fontWeight: "500", color: "var(--text)" }}>{fact.value}</span>
+                  <span style={{ fontSize: "var(--ts-label)", color: "var(--text-3)" }}>{fact.label}</span>
+                  <span style={{ fontSize: "var(--ts-label)", fontWeight: "500", color: "var(--text)" }}>{fact.value}</span>
                 </div>
               ))}
             </div>

@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useOverview } from "@/hooks/use-household";
-import { BudgetView } from "../contributions/contributions-view";
+
+import { BudgetView } from "../../(bills)/contributions/contributions-view";
 import { ExpenseList } from "./expense-list";
 import Link from "next/link";
 import type { ExpensePage, ContributionPeriodSummary } from "@/types/finance";
@@ -11,8 +12,7 @@ import type { ExpensePage, ContributionPeriodSummary } from "@/types/finance";
 // ── Financial summary ─────────────────────────────────────────────────────────
 
 function FinancialSummary({ initialMonths }: { initialMonths: ContributionPeriodSummary[] }) {
-  const { data: overview } = useOverview();
-  const months = overview?.contributionsByMonth ?? initialMonths;
+  const months = initialMonths;
   const nowKey = new Date().toISOString().slice(0, 7);
   const current = months.find((m) => m.periodStart.slice(0, 7) === nowKey);
 
@@ -47,17 +47,17 @@ function FinancialSummary({ initialMonths }: { initialMonths: ContributionPeriod
                   padding: "10px 14px", background: "var(--surface)", border: "1px solid var(--border)",
                   borderRadius: "var(--r-lg)", boxShadow: "var(--shadow-sm)" }}>
       {monthLabel && (
-        <span style={{ fontSize: "12px", fontWeight: 600, color: "var(--text-2)", marginRight: "4px" }}>
+        <span style={{ fontSize: "var(--ts-label)", fontWeight: 600, color: "var(--text-2)", marginRight: "4px" }}>
           {monthLabel}
         </span>
       )}
       {stats.map((s, i) => (
         <span key={s.label} style={{ display: "inline-flex", alignItems: "center", gap: "4px",
-                                     fontSize: "12px", color: "var(--text-3)" }}>
+                                     fontSize: "var(--ts-label)", color: "var(--text-3)" }}>
           {i > 0 && <span style={{ color: "var(--border-2)", userSelect: "none", margin: "0 2px" }}>·</span>}
           {s.label}{" "}
-          <span style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "13px", color: s.color }}>{s.value}</span>
-          {s.sub && <span style={{ fontSize: "10px", color: "var(--text-3)", fontWeight: 500 }}>({s.sub})</span>}
+          <span style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "var(--ts-body-sm)", color: s.color }}>{s.value}</span>
+          {s.sub && <span style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)", fontWeight: 500 }}>({s.sub})</span>}
         </span>
       ))}
     </div>
@@ -81,11 +81,13 @@ export function ExpensesClient({
   initialExpenses: ExpensePage;
 }) {
   const [tab, setTab] = useState<Tab>("payments");
+  const { data: liveMonths } = useOverview(initialMonths);
+  const months = liveMonths ?? initialMonths;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
       {/* Financial summary */}
-      <FinancialSummary initialMonths={initialMonths} />
+      <FinancialSummary initialMonths={months} />
 
       {/* Tab bar */}
       <div style={{ borderBottom: "1px solid var(--border)", display: "flex", gap: "0" }}>
@@ -96,7 +98,7 @@ export function ExpensesClient({
             onClick={() => setTab(t.key)}
             style={{
               padding: "10px 16px",
-              fontSize: "13px",
+              fontSize: "var(--ts-body-sm)",
               fontWeight: tab === t.key ? 600 : 400,
               color: tab === t.key ? "var(--text)" : "var(--text-3)",
               background: "none",
@@ -115,11 +117,11 @@ export function ExpensesClient({
       </div>
 
       {tab === "payments" ? (
-        <BudgetView months={initialMonths} />
+        <BudgetView months={months} />
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <p style={{ fontSize: "13px", color: "var(--text-3)", margin: 0 }}>
+            <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)", margin: 0 }}>
               Manage your recurring personal expense definitions — phone, gym, streaming, insurance.
             </p>
             <Link
@@ -128,7 +130,7 @@ export function ExpensesClient({
                 display: "inline-flex", alignItems: "center", gap: "6px",
                 padding: "8px 16px", borderRadius: "10px",
                 background: "var(--accent)", color: "#fff",
-                fontSize: "13px", fontWeight: "600", textDecoration: "none",
+                fontSize: "var(--ts-body-sm)", fontWeight: "600", textDecoration: "none",
                 flexShrink: 0,
               }}
             >

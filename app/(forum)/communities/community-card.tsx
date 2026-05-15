@@ -42,7 +42,7 @@ function ActivityAvatar({ avatarUrl, name }: { avatarUrl?: string; name?: string
     <div style={{
       width: 18, height: 18, borderRadius: "50%", background: "var(--accent-subtle)",
       display: "flex", alignItems: "center", justifyContent: "center",
-      fontSize: "10px", fontWeight: 700, color: "var(--accent)", flexShrink: 0,
+      fontSize: "var(--ts-meta)", fontWeight: 700, color: "var(--accent)", flexShrink: 0,
     }}>{initial}</div>
   );
 }
@@ -97,26 +97,26 @@ export function CommunityCard({ communityId, slug, name, description, imageUrl, 
               width: "48px", height: "48px", borderRadius: "12px",
               background: "var(--accent-subtle)", flexShrink: 0,
               display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: "18px", fontWeight: 700, color: "var(--accent)",
+              fontSize: "var(--ts-lead)", fontWeight: 700, color: "var(--accent)",
               fontFamily: "var(--ff-display)",
             }}>
               {name[0].toUpperCase()}
             </div>
           )}
           <div style={{ minWidth: 0 }}>
-            <h2 style={{ fontFamily: "var(--ff-display)", fontWeight: 600, fontSize: "15px", color: "var(--text)", margin: 0 }}>{name}</h2>
+            <h2 style={{ fontFamily: "var(--ff-display)", fontWeight: 600, fontSize: "var(--ts-sub)", color: "var(--text)", margin: 0 }}>{name}</h2>
             {description && (
-              <p style={{ fontSize: "13px", color: "var(--text-2)", marginTop: "2px", overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>{description}</p>
+              <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-2)", marginTop: "2px", overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>{description}</p>
             )}
             <div style={{ display: "flex", gap: "16px", marginTop: "4px" }}>
               {memberCount !== undefined && memberCount > 0 && (
-                <span style={{ fontSize: "11px", fontWeight: 500, color: "var(--text-3)" }}>{memberCount.toLocaleString()} {memberCount === 1 ? "member" : "members"}</span>
+                <span style={{ fontSize: "var(--ts-meta)", fontWeight: 500, color: "var(--text-3)" }}>{memberCount.toLocaleString()} {memberCount === 1 ? "member" : "members"}</span>
               )}
               {threadCount !== undefined && threadCount > 0 && (
-                <span style={{ fontSize: "11px", fontWeight: 500, color: "var(--text-3)" }}>{threadCount.toLocaleString()} {threadCount === 1 ? "thread" : "threads"}</span>
+                <span style={{ fontSize: "var(--ts-meta)", fontWeight: 500, color: "var(--text-3)" }}>{threadCount.toLocaleString()} {threadCount === 1 ? "thread" : "threads"}</span>
               )}
               {commentCount !== undefined && commentCount > 0 && (
-                <span style={{ fontSize: "11px", fontWeight: 500, color: "var(--text-3)" }}>{commentCount.toLocaleString()} {commentCount === 1 ? "reply" : "replies"}</span>
+                <span style={{ fontSize: "var(--ts-meta)", fontWeight: 500, color: "var(--text-3)" }}>{commentCount.toLocaleString()} {commentCount === 1 ? "reply" : "replies"}</span>
               )}
             </div>
           </div>
@@ -127,7 +127,7 @@ export function CommunityCard({ communityId, slug, name, description, imageUrl, 
             <div style={{ width: "64px", height: "28px", borderRadius: "9999px", background: "var(--surface-3)" }} className="skeleton" />
           ) : joined ? (
             <span style={{
-              fontSize: "11px", fontWeight: 500, color: "var(--text-3)",
+              fontSize: "var(--ts-meta)", fontWeight: 500, color: "var(--text-3)",
               border: "1px solid var(--border)", padding: "2px 8px",
               borderRadius: "9999px", background: "var(--surface-3)",
             }}>
@@ -138,7 +138,7 @@ export function CommunityCard({ communityId, slug, name, description, imageUrl, 
               onClick={handleJoin}
               disabled={joining}
               style={{
-                fontSize: "12px", fontWeight: 500,
+                fontSize: "var(--ts-label)", fontWeight: 500,
                 background: "var(--accent)", color: "#fff",
                 border: "none", borderRadius: "12px",
                 padding: "4px 14px", cursor: joining ? "not-allowed" : "pointer",
@@ -171,7 +171,7 @@ export function CommunityCard({ communityId, slug, name, description, imageUrl, 
             />
             <div style={{ minWidth: 0, flex: 1 }}>
               <p style={{
-                fontSize: "12px", color: "var(--text-2)", margin: 0,
+                fontSize: "var(--ts-label)", color: "var(--text-2)", margin: 0,
                 overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
               }}>
                 <span style={{ fontWeight: 500, color: "var(--text)" }}>
@@ -184,7 +184,7 @@ export function CommunityCard({ communityId, slug, name, description, imageUrl, 
               </p>
             </div>
             {activityTime && (
-              <span style={{ fontSize: "11px", color: "var(--text-3)", flexShrink: 0 }}>
+              <span style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)", flexShrink: 0 }}>
                 {formatRelative(activityTime)}
               </span>
             )}

@@ -16,7 +16,7 @@ interface Props {
 
 const tabTriggerStyle: React.CSSProperties = {
   padding: "10px 16px", background: "none", border: "none",
-  fontWeight: 600, fontSize: "14px",
+  fontWeight: 600, fontSize: "var(--ts-body)",
   color: "var(--text-3)",
   borderBottom: "2px solid transparent",
   marginBottom: "-1px",

@@ -52,14 +52,14 @@ function AccountRow({ account }: { account: LinkedAccountResponse }) {
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-        <span style={{ fontSize: "13px", color: "var(--text-2)", fontWeight: 500 }}>
+        <span style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-2)", fontWeight: 500 }}>
           {account.name}
           {account.mask ? ` ····${account.mask}` : ""}
         </span>
         {account.subtype && (
           <span
             style={{
-              fontSize: "11px",
+              fontSize: "var(--ts-meta)",
               color: "var(--text-3)",
               background: "var(--surface-2)",
               padding: "2px 7px",
@@ -72,7 +72,7 @@ function AccountRow({ account }: { account: LinkedAccountResponse }) {
       </div>
       <span
         style={{
-          fontSize: "12px",
+          fontSize: "var(--ts-label)",
           color: "var(--text-3)",
           fontVariantNumeric: "tabular-nums",
         }}
@@ -123,7 +123,7 @@ function InstitutionCard({ item }: { item: Connection }) {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            fontSize: "20px",
+            fontSize: "var(--ts-sub)",
             flexShrink: 0,
           }}
         >
@@ -133,12 +133,12 @@ function InstitutionCard({ item }: { item: Connection }) {
         {/* Info */}
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
-            <span style={{ fontSize: "15px", fontWeight: 600, color: "var(--text)" }}>
+            <span style={{ fontSize: "var(--ts-body)", fontWeight: 600, color: "var(--text)" }}>
               {item.institutionName}
             </span>
             <span
               style={{
-                fontSize: "11px",
+                fontSize: "var(--ts-meta)",
                 fontWeight: 600,
                 color: statusColor[item.status],
                 background: `color-mix(in oklch, ${statusColor[item.status]} 15%, transparent)`,
@@ -149,7 +149,7 @@ function InstitutionCard({ item }: { item: Connection }) {
               {statusLabel[item.status]}
             </span>
           </div>
-          <p style={{ fontSize: "12px", color: "var(--text-3)", margin: "3px 0 0" }}>
+          <p style={{ fontSize: "var(--ts-label)", color: "var(--text-3)", margin: "3px 0 0" }}>
             {item.accounts.length} account{item.accounts.length !== 1 ? "s" : ""}
             {lastSync ? ` · Synced ${lastSync}` : " · Never synced"}
           </p>
@@ -165,7 +165,7 @@ function InstitutionCard({ item }: { item: Connection }) {
               border: "1px solid var(--border)",
               borderRadius: "10px",
               padding: "6px 12px",
-              fontSize: "12px",
+              fontSize: "var(--ts-label)",
               fontWeight: 500,
               color: isSyncing ? "var(--text-3)" : "var(--text-2)",
               cursor: isSyncing ? "default" : "pointer",
@@ -184,7 +184,7 @@ function InstitutionCard({ item }: { item: Connection }) {
                   border: "1px solid var(--border)",
                   borderRadius: "10px",
                   padding: "6px 10px",
-                  fontSize: "12px",
+                  fontSize: "var(--ts-label)",
                   color: "var(--text-3)",
                   cursor: "pointer",
                 }}
@@ -201,7 +201,7 @@ function InstitutionCard({ item }: { item: Connection }) {
                   border: "none",
                   borderRadius: "10px",
                   padding: "6px 12px",
-                  fontSize: "12px",
+                  fontSize: "var(--ts-label)",
                   fontWeight: 600,
                   color: "#fff",
                   cursor: "pointer",
@@ -220,7 +220,7 @@ function InstitutionCard({ item }: { item: Connection }) {
                 border: "1px solid color-mix(in oklch, var(--danger) 40%, var(--border))",
                 borderRadius: "10px",
                 padding: "6px 10px",
-                fontSize: "12px",
+                fontSize: "var(--ts-label)",
                 color: "var(--danger)",
                 cursor: "pointer",
               }}
@@ -237,7 +237,7 @@ function InstitutionCard({ item }: { item: Connection }) {
               padding: "6px 4px",
               cursor: "pointer",
               color: "var(--text-3)",
-              fontSize: "14px",
+              fontSize: "var(--ts-body)",
               lineHeight: 1,
               transform: expanded ? "rotate(180deg)" : "rotate(0deg)",
               transition: "transform 200ms",
@@ -266,19 +266,23 @@ function EmptyState({ onConnect, loading }: { onConnect: () => void; loading: bo
       style={{
         textAlign: "center",
         padding: "52px 24px",
-        background: "var(--surface)",
-        border: "1px dashed var(--border)",
-        borderRadius: "20px",
+        background: "var(--paper-2)",
+        border: "1px dashed var(--ink-3)",
       }}
     >
-      <div style={{ fontSize: "40px", marginBottom: "14px" }}>��</div>
-      <p style={{ fontSize: "15px", fontWeight: 600, color: "var(--text)", marginBottom: "8px" }}>
+      <div style={{ display: "flex", justifyContent: "center", marginBottom: "20px" }}>
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter">
+          <path d="M3 9l9-7 9 7v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z" />
+          <polyline points="9 22 9 12 15 12 15 22" />
+        </svg>
+      </div>
+      <p style={{ fontSize: "var(--ts-body)", fontWeight: 600, color: "var(--ink)", marginBottom: "8px", fontFamily: "var(--ff-serif)" }}>
         No bank accounts connected
       </p>
       <p
         style={{
-          fontSize: "13px",
-          color: "var(--text-3)",
+          fontSize: "var(--ts-body-sm)",
+          color: "var(--ink-3)",
           marginBottom: "24px",
           maxWidth: "300px",
           margin: "0 auto 24px",
@@ -291,15 +295,17 @@ function EmptyState({ onConnect, loading }: { onConnect: () => void; loading: bo
         onClick={onConnect}
         disabled={loading}
         style={{
-          background: "var(--accent)",
-          color: "#fff",
+          background: "var(--ink)",
+          color: "var(--paper)",
           border: "none",
-          borderRadius: "12px",
+          borderRadius: 0,
           padding: "10px 24px",
-          fontSize: "14px",
+          fontSize: "var(--ts-body)",
           fontWeight: 600,
+          letterSpacing: "0.05em",
+          textTransform: "uppercase",
           cursor: loading ? "default" : "pointer",
-          opacity: loading ? 0.7 : 1,
+          opacity: loading ? 0.6 : 1,
         }}
       >
         {loading ? "Opening…" : "Connect a bank account"}
@@ -321,14 +327,14 @@ export default function ConnectionsPage() {
         <h1
           style={{
             fontFamily: "var(--ff-display)",
-            fontSize: "22px",
+            fontSize: "var(--ts-h2)", lineHeight: "var(--lh-display)", letterSpacing: "-0.02em",
             fontWeight: 700,
             color: "var(--text)",
           }}
         >
           Settings
         </h1>
-        <p style={{ fontSize: "13px", color: "var(--text-3)", marginTop: "4px" }}>
+        <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)", marginTop: "4px" }}>
           Manage your account, security, and preferences
         </p>
       </div>
@@ -350,7 +356,7 @@ export default function ConnectionsPage() {
               href={TAB_HREFS[tab]}
               style={{
                 padding: "10px 16px",
-                fontSize: "14px",
+                fontSize: "var(--ts-body)",
                 fontWeight: active ? 600 : 400,
                 color: active ? "var(--text)" : "var(--text-3)",
                 borderBottom: active ? "2px solid var(--accent)" : "2px solid transparent",
@@ -376,10 +382,10 @@ export default function ConnectionsPage() {
         }}
       >
         <div>
-          <h2 style={{ fontSize: "16px", fontWeight: 600, color: "var(--text)", margin: 0 }}>
+          <h2 style={{ fontSize: "var(--ts-body)", fontWeight: 600, color: "var(--text)", margin: 0 }}>
             Bank connections
           </h2>
-          <p style={{ fontSize: "13px", color: "var(--text-3)", marginTop: "4px" }}>
+          <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)", marginTop: "4px" }}>
             Linked accounts sync incrementally to track income and expenses automatically.
           </p>
         </div>
@@ -393,7 +399,7 @@ export default function ConnectionsPage() {
               border: "none",
               borderRadius: "12px",
               padding: "8px 16px",
-              fontSize: "13px",
+              fontSize: "var(--ts-body-sm)",
               fontWeight: 600,
               cursor:
                 linkBank.isLaunching || linkBank.isExchanging ? "default" : "pointer",
@@ -414,7 +420,7 @@ export default function ConnectionsPage() {
       {linkBank.exchangeError && (
         <p
           style={{
-            fontSize: "13px",
+            fontSize: "var(--ts-body-sm)",
             color: "var(--danger)",
             marginBottom: "16px",
             padding: "10px 14px",

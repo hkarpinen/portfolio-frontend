@@ -17,16 +17,16 @@ export default async function CommunitySettingsPage({ params }: { params: { slug
       {/* Back link */}
       <Link
         href={`/communities/${params.slug}`}
-        style={{ fontSize: "13px", color: "var(--text-3)", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "4px" }}
+        style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "4px" }}
       >
         ← {community.name}
       </Link>
 
       <div>
-        <h1 style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "24px", color: "var(--text)", margin: 0 }}>
+        <h1 style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "var(--ts-h2)", lineHeight: "var(--lh-display)", letterSpacing: "-0.02em", color: "var(--text)", margin: 0 }}>
           Community Settings
         </h1>
-        <p style={{ color: "var(--text-3)", marginTop: "4px", fontSize: "13px" }}>
+        <p style={{ color: "var(--text-3)", marginTop: "4px", fontSize: "var(--ts-body-sm)" }}>
           Manage profile, description, and visibility for {community.name}.
         </p>
       </div>

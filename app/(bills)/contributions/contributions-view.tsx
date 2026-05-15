@@ -5,7 +5,6 @@ import Link from "next/link";
 import type { ContributionItem, PersonalBillItem, ContributionPeriodSummary } from "@/types/finance";
 import { usePayExpense, useUnpayExpense } from "@/hooks/use-expenses";
 import { usePayContributionSplit, useUnpayContributionSplit } from "@/hooks/use-expenses";
-import { useOverview } from "@/hooks/use-household";
 
 type GranularityTab = "monthly" | "quarterly" | "yearly";
 
@@ -138,7 +137,7 @@ function PayToggle({ paid, pending, onToggle }: {
       disabled={pending}
       onClick={onToggle}
       style={{
-        padding: "2px 9px", borderRadius: "9999px", fontSize: "11px", fontWeight: 600,
+        padding: "2px 9px", borderRadius: "9999px", fontSize: "var(--ts-meta)", fontWeight: 600,
         cursor: pending ? "default" : "pointer", flexShrink: 0,
         background: paid ? "var(--success-s)" : "var(--surface-3)",
         border: `1px solid ${paid ? "var(--success)" : "var(--border)"}`,
@@ -156,7 +155,7 @@ function PayToggle({ paid, pending, onToggle }: {
 
 const tdBase: React.CSSProperties = {
   padding: "9px 10px",
-  fontSize: "13px",
+  fontSize: "var(--ts-body-sm)",
   color: "var(--text)",
   borderBottom: "1px solid var(--border)",
   verticalAlign: "middle",
@@ -164,7 +163,7 @@ const tdBase: React.CSSProperties = {
 
 const tdMeta: React.CSSProperties = {
   ...tdBase,
-  fontSize: "12px",
+  fontSize: "var(--ts-label)",
   color: "var(--text-3)",
   whiteSpace: "nowrap",
 };
@@ -189,7 +188,7 @@ function ItemTableRow({ item, isLast }: { item: TableItem; isLast: boolean }) {
       <td style={{ ...tdBase, ...lastStyle, fontWeight: 600 }}>{item.name}</td>
       <td style={{ ...tdMeta, ...lastStyle }}>
         <span style={{
-          display: "inline-block", padding: "1px 7px", borderRadius: "9999px", fontSize: "11px", fontWeight: 600,
+          display: "inline-block", padding: "1px 7px", borderRadius: "9999px", fontSize: "var(--ts-meta)", fontWeight: 600,
           background: item.type === "Shared" ? "var(--accent-subtle)" : "var(--surface-3)",
           color: item.type === "Shared" ? "var(--accent)" : "var(--text-3)",
           border: `1px solid ${item.type === "Shared" ? "color-mix(in srgb, var(--accent) 30%, transparent)" : "var(--border)"}`,
@@ -200,7 +199,7 @@ function ItemTableRow({ item, isLast }: { item: TableItem; isLast: boolean }) {
       <td style={{ ...tdBase, ...lastStyle, fontFamily: "var(--ff-display)", fontWeight: 700,
                    textAlign: "right", whiteSpace: "nowrap", paddingRight: "12px" }}>
         {item.count !== undefined && item.count > 1
-          ? <>{item.currency} {item.amount} <span style={{ fontSize: "11px", fontWeight: 500, color: "var(--text-3)" }}>×{item.count}</span></>
+          ? <>{item.currency} {item.amount} <span style={{ fontSize: "var(--ts-meta)", fontWeight: 500, color: "var(--text-3)" }}>×{item.count}</span></>
           : <>{item.currency} {item.amount}</>
         }
       </td>
@@ -221,16 +220,16 @@ function StackedItemRow({ item, isLast }: { item: TableItem; isLast: boolean }) 
       borderBottom: isLast ? "none" : "1px solid var(--border)",
     }}>
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontWeight: 600, fontSize: "13px", color: "var(--text)",
+        <div style={{ fontWeight: 600, fontSize: "var(--ts-body-sm)", color: "var(--text)",
                       overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
           {item.name}
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "3px", flexWrap: "wrap" }}>
           {item.dayLabel !== "—" && (
-            <span style={{ fontSize: "11px", color: "var(--text-3)" }}>Day {item.dayLabel}</span>
+            <span style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)" }}>Day {item.dayLabel}</span>
           )}
           <span style={{
-            display: "inline-block", padding: "0px 6px", borderRadius: "9999px", fontSize: "10px", fontWeight: 600,
+            display: "inline-block", padding: "0px 6px", borderRadius: "9999px", fontSize: "var(--ts-meta)", fontWeight: 600,
             background: item.type === "Shared" ? "var(--accent-subtle)" : "var(--surface-3)",
             color: item.type === "Shared" ? "var(--accent)" : "var(--text-3)",
             border: `1px solid ${item.type === "Shared" ? "color-mix(in srgb, var(--accent) 30%, transparent)" : "var(--border)"}`,
@@ -238,12 +237,12 @@ function StackedItemRow({ item, isLast }: { item: TableItem; isLast: boolean }) 
             {item.type}
           </span>
           {item.count !== undefined && item.count > 1 && (
-            <span style={{ fontSize: "11px", color: "var(--text-3)" }}>×{item.count}</span>
+            <span style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)" }}>×{item.count}</span>
           )}
         </div>
       </div>
       <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "5px", flexShrink: 0 }}>
-        <span style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "13px", color: "var(--text)", whiteSpace: "nowrap" }}>
+        <span style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "var(--ts-body-sm)", color: "var(--text)", whiteSpace: "nowrap" }}>
           {item.currency} {item.amount}
         </span>
         {item.payToggle}
@@ -286,12 +285,12 @@ function PeriodCard({ p, cardRef, granularity }: {
         dayLabel: String(due.getUTCDate()),
         name: (
           <Link
-            href={`/households/${c.householdId}/expenses/${c.billId}`}
+            href={`/households/${c.groupId ?? c.householdId}/expenses/${c.billId}`}
             style={{ color: "var(--text)", textDecoration: "none" }}
             onClick={(e) => e.stopPropagation()}
           >
             {c.billTitle}
-            <span style={{ fontWeight: 400, fontSize: "12px", color: "var(--text-3)", marginLeft: "6px" }}>
+            <span style={{ fontWeight: 400, fontSize: "var(--ts-label)", color: "var(--text-3)", marginLeft: "6px" }}>
               {c.householdName}
             </span>
           </Link>
@@ -306,8 +305,8 @@ function PeriodCard({ p, cardRef, granularity }: {
             pending={pending}
             onToggle={(e) => {
               e.stopPropagation();
-              if (c.isClaimed) unpaySplit.mutate({ householdId: c.householdId, billId: c.billId, occurrenceDate: c.dueDate });
-              else             paySplit.mutate({   householdId: c.householdId, billId: c.billId, occurrenceDate: c.dueDate });
+              if (c.isClaimed) unpaySplit.mutate({ householdId: c.groupId ?? c.householdId, billId: c.billId, occurrenceDate: c.dueDate });
+              else             paySplit.mutate({   householdId: c.groupId ?? c.householdId, billId: c.billId, occurrenceDate: c.dueDate });
             }}
           />
         ),
@@ -355,11 +354,11 @@ function PeriodCard({ p, cardRef, granularity }: {
         dayLabel: "—",
         name: (
           <Link
-            href={`/households/${c.householdId}/expenses/${c.billId}`}
+            href={`/households/${c.groupId ?? c.householdId}/expenses/${c.billId}`}
             style={{ color: "var(--text)", textDecoration: "none" }}
           >
             {c.billTitle}
-            <span style={{ fontWeight: 400, fontSize: "12px", color: "var(--text-3)", marginLeft: "6px" }}>
+            <span style={{ fontWeight: 400, fontSize: "var(--ts-label)", color: "var(--text-3)", marginLeft: "6px" }}>
               {c.householdName}
             </span>
           </Link>
@@ -414,13 +413,13 @@ function PeriodCard({ p, cardRef, granularity }: {
         {/* Row 1: label + chevron */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "8px", minWidth: 0 }}>
-            <h3 style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "14px",
+            <h3 style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "var(--ts-body)",
                          color: "var(--text)", margin: 0, whiteSpace: "nowrap" }}>
               {p.label}
             </h3>
             {p.isCurrent && (
               <span style={{ background: "var(--accent-subtle)", color: "var(--accent)", borderRadius: "9999px",
-                             padding: "1px 7px", fontSize: "11px", fontWeight: 600, flexShrink: 0 }}>
+                             padding: "1px 7px", fontSize: "var(--ts-meta)", fontWeight: 600, flexShrink: 0 }}>
                 Current
               </span>
             )}
@@ -434,10 +433,10 @@ function PeriodCard({ p, cardRef, granularity }: {
           )}
         </div>
         {/* Row 2: stats — wraps naturally on narrow screens */}
-        <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: "10px 16px", fontSize: "12px", color: "var(--text-3)" }}>
+        <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: "10px 16px", fontSize: "var(--ts-label)", color: "var(--text-3)" }}>
           <span>Due <strong style={{ color: "var(--text)" }}>${obligations.toFixed(2)}</strong></span>
           <span>Net income <strong style={{ color: "var(--text)" }}>${p.projectedNetIncome.toFixed(2)}</strong></span>
-          <span style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "13px",
+          <span style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "var(--ts-body-sm)",
                          color: netOver ? "var(--danger)" : "var(--success)", whiteSpace: "nowrap" }}>
             {netOver ? "−" : "+"}${Math.abs(p.net).toFixed(2)}
           </span>
@@ -469,26 +468,26 @@ function PeriodCard({ p, cardRef, granularity }: {
             <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <thead>
                 <tr style={{ background: "var(--surface-2)" }}>
-                  <th style={{ ...tdMeta, paddingLeft: "20px", paddingRight: "8px", fontWeight: 700, fontSize: "10px",
+                  <th style={{ ...tdMeta, paddingLeft: "20px", paddingRight: "8px", fontWeight: 700, fontSize: "var(--ts-meta)",
                                textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--text-3)",
                                width: "44px", textAlign: "right", borderBottom: "1px solid var(--border)" }}>
                     {isMonthly ? "Day" : ""}
                   </th>
-                  <th style={{ ...tdMeta, fontWeight: 700, fontSize: "10px", textTransform: "uppercase",
+                  <th style={{ ...tdMeta, fontWeight: 700, fontSize: "var(--ts-meta)", textTransform: "uppercase",
                                letterSpacing: "0.08em", color: "var(--text-3)", borderBottom: "1px solid var(--border)" }}>
                     Name
                   </th>
-                  <th style={{ ...tdMeta, fontWeight: 700, fontSize: "10px", textTransform: "uppercase",
+                  <th style={{ ...tdMeta, fontWeight: 700, fontSize: "var(--ts-meta)", textTransform: "uppercase",
                                letterSpacing: "0.08em", color: "var(--text-3)", borderBottom: "1px solid var(--border)" }}>
                     Type
                   </th>
-                  <th style={{ ...tdMeta, fontWeight: 700, fontSize: "10px", textTransform: "uppercase",
+                  <th style={{ ...tdMeta, fontWeight: 700, fontSize: "var(--ts-meta)", textTransform: "uppercase",
                                letterSpacing: "0.08em", color: "var(--text-3)", textAlign: "right",
                                paddingRight: "12px", borderBottom: "1px solid var(--border)" }}>
                     Amount
                   </th>
                   {isMonthly && (
-                    <th style={{ ...tdMeta, fontWeight: 700, fontSize: "10px", textTransform: "uppercase",
+                    <th style={{ ...tdMeta, fontWeight: 700, fontSize: "var(--ts-meta)", textTransform: "uppercase",
                                  letterSpacing: "0.08em", color: "var(--text-3)", textAlign: "right",
                                  paddingRight: "16px", width: "110px", borderBottom: "1px solid var(--border)" }}>
                       Paid
@@ -515,7 +514,7 @@ function GranularityButton({ label, active, onClick }: { label: string; active: 
     <button
       onClick={onClick}
       style={{
-        padding: "6px 14px", borderRadius: "9999px", fontSize: "12px", fontWeight: active ? 700 : 500,
+        padding: "6px 14px", borderRadius: "9999px", fontSize: "var(--ts-label)", fontWeight: active ? 700 : 500,
         cursor: "pointer", transition: "all 110ms",
         border: active ? "1px solid var(--accent)" : "1px solid var(--border)",
         background: active ? "var(--accent-subtle)" : "var(--surface-2)",
@@ -531,8 +530,7 @@ function GranularityButton({ label, active, onClick }: { label: string; active: 
 
 export function BudgetView({ months: initialMonths }: { months: ContributionPeriodSummary[] }) {
   const [granularity, setGranularity] = useState<GranularityTab>("monthly");
-  const { data: overview } = useOverview();
-  const months = overview?.contributionsByMonth ?? initialMonths;
+  const months = initialMonths;
   const currentRef = useRef<HTMLDivElement>(null);
 
   const rawPeriods =

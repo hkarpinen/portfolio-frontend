@@ -65,10 +65,10 @@ export function ExpenseList({ initialData }: { initialData: ExpensePage }) {
             <path d="M17 9V7a5 5 0 0 0-10 0v2M5 9h14l1 12H4L5 9zm5 4v4m4-4v4" />
           </svg>
         </div>
-        <p style={{ fontFamily: "var(--ff-display)", fontWeight: "700", fontSize: "15px", color: "var(--text)" }}>
+        <p style={{ fontFamily: "var(--ff-display)", fontWeight: "700", fontSize: "var(--ts-body)", color: "var(--text)" }}>
           No personal expenses yet
         </p>
-        <p style={{ fontSize: "13px", color: "var(--text-3)" }}>Add your recurring expenses below.</p>
+        <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)" }}>Add your recurring expenses below.</p>
       </div>
     );
   }
@@ -157,7 +157,7 @@ function ExpenseRow({
   const iStyle: React.CSSProperties = {
     height: "34px", background: "var(--surface-3)",
     border: "1px solid var(--border)", borderRadius: "10px",
-    padding: "0 10px", fontSize: "12px", color: "var(--text)", outline: "none",
+    padding: "0 10px", fontSize: "var(--ts-label)", color: "var(--text)", outline: "none",
   };
 
   return (
@@ -184,16 +184,16 @@ function ExpenseRow({
         {/* Details */}
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap" }}>
-            <span style={{ fontFamily: "var(--ff-display)", fontWeight: 600, fontSize: "14px", color: "var(--text)" }}>{expense.title}</span>
+            <span style={{ fontFamily: "var(--ff-display)", fontWeight: 600, fontSize: "var(--ts-body)", color: "var(--text)" }}>{expense.title}</span>
             <span style={{
-              fontSize: "10px", fontWeight: 600, padding: "1px 6px",
+              fontSize: "var(--ts-meta)", fontWeight: 600, padding: "1px 6px",
               borderRadius: "var(--r-full)",
               background: "var(--surface-3)", color: "var(--text-3)",
               border: "1px solid var(--border)",
             }}>{expense.category}</span>
             {isOverdue && (
               <span style={{
-                fontSize: "10px", fontWeight: 600, padding: "1px 6px",
+                fontSize: "var(--ts-meta)", fontWeight: 600, padding: "1px 6px",
                 borderRadius: "var(--r-full)",
                 background: "var(--danger-s)", color: "var(--danger)",
                 border: "1px solid color-mix(in oklch, var(--danger) 25%, transparent)",
@@ -204,7 +204,7 @@ function ExpenseRow({
               </span>
             )}
           </div>
-          <p style={{ fontSize: "11px", color: "var(--text-3)", marginTop: "3px" }}>
+          <p style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)", marginTop: "3px" }}>
             Due {due.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
             {expense.recurrenceFrequency ? ` · ${expense.recurrenceFrequency.toLowerCase()}` : " · one-time"}
           </p>
@@ -213,7 +213,7 @@ function ExpenseRow({
         {/* Amount + status + actions */}
         <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
           <div style={{ textAlign: "right" }}>
-            <div style={{ fontFamily: "var(--ff-display)", fontWeight: "700", fontSize: "16px", color: isOverdue ? "var(--danger)" : "var(--text)" }}>
+            <div style={{ fontFamily: "var(--ff-display)", fontWeight: "700", fontSize: "var(--ts-body)", color: isOverdue ? "var(--danger)" : "var(--text)" }}>
               {expense.currency} {expense.amount.toFixed(2)}
             </div>
             <button
@@ -221,7 +221,7 @@ function ExpenseRow({
               disabled={isPayPending}
               title={expense.isPaid ? "Click to mark unpaid" : "Click to mark paid"}
               style={{
-                fontSize: "10px", fontWeight: 600, padding: "1px 8px",
+                fontSize: "var(--ts-meta)", fontWeight: 600, padding: "1px 8px",
                 borderRadius: "var(--r-full)", cursor: isPayPending ? "not-allowed" : "pointer",
                 border: `1px solid color-mix(in oklch, ${expense.isPaid ? "var(--success)" : isOverdue ? "var(--danger)" : "var(--warning)"} 25%, transparent)`,
                 background: expense.isPaid
@@ -270,50 +270,50 @@ function ExpenseRow({
         }}>
           <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
             {updateBill.isError && (
-              <div style={{ padding: "8px 12px", borderRadius: "8px", background: "var(--danger-s)", color: "var(--danger)", fontSize: "12px", border: "1px solid oklch(62% 0.21 22 / 0.3)" }}>
+              <div style={{ padding: "8px 12px", borderRadius: "8px", background: "var(--danger-s)", color: "var(--danger)", fontSize: "var(--ts-label)", border: "1px solid oklch(62% 0.21 22 / 0.3)" }}>
                 {updateBill.error instanceof ApiError ? updateBill.error.message : "Something went wrong."}
               </div>
             )}
             <div className="form-grid-2" style={{ gap: "8px" }}>
               <div style={{ gridColumn: "1 / -1", display: "flex", flexDirection: "column", gap: "4px" }}>
-                <label style={{ fontSize: "11px", fontWeight: "500", color: "var(--text-2)" }}>Title</label>
+                <label style={{ fontSize: "var(--ts-meta)", fontWeight: "500", color: "var(--text-2)" }}>Title</label>
                 <input {...register("title")} style={{ ...iStyle, border: errors.title ? "1px solid var(--danger)" : "1px solid var(--border)" }} />
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                <label style={{ fontSize: "11px", fontWeight: "500", color: "var(--text-2)" }}>Amount</label>
+                <label style={{ fontSize: "var(--ts-meta)", fontWeight: "500", color: "var(--text-2)" }}>Amount</label>
                 <input type="number" step="0.01" {...register("amount")} style={{ ...iStyle, border: errors.amount ? "1px solid var(--danger)" : "1px solid var(--border)" }} />
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                <label style={{ fontSize: "11px", fontWeight: "500", color: "var(--text-2)" }}>Currency</label>
+                <label style={{ fontSize: "var(--ts-meta)", fontWeight: "500", color: "var(--text-2)" }}>Currency</label>
                 <input {...register("currency")} style={iStyle} />
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                <label style={{ fontSize: "11px", fontWeight: "500", color: "var(--text-2)" }}>Category</label>
+                <label style={{ fontSize: "var(--ts-meta)", fontWeight: "500", color: "var(--text-2)" }}>Category</label>
                 <select {...register("category")} style={iStyle}>
                   {BILL_CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
                 </select>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                <label style={{ fontSize: "11px", fontWeight: "500", color: "var(--text-2)" }}>Due Date</label>
+                <label style={{ fontSize: "var(--ts-meta)", fontWeight: "500", color: "var(--text-2)" }}>Due Date</label>
                 <input type="date" {...register("dueDate")} style={iStyle} />
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                <label style={{ fontSize: "11px", fontWeight: "500", color: "var(--text-2)" }}>Recurrence</label>
+                <label style={{ fontSize: "var(--ts-meta)", fontWeight: "500", color: "var(--text-2)" }}>Recurrence</label>
                 <select {...register("recurrenceFrequency")} style={iStyle}>
                   <option value="">None</option>
                   {FREQUENCIES.map((f) => <option key={f} value={f}>{f}</option>)}
                 </select>
               </div>
               <div style={{ gridColumn: "1 / -1", display: "flex", flexDirection: "column", gap: "4px" }}>
-                <label style={{ fontSize: "11px", fontWeight: "500", color: "var(--text-2)" }}>Description</label>
+                <label style={{ fontSize: "var(--ts-meta)", fontWeight: "500", color: "var(--text-2)" }}>Description</label>
                 <textarea {...register("description")} rows={2} style={{ ...iStyle, height: "auto", padding: "8px 10px", resize: "vertical" }} />
               </div>
             </div>
             <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
-              <button type="button" onClick={onEditToggle} style={{ padding: "6px 14px", borderRadius: "8px", background: "var(--surface-3)", border: "1px solid var(--border)", fontSize: "12px", fontWeight: "500", color: "var(--text-2)", cursor: "pointer" }}>
+              <button type="button" onClick={onEditToggle} style={{ padding: "6px 14px", borderRadius: "8px", background: "var(--surface-3)", border: "1px solid var(--border)", fontSize: "var(--ts-label)", fontWeight: "500", color: "var(--text-2)", cursor: "pointer" }}>
                 Cancel
               </button>
-              <button type="submit" disabled={updateBill.isPending} style={{ padding: "6px 16px", borderRadius: "8px", background: updateBill.isPending ? "var(--surface-3)" : "var(--accent)", border: "none", fontSize: "12px", fontWeight: "600", color: updateBill.isPending ? "var(--text-3)" : "#fff", cursor: updateBill.isPending ? "not-allowed" : "pointer" }}>
+              <button type="submit" disabled={updateBill.isPending} style={{ padding: "6px 16px", borderRadius: "8px", background: updateBill.isPending ? "var(--surface-3)" : "var(--accent)", border: "none", fontSize: "var(--ts-label)", fontWeight: "600", color: updateBill.isPending ? "var(--text-3)" : "#fff", cursor: updateBill.isPending ? "not-allowed" : "pointer" }}>
                 {updateBill.isPending ? "Saving…" : "Save"}
               </button>
             </div>

@@ -48,11 +48,11 @@ export function NotificationsToaster() {
           <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "8px" }}>
             <div style={{ flex: 1 }}>
               {n.title && (
-                <Toast.Title style={{ fontSize: "13px", fontWeight: "600", fontFamily: "var(--ff-display)", marginBottom: "2px", display: "block" }}>
+                <Toast.Title style={{ fontSize: "var(--ts-body)", fontWeight: "600", fontFamily: "var(--ff-display)", marginBottom: "2px", display: "block" }}>
                   {n.title}
                 </Toast.Title>
               )}
-              <Toast.Description style={{ fontSize: "13px", lineHeight: "1.4" }}>
+              <Toast.Description style={{ fontSize: "var(--ts-body)", lineHeight: "1.4" }}>
                 {n.message}
               </Toast.Description>
               {n.deepLink && (
@@ -62,7 +62,7 @@ export function NotificationsToaster() {
                     onClick={() => { markRead(n.id); removeToast(n.id); }}
                     style={{
                       marginTop: "4px", display: "inline-block",
-                      fontSize: "11px", fontWeight: "500",
+                      fontSize: "var(--ts-meta)", fontWeight: "500",
                       color: "var(--accent)", textDecoration: "underline",
                     }}
                   >

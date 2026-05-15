@@ -102,18 +102,18 @@ export function AddIncomeForm() {
       background: "var(--surface)", border: "1px solid var(--border)",
       borderRadius: "16px", padding: "20px", boxShadow: "var(--shadow-sm)",
     }}>
-      <h2 style={{ fontFamily: "var(--ff-display)", fontWeight: "700", fontSize: "16px", color: "var(--text)", marginBottom: "16px" }}>
+      <h2 style={{ fontFamily: "var(--ff-display)", fontWeight: "700", fontSize: "var(--ts-body)", color: "var(--text)", marginBottom: "16px" }}>
         Add Income Source
       </h2>
 
       <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
         {createIncome.isError && (
-          <div style={{ padding: "10px 14px", borderRadius: "10px", background: "var(--danger-s)", border: "1px solid oklch(62% 0.21 22 / 0.3)", fontSize: "13px", color: "var(--danger)" }}>
+          <div style={{ padding: "10px 14px", borderRadius: "10px", background: "var(--danger-s)", border: "1px solid oklch(62% 0.21 22 / 0.3)", fontSize: "var(--ts-body-sm)", color: "var(--danger)" }}>
             {createIncome.error instanceof ApiError ? createIncome.error.message : "Something went wrong. Please try again."}
           </div>
         )}
         {createIncome.isSuccess && (
-          <div style={{ padding: "10px 14px", borderRadius: "10px", background: "var(--success-s)", border: "1px solid oklch(68% 0.18 152 / 0.25)", fontSize: "13px", color: "var(--success)" }}>
+          <div style={{ padding: "10px 14px", borderRadius: "10px", background: "var(--success-s)", border: "1px solid oklch(68% 0.18 152 / 0.25)", fontSize: "var(--ts-body-sm)", color: "var(--success)" }}>
             Income source added!
           </div>
         )}
@@ -160,7 +160,7 @@ export function AddIncomeForm() {
 
         <div>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "10px" }}>
-            <span style={{ fontSize: "11px", fontWeight: "700", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+            <span style={{ fontSize: "var(--ts-meta)", fontWeight: "700", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
               Payroll Deductions {deductions.length > 0 ? `(${deductions.length})` : "(optional)"}
             </span>
             <button
@@ -168,7 +168,7 @@ export function AddIncomeForm() {
               onClick={() => setShowDeductionForm((v) => !v)}
               style={{
                 background: "none", border: "none", cursor: "pointer",
-                fontSize: "12px", fontWeight: "600",
+                fontSize: "var(--ts-label)", fontWeight: "600",
                 color: showDeductionForm ? "var(--text-3)" : "var(--accent)",
                 padding: 0,
               }}
@@ -187,8 +187,8 @@ export function AddIncomeForm() {
                   background: "var(--surface-2)", border: "1px solid var(--border)",
                 }}>
                   <div>
-                    <span style={{ fontSize: "12px", fontWeight: "600", color: "var(--text)" }}>{d.label}</span>
-                    <span style={{ fontSize: "11px", color: "var(--text-3)", marginLeft: "8px" }}>
+                    <span style={{ fontSize: "var(--ts-label)", fontWeight: "600", color: "var(--text)" }}>{d.label}</span>
+                    <span style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)", marginLeft: "8px" }}>
                       {d.method === "PercentOfGross" ? `${d.value}%` : `$${d.value.toFixed(2)}`}
                       {" · "}{d.frequency.toLowerCase()}
                       {d.isEmployerSponsored ? " · employer" : ""}
@@ -197,7 +197,7 @@ export function AddIncomeForm() {
                   <button
                     type="button"
                     onClick={() => removePendingDeduction(i)}
-                    style={{ background: "none", border: "none", cursor: "pointer", color: "var(--danger)", padding: "2px 4px", fontSize: "16px", lineHeight: 1 }}
+                    style={{ background: "none", border: "none", cursor: "pointer", color: "var(--danger)", padding: "2px 4px", fontSize: "var(--ts-body)", lineHeight: 1 }}
                     aria-label="Remove"
                   >
                     ×
@@ -242,7 +242,7 @@ export function AddIncomeForm() {
                 </Field>
               </div>
 
-              <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", fontSize: "12px", color: "var(--text-2)" }}>
+              <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", fontSize: "var(--ts-label)", color: "var(--text-2)" }}>
                 <input type="checkbox" checked={dEmployer} onChange={(e) => setDEmployer(e.target.checked)} style={{ cursor: "pointer" }} />
                 Employer-sponsored benefit
               </label>
@@ -256,7 +256,7 @@ export function AddIncomeForm() {
                   border: "1px solid var(--accent)",
                   background: "transparent",
                   color: "var(--accent)",
-                  fontSize: "12px", fontWeight: "600", cursor: "pointer",
+                  fontSize: "var(--ts-label)", fontWeight: "600", cursor: "pointer",
                   opacity: !dValue ? 0.5 : 1,
                   alignSelf: "flex-start",
                 }}

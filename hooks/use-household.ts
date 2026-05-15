@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  fetchOverview,
+  fetchContributionSummary,
   fetchHousehold,
   fetchHouseholdDetail,
   fetchHouseholdMembers,
@@ -14,12 +14,14 @@ import {
   transferOwnership,
 } from "@/lib/api/households";
 import { financeKeys } from "@/lib/query-keys";
+import type { ContributionPeriodSummary } from "@/types/finance";
 
-export function useOverview() {
+export function useOverview(initialData?: ContributionPeriodSummary[]) {
   return useQuery({
-    queryKey: financeKeys.overview(),
-    queryFn: fetchOverview,
+    queryKey: financeKeys.householdContributions(),
+    queryFn: () => fetchContributionSummary(),
     staleTime: 60_000,
+    initialData,
   });
 }
 
@@ -56,7 +58,7 @@ export function useCreateHousehold() {
     mutationFn: createHousehold,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: financeKeys.households() });
-      queryClient.invalidateQueries({ queryKey: financeKeys.overview() });
+      queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions() });
     },
   });
 }
@@ -80,7 +82,7 @@ export function useDeleteHousehold() {
     mutationFn: (householdId: string) => deleteHousehold(householdId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: financeKeys.households() });
-      queryClient.invalidateQueries({ queryKey: financeKeys.overview() });
+      queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions() });
     },
   });
 }
@@ -91,7 +93,7 @@ export function useJoinHousehold() {
     mutationFn: (invitationCode: string) => joinHousehold(invitationCode),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: financeKeys.households() });
-      queryClient.invalidateQueries({ queryKey: financeKeys.overview() });
+      queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions() });
     },
   });
 }
@@ -136,6 +138,7 @@ export function useTransferOwnership(householdId: string) {
   return useMutation({
     mutationFn: (newOwnerId: string) => transferOwnership(householdId, newOwnerId),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: financeKeys.households() });
       queryClient.invalidateQueries({ queryKey: financeKeys.householdDetail(householdId) });
       queryClient.invalidateQueries({ queryKey: financeKeys.householdMembers(householdId) });
     },

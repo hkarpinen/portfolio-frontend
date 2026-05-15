@@ -6,7 +6,7 @@ export const fetchIncome = () =>
   api.get<IncomeListResponse>("/api/finance/income");
 
 export const fetchHouseholdIncome = (householdId: string) =>
-  api.get<IncomeListResponse>(`/api/finance/households/${householdId}/income`);
+  api.get<IncomeListResponse>(`/api/finance/groups/${householdId}/income`);
 
 export const createIncomeSource = (body: {
   source: string;

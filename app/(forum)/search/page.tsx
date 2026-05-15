@@ -16,10 +16,10 @@ export default function SearchPage() {
   return (
     <div className="page-enter" style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
       <div>
-        <h1 style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "24px", color: "var(--text)", margin: 0 }}>
+        <h1 style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "var(--ts-h2)", lineHeight: "var(--lh-display)", letterSpacing: "-0.02em", color: "var(--text)", margin: 0 }}>
           Search
         </h1>
-        <p style={{ color: "var(--text-3)", marginTop: "4px", fontSize: "14px" }}>Find threads and communities</p>
+        <p style={{ color: "var(--text-3)", marginTop: "4px", fontSize: "var(--ts-body)" }}>Find threads and communities</p>
       </div>
 
       {/* Search input */}
@@ -42,7 +42,7 @@ export default function SearchPage() {
             paddingLeft: "40px",
             paddingRight: loading ? "44px" : "16px",
             background: "var(--surface)", border: "1px solid var(--border)",
-            borderRadius: "12px", color: "var(--text)", fontSize: "16px",
+            borderRadius: "12px", color: "var(--text)", fontSize: "var(--ts-body)",
             outline: "none", boxSizing: "border-box",
             boxShadow: "var(--shadow-sm)",
           }}
@@ -58,11 +58,11 @@ export default function SearchPage() {
       </div>
 
       {!query.trim() && (
-        <p style={{ fontSize: "13px", color: "var(--text-3)" }}>Start typing to search…</p>
+        <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)" }}>Start typing to search…</p>
       )}
 
       {query.trim() && !loading && results.length > 0 && (
-        <p style={{ fontSize: "13px", color: "var(--text-3)" }}>
+        <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)" }}>
           {results.length} result{results.length !== 1 ? "s" : ""} for &ldquo;{query}&rdquo;
         </p>
       )}
@@ -78,12 +78,12 @@ export default function SearchPage() {
             width: "56px", height: "56px", borderRadius: "16px",
             background: "var(--accent-subtle)",
             display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: "22px",
+            fontSize: "var(--ts-sub)",
           }}>
             🔍
           </div>
-          <p style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "15px", color: "var(--text)" }}>No results</p>
-          <p style={{ fontSize: "13px", color: "var(--text-3)" }}>Nothing found for &ldquo;{query}&rdquo;</p>
+          <p style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "var(--ts-body)", color: "var(--text)" }}>No results</p>
+          <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)" }}>Nothing found for &ldquo;{query}&rdquo;</p>
         </div>
       )}
 
@@ -123,7 +123,7 @@ function SearchResultRow({ result, href, isLast }: { result: SearchResult; href:
     >
       <span style={{
         flexShrink: 0, marginTop: "2px",
-        fontSize: "11px", fontWeight: 500,
+        fontSize: "var(--ts-meta)", fontWeight: 500,
         background: result.type === "community" ? "var(--accent-subtle)" : "var(--surface-3)",
         color: result.type === "community" ? "var(--accent)" : "var(--text-2)",
         padding: "2px 8px", borderRadius: "9999px",
@@ -132,12 +132,12 @@ function SearchResultRow({ result, href, isLast }: { result: SearchResult; href:
         {result.type}
       </span>
       <div style={{ flex: 1, minWidth: 0 }}>
-        <p style={{ fontFamily: "var(--ff-display)", fontWeight: 600, fontSize: "14px", color: "var(--text)", margin: 0 }}>
+        <p style={{ fontFamily: "var(--ff-display)", fontWeight: 600, fontSize: "var(--ts-body)", color: "var(--text)", margin: 0 }}>
           {result.title ?? result.name}
         </p>
         {result.excerpt && (
           <p style={{
-            fontSize: "13px", color: "var(--text-3)", marginTop: "4px",
+            fontSize: "var(--ts-body-sm)", color: "var(--text-3)", marginTop: "4px",
             overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical",
           }}>
             {result.excerpt}

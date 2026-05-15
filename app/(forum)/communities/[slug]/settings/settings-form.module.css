@@ -5,7 +5,7 @@
   background: transparent;
   color: var(--danger);
   border: 1px solid var(--danger);
-  font-size: 13px;
+  font-size: var(--ts-body-sm);
   font-weight: 600;
   cursor: pointer;
   transition: background 110ms;

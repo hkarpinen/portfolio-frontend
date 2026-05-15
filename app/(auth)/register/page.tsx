@@ -33,7 +33,7 @@ function PasswordStrength({ password }: { password: string }) {
         ))}
       </div>
       {score > 0 && (
-        <span style={{ fontSize: "11px", color: colors[score] }}>{labels[score]}</span>
+        <span style={{ fontSize: "var(--ts-meta)", color: colors[score] }}>{labels[score]}</span>
       )}
     </div>
   );
@@ -50,11 +50,11 @@ function Field({
 }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-      <label style={{ fontSize: "12px", fontWeight: "500", color: "var(--text-2)", letterSpacing: "0.02em" }}>
+      <label style={{ fontSize: "var(--ts-label)", fontWeight: "500", color: "var(--text-2)", letterSpacing: "0.02em" }}>
         {label}
       </label>
       {children}
-      {error && <span style={{ fontSize: "11px", color: "var(--danger)" }}>{error}</span>}
+      {error && <span style={{ fontSize: "var(--ts-meta)", color: "var(--danger)" }}>{error}</span>}
     </div>
   );
 }
@@ -66,7 +66,7 @@ const inputStyle = (hasError: boolean): React.CSSProperties => ({
   border: `1px solid ${hasError ? "var(--danger)" : "var(--border)"}`,
   borderRadius: "12px",
   padding: "0 12px",
-  fontSize: "13px",
+  fontSize: "var(--ts-body-sm)",
   color: "var(--text)",
   outline: "none",
   transition: "border-color 110ms, box-shadow 110ms",
@@ -102,11 +102,10 @@ export default function RegisterPage() {
   if (submitted) {
     return (
       <div style={{
-        background: "var(--surface)",
-        border: "1px solid var(--border)",
-        borderRadius: "24px",
+        background: "var(--paper-2)",
+        border: "1.5px solid var(--ink)",
+        boxShadow: "var(--shadow-stamp)",
         padding: "40px 32px",
-        boxShadow: "var(--shadow-lg)",
         textAlign: "center",
       }}>
         <div style={{
@@ -119,14 +118,14 @@ export default function RegisterPage() {
             <path d="M20 6L9 17l-5-5" />
           </svg>
         </div>
-        <h1 style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "24px", letterSpacing: "-0.025em", color: "var(--text)", marginBottom: "8px" }}>
+        <h1 style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "var(--ts-card-h)", letterSpacing: "-0.025em", color: "var(--text)", marginBottom: "8px" }}>
           Check your inbox
         </h1>
-        <p style={{ fontSize: "13px", color: "var(--text-3)", lineHeight: "1.6", marginBottom: "24px" }}>
+        <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)", lineHeight: "1.6", marginBottom: "24px" }}>
           We&apos;ve sent a confirmation link to your email. Click it to activate your account.
         </p>
         <Link href="/login" style={{
-          fontSize: "13px", color: "var(--accent)", fontWeight: "500", textDecoration: "none",
+          fontSize: "var(--ts-body-sm)", color: "var(--accent)", fontWeight: "500", textDecoration: "none",
         }}>
           Back to sign in
         </Link>
@@ -136,21 +135,20 @@ export default function RegisterPage() {
 
   return (
     <div style={{
-      background: "var(--surface)",
-      border: "1px solid var(--border)",
-      borderRadius: "24px",
+      background: "var(--paper-2)",
+      border: "1.5px solid var(--ink)",
+      boxShadow: "var(--shadow-stamp)",
       padding: "32px",
-      boxShadow: "var(--shadow-lg)",
     }}>
-      <div style={{ textAlign: "center", marginBottom: "28px" }}>
+      <div style={{ marginBottom: "28px" }}>
         <h1 style={{
-          fontFamily: "var(--ff-display)", fontWeight: "800",
-          fontSize: "28px", letterSpacing: "-0.025em", color: "var(--text)",
-          marginBottom: "8px",
+          fontFamily: "var(--ff-serif)", fontStyle: "italic", fontWeight: 400,
+          fontSize: "var(--ts-h3)", letterSpacing: "-0.025em", color: "var(--ink)",
+          marginBottom: "6px",
         }}>
-          Create account
+          Create account<span style={{ color: "var(--red)" }}>.</span>
         </h1>
-        <p style={{ fontSize: "13px", color: "var(--text-3)" }}>
+        <p style={{ fontFamily: "var(--ff-mono)", fontSize: "var(--ts-meta)", color: "var(--ink-3)", textTransform: "uppercase", letterSpacing: "0.20em" }}>
           Join the community today
         </p>
       </div>
@@ -160,7 +158,7 @@ export default function RegisterPage() {
           <div style={{
             padding: "12px 16px", borderRadius: "10px",
             background: "var(--danger-s)", border: "1px solid oklch(62% 0.21 22 / 0.3)",
-            fontSize: "13px", color: "var(--danger)",
+            fontSize: "var(--ts-body-sm)", color: "var(--danger)",
           }}>
             {serverError}
           </div>
@@ -290,9 +288,9 @@ export default function RegisterPage() {
         </Button>
       </form>
 
-      <p style={{ textAlign: "center", fontSize: "13px", color: "var(--text-3)", marginTop: "24px" }}>
+      <p style={{ textAlign: "center", fontSize: "var(--ts-body-sm)", color: "var(--text-3)", marginTop: "24px" }}>
         Already have an account?{" "}
-        <Link href="/login" style={{ color: "var(--accent)", fontWeight: "500", textDecoration: "none" }}>
+        <Link href="/login" style={{ color: "var(--ink)", fontWeight: 600, textDecoration: "underline" }}>
           Sign in
         </Link>
       </p>

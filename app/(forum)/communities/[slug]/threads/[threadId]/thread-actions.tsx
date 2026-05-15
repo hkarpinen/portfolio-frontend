@@ -80,7 +80,7 @@ export function ThreadActions({ threadId, threadUrl }: ThreadActionsProps) {
     border: "none",
     background: "transparent",
     color: "var(--text-3)",
-    fontSize: "12px",
+    fontSize: "var(--ts-label)",
     fontWeight: 500,
     cursor: "pointer",
     transition: "background 110ms, color 110ms",
@@ -158,14 +158,14 @@ export function ThreadActions({ threadId, threadUrl }: ThreadActionsProps) {
                 <polyline points="20 6 9 17 4 12"/>
               </svg>
             </div>
-            <p style={{ fontSize: "14px", color: "var(--text-2)", textAlign: "center", margin: 0 }}>
+            <p style={{ fontSize: "var(--ts-body)", color: "var(--text-2)", textAlign: "center", margin: 0 }}>
               Thanks for the report. Our moderators will review it shortly.
             </p>
           </div>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
             <div>
-              <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-2)", marginBottom: "6px" }}>
+              <label style={{ display: "block", fontSize: "var(--ts-label)", fontWeight: 600, color: "var(--text-2)", marginBottom: "6px" }}>
                 Reason
               </label>
               <select
@@ -178,7 +178,7 @@ export function ThreadActions({ threadId, threadUrl }: ThreadActionsProps) {
                   border: "1px solid var(--border)",
                   background: "var(--surface-2)",
                   color: "var(--text)",
-                  fontSize: "13px",
+                  fontSize: "var(--ts-body-sm)",
                   outline: "none",
                 }}
               >
@@ -188,7 +188,7 @@ export function ThreadActions({ threadId, threadUrl }: ThreadActionsProps) {
               </select>
             </div>
             <div>
-              <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-2)", marginBottom: "6px" }}>
+              <label style={{ display: "block", fontSize: "var(--ts-label)", fontWeight: 600, color: "var(--text-2)", marginBottom: "6px" }}>
                 Additional details <span style={{ fontWeight: 400, color: "var(--text-3)" }}>(optional)</span>
               </label>
               <textarea
@@ -204,7 +204,7 @@ export function ThreadActions({ threadId, threadUrl }: ThreadActionsProps) {
                   border: "1px solid var(--border)",
                   background: "var(--surface-2)",
                   color: "var(--text)",
-                  fontSize: "13px",
+                  fontSize: "var(--ts-body-sm)",
                   resize: "vertical",
                   outline: "none",
                   boxSizing: "border-box",
@@ -212,7 +212,7 @@ export function ThreadActions({ threadId, threadUrl }: ThreadActionsProps) {
                   lineHeight: 1.5,
                 }}
               />
-              <p style={{ fontSize: "11px", color: "var(--text-3)", textAlign: "right", margin: "4px 0 0" }}>
+              <p style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)", textAlign: "right", margin: "4px 0 0" }}>
                 {details.length}/500
               </p>
             </div>

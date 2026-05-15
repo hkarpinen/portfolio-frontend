@@ -78,7 +78,7 @@ export function ThreadCard({
             </button>
             <span
               style={{
-                fontSize: "12px",
+                fontSize: "var(--ts-label)",
                 fontWeight: 700,
                 minWidth: "28px",
                 textAlign: "center",
@@ -128,20 +128,20 @@ export function ThreadCard({
                 }}
               >
                 {showCommunity && displayCommunity && (
-                  <span style={{ fontSize: "11px", fontWeight: 600, color: "var(--accent)" }}>
+                  <span style={{ fontSize: "var(--ts-meta)", fontWeight: 600, color: "var(--accent)" }}>
                     {displayCommunity}
                   </span>
                 )}
                 {showCommunity && displayCommunity && (
-                  <span style={{ fontSize: "11px", color: "var(--text-3)" }}>·</span>
+                  <span style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)" }}>·</span>
                 )}
-                <span style={{ fontSize: "11px", color: "var(--text-3)" }}>
+                <span style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)" }}>
                   Posted by {thread.authorDisplayName ?? "Unknown"} · {timeAgo(thread.createdAt)}
                 </span>
                 {thread.isPinned && (
                   <span
                     style={{
-                      fontSize: "10px",
+                      fontSize: "var(--ts-meta)",
                       fontWeight: 600,
                       color: "var(--success)",
                       background: "var(--success-s)",
@@ -155,7 +155,7 @@ export function ThreadCard({
                 {thread.flair && thread.flair !== "None" && (
                   <span
                     style={{
-                      fontSize: "10px",
+                      fontSize: "var(--ts-meta)",
                       fontWeight: 600,
                       color: "var(--accent-v)",
                       background: "var(--accent-v-subtle)",
@@ -173,8 +173,8 @@ export function ThreadCard({
                 style={{
                   fontFamily: "var(--ff-display)",
                   fontWeight: 600,
-                  fontSize: "14px",
-                  lineHeight: 1.45,
+                  fontSize: "var(--ts-h3)",
+                  lineHeight: "var(--lh-snug)",
                   color: "var(--text)",
                   margin: 0,
                   marginBottom: "8px",
@@ -191,7 +191,7 @@ export function ThreadCard({
                 style={{
                   display: "flex", alignItems: "center", gap: "4px",
                   padding: "4px 10px", borderRadius: "6px",
-                  fontSize: "11px", color: "var(--text-3)", textDecoration: "none", fontWeight: 500,
+                  fontSize: "var(--ts-meta)", color: "var(--text-3)", textDecoration: "none", fontWeight: 500,
                 }}
                 className="row-hover"
               >

@@ -25,6 +25,7 @@ export function useCreateExpense() {
     mutationFn: createExpense,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: financeKeys.expenses() });
+      queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions() });
     },
   });
 }
@@ -36,6 +37,7 @@ export function useUpdateExpense() {
       updateExpense(id, body),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: financeKeys.expenses() });
+      queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions() });
     },
   });
 }
@@ -46,6 +48,7 @@ export function useDeleteExpense() {
     mutationFn: (id: string) => deleteExpense(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: financeKeys.expenses() });
+      queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions() });
     },
   });
 }
@@ -57,7 +60,7 @@ export function usePayExpense() {
       payExpense(id, occurrenceDate),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: financeKeys.expenses() });
-      queryClient.invalidateQueries({ queryKey: financeKeys.overview() });
+      queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions() });
     },
   });
 }
@@ -69,7 +72,7 @@ export function useUnpayExpense() {
       unpayExpense(id, occurrenceDate),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: financeKeys.expenses() });
-      queryClient.invalidateQueries({ queryKey: financeKeys.overview() });
+      queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions() });
     },
   });
 }
@@ -135,7 +138,7 @@ export function useCreateHouseholdExpense(householdId: string) {
     mutationFn: (body: Parameters<typeof createHouseholdExpense>[1]) => createHouseholdExpense(householdId, body),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: financeKeys.householdExpenses(householdId) });
-      queryClient.invalidateQueries({ queryKey: financeKeys.overview() });
+      queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions(householdId) });
       queryClient.invalidateQueries({ queryKey: financeKeys.householdDashboard(householdId) });
     },
   });
@@ -149,7 +152,6 @@ export function useUpdateHouseholdExpense(householdId: string, householdExpenseI
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: financeKeys.householdExpenseDetail(householdId, householdExpenseId) });
       queryClient.invalidateQueries({ queryKey: financeKeys.householdExpenses(householdId) });
-      queryClient.invalidateQueries({ queryKey: financeKeys.overview() });
       queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions(householdId) });
     },
   });
@@ -161,7 +163,6 @@ export function useDeleteHouseholdExpense(householdId: string) {
     mutationFn: (householdExpenseId: string) => deleteHouseholdExpense(householdId, householdExpenseId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: financeKeys.householdExpenses(householdId) });
-      queryClient.invalidateQueries({ queryKey: financeKeys.overview() });
       queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions(householdId) });
       queryClient.invalidateQueries({ queryKey: financeKeys.householdDashboard(householdId) });
     },
@@ -188,7 +189,6 @@ export function usePayHouseholdExpense(householdId: string, householdExpenseId: 
             : old
       );
       queryClient.invalidateQueries({ queryKey: financeKeys.householdExpenseDetail(householdId, householdExpenseId) });
-      queryClient.invalidateQueries({ queryKey: financeKeys.overview() });
       queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions(householdId) });
       queryClient.invalidateQueries({ queryKey: financeKeys.householdDashboard(householdId) });
     },
@@ -213,7 +213,6 @@ export function useUnpayHouseholdExpense(householdId: string, householdExpenseId
             : old
       );
       queryClient.invalidateQueries({ queryKey: financeKeys.householdExpenseDetail(householdId, householdExpenseId) });
-      queryClient.invalidateQueries({ queryKey: financeKeys.overview() });
       queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions(householdId) });
       queryClient.invalidateQueries({ queryKey: financeKeys.householdDashboard(householdId) });
     },
@@ -254,8 +253,10 @@ export function usePayContributionSplit() {
   return useMutation({
     mutationFn: ({ householdId, billId, occurrenceDate }: { householdId: string; billId: string; occurrenceDate: string }) =>
       payHouseholdExpense(householdId, billId, occurrenceDate),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: financeKeys.overview() });
+    onSuccess: (_data, { householdId }) => {
+      queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions(householdId) });
+      queryClient.invalidateQueries({ queryKey: financeKeys.householdExpenses(householdId) });
+      queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions() });
     },
   });
 }
@@ -265,8 +266,10 @@ export function useUnpayContributionSplit() {
   return useMutation({
     mutationFn: ({ householdId, billId, occurrenceDate }: { householdId: string; billId: string; occurrenceDate: string }) =>
       unpayHouseholdExpense(householdId, billId, occurrenceDate),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: financeKeys.overview() });
+    onSuccess: (_data, { householdId }) => {
+      queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions(householdId) });
+      queryClient.invalidateQueries({ queryKey: financeKeys.householdExpenses(householdId) });
+      queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions() });
     },
   });
 }

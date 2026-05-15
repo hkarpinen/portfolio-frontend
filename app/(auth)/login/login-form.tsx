@@ -41,21 +41,20 @@ export function LoginForm({ from }: LoginFormProps) {
 
   return (
     <div style={{
-      background: "var(--surface)",
-      border: "1px solid var(--border)",
-      borderRadius: "24px",
+      background: "var(--paper-2)",
+      border: "1.5px solid var(--ink)",
+      boxShadow: "var(--shadow-stamp)",
       padding: "32px",
-      boxShadow: "var(--shadow-lg)",
     }}>
-      <div style={{ textAlign: "center", marginBottom: "28px" }}>
+      <div style={{ marginBottom: "28px" }}>
         <h1 style={{
-          fontFamily: "var(--ff-display)", fontWeight: "800",
-          fontSize: "28px", letterSpacing: "-0.025em", color: "var(--text)",
-          marginBottom: "8px",
+          fontFamily: "var(--ff-serif)", fontStyle: "italic", fontWeight: 400,
+          fontSize: "var(--ts-h3)", letterSpacing: "-0.025em", color: "var(--ink)",
+          marginBottom: "6px",
         }}>
-          Welcome back
+          Welcome back<span style={{ color: "var(--red)" }}>.</span>
         </h1>
-        <p style={{ fontSize: "13px", color: "var(--text-3)" }}>
+        <p style={{ fontFamily: "var(--ff-mono)", fontSize: "var(--ts-meta)", color: "var(--ink-3)", textTransform: "uppercase", letterSpacing: "0.20em" }}>
           Sign in to your account
         </p>
       </div>
@@ -69,7 +68,7 @@ export function LoginForm({ from }: LoginFormProps) {
             display: "flex", alignItems: "center", justifyContent: "center", gap: "10px",
             padding: "10px 16px", borderRadius: "12px",
             background: "var(--surface-2)", border: "1px solid var(--border)",
-            color: "var(--text)", fontSize: "14px", fontWeight: 500, cursor: "pointer",
+            color: "var(--text)", fontSize: "var(--ts-body)", fontWeight: 500, cursor: "pointer",
             width: "100%", transition: "border-color 0.12s",
           }}
         >
@@ -85,7 +84,7 @@ export function LoginForm({ from }: LoginFormProps) {
             display: "flex", alignItems: "center", justifyContent: "center", gap: "10px",
             padding: "10px 16px", borderRadius: "12px",
             background: "var(--surface-2)", border: "1px solid var(--border)",
-            color: "var(--text)", fontSize: "14px", fontWeight: 500, cursor: "pointer",
+            color: "var(--text)", fontSize: "var(--ts-body)", fontWeight: 500, cursor: "pointer",
             width: "100%", transition: "border-color 0.12s",
           }}
         >
@@ -101,7 +100,7 @@ export function LoginForm({ from }: LoginFormProps) {
 
       <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "4px" }}>
         <div style={{ flex: 1, height: "1px", background: "var(--border)" }} />
-        <span style={{ fontSize: "12px", color: "var(--text-3)" }}>or</span>
+        <span style={{ fontSize: "var(--ts-label)", color: "var(--text-3)" }}>or</span>
         <div style={{ flex: 1, height: "1px", background: "var(--border)" }} />
       </div>
 
@@ -112,7 +111,7 @@ export function LoginForm({ from }: LoginFormProps) {
             borderRadius: "10px",
             background: "var(--danger-s)",
             border: "1px solid oklch(62% 0.21 22 / 0.3)",
-            fontSize: "13px",
+            fontSize: "var(--ts-body-sm)",
             color: "var(--danger)",
           }}>
             {serverError}
@@ -121,7 +120,7 @@ export function LoginForm({ from }: LoginFormProps) {
 
         <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
           <label style={{
-            fontSize: "12px", fontWeight: "500", color: "var(--text-2)",
+            fontSize: "var(--ts-label)", fontWeight: "500", color: "var(--text-2)",
             letterSpacing: "0.02em",
           }}>
             Email address
@@ -136,7 +135,7 @@ export function LoginForm({ from }: LoginFormProps) {
               border: `1px solid ${errors.email ? "var(--danger)" : "var(--border)"}`,
               borderRadius: "12px",
               padding: "0 12px",
-              fontSize: "13px",
+              fontSize: "var(--ts-body-sm)",
               color: "var(--text)",
               outline: "none",
               transition: "border-color 110ms, box-shadow 110ms",
@@ -155,12 +154,12 @@ export function LoginForm({ from }: LoginFormProps) {
             }}
           />
           {errors.email && (
-            <span style={{ fontSize: "11px", color: "var(--danger)" }}>{errors.email.message}</span>
+            <span style={{ fontSize: "var(--ts-meta)", color: "var(--danger)" }}>{errors.email.message}</span>
           )}
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-          <label style={{ fontSize: "12px", fontWeight: "500", color: "var(--text-2)", letterSpacing: "0.02em" }}>
+          <label style={{ fontSize: "var(--ts-label)", fontWeight: "500", color: "var(--text-2)", letterSpacing: "0.02em" }}>
             Password
           </label>
           <div style={{ position: "relative" }}>
@@ -175,7 +174,7 @@ export function LoginForm({ from }: LoginFormProps) {
                 border: `1px solid ${errors.password ? "var(--danger)" : "var(--border)"}`,
                 borderRadius: "12px",
                 padding: "0 40px 0 12px",
-                fontSize: "13px",
+                fontSize: "var(--ts-body-sm)",
                 color: "var(--text)",
                 outline: "none",
                 transition: "border-color 110ms, box-shadow 110ms",
@@ -211,7 +210,7 @@ export function LoginForm({ from }: LoginFormProps) {
             </button>
           </div>
           {errors.password && (
-            <span style={{ fontSize: "11px", color: "var(--danger)" }}>{errors.password.message}</span>
+            <span style={{ fontSize: "var(--ts-meta)", color: "var(--danger)" }}>{errors.password.message}</span>
           )}
         </div>
 
@@ -226,9 +225,9 @@ export function LoginForm({ from }: LoginFormProps) {
         </Button>
       </form>
 
-      <p style={{ textAlign: "center", fontSize: "13px", color: "var(--text-3)", marginTop: "24px" }}>
+      <p style={{ textAlign: "center", fontSize: "var(--ts-body-sm)", color: "var(--text-3)", marginTop: "24px" }}>
         Don&apos;t have an account?{" "}
-        <Link href="/register" style={{ color: "var(--accent)", fontWeight: "500", textDecoration: "none" }}>
+        <Link href="/register" style={{ color: "var(--ink)", fontWeight: 600, textDecoration: "underline" }}>
           Create one
         </Link>
       </p>

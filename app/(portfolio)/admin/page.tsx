@@ -22,11 +22,11 @@ export default function AdminPage() {
       <div>
         <h1 style={{
           fontFamily: "var(--ff-display)", fontWeight: "800",
-          fontSize: "28px", letterSpacing: "-0.025em", color: "var(--text)",
+          fontSize: "var(--ts-card-h)", letterSpacing: "-0.025em", color: "var(--text)",
         }}>
           Admin Panel
         </h1>
-        <p style={{ fontSize: "13px", color: "var(--text-3)", marginTop: "4px" }}>
+        <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)", marginTop: "4px" }}>
           Manage users, roles, and access.
         </p>
       </div>
@@ -45,7 +45,7 @@ export default function AdminPage() {
           background: "var(--surface-2)",
         }}>
           {["User", "Email", "Role", "Status", "Actions"].map((col) => (
-            <span key={col} style={{ fontSize: "11px", fontWeight: "600", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+            <span key={col} style={{ fontSize: "var(--ts-meta)", fontWeight: "600", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em" }}>
               {col}
             </span>
           ))}
@@ -60,7 +60,7 @@ export default function AdminPage() {
             }} />
           </div>
         ) : users.length === 0 ? (
-          <p style={{ padding: "32px", textAlign: "center", fontSize: "13px", color: "var(--text-3)" }}>No users found.</p>
+          <p style={{ padding: "32px", textAlign: "center", fontSize: "var(--ts-body-sm)", color: "var(--text-3)" }}>No users found.</p>
         ) : (
           users.map((user, i) => {
             const isSelf = me?.id === user.id;
@@ -86,18 +86,18 @@ export default function AdminPage() {
                     width: "28px", height: "28px", flexShrink: 0, borderRadius: "9999px",
                     background: "var(--accent-subtle)", color: "var(--accent)",
                     display: "flex", alignItems: "center", justifyContent: "center",
-                    fontSize: "10px", fontWeight: "700",
+                    fontSize: "var(--ts-meta)", fontWeight: "700",
                   }}>
                     {(user.displayName ?? "?").slice(0, 2).toUpperCase()}
                   </span>
-                  <span style={{ fontSize: "13px", fontWeight: "500", color: "var(--text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  <span style={{ fontSize: "var(--ts-body-sm)", fontWeight: "500", color: "var(--text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                     {user.displayName}
-                    {isSelf && <span style={{ fontSize: "10px", color: "var(--accent)", marginLeft: "6px" }}>you</span>}
+                    {isSelf && <span style={{ fontSize: "var(--ts-meta)", color: "var(--accent)", marginLeft: "6px" }}>you</span>}
                   </span>
                 </div>
 
                 {/* Email */}
-                <span style={{ fontSize: "12px", color: "var(--text-3)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                <span style={{ fontSize: "var(--ts-label)", color: "var(--text-3)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                   {user.email}
                 </span>
 
@@ -109,7 +109,7 @@ export default function AdminPage() {
                   style={{
                     height: "30px", background: "var(--surface-2)",
                     border: "1px solid var(--border)", borderRadius: "8px",
-                    padding: "0 8px", fontSize: "12px", color: "var(--text)", outline: "none",
+                    padding: "0 8px", fontSize: "var(--ts-label)", color: "var(--text)", outline: "none",
                     cursor: isSelf ? "not-allowed" : "pointer",
                     opacity: isSelf ? 0.5 : 1,
                   }}
@@ -121,7 +121,7 @@ export default function AdminPage() {
                 {/* Status */}
                 <span style={{
                   padding: "2px 8px", borderRadius: "9999px", display: "inline-block",
-                  fontSize: "11px", fontWeight: "600",
+                  fontSize: "var(--ts-meta)", fontWeight: "600",
                   background: user.isBanned ? "var(--danger-s)" : "var(--success-s)",
                   color: user.isBanned ? "var(--danger)" : "var(--success)",
                 }}>
@@ -139,7 +139,7 @@ export default function AdminPage() {
                         background: user.isBanned ? "var(--surface-3)" : "var(--danger-s)",
                         color: user.isBanned ? "var(--text-3)" : "var(--danger)",
                         border: `1px solid ${user.isBanned ? "var(--border)" : "oklch(62% 0.21 22 / 0.25)"}`,
-                        fontSize: "11px", fontWeight: "500",
+                        fontSize: "var(--ts-meta)", fontWeight: "500",
                         cursor: isBanning ? "not-allowed" : "pointer",
                         opacity: isBanning ? 0.5 : 1,
                       }}
@@ -163,14 +163,14 @@ export default function AdminPage() {
             style={{
               padding: "6px 16px", borderRadius: "10px",
               background: "var(--surface-2)", border: "1px solid var(--border)",
-              fontSize: "12px", fontWeight: "500", color: "var(--text-2)",
+              fontSize: "var(--ts-label)", fontWeight: "500", color: "var(--text-2)",
               cursor: page <= 1 ? "not-allowed" : "pointer",
               opacity: page <= 1 ? 0.5 : 1,
             }}
           >
             ← Prev
           </button>
-          <span style={{ display: "flex", alignItems: "center", fontSize: "12px", color: "var(--text-3)" }}>
+          <span style={{ display: "flex", alignItems: "center", fontSize: "var(--ts-label)", color: "var(--text-3)" }}>
             {page} / {totalPages}
           </span>
           <button
@@ -179,7 +179,7 @@ export default function AdminPage() {
             style={{
               padding: "6px 16px", borderRadius: "10px",
               background: "var(--surface-2)", border: "1px solid var(--border)",
-              fontSize: "12px", fontWeight: "500", color: "var(--text-2)",
+              fontSize: "var(--ts-label)", fontWeight: "500", color: "var(--text-2)",
               cursor: page >= totalPages ? "not-allowed" : "pointer",
               opacity: page >= totalPages ? 0.5 : 1,
             }}

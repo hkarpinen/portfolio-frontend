@@ -29,6 +29,14 @@ export const financeKeys = {
   // Expenses (personal)
   expenses: () => [...financeKeys.all, "expenses"] as const,
   expense: (id: string) => [...financeKeys.expenses(), id] as const,
+
+  // Chores
+  chores: (householdId: string) => [...financeKeys.household(householdId), "chores"] as const,
+  chore: (householdId: string, choreId: string) => [...financeKeys.chores(householdId), choreId] as const,
+
+  // Calendar
+  calendarEvents: (householdId: string, from?: string, to?: string) =>
+    [...financeKeys.household(householdId), "calendar", from ?? "", to ?? ""] as const,
 } as const;
 
 export const forumKeys = {

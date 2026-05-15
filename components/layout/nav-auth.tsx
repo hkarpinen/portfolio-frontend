@@ -15,7 +15,7 @@ export function NavAuth({ displayName, avatarUrl = null }: NavAuthProps) {
   if (!displayName) {
     return (
       <Link href="/login" style={{
-        fontSize: "13px", fontWeight: "600", color: "var(--accent)",
+        fontSize: "var(--ts-body)", fontWeight: "600", color: "var(--accent)",
         textDecoration: "none", padding: "6px 14px", borderRadius: "8px",
         background: "var(--accent-subtle)", transition: "background 110ms",
       }}>
@@ -51,19 +51,19 @@ export function NavAuth({ displayName, avatarUrl = null }: NavAuthProps) {
             width: "28px", height: "28px", borderRadius: "9999px",
             background: "var(--accent-subtle)", color: "var(--accent)",
             display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: "10px", fontWeight: "700", fontFamily: "var(--ff-display)",
+            fontSize: "var(--ts-meta)", fontWeight: "700", fontFamily: "var(--ff-display)",
           }}>
             {initials || "?"}
           </span>
         )}
-        <span style={{ fontSize: "13px", fontWeight: "500", color: "var(--text-2)" }}>
+        <span style={{ fontSize: "var(--ts-body)", fontWeight: "500", color: "var(--text-2)" }}>
           {displayName}
         </span>
       </Link>
       <button
         onClick={logout}
         style={{
-          fontSize: "12px", fontWeight: "500", color: "var(--danger)",
+          fontSize: "var(--ts-label)", fontWeight: "500", color: "var(--danger)",
           background: "none", border: "none", cursor: "pointer", padding: "4px 8px",
         }}
       >

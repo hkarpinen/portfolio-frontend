@@ -40,7 +40,7 @@ export function JoinHouseholdModal({ onClose }: { onClose: () => void }) {
       }}>
         {/* Header */}
         <div style={{ padding: "20px 24px", borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <h2 style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "16px", color: "var(--text)", margin: 0 }}>
+          <h2 style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "var(--ts-body)", color: "var(--text)", margin: 0 }}>
             Join a Household
           </h2>
           <button
@@ -55,16 +55,16 @@ export function JoinHouseholdModal({ onClose }: { onClose: () => void }) {
 
         {/* Body */}
         <div style={{ padding: "20px 24px", display: "flex", flexDirection: "column", gap: "14px" }}>
-          <p style={{ fontSize: "13px", color: "var(--text-2)", lineHeight: "1.5" }}>
+          <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-2)", lineHeight: "1.5" }}>
             Enter the invite code shared by a household member to join their household.
           </p>
           {joinMutation.isError && (
-            <div style={{ background: "var(--danger-s)", border: "1px solid var(--danger)", borderRadius: "10px", padding: "10px 14px", fontSize: "13px", color: "var(--danger)" }}>
+            <div style={{ background: "var(--danger-s)", border: "1px solid var(--danger)", borderRadius: "10px", padding: "10px 14px", fontSize: "var(--ts-body-sm)", color: "var(--danger)" }}>
               {joinMutation.error instanceof ApiError ? joinMutation.error.message : "Invalid or expired invite code."}
             </div>
           )}
           <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-            <label style={{ fontSize: "12px", fontWeight: 500, color: "var(--text-2)", letterSpacing: "0.02em" }}>
+            <label style={{ fontSize: "var(--ts-label)", fontWeight: 500, color: "var(--text-2)", letterSpacing: "0.02em" }}>
               Invite Code
             </label>
             <input
@@ -79,7 +79,7 @@ export function JoinHouseholdModal({ onClose }: { onClose: () => void }) {
                 border: "1px solid var(--border)",
                 borderRadius: "12px",
                 padding: "0 12px",
-                fontSize: "14px",
+                fontSize: "var(--ts-body)",
                 color: "var(--text)",
                 outline: "none",
                 fontFamily: "monospace",
@@ -104,7 +104,7 @@ export function JoinHouseholdModal({ onClose }: { onClose: () => void }) {
             style={{
               background: "var(--surface-2)", border: "1px solid var(--border)",
               color: "var(--text-2)", padding: "8px 16px", borderRadius: "12px",
-              fontSize: "13px", fontWeight: 500, cursor: "pointer", fontFamily: "var(--ff-body)",
+              fontSize: "var(--ts-body-sm)", fontWeight: 500, cursor: "pointer", fontFamily: "var(--ff-body)",
             }}
           >
             Cancel

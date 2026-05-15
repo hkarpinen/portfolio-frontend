@@ -28,7 +28,6 @@ export function useCreateIncomeSource() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: financeKeys.income() });
       queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions() });
-      queryClient.invalidateQueries({ queryKey: financeKeys.overview() });
     },
   });
 }
@@ -40,7 +39,6 @@ export function useDeleteIncomeSource() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: financeKeys.income() });
       queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions() });
-      queryClient.invalidateQueries({ queryKey: financeKeys.overview() });
     },
   });
 }
@@ -53,7 +51,6 @@ export function useUpdateIncomeSource() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: financeKeys.income() });
       queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions() });
-      queryClient.invalidateQueries({ queryKey: financeKeys.overview() });
     },
   });
 }
@@ -65,7 +62,7 @@ export function useSetTaxProfile() {
       setTaxProfile(incomeId, taxProfile),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: financeKeys.income() });
-      queryClient.invalidateQueries({ queryKey: financeKeys.overview() });
+      queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions() });
     },
   });
 }
@@ -77,7 +74,7 @@ export function useAddDeduction() {
       addDeduction(incomeId, deduction),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: financeKeys.income() });
-      queryClient.invalidateQueries({ queryKey: financeKeys.overview() });
+      queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions() });
     },
   });
 }
@@ -89,7 +86,7 @@ export function useRemoveDeduction() {
       removeDeduction(incomeId, type, label),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: financeKeys.income() });
-      queryClient.invalidateQueries({ queryKey: financeKeys.overview() });
+      queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions() });
     },
   });
 }

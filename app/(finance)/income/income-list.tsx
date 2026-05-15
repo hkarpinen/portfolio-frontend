@@ -80,10 +80,10 @@ function IncomeCard({
         >
           {/* Left: name + frequency */}
           <div style={{ minWidth: 0, flex: 1 }}>
-            <p style={{ fontWeight: "600", fontSize: "14px", color: "var(--text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+            <p style={{ fontWeight: "600", fontSize: "var(--ts-body)", color: "var(--text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
               {source.source}
             </p>
-            <p style={{ fontSize: "12px", color: "var(--text-3)", marginTop: "2px", textTransform: "capitalize" }}>
+            <p style={{ fontSize: "var(--ts-label)", color: "var(--text-3)", marginTop: "2px", textTransform: "capitalize" }}>
               {source.paidEvery?.toLowerCase() ?? "biweekly"}{source.currency ? ` · ${source.currency}` : ""}
             </p>
           </div>
@@ -91,10 +91,10 @@ function IncomeCard({
           {/* Amounts */}
           <div style={{ display: "flex", alignItems: "center", gap: "10px", flexShrink: 0 }}>
             <div style={{ textAlign: "right" }}>
-              <div style={{ fontSize: "9px", fontWeight: "700", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "1px" }}>
+              <div style={{ fontSize: "var(--ts-meta)", fontWeight: "700", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "1px" }}>
                 Gross · {periodLabel}
               </div>
-              <span style={{ fontFamily: "var(--ff-display)", fontWeight: "700", fontSize: "15px", color: "var(--text)", letterSpacing: "-0.02em" }}>
+              <span style={{ fontFamily: "var(--ff-display)", fontWeight: "700", fontSize: "var(--ts-body)", color: "var(--text)", letterSpacing: "-0.02em" }}>
                 ${(grossMonthly * factor).toFixed(2)}
               </span>
             </div>
@@ -102,8 +102,8 @@ function IncomeCard({
               <>
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--border-2)" strokeWidth="2.5" strokeLinecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                 <div style={{ textAlign: "right" }}>
-                  <div style={{ fontSize: "9px", fontWeight: "700", color: "var(--accent)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "1px" }}>Net</div>
-                  <span style={{ fontFamily: "var(--ff-display)", fontWeight: "700", fontSize: "15px", color: "var(--accent)", letterSpacing: "-0.02em" }}>
+                  <div style={{ fontSize: "var(--ts-meta)", fontWeight: "700", color: "var(--accent)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "1px" }}>Net</div>
+                  <span style={{ fontFamily: "var(--ff-display)", fontWeight: "700", fontSize: "var(--ts-body)", color: "var(--accent)", letterSpacing: "-0.02em" }}>
                     ${(netMonthly * factor).toFixed(2)}
                   </span>
                 </div>
@@ -169,7 +169,7 @@ function IncomeCard({
             onSubmit={handleSubmit(onEditSubmit)}
             style={{ marginTop: "14px", paddingTop: "14px", borderTop: "1px solid var(--border)", display: "flex", flexDirection: "column", gap: "10px" }}
           >
-            <p style={{ fontSize: "11px", fontWeight: "700", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.08em", margin: 0 }}>Edit income source</p>
+            <p style={{ fontSize: "var(--ts-meta)", fontWeight: "700", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.08em", margin: 0 }}>Edit income source</p>
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
               <Field label="Source name" error={editErrors.source?.message}>
@@ -200,15 +200,15 @@ function IncomeCard({
             </div>
 
             {updateIncome.isError && (
-              <p style={{ fontSize: "12px", color: "var(--danger)", margin: 0 }}>Failed to save. Please try again.</p>
+              <p style={{ fontSize: "var(--ts-label)", color: "var(--danger)", margin: 0 }}>Failed to save. Please try again.</p>
             )}
             <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
               <button type="button" onClick={() => { setEditOpen(false); resetForm(); }}
-                style={{ padding: "6px 14px", borderRadius: "10px", background: "var(--surface-2)", border: "1px solid var(--border)", fontSize: "12px", fontWeight: "600", color: "var(--text-2)", cursor: "pointer" }}>
+                style={{ padding: "6px 14px", borderRadius: "10px", background: "var(--surface-2)", border: "1px solid var(--border)", fontSize: "var(--ts-label)", fontWeight: "600", color: "var(--text-2)", cursor: "pointer" }}>
                 Cancel
               </button>
               <button type="submit" disabled={updateIncome.isPending}
-                style={{ padding: "6px 14px", borderRadius: "10px", background: "var(--accent)", border: "none", fontSize: "12px", fontWeight: "600", color: "#fff", cursor: "pointer", opacity: updateIncome.isPending ? 0.6 : 1 }}>
+                style={{ padding: "6px 14px", borderRadius: "10px", background: "var(--accent)", border: "none", fontSize: "var(--ts-label)", fontWeight: "600", color: "#fff", cursor: "pointer", opacity: updateIncome.isPending ? 0.6 : 1 }}>
                 {updateIncome.isPending ? "Saving…" : "Save"}
               </button>
             </div>
@@ -251,10 +251,10 @@ export function IncomeList({ initialData }: { initialData: IncomeListResponse })
             <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
           </svg>
         </div>
-        <p style={{ fontFamily: "var(--ff-display)", fontWeight: "700", fontSize: "15px", color: "var(--text)" }}>
+        <p style={{ fontFamily: "var(--ff-display)", fontWeight: "700", fontSize: "var(--ts-body)", color: "var(--text)" }}>
           No income sources yet
         </p>
-        <p style={{ fontSize: "13px", color: "var(--text-3)" }}>Add one below to start tracking coverage.</p>
+        <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)" }}>Add one below to start tracking coverage.</p>
       </div>
     );
   }

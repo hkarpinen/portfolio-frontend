@@ -26,10 +26,10 @@ export default async function IncomePage() {
       {/* Header */}
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "16px" }}>
         <div>
-          <h1 style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "28px", letterSpacing: "-0.025em", color: "var(--text)" }}>
+          <h1 style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "var(--ts-h2)", lineHeight: "var(--lh-display)", letterSpacing: "-0.02em", letterSpacing: "-0.025em", color: "var(--text)" }}>
             Income
           </h1>
-          <p style={{ color: "var(--text-3)", marginTop: "4px", fontSize: "13px" }}>
+          <p style={{ color: "var(--text-3)", marginTop: "4px", fontSize: "var(--ts-body-sm)" }}>
             Manage your personal income sources
           </p>
         </div>
@@ -39,7 +39,7 @@ export default async function IncomePage() {
             display: "inline-flex", alignItems: "center", gap: "6px",
             padding: "9px 18px", borderRadius: "10px",
             background: "var(--accent)", color: "#fff",
-            fontSize: "13px", fontWeight: "600", textDecoration: "none",
+            fontSize: "var(--ts-body-sm)", fontWeight: "600", textDecoration: "none",
             flexShrink: 0, marginTop: "4px",
           }}
         >
@@ -61,19 +61,19 @@ export default async function IncomePage() {
             boxShadow: "var(--shadow-sm)", display: "flex", flexDirection: "column", gap: "10px",
           }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <span style={{ fontSize: "10px", fontWeight: "700", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>{label}</span>
+              <span style={{ fontSize: "var(--ts-meta)", fontWeight: "700", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>{label}</span>
               <div style={{ width: "30px", height: "30px", borderRadius: "8px", background: bg, display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">{icon}</svg>
               </div>
             </div>
-            <p style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "24px", letterSpacing: "-0.025em", color: "var(--text)", lineHeight: 1 }}>{value}</p>
+            <p style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "var(--ts-card-h)", letterSpacing: "-0.025em", color: "var(--text)", lineHeight: 1 }}>{value}</p>
           </div>
         ))}
       </div>
 
       {/* Income sources list */}
       <div>
-        <p style={{ fontSize: "10px", fontWeight: "700", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "16px" }}>
+        <p style={{ fontSize: "var(--ts-meta)", fontWeight: "700", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "16px" }}>
           Income Sources
         </p>
         <IncomeList initialData={incomePage} />

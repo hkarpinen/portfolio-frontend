@@ -34,11 +34,10 @@ function ConfirmEmailContent() {
 
   return (
     <div style={{
-      background: "var(--surface)",
-      border: "1px solid var(--border)",
-      borderRadius: "24px",
+      background: "var(--paper-2)",
+      border: "1.5px solid var(--ink)",
+      boxShadow: "var(--shadow-stamp)",
       padding: "40px 32px",
-      boxShadow: "var(--shadow-lg)",
       textAlign: "center",
     }}>
       {status === "loading" && (
@@ -50,7 +49,7 @@ function ConfirmEmailContent() {
             animation: "spin 0.8s linear infinite",
             margin: "0 auto 20px",
           }} />
-          <p style={{ fontSize: "14px", color: "var(--text-2)" }}>Confirming your email…</p>
+          <p style={{ fontSize: "var(--ts-body)", color: "var(--text-2)" }}>Confirming your email…</p>
         </>
       )}
 
@@ -68,10 +67,10 @@ function ConfirmEmailContent() {
           </div>
           <h1 style={{
             fontFamily: "var(--ff-display)", fontWeight: "800",
-            fontSize: "24px", letterSpacing: "-0.025em", color: "var(--text)",
+            fontSize: "var(--ts-card-h)", letterSpacing: "-0.025em", color: "var(--text)",
             marginBottom: "8px",
           }}>Email confirmed!</h1>
-          <p style={{ fontSize: "13px", color: "var(--text-3)", lineHeight: "1.6", marginBottom: "28px" }}>
+          <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)", lineHeight: "1.6", marginBottom: "28px" }}>
             {message}
           </p>
           <Link href="/login" className={styles.primaryLink}
@@ -95,17 +94,17 @@ function ConfirmEmailContent() {
           </div>
           <h1 style={{
             fontFamily: "var(--ff-display)", fontWeight: "800",
-            fontSize: "24px", letterSpacing: "-0.025em", color: "var(--text)",
+            fontSize: "var(--ts-card-h)", letterSpacing: "-0.025em", color: "var(--text)",
             marginBottom: "8px",
           }}>Confirmation failed</h1>
-          <p style={{ fontSize: "13px", color: "var(--text-3)", lineHeight: "1.6", marginBottom: "28px" }}>
+          <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)", lineHeight: "1.6", marginBottom: "28px" }}>
             {message}
           </p>
           <div style={{ display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap" }}>
             <Link href="/register" style={{
               padding: "10px 20px", borderRadius: "12px",
               background: "var(--accent)", color: "#fff",
-              fontSize: "13px", fontWeight: "600", textDecoration: "none",
+              fontSize: "var(--ts-body-sm)", fontWeight: "600", textDecoration: "none",
             }}>
               Try again
             </Link>
@@ -113,7 +112,7 @@ function ConfirmEmailContent() {
               padding: "10px 20px", borderRadius: "12px",
               background: "var(--surface-2)", color: "var(--text-2)",
               border: "1px solid var(--border)",
-              fontSize: "13px", fontWeight: "500", textDecoration: "none",
+              fontSize: "var(--ts-body-sm)", fontWeight: "500", textDecoration: "none",
             }}>
               Back to sign in
             </Link>

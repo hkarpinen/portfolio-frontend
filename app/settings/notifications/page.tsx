@@ -55,8 +55,8 @@ function NotifRow({
       }}
     >
       <div>
-        <p style={{ fontSize: "14px", fontWeight: 500, color: "var(--text)" }}>{label}</p>
-        <p style={{ fontSize: "12px", color: "var(--text-3)", marginTop: "2px" }}>{description}</p>
+        <p style={{ fontSize: "var(--ts-body)", fontWeight: 500, color: "var(--text)" }}>{label}</p>
+        <p style={{ fontSize: "var(--ts-label)", color: "var(--text-3)", marginTop: "2px" }}>{description}</p>
       </div>
       <Toggle checked={checked} onChange={onChange} />
     </div>
@@ -74,7 +74,7 @@ const cardStyle: React.CSSProperties = {
 };
 
 const sectionLabelStyle: React.CSSProperties = {
-  fontSize: "10px",
+  fontSize: "var(--ts-meta)",
   fontWeight: 700,
   color: "var(--text-3)",
   textTransform: "uppercase",
@@ -159,17 +159,17 @@ export default function NotificationsSettingsPage() {
       {/* Header */}
       <div style={{ marginBottom: "28px", display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
         <div>
-          <h1 style={{ fontFamily: "var(--ff-display)", fontSize: "22px", fontWeight: 700, color: "var(--text)" }}>
+          <h1 style={{ fontFamily: "var(--ff-display)", fontSize: "var(--ts-h2)", lineHeight: "var(--lh-display)", letterSpacing: "-0.02em", fontWeight: 700, color: "var(--text)" }}>
             Settings
           </h1>
-          <p style={{ fontSize: "13px", color: "var(--text-3)", marginTop: "4px" }}>
+          <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)", marginTop: "4px" }}>
             Manage your account, security, and preferences
           </p>
         </div>
         {saved && (
           <span
             style={{
-              fontSize: "12px",
+              fontSize: "var(--ts-label)",
               fontWeight: 600,
               color: "var(--success)",
               background: "var(--success-s)",
@@ -194,7 +194,7 @@ export default function NotificationsSettingsPage() {
               href={TAB_HREFS[tab]}
               style={{
                 padding: "10px 16px",
-                fontSize: "14px",
+                fontSize: "var(--ts-body)",
                 fontWeight: active ? 600 : 400,
                 color: active ? "var(--text)" : "var(--text-3)",
                 borderBottom: active ? "2px solid var(--accent)" : "2px solid transparent",
@@ -228,7 +228,7 @@ export default function NotificationsSettingsPage() {
         ))}
       </div>
 
-      <p style={{ fontSize: "11px", color: "var(--text-3)", marginTop: "16px" }}>
+      <p style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)", marginTop: "16px" }}>
         Preferences are saved locally in your browser.
       </p>
     </div>

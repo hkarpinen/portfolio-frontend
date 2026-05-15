@@ -25,7 +25,7 @@ export function JoinButton({ communityId }: JoinButtonProps) {
   if (joined) {
     return (
       <span style={{
-        padding: "5px 12px", borderRadius: "var(--r-md)", fontSize: "12px",
+        padding: "5px 12px", borderRadius: "var(--r-md)", fontSize: "var(--ts-label)",
         fontWeight: 600, color: "var(--text-3)", border: "1px solid var(--border)",
         background: "var(--surface-2)", flexShrink: 0,
       }}>
@@ -49,7 +49,7 @@ export function JoinButton({ communityId }: JoinButtonProps) {
       }}
       disabled={joinMutation.isPending}
       style={{
-        padding: "5px 12px", borderRadius: "var(--r-md)", fontSize: "12px",
+        padding: "5px 12px", borderRadius: "var(--r-md)", fontSize: "var(--ts-label)",
         fontWeight: 600, color: "var(--accent)", border: "1px solid var(--accent)",
         background: "var(--accent-subtle)", cursor: joinMutation.isPending ? "not-allowed" : "pointer",
         opacity: joinMutation.isPending ? 0.6 : 1,

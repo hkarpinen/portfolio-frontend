@@ -34,13 +34,13 @@ export default function JoinHouseholdPage() {
   return (
     <div className="page-enter" style={{ maxWidth: "440px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "20px" }}>
       <div>
-        <Link href="/households" style={{ color: "var(--text-3)", fontSize: "12px", textDecoration: "none" }}>
+        <Link href="/households" style={{ color: "var(--text-3)", fontSize: "var(--ts-label)", textDecoration: "none" }}>
           ← Households
         </Link>
-        <h1 style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "28px", letterSpacing: "-0.025em", color: "var(--text)", marginTop: "6px" }}>
+        <h1 style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "var(--ts-card-h)", letterSpacing: "-0.025em", color: "var(--text)", marginTop: "6px" }}>
           Join a Household
         </h1>
-        <p style={{ color: "var(--text-3)", fontSize: "13px", marginTop: "4px" }}>
+        <p style={{ color: "var(--text-3)", fontSize: "var(--ts-body-sm)", marginTop: "4px" }}>
           Enter the invite code you received from a household owner or admin.
         </p>
       </div>
@@ -59,7 +59,7 @@ export default function JoinHouseholdPage() {
               border: "1px solid var(--danger)",
               borderRadius: "10px",
               padding: "10px 14px",
-              fontSize: "13px",
+              fontSize: "var(--ts-body-sm)",
               color: "var(--danger)",
             }}>
               {joinHousehold.error instanceof ApiError ? joinHousehold.error.message : "Invalid invitation code. Make sure you typed it correctly."}
@@ -67,7 +67,7 @@ export default function JoinHouseholdPage() {
           )}
 
           <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-            <label style={{ fontSize: "12px", fontWeight: "500", color: "var(--text-2)", letterSpacing: "0.02em" }}>
+            <label style={{ fontSize: "var(--ts-label)", fontWeight: "500", color: "var(--text-2)", letterSpacing: "0.02em" }}>
               Invitation Code
             </label>
             <input
@@ -81,7 +81,7 @@ export default function JoinHouseholdPage() {
                 border: "1px solid var(--border)",
                 borderRadius: "12px",
                 color: "var(--text)",
-                fontSize: "14px",
+                fontSize: "var(--ts-body)",
                 fontFamily: "monospace",
                 outline: "none",
                 width: "100%",
@@ -96,7 +96,7 @@ export default function JoinHouseholdPage() {
               }}
             />
             {errors.invitationCode && (
-              <p style={{ color: "var(--danger)", fontSize: "12px" }}>{errors.invitationCode.message}</p>
+              <p style={{ color: "var(--danger)", fontSize: "var(--ts-label)" }}>{errors.invitationCode.message}</p>
             )}
           </div>
 

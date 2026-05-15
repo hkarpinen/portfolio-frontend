@@ -32,12 +32,12 @@ type FormData = z.infer<typeof schema>;
 const inputStyle: React.CSSProperties = {
   height: "38px", padding: "0 12px",
   background: "var(--surface-2)", border: "1px solid var(--border)",
-  borderRadius: "12px", color: "var(--text)", fontSize: "14px",
+  borderRadius: "12px", color: "var(--text)", fontSize: "var(--ts-body)",
   outline: "none", width: "100%", fontFamily: "var(--ff-body)",
 };
 
 const labelStyle: React.CSSProperties = {
-  fontSize: "12px", fontWeight: "500", color: "var(--text-2)", letterSpacing: "0.02em",
+  fontSize: "var(--ts-label)", fontWeight: "500", color: "var(--text-2)", letterSpacing: "0.02em",
 };
 
 function handleFocus(e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
@@ -83,13 +83,13 @@ export default function NewExpensePage({ params }: { params: { id: string } }) {
   return (
     <div className="page-enter" style={{ maxWidth: "560px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "24px" }}>
       <div>
-        <Link href={`/households/${params.id}`} style={{ color: "var(--text-3)", fontSize: "12px", textDecoration: "none" }}>
+        <Link href={`/households/${params.id}`} style={{ color: "var(--text-3)", fontSize: "var(--ts-label)", textDecoration: "none" }}>
           ← Back to Household
         </Link>
-        <h1 style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "28px", letterSpacing: "-0.025em", color: "var(--text)", marginTop: "6px" }}>
+        <h1 style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "var(--ts-card-h)", letterSpacing: "-0.025em", color: "var(--text)", marginTop: "6px" }}>
           Add Expense
         </h1>
-        <p style={{ color: "var(--text-3)", fontSize: "13px", marginTop: "4px" }}>
+        <p style={{ color: "var(--text-3)", fontSize: "var(--ts-body-sm)", marginTop: "4px" }}>
           Add a new expense to this household
         </p>
       </div>
@@ -97,7 +97,7 @@ export default function NewExpensePage({ params }: { params: { id: string } }) {
       <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "16px", padding: "24px", boxShadow: "var(--shadow-sm)" }}>
         <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
           {createExpense.isError && (
-            <div style={{ background: "var(--danger-s)", border: "1px solid var(--danger)", borderRadius: "10px", padding: "10px 14px", fontSize: "13px", color: "var(--danger)" }}>
+            <div style={{ background: "var(--danger-s)", border: "1px solid var(--danger)", borderRadius: "10px", padding: "10px 14px", fontSize: "var(--ts-body-sm)", color: "var(--danger)" }}>
               {createExpense.error instanceof ApiError ? createExpense.error.message : "Something went wrong. Please try again."}
             </div>
           )}
@@ -105,14 +105,14 @@ export default function NewExpensePage({ params }: { params: { id: string } }) {
           <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
             <label style={labelStyle}>Name</label>
             <input type="text" {...register("title")} placeholder="Rent, Electricity, etc." style={inputStyle} onFocus={handleFocus} onBlur={handleBlur} />
-            {errors.title && <p style={{ color: "var(--danger)", fontSize: "12px" }}>{errors.title.message}</p>}
+            {errors.title && <p style={{ color: "var(--danger)", fontSize: "var(--ts-label)" }}>{errors.title.message}</p>}
           </div>
 
           <div className="form-grid-2">
             <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
               <label style={labelStyle}>Amount</label>
               <input type="number" step="0.01" {...register("amount")} placeholder="0.00" style={inputStyle} onFocus={handleFocus} onBlur={handleBlur} />
-              {errors.amount && <p style={{ color: "var(--danger)", fontSize: "12px" }}>{errors.amount.message}</p>}
+              {errors.amount && <p style={{ color: "var(--danger)", fontSize: "var(--ts-label)" }}>{errors.amount.message}</p>}
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
               <label style={labelStyle}>Currency</label>
@@ -131,23 +131,23 @@ export default function NewExpensePage({ params }: { params: { id: string } }) {
               <option value="">Select category</option>
               {CATEGORIES.map((c) => <option key={c} value={c}>{c.charAt(0) + c.slice(1).toLowerCase()}</option>)}
             </select>
-            {errors.category && <p style={{ color: "var(--danger)", fontSize: "12px" }}>{errors.category.message}</p>}
+            {errors.category && <p style={{ color: "var(--danger)", fontSize: "var(--ts-label)" }}>{errors.category.message}</p>}
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
             <label style={labelStyle}>Due Date</label>
             <input type="date" {...register("dueDate")} style={inputStyle} onFocus={handleFocus} onBlur={handleBlur} />
-            {errors.dueDate && <p style={{ color: "var(--danger)", fontSize: "12px" }}>{errors.dueDate.message}</p>}
+            {errors.dueDate && <p style={{ color: "var(--danger)", fontSize: "var(--ts-label)" }}>{errors.dueDate.message}</p>}
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
             <label style={labelStyle}>Description <span style={{ color: "var(--text-3)", fontWeight: "400" }}>(optional)</span></label>
-            <textarea {...register("description")} rows={2} placeholder="Any additional notes" style={{ padding: "10px 12px", background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: "12px", color: "var(--text)", fontSize: "14px", outline: "none", width: "100%", resize: "vertical", fontFamily: "var(--ff-body)" }} onFocus={handleFocus} onBlur={handleBlur} />
+            <textarea {...register("description")} rows={2} placeholder="Any additional notes" style={{ padding: "10px 12px", background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: "12px", color: "var(--text)", fontSize: "var(--ts-body)", outline: "none", width: "100%", resize: "vertical", fontFamily: "var(--ff-body)" }} onFocus={handleFocus} onBlur={handleBlur} />
           </div>
 
           <label style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer" }}>
             <input id="isRecurring" type="checkbox" {...register("isRecurring")} style={{ width: "16px", height: "16px", accentColor: "var(--accent)" }} />
-            <span style={{ fontSize: "13px", fontWeight: "500", color: "var(--text-2)" }}>Recurring expense</span>
+            <span style={{ fontSize: "var(--ts-body-sm)", fontWeight: "500", color: "var(--text-2)" }}>Recurring expense</span>
           </label>
 
           {isRecurring && (

@@ -1,5 +1,5 @@
 .editLink {
-  font-size: 13px;
+  font-size: var(--ts-body-sm);
   font-weight: 600;
   color: var(--text-2);
   padding: 7px 14px;

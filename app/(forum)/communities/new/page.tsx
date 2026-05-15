@@ -37,10 +37,10 @@ export default function NewCommunityPage() {
   return (
     <div className="page-enter" style={{ maxWidth: "560px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "24px" }}>
       <div>
-        <h1 style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "24px", color: "var(--text)", margin: 0 }}>
+        <h1 style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "var(--ts-h2)", lineHeight: "var(--lh-display)", letterSpacing: "-0.02em", color: "var(--text)", margin: 0 }}>
           Create Community
         </h1>
-        <p style={{ color: "var(--text-3)", marginTop: "6px", fontSize: "14px" }}>
+        <p style={{ color: "var(--text-3)", marginTop: "6px", fontSize: "var(--ts-body)" }}>
           Start a new community
         </p>
       </div>
@@ -52,7 +52,7 @@ export default function NewCommunityPage() {
         <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
           {createCommunity.isError && (
             <div style={{
-              fontSize: "13px", color: "var(--danger)",
+              fontSize: "var(--ts-body-sm)", color: "var(--danger)",
               background: "var(--danger-s)", border: "1px solid var(--danger)",
               borderRadius: "10px", padding: "10px 14px",
             }}>
@@ -95,23 +95,23 @@ export default function NewCommunityPage() {
               )}
             </button>
             <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-              <span style={{ fontSize: "13px", fontWeight: 500, color: "var(--text-2)" }}>Community image</span>
+              <span style={{ fontSize: "var(--ts-body-sm)", fontWeight: 500, color: "var(--text-2)" }}>Community image</span>
               {imageUrl ? (
-                <button type="button" onClick={() => setImageUrl("")} style={{ alignSelf: "flex-start", padding: "4px 10px", borderRadius: "8px", background: "transparent", color: "var(--text-3)", border: "1px solid var(--border)", fontSize: "12px", cursor: "pointer" }}>
+                <button type="button" onClick={() => setImageUrl("")} style={{ alignSelf: "flex-start", padding: "4px 10px", borderRadius: "8px", background: "transparent", color: "var(--text-3)", border: "1px solid var(--border)", fontSize: "var(--ts-label)", cursor: "pointer" }}>
                   Remove
                 </button>
               ) : null}
               {uploadImage.isError && (
-                <span style={{ fontSize: "11px", color: "var(--danger)" }}>
+                <span style={{ fontSize: "var(--ts-meta)", color: "var(--danger)" }}>
                   {uploadImage.error instanceof ApiError ? uploadImage.error.message : "Upload failed."}
                 </span>
               )}
-              <span style={{ fontSize: "11px", color: "var(--text-3)" }}>Optional · JPEG, PNG, WebP or GIF · max 5 MB</span>
+              <span style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)" }}>Optional · JPEG, PNG, WebP or GIF · max 5 MB</span>
             </div>
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-            <label style={{ fontSize: "10px", fontWeight: 700, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
+            <label style={{ fontSize: "var(--ts-meta)", fontWeight: 700, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
               Name
             </label>
             <input
@@ -125,14 +125,14 @@ export default function NewCommunityPage() {
               style={{
                 width: "100%", padding: "10px 14px",
                 background: "var(--surface-2)", border: "1px solid var(--border)",
-                borderRadius: "10px", color: "var(--text)", fontSize: "14px",
+                borderRadius: "10px", color: "var(--text)", fontSize: "var(--ts-body)",
                 outline: "none", boxSizing: "border-box",
               }}
             />
-            <span style={{ fontSize: "11px", color: "var(--text-3)" }}>Lowercase letters, numbers, underscores only.</span>
+            <span style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)" }}>Lowercase letters, numbers, underscores only.</span>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-            <label style={{ fontSize: "10px", fontWeight: 700, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
+            <label style={{ fontSize: "var(--ts-meta)", fontWeight: 700, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
               Description
               <span style={{ fontWeight: 500, color: "var(--text-3)", marginLeft: "6px", textTransform: "none", letterSpacing: 0 }}>
                 optional · {description.length}/1000
@@ -147,7 +147,7 @@ export default function NewCommunityPage() {
               style={{
                 width: "100%", padding: "10px 14px",
                 background: "var(--surface-2)", border: "1px solid var(--border)",
-                borderRadius: "10px", color: "var(--text)", fontSize: "14px",
+                borderRadius: "10px", color: "var(--text)", fontSize: "var(--ts-body)",
                 outline: "none", boxSizing: "border-box",
                 resize: "vertical", lineHeight: "1.6",
                 fontFamily: "var(--ff-body)",
@@ -155,7 +155,7 @@ export default function NewCommunityPage() {
             />
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-            <label style={{ fontSize: "10px", fontWeight: 700, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
+            <label style={{ fontSize: "var(--ts-meta)", fontWeight: 700, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
               Visibility
             </label>
             <select
@@ -164,7 +164,7 @@ export default function NewCommunityPage() {
               style={{
                 width: "100%", padding: "10px 14px",
                 background: "var(--surface-2)", border: "1px solid var(--border)",
-                borderRadius: "10px", color: "var(--text)", fontSize: "14px",
+                borderRadius: "10px", color: "var(--text)", fontSize: "var(--ts-body)",
                 outline: "none", boxSizing: "border-box", cursor: "pointer",
               }}
             >
@@ -180,7 +180,7 @@ export default function NewCommunityPage() {
               style={{
                 flex: 1, background: "var(--surface-2)", color: "var(--text-2)",
                 border: "1px solid var(--border)", borderRadius: "12px",
-                padding: "10px 20px", fontWeight: 600, fontSize: "14px",
+                padding: "10px 20px", fontWeight: 600, fontSize: "var(--ts-body)",
                 cursor: "pointer", fontFamily: "var(--ff-body)",
               }}
             >
@@ -192,7 +192,7 @@ export default function NewCommunityPage() {
               style={{
                 flex: 2, background: "var(--accent)", color: "#fff",
                 border: "none", borderRadius: "12px",
-                padding: "10px 20px", fontWeight: 600, fontSize: "14px",
+                padding: "10px 20px", fontWeight: 600, fontSize: "var(--ts-body)",
                 cursor: createCommunity.isPending ? "not-allowed" : "pointer",
                 opacity: createCommunity.isPending ? 0.6 : 1,
                 fontFamily: "var(--ff-body)",

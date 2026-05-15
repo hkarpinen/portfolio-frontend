@@ -6,19 +6,19 @@ export default function AddIncomeSourcePage() {
     <div className="page-enter" style={{ display: "flex", flexDirection: "column", gap: "24px", maxWidth: "640px" }}>
       {/* Breadcrumb */}
       <nav style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-        <Link href="/income" style={{ fontSize: "13px", color: "var(--text-3)", textDecoration: "none" }}>
+        <Link href="/income" style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)", textDecoration: "none" }}>
           Income
         </Link>
-        <span style={{ color: "var(--text-3)", fontSize: "13px" }}>/</span>
-        <span style={{ fontSize: "13px", color: "var(--text-2)" }}>Add source</span>
+        <span style={{ color: "var(--text-3)", fontSize: "var(--ts-body-sm)" }}>/</span>
+        <span style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-2)" }}>Add source</span>
       </nav>
 
       {/* Header */}
       <div>
-        <h1 style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "28px", letterSpacing: "-0.025em", color: "var(--text)", margin: 0 }}>
+        <h1 style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "var(--ts-card-h)", letterSpacing: "-0.025em", color: "var(--text)", margin: 0 }}>
           Add Income Source
         </h1>
-        <p style={{ color: "var(--text-3)", marginTop: "4px", fontSize: "13px" }}>
+        <p style={{ color: "var(--text-3)", marginTop: "4px", fontSize: "var(--ts-body-sm)" }}>
           Add a salary, freelance contract, or any other income stream.
         </p>
       </div>

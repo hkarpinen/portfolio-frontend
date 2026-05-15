@@ -37,11 +37,11 @@ export default async function ThreadPage({
     <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
       {/* Breadcrumb */}
       <nav style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-        <Link href="/communities" style={{ fontSize: "13px", color: "var(--text-3)", textDecoration: "none" }}>
+        <Link href="/communities" style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)", textDecoration: "none" }}>
           Communities
         </Link>
-        <span style={{ color: "var(--text-3)", fontSize: "13px" }}>/</span>
-        <Link href={`/communities/${params.slug}`} style={{ fontSize: "13px", color: "var(--text-3)", textDecoration: "none", textTransform: "capitalize" }}>
+        <span style={{ color: "var(--text-3)", fontSize: "var(--ts-body-sm)" }}>/</span>
+        <Link href={`/communities/${params.slug}`} style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)", textDecoration: "none", textTransform: "capitalize" }}>
           {params.slug}
         </Link>
       </nav>
@@ -63,14 +63,14 @@ export default async function ThreadPage({
 
           {/* Content */}
           <div style={{ flex: 1, minWidth: 0, padding: "20px 24px" }}>
-            <h1 style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "22px", color: "var(--text)", lineHeight: 1.3, margin: 0 }}>
+            <h1 style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "var(--ts-h2)", lineHeight: "var(--lh-display)", letterSpacing: "-0.02em", color: "var(--text)", margin: 0 }}>
               {thread.title}
             </h1>
             {thread.flair && thread.flair !== "None" && (
               <span style={{
                 display: "inline-block", marginTop: "8px",
                 padding: "2px 10px", borderRadius: "9999px",
-                fontSize: "11px", fontWeight: 600, letterSpacing: "0.03em",
+                fontSize: "var(--ts-meta)", fontWeight: 600, letterSpacing: "0.03em",
                 background: "var(--accent-subtle)", color: "var(--accent)",
                 border: "1px solid var(--accent-border)",
               }}>
@@ -92,12 +92,12 @@ export default async function ThreadPage({
                       width: "18px", height: "18px", borderRadius: "9999px",
                       background: "var(--surface-3)", display: "flex",
                       alignItems: "center", justifyContent: "center",
-                      fontSize: "9px", fontWeight: 600, color: "var(--text-2)", flexShrink: 0,
+                      fontSize: "var(--ts-meta)", fontWeight: 600, color: "var(--text-2)", flexShrink: 0,
                     }}>
                       {(thread.authorDisplayName ?? thread.authorUsername ?? "?")[0].toUpperCase()}
                     </span>
                   )}
-                  <span style={{ fontSize: "12px", color: "var(--text-3)" }}>
+                  <span style={{ fontSize: "var(--ts-label)", color: "var(--text-3)" }}>
                     {thread.authorId ? (
                       <Link href={`/profile/${thread.authorId}`} style={{ color: "inherit", textDecoration: "none" }}
                       >{thread.authorDisplayName ?? thread.authorUsername}</Link>
@@ -105,18 +105,18 @@ export default async function ThreadPage({
                   </span>
                 </span>
               )}
-              <span style={{ color: "var(--text-3)", fontSize: "12px" }}>·</span>
-              <span style={{ fontSize: "12px", color: "var(--text-3)" }}>{timeAgo(thread.createdAt)}</span>
+              <span style={{ color: "var(--text-3)", fontSize: "var(--ts-label)" }}>·</span>
+              <span style={{ fontSize: "var(--ts-label)", color: "var(--text-3)" }}>{timeAgo(thread.createdAt)}</span>
               {thread.commentCount !== undefined && (
                 <>
-                  <span style={{ color: "var(--text-3)", fontSize: "12px" }}>·</span>
-                  <span style={{ fontSize: "12px", color: "var(--text-3)" }}>{thread.commentCount} comments</span>
+                  <span style={{ color: "var(--text-3)", fontSize: "var(--ts-label)" }}>·</span>
+                  <span style={{ fontSize: "var(--ts-label)", color: "var(--text-3)" }}>{thread.commentCount} comments</span>
                 </>
               )}
             </div>
             <div
               className="prose prose-slate dark:prose-invert max-w-none"
-              style={{ marginTop: "16px", fontSize: "14px", color: "var(--text-2)", lineHeight: 1.7 }}
+              style={{ marginTop: "16px", fontSize: "var(--ts-body)", color: "var(--text-2)", lineHeight: 1.7 }}
               dangerouslySetInnerHTML={{ __html: bodyHtml }}
             />
             {/* Action row */}
@@ -135,7 +135,7 @@ export default async function ThreadPage({
         background: "var(--surface)", border: "1px solid var(--border)",
         borderRadius: "16px", padding: "20px", boxShadow: "var(--shadow-sm)",
       }}>
-        <h2 style={{ fontFamily: "var(--ff-display)", fontWeight: 600, fontSize: "15px", color: "var(--text)", marginBottom: "12px" }}>
+        <h2 style={{ fontFamily: "var(--ff-display)", fontWeight: 600, fontSize: "var(--ts-body)", color: "var(--text)", marginBottom: "12px" }}>
           Leave a comment
         </h2>
         <CommentForm threadId={params.threadId} isAuthed={isAuthed} />
@@ -154,26 +154,24 @@ export default async function ThreadPage({
         }}>
           {/* Banner strip */}
           <div style={{
-            height: "40px",
-            background: community.color
-              ? `linear-gradient(135deg, ${community.color}22, ${community.color}44)`
-              : "linear-gradient(135deg, var(--accent-subtle), color-mix(in oklch, var(--accent) 22%, transparent))",
+            height: "4px",
+            background: "var(--ink)",
           }} />
           <div style={{ padding: "0 16px 16px" }}>
-            <p style={{ fontFamily: "var(--ff-display)", fontWeight: 800, fontSize: "14px", color: "var(--text)", margin: "12px 0 6px" }}>
+            <p style={{ fontFamily: "var(--ff-display)", fontWeight: 800, fontSize: "var(--ts-body)", color: "var(--text)", margin: "12px 0 6px" }}>
               About {community.name}
             </p>
             {community.description && (
-              <p style={{ fontSize: "13px", color: "var(--text-2)", lineHeight: 1.5, margin: "0 0 12px" }}>{community.description}</p>
+              <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-2)", lineHeight: 1.5, margin: "0 0 12px" }}>{community.description}</p>
             )}
             <div style={{ display: "flex", gap: "16px", marginBottom: "12px" }}>
               <div>
-                <p style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "16px", color: "var(--text)", margin: 0 }}>{community.memberCount.toLocaleString()}</p>
-                <p style={{ fontSize: "11px", color: "var(--text-3)", margin: 0 }}>Members</p>
+                <p style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "var(--ts-body)", color: "var(--text)", margin: 0 }}>{community.memberCount.toLocaleString()}</p>
+                <p style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)", margin: 0 }}>Members</p>
               </div>
               <div>
-                <p style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "16px", color: "var(--text)", margin: 0 }}>{community.threadCount.toLocaleString()}</p>
-                <p style={{ fontSize: "11px", color: "var(--text-3)", margin: 0 }}>Posts</p>
+                <p style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "var(--ts-body)", color: "var(--text)", margin: 0 }}>{community.threadCount.toLocaleString()}</p>
+                <p style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)", margin: 0 }}>Posts</p>
               </div>
             </div>
             <Link
@@ -182,7 +180,7 @@ export default async function ThreadPage({
                 display: "block", textAlign: "center",
                 background: "var(--accent)", color: "#fff",
                 borderRadius: "var(--r-md)", padding: "8px 12px",
-                fontSize: "13px", fontWeight: 600, textDecoration: "none",
+                fontSize: "var(--ts-body-sm)", fontWeight: 600, textDecoration: "none",
               }}
             >
               Visit community

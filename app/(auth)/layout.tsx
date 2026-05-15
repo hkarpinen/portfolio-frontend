@@ -1,88 +1,78 @@
+import Link from "next/link";
 import { requireAnonymous } from "@/lib/auth/session";
 
 export default async function AuthLayout({ children }: { children: React.ReactNode }) {
-  // Already-signed-in users have no business on /login or /login/2fa; bounce
-  // them server-side before any markup renders.
+  // Already-signed-in users have no business on /login or /login/2fa; bounce server-side.
   await requireAnonymous();
+
   return (
     <div style={{
       minHeight: "100vh",
+      background: "var(--paper)",
       display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      background: "var(--bg)",
-      padding: "24px 16px",
-      position: "relative",
-      overflow: "hidden",
+      flexDirection: "column",
     }}>
-      {/* Gradient mesh blobs */}
-      <div style={{
-        position: "absolute",
-        inset: 0,
-        pointerEvents: "none",
-        overflow: "hidden",
+      {/* Masthead strip */}
+      <header style={{
+        borderBottom: "3px solid var(--ink)",
+        padding: "20px 5%",
+        display: "flex",
+        alignItems: "baseline",
+        justifyContent: "space-between",
+        gap: 16,
       }}>
-        <div style={{
-          position: "absolute",
-          top: "-20%",
-          left: "-10%",
-          width: "600px",
-          height: "600px",
-          borderRadius: "9999px",
-          background: "var(--accent-subtle)",
-          filter: "blur(120px)",
-          animation: "meshMove1 18s ease-in-out infinite",
-        }} />
-        <div style={{
-          position: "absolute",
-          bottom: "-20%",
-          right: "-10%",
-          width: "500px",
-          height: "500px",
-          borderRadius: "9999px",
-          background: "var(--accent-v-subtle)",
-          filter: "blur(100px)",
-          animation: "meshMove2 22s ease-in-out infinite reverse",
-        }} />
-      </div>
-
-      <div style={{ position: "relative", width: "100%", maxWidth: "440px" }} className="page-enter">
-        {/* Logo */}
-        <div style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "10px",
-          justifyContent: "center",
-          marginBottom: "32px",
-        }}>
-          <div style={{
-            width: "32px",
-            height: "32px",
-            borderRadius: "10px",
-            background: "linear-gradient(135deg, var(--accent) 0%, var(--accent-v) 100%)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexShrink: 0,
-          }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 2L2 7l10 5 10-5-10-5z" />
-              <path d="M2 17l10 5 10-5" />
-              <path d="M2 12l10 5 10-5" />
-            </svg>
-          </div>
+        <Link href="/" style={{ textDecoration: "none" }}>
           <span style={{
-            fontFamily: "var(--ff-display)",
-            fontWeight: "700",
-            fontSize: "18px",
-            color: "var(--text)",
+            fontFamily: "var(--ff-serif)",
+            fontStyle: "italic",
+            fontSize: "var(--ts-card-h)",
+            letterSpacing: "-0.03em",
+            lineHeight: 1,
+            color: "var(--ink)",
           }}>
-            Portfolio
+            The Stack<span style={{ color: "var(--red)" }}>.</span>
           </span>
-        </div>
+        </Link>
+        <span style={{
+          fontFamily: "var(--ff-mono)",
+          fontSize: "var(--ts-meta)",
+          color: "var(--ink-3)",
+          textTransform: "uppercase",
+          letterSpacing: "0.20em",
+        }}>
+          Vol. I · No. 04
+        </span>
+      </header>
 
-        {children}
+      <div style={{ borderBottom: "1px solid var(--ink-4)" }} />
+
+      {/* Content — centered column */}
+      <div style={{
+        flex: 1,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "48px 16px",
+      }}>
+        <div style={{ width: "100%", maxWidth: 420 }}>
+          {/* Column label */}
+          <div style={{ marginBottom: 24, display: "flex", alignItems: "center", gap: 10 }}>
+            <span style={{ width: 22, height: 1, background: "var(--red)", display: "inline-block" }} />
+            <span style={{
+              fontFamily: "var(--ff-mono)",
+              fontSize: "var(--ts-meta)",
+              color: "var(--red)",
+              textTransform: "uppercase",
+              letterSpacing: "0.30em",
+            }}>
+              Reader access
+            </span>
+          </div>
+
+          {children}
+        </div>
       </div>
     </div>
+
   );
 }

@@ -1,7 +1,7 @@
 import type { Config } from 'tailwindcss'
 
 const config: Config = {
-  darkMode: ['class', '[data-theme="dark"]'],
+  // No dark mode toggle — editorial is single-mode paper-on-ink
   content: [
     './pages/**/*.{ts,tsx}',
     './components/**/*.{ts,tsx}',
@@ -10,6 +10,21 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        /* ── Editorial palette ─────────────────────────────────────────── */
+        paper:    'var(--paper)',
+        'paper-2':'var(--paper-2)',
+        'paper-3':'var(--paper-3)',
+        'paper-4':'var(--paper-4)',
+        ink:      'var(--ink)',
+        'ink-2':  'var(--ink-2)',
+        'ink-3':  'var(--ink-3)',
+        'ink-4':  'var(--ink-4)',
+        red:      'var(--red)',
+        'red-deep':'var(--red-deep)',
+        'red-soft':'var(--red-soft)',
+        green:    'var(--green)',
+
+        /* ── Semantic aliases (so bg-accent etc. keep working) ─────────── */
         bg: {
           DEFAULT: 'var(--bg)',
           2:       'var(--bg-2)',
@@ -32,9 +47,9 @@ const config: Config = {
         accent: {
           DEFAULT:  'var(--accent)',
           hi:       'var(--accent-hi)',
+          subtle:   'var(--accent-subtle)',
           v:        'var(--accent-v)',
           glow:     'var(--accent-glow)',
-          subtle:   'var(--accent-subtle)',
           'v-subtle': 'var(--accent-v-subtle)',
         },
         success: {
@@ -52,48 +67,57 @@ const config: Config = {
       },
 
       fontFamily: {
-        display: ['var(--ff-display)', 'sans-serif'],
-        body:    ['var(--ff-body)', 'sans-serif'],
-      },
-      fontSize: {
-        xs:    ['11px', { lineHeight: '16px' }],
-        sm:    ['13px', { lineHeight: '18px' }],
-        base:  ['14px', { lineHeight: '20px' }],
-        md:    ['16px', { lineHeight: '24px' }],
-        lg:    ['18px', { lineHeight: '28px' }],
-        xl:    ['22px', { lineHeight: '30px' }],
-        '2xl': ['28px', { lineHeight: '36px' }],
-        '3xl': ['36px', { lineHeight: '44px' }],
-        '4xl': ['48px', { lineHeight: '56px' }],
-        '5xl': ['64px', { lineHeight: '72px' }],
-      },
-      fontWeight: {
-        light:     '300',
-        normal:    '400',
-        medium:    '500',
-        semibold:  '600',
-        bold:      '700',
-        extrabold: '800',
-        black:     '900',
-      },
-      letterSpacing: {
-        tighter: '-0.03em',
-        tight:   '-0.025em',
-        snug:    '-0.015em',
-        normal:  '0',
-        wide:    '0.02em',
-        wider:   '0.06em',
-        widest:  '0.1em',
+        serif:   ['var(--ff-serif)', 'Times New Roman', 'serif'],
+        display: ['var(--ff-serif)', 'Times New Roman', 'serif'], // backward compat
+        body:    ['var(--ff-body)',  'Georgia', 'serif'],
+        mono:    ['var(--ff-mono)',  'ui-monospace', 'SF Mono', 'Menlo', 'monospace'],
       },
 
+      fontSize: {
+        xs:    ['10px',  { lineHeight: '14px' }],
+        sm:    ['13px',  { lineHeight: '18px' }],
+        base:  ['15px',  { lineHeight: '22px' }],
+        md:    ['17px',  { lineHeight: '26px' }],
+        lg:    ['20px',  { lineHeight: '28px' }],
+        xl:    ['24px',  { lineHeight: '30px' }],
+        '2xl': ['30px',  { lineHeight: '34px' }],
+        '3xl': ['38px',  { lineHeight: '42px' }],
+        '4xl': ['54px',  { lineHeight: '56px' }],
+        '5xl': ['72px',  { lineHeight: '72px' }],
+      },
+
+      letterSpacing: {
+        tighter: '-0.035em',
+        tight:   '-0.03em',
+        snug:    '-0.02em',
+        normal:  '0',
+        mono:    '0.14em',
+        wide:    '0.20em',
+        wider:   '0.28em',
+        widest:  '0.40em',
+      },
+
+      /* Everything is square — no border radius */
       borderRadius: {
-        xs:   '4px',
-        sm:   '8px',
-        md:   '12px',
-        lg:   '16px',
-        xl:   '24px',
-        '2xl':'32px',
-        full: '9999px',
+        DEFAULT: '0',
+        none:    '0',
+        sm:      '0',
+        md:      '0',
+        lg:      '0',
+        xl:      '0',
+        '2xl':   '0',
+        full:    '9999px',
+      },
+
+      boxShadow: {
+        card:  '4px 4px 0 var(--ink)',
+        stamp: '6px 6px 0 var(--ink)',
+        modal: '8px 8px 0 var(--ink)',
+        /* Legacy names */
+        sm:    '4px 4px 0 var(--ink)',
+        md:    '6px 6px 0 var(--ink)',
+        lg:    '8px 8px 0 var(--ink)',
+        none:  'none',
       },
 
       spacing: {
@@ -112,14 +136,6 @@ const config: Config = {
         '32': '64px',
         '40': '80px',
         '48': '96px',
-      },
-
-      boxShadow: {
-        sm:   'var(--shadow-sm)',
-        md:   'var(--shadow-md)',
-        lg:   'var(--shadow-lg)',
-        glow: 'var(--shadow-glow)',
-        none: 'none',
       },
 
       transitionTimingFunction: {
@@ -144,12 +160,14 @@ const config: Config = {
       },
 
       animation: {
-        'fade-up':  'fadeUp 380ms cubic-bezier(0.16,1,0.3,1) both',
-        'fade-in':  'fadeIn 220ms cubic-bezier(0.2,0,0,1) both',
-        'scale-in': 'scaleIn 220ms cubic-bezier(0.16,1,0.3,1) both',
-        'slide-in': 'slideIn 220ms cubic-bezier(0.16,1,0.3,1) both',
-        shimmer:    'shimmer 1.6s ease-in-out infinite',
-        spin:       'spin 0.8s linear infinite',
+        'fade-up':   'fadeUp 320ms cubic-bezier(0.16,1,0.3,1) both',
+        'fade-in':   'fadeIn 220ms cubic-bezier(0.2,0,0,1) both',
+        'scale-in':  'scaleIn 200ms cubic-bezier(0.16,1,0.3,1) both',
+        'slide-in':  'slideIn 220ms cubic-bezier(0.16,1,0.3,1) both',
+        'pulse-dot': 'pulseDot 1.8s ease-in-out infinite',
+        marquee:     'marquee 38s linear infinite',
+        spin:        'spin 0.8s linear infinite',
+        shimmer:     'shimmer 1.6s ease-in-out infinite',
       },
     },
   },

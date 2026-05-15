@@ -103,7 +103,6 @@ export interface HouseholdExpense {
 
 export interface ExpenseSplit {
   splitId: string;
-  membershipId: string;
   userId: string;
   displayName?: string;
   avatarUrl?: string;
@@ -165,7 +164,8 @@ export interface IncomeSource {
 export interface ContributionItem {
   splitId: string;
   billId: string;
-  householdId: string;
+  groupId: string;
+  householdId: string; // @deprecated use groupId
   householdName: string;
   billTitle: string;
   billCategory?: string;

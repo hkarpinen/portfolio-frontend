@@ -15,13 +15,13 @@ interface Props {
 export default async function HouseholdSettingsPage({ params }: Props) {
   const cookieHeader = cookies().toString();
   const [household, membersRaw, me] = await Promise.all([
-    serverFetch<Household>(`/api/finance/households/${params.id}`, cookieHeader),
-    serverFetch<MembershipResponse[]>(`/api/finance/households/${params.id}/members`, cookieHeader),
+    serverFetch<Household>(`/api/households/${params.id}`, cookieHeader),
+    serverFetch<MembershipResponse[]>(`/api/households/${params.id}/members`, cookieHeader),
     serverFetch<UserProfile>("/api/identity/profile", cookieHeader),
   ]);
 
   if (!household) {
-    return <div style={{ padding: "32px", color: "var(--danger)", fontSize: "13px" }}>Household not found.</div>;
+    return <div style={{ padding: "32px", color: "var(--danger)", fontSize: "var(--ts-body-sm)" }}>Household not found.</div>;
   }
 
   const members = (Array.isArray(membersRaw) ? membersRaw : []) as MembershipResponse[];
@@ -33,10 +33,10 @@ export default async function HouseholdSettingsPage({ params }: Props) {
   return (
     <div className="page-enter" style={{ maxWidth: "560px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "24px" }}>
       <div>
-        <Link href={`/households/${params.id}`} style={{ color: "var(--text-3)", fontSize: "12px", textDecoration: "none" }}>
+        <Link href={`/households/${params.id}`} style={{ color: "var(--text-3)", fontSize: "var(--ts-label)", textDecoration: "none" }}>
           ← Back to {household.name}
         </Link>
-        <h1 style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "28px", letterSpacing: "-0.025em", color: "var(--text)", marginTop: "6px" }}>
+        <h1 style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "var(--ts-card-h)", letterSpacing: "-0.025em", color: "var(--text)", marginTop: "6px" }}>
           Settings
         </h1>
       </div>

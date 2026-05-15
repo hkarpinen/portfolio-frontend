@@ -52,13 +52,13 @@ export default async function HouseholdContributionsPage({
     <div className="page-enter" style={{ display: "flex", flexDirection: "column", gap: "28px" }}>
       {/* Header */}
       <div>
-        <Link href={`/households/${params.id}`} style={{ color: "var(--text-3)", fontSize: "12px", textDecoration: "none" }}>
+        <Link href={`/households/${params.id}`} style={{ color: "var(--text-3)", fontSize: "var(--ts-label)", textDecoration: "none" }}>
           ← {household.name}
         </Link>
-        <h1 style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "28px", letterSpacing: "-0.025em", color: "var(--text)", marginTop: "4px" }}>
+        <h1 style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "var(--ts-h2)", lineHeight: "var(--lh-display)", letterSpacing: "-0.02em", letterSpacing: "-0.025em", color: "var(--text)", marginTop: "4px" }}>
           Contributions
         </h1>
-        <p style={{ color: "var(--text-3)", marginTop: "4px", fontSize: "13px" }}>
+        <p style={{ color: "var(--text-3)", marginTop: "4px", fontSize: "var(--ts-body-sm)" }}>
           Per-member expense splits by month
         </p>
       </div>
@@ -76,7 +76,7 @@ export default async function HouseholdContributionsPage({
             href={tab.href}
             style={{
               padding: "10px 16px",
-              fontSize: "13px",
+              fontSize: "var(--ts-body-sm)",
               fontWeight: tab.label === "Contributions" ? 600 : 400,
               color: tab.label === "Contributions" ? "var(--text)" : "var(--text-3)",
               borderBottom: tab.label === "Contributions" ? "2px solid var(--accent)" : "2px solid transparent",
@@ -103,15 +103,15 @@ export default async function HouseholdContributionsPage({
               <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
             </svg>
           </div>
-          <p style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "15px", color: "var(--text)" }}>
+          <p style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "var(--ts-body)", color: "var(--text)" }}>
             No contributions yet
           </p>
-          <p style={{ fontSize: "13px", color: "var(--text-3)", maxWidth: "320px" }}>
+          <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)", maxWidth: "320px" }}>
             Add expenses with member splits to see monthly contributions here.
           </p>
           <Link
             href={`/households/${params.id}/expenses/new`}
-            style={{ background: "var(--accent)", color: "#fff", padding: "8px 20px", borderRadius: "12px", fontSize: "13px", fontWeight: 600, textDecoration: "none" }}
+            style={{ background: "var(--accent)", color: "#fff", padding: "8px 20px", borderRadius: "12px", fontSize: "var(--ts-body-sm)", fontWeight: 600, textDecoration: "none" }}
           >
             Add an Expense
           </Link>
@@ -129,10 +129,10 @@ export default async function HouseholdContributionsPage({
             >
               {/* Month header */}
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px" }}>
-                <h3 style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "16px", color: "var(--text)", margin: 0 }}>
+                <h3 style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "var(--ts-body)", color: "var(--text)", margin: 0 }}>
                   {month.periodLabel}
                 </h3>
-                <span style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "14px", color: "var(--text)" }}>
+                <span style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "var(--ts-body)", color: "var(--text)" }}>
                   {month.currency ?? household.currencyCode} {month.total?.toFixed(2)}
                 </span>
               </div>
@@ -150,17 +150,17 @@ export default async function HouseholdContributionsPage({
                           width: "28px", height: "28px", borderRadius: "9999px",
                           background: color, flexShrink: 0,
                           display: "flex", alignItems: "center", justifyContent: "center",
-                          fontSize: "11px", fontWeight: 700, color: "#fff",
+                          fontSize: "var(--ts-meta)", fontWeight: 700, color: "#fff",
                           border: "2px solid var(--surface)",
                         }}>
                           {initials(member.displayName)}
                         </div>
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "4px" }}>
-                            <span style={{ fontSize: "13px", fontWeight: 600, color: "var(--text)" }}>
+                            <span style={{ fontSize: "var(--ts-body-sm)", fontWeight: 600, color: "var(--text)" }}>
                               {member.displayName ?? `User ${member.userId.slice(0, 6)}`}
                             </span>
-                            <span style={{ fontSize: "13px", fontWeight: 700, color: "var(--text)", fontFamily: "var(--ff-display)" }}>
+                            <span style={{ fontSize: "var(--ts-body-sm)", fontWeight: 700, color: "var(--text)", fontFamily: "var(--ff-display)" }}>
                               {household.currencyCode} {member.totalDue?.toFixed(2)}
                             </span>
                           </div>
@@ -175,11 +175,11 @@ export default async function HouseholdContributionsPage({
                             }} />
                           </div>
                           <div style={{ display: "flex", justifyContent: "space-between", marginTop: "3px" }}>
-                            <span style={{ fontSize: "11px", color: "var(--text-3)" }}>
+                            <span style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)" }}>
                               {household.currencyCode} {member.totalPaid?.toFixed(2)} paid
                             </span>
                             <span style={{
-                              fontSize: "11px",
+                              fontSize: "var(--ts-meta)",
                               color: paidRatio >= 1 ? "var(--success)" : "var(--text-3)",
                             }}>
                               {(paidRatio * 100).toFixed(0)}%

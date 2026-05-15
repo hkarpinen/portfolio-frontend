@@ -20,11 +20,11 @@ interface Props {
 function Field({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-      <label style={{ fontSize: "12px", fontWeight: "500", color: "var(--text-2)", letterSpacing: "0.02em" }}>
+      <label style={{ fontSize: "var(--ts-label)", fontWeight: "500", color: "var(--text-2)", letterSpacing: "0.02em" }}>
         {label}
       </label>
       {children}
-      {hint && <span style={{ fontSize: "11px", color: "var(--text-3)" }}>{hint}</span>}
+      {hint && <span style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)" }}>{hint}</span>}
     </div>
   );
 }
@@ -35,7 +35,7 @@ const iStyle: React.CSSProperties = {
   border: "1px solid var(--border)",
   borderRadius: "12px",
   padding: "0 12px",
-  fontSize: "13px",
+  fontSize: "var(--ts-body-sm)",
   color: "var(--text)",
   outline: "none",
   transition: "border-color 110ms, box-shadow 110ms",
@@ -107,7 +107,7 @@ export function CommunitySettingsForm({
         <div style={{
           padding: "12px 16px", borderRadius: "10px",
           background: "var(--danger-s)", border: "1px solid oklch(62% 0.21 22 / 0.3)",
-          fontSize: "13px", color: "var(--danger)",
+          fontSize: "var(--ts-body-sm)", color: "var(--danger)",
         }}>
           {updateCommunity.error instanceof ApiError ? updateCommunity.error.message : "Something went wrong."}
         </div>
@@ -116,7 +116,7 @@ export function CommunitySettingsForm({
         <div style={{
           padding: "12px 16px", borderRadius: "10px",
           background: "var(--success-s)", border: "1px solid oklch(68% 0.18 152 / 0.25)",
-          fontSize: "13px", color: "var(--success)",
+          fontSize: "var(--ts-body-sm)", color: "var(--success)",
         }}>Settings saved.</div>
       )}
 
@@ -138,14 +138,14 @@ export function CommunitySettingsForm({
             width: "56px", height: "56px", borderRadius: "12px",
             background: "var(--accent-subtle)", flexShrink: 0,
             display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: "20px", fontWeight: "700", fontFamily: "var(--ff-display)",
+            fontSize: "var(--ts-sub)", fontWeight: "700", fontFamily: "var(--ff-display)",
             color: "var(--accent)",
           }}>
             {name[0]?.toUpperCase() ?? "?"}
           </div>
         )}
         <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "6px" }}>
-          <span style={{ fontSize: "12px", fontWeight: "500", color: "var(--text-2)" }}>Community image</span>
+          <span style={{ fontSize: "var(--ts-label)", fontWeight: "500", color: "var(--text-2)" }}>Community image</span>
           <input
             ref={fileInputRef}
             type="file"
@@ -161,7 +161,7 @@ export function CommunitySettingsForm({
               style={{
                 padding: "7px 14px", borderRadius: "10px",
                 background: "var(--surface-3)", color: "var(--text-2)",
-                border: "1px solid var(--border)", fontSize: "12px", fontWeight: "500",
+                border: "1px solid var(--border)", fontSize: "var(--ts-label)", fontWeight: "500",
                 cursor: uploadImage.isPending ? "not-allowed" : "pointer",
                 opacity: uploadImage.isPending ? 0.6 : 1,
                 transition: "background 110ms",
@@ -176,7 +176,7 @@ export function CommunitySettingsForm({
                 style={{
                   padding: "7px 10px", borderRadius: "10px",
                   background: "transparent", color: "var(--text-3)",
-                  border: "1px solid var(--border)", fontSize: "12px",
+                  border: "1px solid var(--border)", fontSize: "var(--ts-label)",
                   cursor: "pointer", transition: "background 110ms, color 110ms",
                 }}
               >
@@ -185,11 +185,11 @@ export function CommunitySettingsForm({
             )}
           </div>
           {uploadImage.isError && (
-            <span style={{ fontSize: "11px", color: "var(--danger)" }}>
+            <span style={{ fontSize: "var(--ts-meta)", color: "var(--danger)" }}>
               {uploadImage.error instanceof ApiError ? uploadImage.error.message : "Upload failed."}
             </span>
           )}
-          <span style={{ fontSize: "11px", color: "var(--text-3)" }}>JPEG, PNG, WebP or GIF · max 5 MB</span>
+          <span style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)" }}>JPEG, PNG, WebP or GIF · max 5 MB</span>
         </div>
       </div>
 
@@ -253,8 +253,8 @@ export function CommunitySettingsForm({
           display: "flex", flexDirection: "column", gap: "12px",
         }}>
           <div>
-            <p style={{ fontSize: "13px", fontWeight: "600", color: "var(--danger)", margin: "0 0 4px" }}>Danger zone</p>
-            <p style={{ fontSize: "12px", color: "var(--text-3)", margin: 0 }}>
+            <p style={{ fontSize: "var(--ts-body-sm)", fontWeight: "600", color: "var(--danger)", margin: "0 0 4px" }}>Danger zone</p>
+            <p style={{ fontSize: "var(--ts-label)", color: "var(--text-3)", margin: 0 }}>
               Permanently delete this community and all its threads. This cannot be undone.
             </p>
           </div>
@@ -268,7 +268,7 @@ export function CommunitySettingsForm({
             </button>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-              <p style={{ fontSize: "13px", color: "var(--text-2)", margin: 0 }}>
+              <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-2)", margin: 0 }}>
                 Are you sure? Type <strong>{name}</strong> to confirm.
               </p>
               <DeleteConfirm
@@ -282,7 +282,7 @@ export function CommunitySettingsForm({
                 }
               />
               {deleteCommunity.isError && (
-                <span style={{ fontSize: "12px", color: "var(--danger)" }}>
+                <span style={{ fontSize: "var(--ts-label)", color: "var(--danger)" }}>
                   {deleteCommunity.error instanceof ApiError ? deleteCommunity.error.message : "Something went wrong."}
                 </span>
               )}
@@ -317,7 +317,7 @@ function DeleteConfirm({
         style={{
           height: "36px", borderRadius: "10px",
           background: "var(--surface-2)", border: "1px solid var(--border)",
-          padding: "0 12px", fontSize: "13px", color: "var(--text)", outline: "none",
+          padding: "0 12px", fontSize: "var(--ts-body-sm)", color: "var(--text)", outline: "none",
           minWidth: "180px",
         }}
       />
@@ -329,7 +329,7 @@ function DeleteConfirm({
           padding: "8px 18px", borderRadius: "10px",
           background: matches && !isPending ? "var(--danger)" : "var(--surface-3)",
           color: matches && !isPending ? "#fff" : "var(--text-3)",
-          border: "none", fontSize: "13px", fontWeight: "600",
+          border: "none", fontSize: "var(--ts-body-sm)", fontWeight: "600",
           cursor: matches && !isPending ? "pointer" : "not-allowed",
           transition: "background 110ms",
         }}
@@ -343,7 +343,7 @@ function DeleteConfirm({
         style={{
           padding: "8px 14px", borderRadius: "10px",
           background: "transparent", color: "var(--text-3)",
-          border: "1px solid var(--border)", fontSize: "13px",
+          border: "1px solid var(--border)", fontSize: "var(--ts-body-sm)",
           cursor: "pointer", transition: "background 110ms",
         }}
       >

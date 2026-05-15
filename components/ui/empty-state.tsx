@@ -32,7 +32,7 @@ export function EmptyState({ icon, title, description, action }: EmptyStateProps
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            fontSize: "24px",
+            fontSize: "var(--ts-card-h)",
             flexShrink: 0,
           }}
         >
@@ -43,7 +43,7 @@ export function EmptyState({ icon, title, description, action }: EmptyStateProps
         style={{
           fontFamily: "var(--ff-display)",
           fontWeight: 700,
-          fontSize: "15px",
+          fontSize: "var(--ts-body)",
           color: "var(--text)",
           margin: 0,
         }}
@@ -51,7 +51,7 @@ export function EmptyState({ icon, title, description, action }: EmptyStateProps
         {title}
       </p>
       {description && (
-        <p style={{ fontSize: "13px", color: "var(--text-3)", margin: 0, maxWidth: "320px" }}>
+        <p style={{ fontSize: "var(--ts-body)", color: "var(--text-3)", margin: 0, maxWidth: "320px" }}>
           {description}
         </p>
       )}

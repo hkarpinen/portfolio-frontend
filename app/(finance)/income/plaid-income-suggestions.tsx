@@ -42,10 +42,10 @@ function StreamCard({ stream, onAccept, accepting }: { stream: RecurringSuggesti
 
         {/* Info */}
         <div style={{ minWidth: 0 }}>
-          <p style={{ fontWeight: 600, fontSize: "14px", color: "var(--text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+          <p style={{ fontWeight: 600, fontSize: "var(--ts-body)", color: "var(--text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
             {stream.merchantName ?? stream.description}
           </p>
-          <p style={{ fontSize: "12px", color: "var(--text-3)", marginTop: "2px" }}>
+          <p style={{ fontSize: "var(--ts-label)", color: "var(--text-3)", marginTop: "2px" }}>
             {FREQ_LABELS[stream.frequency] ?? stream.frequency}
             {" · "}
             <span style={{ fontVariantNumeric: "tabular-nums" }}>
@@ -63,7 +63,7 @@ function StreamCard({ stream, onAccept, accepting }: { stream: RecurringSuggesti
         <a
           href="/income"
           style={{
-            fontSize: "12px", fontWeight: 600, color: "var(--success)",
+            fontSize: "var(--ts-label)", fontWeight: 600, color: "var(--success)",
             textDecoration: "none", padding: "6px 12px", borderRadius: "8px",
             background: "var(--success-s)", border: "1px solid oklch(68% 0.18 152 / 0.25)",
             flexShrink: 0,
@@ -77,7 +77,7 @@ function StreamCard({ stream, onAccept, accepting }: { stream: RecurringSuggesti
           disabled={accepting}
           style={{
             background: "var(--accent)", color: "#fff", border: "none",
-            borderRadius: "8px", padding: "7px 16px", fontSize: "13px",
+            borderRadius: "8px", padding: "7px 16px", fontSize: "var(--ts-body-sm)",
             fontWeight: 600, cursor: accepting ? "not-allowed" : "pointer",
             opacity: accepting ? 0.6 : 1, flexShrink: 0,
             transition: "opacity 150ms",
@@ -126,17 +126,17 @@ export function PlaidIncomeSuggestions() {
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <p style={{
-            fontSize: "10px", fontWeight: 700, color: "var(--text-3)",
+            fontSize: "var(--ts-meta)", fontWeight: 700, color: "var(--text-3)",
             textTransform: "uppercase", letterSpacing: "0.1em",
           }}>
             Detected from bank
           </p>
           {(streamsQuery.isLoading || refresh.isPending) && (
-            <span style={{ fontSize: "11px", color: "var(--text-3)" }}>Loading…</span>
+            <span style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)" }}>Loading…</span>
           )}
           {inflows.length > 0 && (
             <span style={{
-              fontSize: "11px", fontWeight: 700, color: "var(--accent)",
+              fontSize: "var(--ts-meta)", fontWeight: 700, color: "var(--accent)",
               background: "var(--accent-subtle)", borderRadius: "99px",
               padding: "1px 8px",
             }}>
@@ -156,7 +156,7 @@ export function PlaidIncomeSuggestions() {
               disabled={refresh.isPending}
               style={{
                 background: "none", border: "1px solid var(--border)",
-                borderRadius: "8px", padding: "4px 10px", fontSize: "12px",
+                borderRadius: "8px", padding: "4px 10px", fontSize: "var(--ts-label)",
                 color: "var(--text-3)", cursor: "pointer",
                 opacity: refresh.isPending ? 0.5 : 1, transition: "opacity 150ms",
               }}
@@ -171,7 +171,7 @@ export function PlaidIncomeSuggestions() {
               onClick={() => setCollapsed(c => !c)}
               style={{
                 background: "none", border: "none", padding: "4px 6px",
-                fontSize: "12px", color: "var(--text-3)", cursor: "pointer",
+                fontSize: "var(--ts-label)", color: "var(--text-3)", cursor: "pointer",
               }}
             >
               {collapsed ? "Show" : "Hide"}
@@ -187,7 +187,7 @@ export function PlaidIncomeSuggestions() {
             <div style={{
               background: "var(--surface)", border: "1px solid var(--border)",
               borderRadius: "14px", padding: "20px 18px",
-              textAlign: "center", color: "var(--text-3)", fontSize: "13px",
+              textAlign: "center", color: "var(--text-3)", fontSize: "var(--ts-body-sm)",
             }}>
               No recurring deposits detected yet.{" "}
               <button
@@ -195,7 +195,7 @@ export function PlaidIncomeSuggestions() {
                 disabled={refresh.isPending}
                 style={{
                   background: "none", border: "none", color: "var(--accent)",
-                  cursor: "pointer", fontWeight: 600, fontSize: "13px", padding: 0,
+                  cursor: "pointer", fontWeight: 600, fontSize: "var(--ts-body-sm)", padding: 0,
                 }}
               >
                 Detect now

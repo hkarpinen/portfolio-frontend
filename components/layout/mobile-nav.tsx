@@ -80,10 +80,10 @@ export function MobileNav({ displayName, avatarUrl, initials }: MobileNavProps) 
                     width: "24px", height: "24px", borderRadius: "9999px",
                     background: "var(--accent-subtle)", color: "var(--accent)",
                     display: "flex", alignItems: "center", justifyContent: "center",
-                    fontSize: "10px", fontWeight: "700",
+                    fontSize: "var(--ts-meta)", fontWeight: "700",
                   }}>{initials ?? "?"}</span>
                 )}
-                <span style={{ fontSize: "14px", color: "var(--text)" }}>{displayName}</span>
+                <span style={{ fontSize: "var(--ts-body)", color: "var(--text)" }}>{displayName}</span>
               </Link>
             </DropdownMenu.Item>
           ) : (

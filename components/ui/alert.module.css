@@ -49,7 +49,7 @@
 }
 
 .title {
-  font-size: 13px;
+  font-size: var(--ts-body);
   font-weight: 600;
   font-family: var(--ff-body);
   color: var(--text);
@@ -57,7 +57,7 @@
 }
 
 .body {
-  font-size: 12px;
+  font-size: var(--ts-body);
   color: var(--text-2);
   line-height: 1.5;
   font-family: var(--ff-body);

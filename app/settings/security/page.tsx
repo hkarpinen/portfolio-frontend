@@ -53,14 +53,14 @@ const inputStyle: React.CSSProperties = {
   borderRadius: "12px",
   color: "var(--text)",
   fontFamily: "var(--ff-body)",
-  fontSize: "14px",
+  fontSize: "var(--ts-body)",
   outline: "none",
   transition: "border-color 150ms, box-shadow 150ms",
 };
 
 const labelStyle: React.CSSProperties = {
   display: "block",
-  fontSize: "12px",
+  fontSize: "var(--ts-label)",
   fontWeight: 500,
   color: "var(--text-2)",
   letterSpacing: "0.02em",
@@ -68,7 +68,7 @@ const labelStyle: React.CSSProperties = {
 };
 
 const sectionLabelStyle: React.CSSProperties = {
-  fontSize: "10px",
+  fontSize: "var(--ts-meta)",
   fontWeight: 700,
   color: "var(--text-3)",
   textTransform: "uppercase",
@@ -173,10 +173,10 @@ export default function SecuritySettingsPage() {
     <div className="page-enter" style={{ maxWidth: "620px", margin: "0 auto", padding: "32px 24px" }}>
       {/* Header */}
       <div style={{ marginBottom: "28px" }}>
-        <h1 style={{ fontFamily: "var(--ff-display)", fontSize: "22px", fontWeight: 700, color: "var(--text)" }}>
+        <h1 style={{ fontFamily: "var(--ff-display)", fontSize: "var(--ts-h2)", lineHeight: "var(--lh-display)", letterSpacing: "-0.02em", fontWeight: 700, color: "var(--text)" }}>
           Settings
         </h1>
-        <p style={{ fontSize: "13px", color: "var(--text-3)", marginTop: "4px" }}>
+        <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)", marginTop: "4px" }}>
           Manage your account, security, and preferences
         </p>
       </div>
@@ -191,7 +191,7 @@ export default function SecuritySettingsPage() {
               href={TAB_HREFS[tab]}
               style={{
                 padding: "10px 16px",
-                fontSize: "14px",
+                fontSize: "var(--ts-body)",
                 fontWeight: active ? 600 : 400,
                 color: active ? "var(--text)" : "var(--text-3)",
                 borderBottom: active ? "2px solid var(--accent)" : "2px solid transparent",
@@ -235,12 +235,12 @@ export default function SecuritySettingsPage() {
               style={{ display: "flex", flexDirection: "column", gap: "14px", marginTop: "20px", paddingTop: "20px", borderTop: "1px solid var(--border)" }}
             >
               {passwordError && (
-                <div style={{ background: "var(--danger-s)", border: "1px solid oklch(62% 0.21 22 / 0.3)", borderRadius: "10px", padding: "10px 14px", fontSize: "13px", color: "var(--danger)" }}>
+                <div style={{ background: "var(--danger-s)", border: "1px solid oklch(62% 0.21 22 / 0.3)", borderRadius: "10px", padding: "10px 14px", fontSize: "var(--ts-body-sm)", color: "var(--danger)" }}>
                   {passwordError}
                 </div>
               )}
               {passwordSaved && (
-                <div style={{ background: "var(--success-s)", border: "1px solid oklch(68% 0.18 152 / 0.3)", borderRadius: "10px", padding: "10px 14px", fontSize: "13px", color: "var(--success)" }}>
+                <div style={{ background: "var(--success-s)", border: "1px solid oklch(68% 0.18 152 / 0.3)", borderRadius: "10px", padding: "10px 14px", fontSize: "var(--ts-body-sm)", color: "var(--success)" }}>
                   Password updated successfully!
                 </div>
               )}
@@ -248,21 +248,21 @@ export default function SecuritySettingsPage() {
                 <label style={labelStyle}>Current Password</label>
                 <Input type="password" {...register("currentPassword")} placeholder="••••••••" />
                 {errors.currentPassword && (
-                  <p style={{ color: "var(--danger)", fontSize: "12px", marginTop: "4px" }}>{errors.currentPassword.message}</p>
+                  <p style={{ color: "var(--danger)", fontSize: "var(--ts-label)", marginTop: "4px" }}>{errors.currentPassword.message}</p>
                 )}
               </div>
               <div>
                 <label style={labelStyle}>New Password</label>
                 <Input type="password" {...register("newPassword")} placeholder="••••••••" />
                 {errors.newPassword && (
-                  <p style={{ color: "var(--danger)", fontSize: "12px", marginTop: "4px" }}>{errors.newPassword.message}</p>
+                  <p style={{ color: "var(--danger)", fontSize: "var(--ts-label)", marginTop: "4px" }}>{errors.newPassword.message}</p>
                 )}
               </div>
               <div>
                 <label style={labelStyle}>Confirm New Password</label>
                 <Input type="password" {...register("confirmPassword")} placeholder="••••••••" />
                 {errors.confirmPassword && (
-                  <p style={{ color: "var(--danger)", fontSize: "12px", marginTop: "4px" }}>{errors.confirmPassword.message}</p>
+                  <p style={{ color: "var(--danger)", fontSize: "var(--ts-label)", marginTop: "4px" }}>{errors.confirmPassword.message}</p>
                 )}
               </div>
               <PrimaryButton type="submit" disabled={isSubmitting} fullWidth>
@@ -282,7 +282,7 @@ export default function SecuritySettingsPage() {
             {twoFaEnabled === true && (
               <span
                 style={{
-                  fontSize: "11px",
+                  fontSize: "var(--ts-meta)",
                   fontWeight: 600,
                   background: "var(--success-s)",
                   color: "var(--success)",
@@ -297,16 +297,16 @@ export default function SecuritySettingsPage() {
           </div>
 
           {twoFaEnabled === null && (
-            <p style={{ color: "var(--text-3)", fontSize: "13px" }}>Loading…</p>
+            <p style={{ color: "var(--text-3)", fontSize: "var(--ts-body-sm)" }}>Loading…</p>
           )}
 
           {twoFaEnabled === false && !qrCodeUrl && (
             <div>
-              <p style={{ fontSize: "13px", color: "var(--text-3)", marginBottom: "14px" }}>
+              <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)", marginBottom: "14px" }}>
                 Add an extra layer of security to your account using an authenticator app.
               </p>
               {totpError && (
-                <p style={{ color: "var(--danger)", fontSize: "13px", marginBottom: "12px" }}>{totpError}</p>
+                <p style={{ color: "var(--danger)", fontSize: "var(--ts-body-sm)", marginBottom: "12px" }}>{totpError}</p>
               )}
               <Toggle checked={false} onChange={handleEnable2FA} />
             </div>
@@ -314,7 +314,7 @@ export default function SecuritySettingsPage() {
 
           {qrCodeUrl && (
             <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-              <p style={{ fontSize: "13px", color: "var(--text-3)" }}>
+              <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)" }}>
                 Scan the QR code with your authenticator app, then enter the 6-digit code below to confirm.
               </p>
               <div style={{ background: "#fff", padding: "12px", display: "inline-block", borderRadius: "12px", border: "1px solid var(--border)" }}>
@@ -322,7 +322,7 @@ export default function SecuritySettingsPage() {
                 <img src={qrCodeUrl} alt="2FA QR Code" style={{ width: "160px", height: "160px", display: "block" }} />
               </div>
               {totpError && (
-                <p style={{ color: "var(--danger)", fontSize: "13px" }}>{totpError}</p>
+                <p style={{ color: "var(--danger)", fontSize: "var(--ts-body-sm)" }}>{totpError}</p>
               )}
               <div className="flex gap-2">
                 <Input
@@ -346,7 +346,7 @@ export default function SecuritySettingsPage() {
 
           {twoFaEnabled === true && (
             <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-              <p style={{ fontSize: "13px", color: "var(--text-3)", flex: 1 }}>
+              <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)", flex: 1 }}>
                 Two-factor authentication is enabled on your account.
               </p>
               <Toggle checked={true} onChange={() => {/* disable 2FA flow */}} />
@@ -363,7 +363,7 @@ export default function SecuritySettingsPage() {
         {/* Danger zone */}
         <Card className="border-danger/40">
           <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: "var(--danger)" }}>Danger Zone</p>
-          <p style={{ fontSize: "13px", color: "var(--text-3)", marginTop: "8px", marginBottom: "16px" }}>
+          <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)", marginTop: "8px", marginBottom: "16px" }}>
             Permanently delete your account and all associated data. This action cannot be undone.
           </p>
           <DangerButton type="button">Delete Account</DangerButton>

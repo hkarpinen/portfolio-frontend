@@ -39,20 +39,20 @@ export default async function CommunitiesPage() {
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div>
-          <h1 style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "28px", color: "var(--text)", margin: 0 }}>
+          <h1 style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "var(--ts-h2)", lineHeight: "var(--lh-display)", letterSpacing: "-0.02em", color: "var(--text)", margin: 0 }}>
             Forum
           </h1>
-          <p style={{ color: "var(--text-3)", marginTop: "4px", fontSize: "13px" }}>
+          <p style={{ color: "var(--text-3)", marginTop: "4px", fontSize: "var(--ts-body-sm)", lineHeight: "var(--lh-body)" }}>
             {communities.length} communit{communities.length !== 1 ? "ies" : "y"}
           </p>
         </div>
-        <Link href="/communities/new" style={{ background: "var(--accent)", color: "#fff", padding: "8px 16px", borderRadius: "12px", fontSize: "13px", fontWeight: 600, textDecoration: "none" }}>
+        <Link href="/communities/new" style={{ background: "var(--accent)", color: "#fff", padding: "8px 16px", borderRadius: "12px", fontSize: "var(--ts-label)", fontWeight: 600, textDecoration: "none", minHeight: "40px", display: "inline-flex", alignItems: "center" }}>
           + New Community
         </Link>
       </div>
 
       {/* Two-column layout */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 280px", gap: "24px", alignItems: "start" }} className="forum-grid">
+      <div style={{ display: "grid", gridTemplateColumns: "1fr clamp(280px, 22vw, 420px)", gap: "24px", alignItems: "start" }} className="forum-grid">
         {/* Left — tabs + content */}
         <ForumTabs
           communities={communities}
@@ -65,11 +65,11 @@ export default async function CommunitiesPage() {
         <div style={{ display: "flex", flexDirection: "column", gap: "16px" }} className="forum-sidebar">
           {/* Forum rules card */}
           <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--r-lg)", padding: "16px 18px", boxShadow: "var(--shadow-sm)" }}>
-            <p style={{ fontSize: "10px", fontWeight: 700, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "12px" }}>Community Rules</p>
+            <p style={{ fontSize: "var(--ts-meta)", fontFamily: "var(--ff-mono)", fontWeight: 700, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.26em", marginBottom: "12px" }}>Community Rules</p>
             <ol style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "10px" }}>
               {FORUM_RULES.map((rule, i) => (
-                <li key={i} style={{ display: "flex", gap: "10px", fontSize: "12px", color: "var(--text-2)", lineHeight: "1.5" }}>
-                  <span style={{ width: "18px", height: "18px", borderRadius: "9999px", background: "var(--accent-subtle)", color: "var(--accent)", fontSize: "11px", fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: "1px" }}>{i + 1}</span>
+                <li key={i} style={{ display: "flex", gap: "10px", fontSize: "var(--ts-body)", color: "var(--text-2)", lineHeight: "1.5" }}>
+                  <span style={{ width: "18px", height: "18px", borderRadius: "9999px", background: "var(--accent-subtle)", color: "var(--accent)", fontSize: "var(--ts-meta)", fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: "1px" }}>{i + 1}</span>
                   {rule}
                 </li>
               ))}
@@ -80,8 +80,8 @@ export default async function CommunitiesPage() {
           {trending.length > 0 && (
             <div style={{ background: "var(--surface)", border: "1px solid var(--border)", borderRadius: "var(--r-lg)", padding: "16px 18px", boxShadow: "var(--shadow-sm)" }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
-                <p style={{ fontSize: "10px", fontWeight: 700, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em", margin: 0 }}>Popular</p>
-                <Link href="/communities/new" style={{ fontSize: "11px", color: "var(--accent)", fontWeight: 600, textDecoration: "none" }}>+ Create</Link>
+                <p style={{ fontSize: "var(--ts-meta)", fontFamily: "var(--ff-mono)", fontWeight: 700, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.26em", margin: 0 }}>Popular</p>
+                <Link href="/communities/new" style={{ fontSize: "var(--ts-label)", color: "var(--accent)", fontWeight: 600, textDecoration: "none" }}>+ Create</Link>
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "8px" }}>
                 {trending.map((c) => (
@@ -90,11 +90,11 @@ export default async function CommunitiesPage() {
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={c.imageUrl} alt="" style={{ width: "36px", height: "36px", borderRadius: "var(--r-md)", objectFit: "cover", border: "1px solid var(--border)", flexShrink: 0 }} />
                     ) : (
-                      <div style={{ width: "36px", height: "36px", borderRadius: "var(--r-md)", background: c.color ? `${c.color}1a` : "var(--accent-subtle)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px", fontWeight: 700, color: c.color ?? "var(--accent)", fontFamily: "var(--ff-display)", flexShrink: 0 }}>{c.name[0]?.toUpperCase()}</div>
+                      <div style={{ width: "36px", height: "36px", borderRadius: "var(--r-md)", background: c.color ? `${c.color}1a` : "var(--accent-subtle)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "var(--ts-body)", fontWeight: 700, color: c.color ?? "var(--accent)", fontFamily: "var(--ff-display)", flexShrink: 0 }}>{c.name[0]?.toUpperCase()}</div>
                     )}
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <p style={{ fontSize: "13px", fontWeight: 600, color: "var(--text)", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.name}</p>
-                      <p style={{ fontSize: "11px", color: "var(--text-3)", marginTop: "1px" }}>{c.memberCount ?? 0} members</p>
+                      <p style={{ fontSize: "var(--ts-body-sm)", fontWeight: 600, color: "var(--text)", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.name}</p>
+                      <p style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)", marginTop: "1px" }}>{c.memberCount ?? 0} members</p>
                     </div>
                   </Link>
                 ))}

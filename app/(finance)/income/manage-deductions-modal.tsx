@@ -84,7 +84,7 @@ const fieldStyle: React.CSSProperties = {
   border: "1px solid var(--border)",
   borderRadius: "10px",
   padding: "0 12px",
-  fontSize: "13px",
+  fontSize: "var(--ts-body-sm)",
   color: "var(--text)",
   outline: "none",
   fontFamily: "var(--ff-body)",
@@ -102,7 +102,7 @@ function onBlur(e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) {
 function FieldGroup({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
-      <span style={{ fontSize: "11px", fontWeight: "600", color: "var(--text-3)", letterSpacing: "0.02em" }}>{label}</span>
+      <span style={{ fontSize: "var(--ts-meta)", fontWeight: "600", color: "var(--text-3)", letterSpacing: "0.02em" }}>{label}</span>
       {children}
     </div>
   );
@@ -207,10 +207,10 @@ export function ManageDeductionsModal({ source, onClose }: ManageDeductionsModal
           padding: "10px 20px 14px",
         }}>
           <div>
-            <h2 style={{ fontFamily: "var(--ff-display)", fontWeight: "700", fontSize: "16px", color: "var(--text)", margin: 0 }}>
+            <h2 style={{ fontFamily: "var(--ff-display)", fontWeight: "700", fontSize: "var(--ts-body)", color: "var(--text)", margin: 0 }}>
               Manage Deductions
             </h2>
-            <p style={{ fontSize: "12px", color: "var(--text-3)", marginTop: "2px" }}>{source.source}</p>
+            <p style={{ fontSize: "var(--ts-label)", color: "var(--text-3)", marginTop: "2px" }}>{source.source}</p>
           </div>
           <button
             onClick={onClose}
@@ -250,10 +250,10 @@ export function ManageDeductionsModal({ source, onClose }: ManageDeductionsModal
                 cursor: "pointer",
               }}>
                 <div>
-                  <span style={{ fontSize: "13px", fontWeight: "600", color: "var(--text)" }}>
+                  <span style={{ fontSize: "var(--ts-body-sm)", fontWeight: "600", color: "var(--text)" }}>
                     Calculate tax withholding
                   </span>
-                  <p style={{ fontSize: "11px", color: "var(--text-3)", marginTop: "2px" }}>
+                  <p style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)", marginTop: "2px" }}>
                     Estimates federal + state income tax deducted from your pay
                   </p>
                 </div>
@@ -302,7 +302,7 @@ export function ManageDeductionsModal({ source, onClose }: ManageDeductionsModal
                   padding: "11px", borderRadius: "12px", border: "none",
                   background: taxEnabled ? "var(--accent)" : "var(--surface-3)",
                   color: taxEnabled ? "#fff" : "var(--text-3)",
-                  fontSize: "13px", fontWeight: "600",
+                  fontSize: "var(--ts-body-sm)", fontWeight: "600",
                   cursor: setTaxProfileMutation.isPending ? "not-allowed" : "pointer",
                   opacity: setTaxProfileMutation.isPending ? 0.7 : 1,
                   transition: "background 150ms, color 150ms",
@@ -312,7 +312,7 @@ export function ManageDeductionsModal({ source, onClose }: ManageDeductionsModal
               </button>
 
               {setTaxProfileMutation.isSuccess && (
-                <p style={{ fontSize: "12px", color: "var(--success)", textAlign: "center" }}>\u2713 Saved</p>
+                <p style={{ fontSize: "var(--ts-label)", color: "var(--success)", textAlign: "center" }}>\u2713 Saved</p>
               )}
             </div>
           )}
@@ -323,8 +323,8 @@ export function ManageDeductionsModal({ source, onClose }: ManageDeductionsModal
 
               {existingDeductions.length === 0 && !addOpen ? (
                 <div style={{ padding: "28px 20px", textAlign: "center", border: "1px dashed var(--border)", borderRadius: "14px" }}>
-                  <p style={{ fontSize: "13px", color: "var(--text-3)", fontStyle: "italic" }}>No deductions added yet.</p>
-                  <p style={{ fontSize: "11px", color: "var(--text-3)", marginTop: "4px" }}>401(k), health insurance, HSA, and more.</p>
+                  <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)", fontStyle: "italic" }}>No deductions added yet.</p>
+                  <p style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)", marginTop: "4px" }}>401(k), health insurance, HSA, and more.</p>
                 </div>
               ) : (
                 <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
@@ -342,7 +342,7 @@ export function ManageDeductionsModal({ source, onClose }: ManageDeductionsModal
                     padding: "11px", borderRadius: "12px",
                     border: "1px dashed var(--accent-border)",
                     background: "var(--accent-subtle)", color: "var(--accent)",
-                    fontSize: "13px", fontWeight: "600", cursor: "pointer",
+                    fontSize: "var(--ts-body-sm)", fontWeight: "600", cursor: "pointer",
                   }}
                 >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -367,7 +367,7 @@ export function ManageDeductionsModal({ source, onClose }: ManageDeductionsModal
               )}
 
               {addDeductionMutation.isError && (
-                <p style={{ fontSize: "12px", color: "var(--danger)" }}>Failed to add deduction \u2014 please try again.</p>
+                <p style={{ fontSize: "var(--ts-label)", color: "var(--danger)" }}>Failed to add deduction \u2014 please try again.</p>
               )}
             </div>
           )}
@@ -394,18 +394,18 @@ function DeductionChip({ d, onRemove, removeDisabled }: {
         onClick={() => setExpanded((v) => !v)}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "7px", minWidth: 0 }}>
-          <span style={{ fontSize: "13px", fontWeight: "600", color: "var(--text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+          <span style={{ fontSize: "var(--ts-body-sm)", fontWeight: "600", color: "var(--text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
             {d.label}
           </span>
           {d.isTaxExempt && (
-            <span style={{ flexShrink: 0, fontSize: "10px", fontWeight: "600", padding: "1px 6px", borderRadius: "9999px", background: "var(--accent-subtle)", color: "var(--accent)" }}>Pre-tax</span>
+            <span style={{ flexShrink: 0, fontSize: "var(--ts-meta)", fontWeight: "600", padding: "1px 6px", borderRadius: "9999px", background: "var(--accent-subtle)", color: "var(--accent)" }}>Pre-tax</span>
           )}
           {d.isEmployerSponsored && (
-            <span style={{ flexShrink: 0, fontSize: "10px", fontWeight: "600", padding: "1px 6px", borderRadius: "9999px", background: "var(--success-s)", color: "var(--success)" }}>Employer</span>
+            <span style={{ flexShrink: 0, fontSize: "var(--ts-meta)", fontWeight: "600", padding: "1px 6px", borderRadius: "9999px", background: "var(--success-s)", color: "var(--success)" }}>Employer</span>
           )}
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "6px", flexShrink: 0 }}>
-          <span style={{ fontSize: "12px", fontWeight: "600", color: "var(--text-2)" }}>
+          <span style={{ fontSize: "var(--ts-label)", fontWeight: "600", color: "var(--text-2)" }}>
             {d.method === "PercentOfGross" ? `${d.value}%` : `$${d.value.toFixed(2)}`}
           </span>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
@@ -430,7 +430,7 @@ function DeductionChip({ d, onRemove, removeDisabled }: {
               display: "flex", alignItems: "center", gap: "6px",
               padding: "7px 12px", borderRadius: "8px",
               border: "1px solid var(--danger-border)", background: "var(--danger-s)", color: "var(--danger)",
-              fontSize: "12px", fontWeight: "600",
+              fontSize: "var(--ts-label)", fontWeight: "600",
               cursor: removeDisabled ? "not-allowed" : "pointer",
               alignSelf: "flex-start", opacity: removeDisabled ? 0.5 : 1,
             }}
@@ -448,7 +448,7 @@ function DeductionChip({ d, onRemove, removeDisabled }: {
 
 function DetailPill({ label, value }: { label: string; value: string }) {
   return (
-    <div style={{ padding: "3px 10px", borderRadius: "9999px", background: "var(--surface-3)", border: "1px solid var(--border)", fontSize: "11px", color: "var(--text-2)" }}>
+    <div style={{ padding: "3px 10px", borderRadius: "9999px", background: "var(--surface-3)", border: "1px solid var(--border)", fontSize: "var(--ts-meta)", color: "var(--text-2)" }}>
       <span style={{ color: "var(--text-3)" }}>{label}: </span>{value}
     </div>
   );
@@ -493,7 +493,7 @@ function AddDeductionForm({
             <option key={t} value={t}>{TYPE_CONFIGS[t as string]?.label ?? t}</option>
           ))}
         </select>
-        {cfg?.hint ? <span style={{ fontSize: "11px", color: "var(--accent)", marginTop: "1px" }}>{cfg.hint}</span> : null}
+        {cfg?.hint ? <span style={{ fontSize: "var(--ts-meta)", color: "var(--accent)", marginTop: "1px" }}>{cfg.hint}</span> : null}
       </FieldGroup>
 
       {/* Label (optional) */}
@@ -530,7 +530,7 @@ function AddDeductionForm({
         <button type="button" onClick={() => setAdvancedOpen(!advancedOpen)}
           style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "9px 12px", background: "none", border: "none", cursor: "pointer" }}
         >
-          <span style={{ fontSize: "12px", fontWeight: "600", color: "var(--text-3)" }}>Advanced</span>
+          <span style={{ fontSize: "var(--ts-label)", fontWeight: "600", color: "var(--text-3)" }}>Advanced</span>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
             style={{ transform: advancedOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 180ms" }}>
             <polyline points="6 9 12 15 18 9"/>
@@ -538,7 +538,7 @@ function AddDeductionForm({
         </button>
         {advancedOpen && (
           <div style={{ padding: "0 12px 12px", display: "flex", flexDirection: "column", gap: "10px", borderTop: "1px solid var(--border)" }}>
-            <p style={{ fontSize: "11px", color: "var(--text-3)", paddingTop: "10px", lineHeight: 1.5 }}>
+            <p style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)", paddingTop: "10px", lineHeight: 1.5 }}>
               Auto-set from type. Override only if your plan is non-standard.
             </p>
             <CheckRow label="Pre-tax deduction" hint="Reduces federal + state taxable wages (W-2 Box 1)" checked={dPreTax} onChange={setDPreTax} />
@@ -550,7 +550,7 @@ function AddDeductionForm({
       {/* Actions */}
       <div style={{ display: "flex", gap: "8px" }}>
         <button type="button" onClick={onCancel}
-          style={{ flex: 1, padding: "11px", borderRadius: "12px", border: "1px solid var(--border)", background: "transparent", color: "var(--text-2)", fontSize: "13px", fontWeight: "600", cursor: "pointer" }}
+          style={{ flex: 1, padding: "11px", borderRadius: "12px", border: "1px solid var(--border)", background: "transparent", color: "var(--text-2)", fontSize: "var(--ts-body-sm)", fontWeight: "600", cursor: "pointer" }}
         >
           Cancel
         </button>
@@ -559,7 +559,7 @@ function AddDeductionForm({
             flex: 2, padding: "11px", borderRadius: "12px", border: "none",
             background: canAdd && !isPending ? "var(--accent)" : "var(--surface-3)",
             color: canAdd && !isPending ? "#fff" : "var(--text-3)",
-            fontSize: "13px", fontWeight: "600",
+            fontSize: "var(--ts-body-sm)", fontWeight: "600",
             cursor: isPending || !canAdd ? "not-allowed" : "pointer",
             transition: "background 150ms, color 150ms",
           }}
@@ -581,8 +581,8 @@ function CheckRow({ label, hint, checked, onChange }: {
         style={{ marginTop: "2px", cursor: "pointer", accentColor: "var(--accent)", width: "15px", height: "15px", flexShrink: 0 }}
       />
       <div>
-        <span style={{ fontSize: "12px", fontWeight: "600", color: "var(--text-2)", display: "block" }}>{label}</span>
-        <span style={{ fontSize: "11px", color: "var(--text-3)" }}>{hint}</span>
+        <span style={{ fontSize: "var(--ts-label)", fontWeight: "600", color: "var(--text-2)", display: "block" }}>{label}</span>
+        <span style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)" }}>{hint}</span>
       </div>
     </label>
   );

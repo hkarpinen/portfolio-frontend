@@ -25,9 +25,9 @@ export default function NewHouseholdPage() {
   } = useForm<FormData>({ resolver: zodResolver(schema) });
 
   const onSubmit = (data: FormData) => {
-    createHousehold.mutate(data, {
+    createHousehold.mutate({ ...data, currencyCode: "USD" }, {
       onSuccess: (created) => {
-        router.push(`/households/${created.householdId}`);
+        router.push(`/households/${created.id}`);
         router.refresh();
       },
     });
@@ -36,10 +36,10 @@ export default function NewHouseholdPage() {
   return (
     <div className="page-enter" style={{ maxWidth: "560px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "24px" }}>
       <div>
-        <h1 style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "28px", letterSpacing: "-0.025em", color: "var(--text)" }}>
+        <h1 style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "var(--ts-card-h)", letterSpacing: "-0.025em", color: "var(--text)" }}>
           Create Household
         </h1>
-        <p style={{ color: "var(--text-3)", marginTop: "6px", fontSize: "13px" }}>
+        <p style={{ color: "var(--text-3)", marginTop: "6px", fontSize: "var(--ts-body-sm)" }}>
           Start managing a new household
         </p>
       </div>
@@ -54,7 +54,7 @@ export default function NewHouseholdPage() {
         {/* Info alert */}
         <div style={{ display: "flex", gap: "12px", background: "var(--accent-subtle)", border: "1px solid var(--accent-border)", borderRadius: "var(--r-md)", padding: "12px 14px", marginBottom: "20px" }}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: "1px" }}><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          <p style={{ fontSize: "13px", color: "var(--accent)", lineHeight: "1.5", margin: 0 }}>You can invite members after creating the household using a shareable invite code.</p>
+          <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--accent)", lineHeight: "1.5", margin: 0 }}>You can invite members after creating the household using a shareable invite code.</p>
         </div>
         <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
           {createHousehold.isError && (
@@ -63,7 +63,7 @@ export default function NewHouseholdPage() {
               border: "1px solid var(--danger)",
               borderRadius: "10px",
               padding: "10px 14px",
-              fontSize: "13px",
+              fontSize: "var(--ts-body-sm)",
               color: "var(--danger)",
             }}>
               {createHousehold.error instanceof ApiError ? createHousehold.error.message : "Something went wrong. Please try again."}
@@ -71,7 +71,7 @@ export default function NewHouseholdPage() {
           )}
 
           <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-            <label style={{ fontSize: "12px", fontWeight: "500", color: "var(--text-2)", letterSpacing: "0.02em" }}>
+            <label style={{ fontSize: "var(--ts-label)", fontWeight: "500", color: "var(--text-2)", letterSpacing: "0.02em" }}>
               Name
             </label>
             <input
@@ -85,7 +85,7 @@ export default function NewHouseholdPage() {
                 border: "1px solid var(--border)",
                 borderRadius: "12px",
                 color: "var(--text)",
-                fontSize: "14px",
+                fontSize: "var(--ts-body)",
                 outline: "none",
                 width: "100%",
               }}
@@ -99,12 +99,12 @@ export default function NewHouseholdPage() {
               }}
             />
             {errors.name && (
-              <p style={{ color: "var(--danger)", fontSize: "12px" }}>{errors.name.message}</p>
+              <p style={{ color: "var(--danger)", fontSize: "var(--ts-label)" }}>{errors.name.message}</p>
             )}
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-            <label style={{ fontSize: "12px", fontWeight: "500", color: "var(--text-2)", letterSpacing: "0.02em" }}>
+            <label style={{ fontSize: "var(--ts-label)", fontWeight: "500", color: "var(--text-2)", letterSpacing: "0.02em" }}>
               Description <span style={{ color: "var(--text-3)", fontWeight: "400" }}>(optional)</span>
             </label>
             <textarea
@@ -117,7 +117,7 @@ export default function NewHouseholdPage() {
                 border: "1px solid var(--border)",
                 borderRadius: "12px",
                 color: "var(--text)",
-                fontSize: "14px",
+                fontSize: "var(--ts-body)",
                 outline: "none",
                 width: "100%",
                 resize: "vertical",

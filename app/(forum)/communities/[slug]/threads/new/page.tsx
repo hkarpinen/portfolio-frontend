@@ -35,7 +35,7 @@ export default function NewThreadPage({
   return (
     <div className="page-enter" style={{ maxWidth: "680px", margin: "0 auto", display: "flex", flexDirection: "column", gap: "24px" }}>
       <div>
-        <h1 style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "24px", color: "var(--text)", margin: 0 }}>
+        <h1 style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "var(--ts-h2)", lineHeight: "var(--lh-display)", letterSpacing: "-0.02em", color: "var(--text)", margin: 0 }}>
           Create Thread
         </h1>
       </div>
@@ -47,7 +47,7 @@ export default function NewThreadPage({
         <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
           {createThread.isError && (
             <div style={{
-              fontSize: "13px", color: "var(--danger)",
+              fontSize: "var(--ts-body-sm)", color: "var(--danger)",
               background: "var(--danger-s)", border: "1px solid var(--danger)",
               borderRadius: "10px", padding: "10px 14px",
             }}>
@@ -57,7 +57,7 @@ export default function NewThreadPage({
 
           {/* Community selector */}
           <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-            <label style={{ fontSize: "10px", fontWeight: 700, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
+            <label style={{ fontSize: "var(--ts-meta)", fontWeight: 700, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
               Community
             </label>
             <select
@@ -67,7 +67,7 @@ export default function NewThreadPage({
               style={{
                 width: "100%", padding: "10px 14px",
                 background: "var(--surface-2)", border: "1px solid var(--border)",
-                borderRadius: "10px", color: "var(--text)", fontSize: "14px",
+                borderRadius: "10px", color: "var(--text)", fontSize: "var(--ts-body)",
                 outline: "none", boxSizing: "border-box", appearance: "none",
                 backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' strokeWidth='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`,
                 backgroundRepeat: "no-repeat",
@@ -85,7 +85,7 @@ export default function NewThreadPage({
 
           {/* Title — spec order: community → title → body → flair */}
           <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-            <label style={{ fontSize: "10px", fontWeight: 700, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
+            <label style={{ fontSize: "var(--ts-meta)", fontWeight: 700, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
               Title
             </label>
             <input
@@ -98,16 +98,16 @@ export default function NewThreadPage({
               style={{
                 width: "100%", padding: "10px 14px",
                 background: "var(--surface-2)", border: "1px solid var(--border)",
-                borderRadius: "10px", color: "var(--text)", fontSize: "14px",
+                borderRadius: "10px", color: "var(--text)", fontSize: "var(--ts-body)",
                 outline: "none", boxSizing: "border-box",
               }}
             />
-            <span style={{ fontSize: "11px", color: "var(--text-3)" }}>Be specific — good titles get more engagement.</span>
+            <span style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)" }}>Be specific — good titles get more engagement.</span>
           </div>
 
           {/* Body */}
           <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-            <label style={{ fontSize: "10px", fontWeight: 700, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
+            <label style={{ fontSize: "var(--ts-meta)", fontWeight: 700, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
               Content
             </label>
             <textarea
@@ -119,17 +119,17 @@ export default function NewThreadPage({
               style={{
                 width: "100%", padding: "10px 14px",
                 background: "var(--surface-2)", border: "1px solid var(--border)",
-                borderRadius: "10px", color: "var(--text)", fontSize: "14px",
+                borderRadius: "10px", color: "var(--text)", fontSize: "var(--ts-body)",
                 outline: "none", resize: "vertical", boxSizing: "border-box",
                 fontFamily: "var(--ff-body)", lineHeight: 1.6,
               }}
             />
-            <span style={{ fontSize: "11px", color: "var(--text-3)" }}>Optional. Markdown supported.</span>
+            <span style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)" }}>Optional. Markdown supported.</span>
           </div>
 
           {/* Flair */}
           <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-            <label style={{ fontSize: "10px", fontWeight: 700, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>Flair</label>
+            <label style={{ fontSize: "var(--ts-meta)", fontWeight: 700, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>Flair</label>
             <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
               {flairOptions.map((f) => (
                 <button
@@ -137,7 +137,7 @@ export default function NewThreadPage({
                   type="button"
                   onClick={() => setFlair(f)}
                   style={{
-                    padding: "5px 12px", borderRadius: "20px", fontSize: "12px",
+                    padding: "5px 12px", borderRadius: "20px", fontSize: "var(--ts-label)",
                     fontWeight: flair === f ? 700 : 500,
                     background: flair === f ? "var(--accent-subtle)" : "var(--surface-2)",
                     color: flair === f ? "var(--accent)" : "var(--text-2)",
@@ -158,7 +158,7 @@ export default function NewThreadPage({
               style={{
                 flex: 1, background: "var(--surface-2)", color: "var(--text-2)",
                 border: "1px solid var(--border)", borderRadius: "12px",
-                padding: "10px 20px", fontWeight: 600, fontSize: "14px",
+                padding: "10px 20px", fontWeight: 600, fontSize: "var(--ts-body)",
                 cursor: "pointer", fontFamily: "var(--ff-body)",
               }}
             >
@@ -170,7 +170,7 @@ export default function NewThreadPage({
               style={{
                 flex: 2, background: "var(--accent)", color: "#fff",
                 border: "none", borderRadius: "12px",
-                padding: "10px 20px", fontWeight: 600, fontSize: "14px",
+                padding: "10px 20px", fontWeight: 600, fontSize: "var(--ts-body)",
                 cursor: createThread.isPending ? "not-allowed" : "pointer",
                 opacity: createThread.isPending ? 0.6 : 1,
                 fontFamily: "var(--ff-body)",

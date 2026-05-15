@@ -28,14 +28,14 @@ const inputStyle: React.CSSProperties = {
   border: "1px solid var(--border)",
   borderRadius: "12px",
   color: "var(--text)",
-  fontSize: "14px",
+  fontSize: "var(--ts-body)",
   outline: "none",
   width: "100%",
   fontFamily: "var(--ff-body)",
 };
 
 const labelStyle: React.CSSProperties = {
-  fontSize: "12px",
+  fontSize: "var(--ts-label)",
   fontWeight: "500" as const,
   color: "var(--text-2)",
   letterSpacing: "0.02em",
@@ -95,35 +95,35 @@ export function SettingsForm({ household }: { household: Household }) {
 
   return (
     <section style={cardStyle}>
-      <p style={{ fontSize: "10px", fontWeight: "700", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
+      <p style={{ fontSize: "var(--ts-meta)", fontWeight: "700", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
         Household Details
       </p>
       <form onSubmit={handleSubmit(onSave)} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
         {saveError && (
-          <div style={{ background: "var(--danger-s)", border: "1px solid var(--danger)", borderRadius: "10px", padding: "10px 14px", fontSize: "13px", color: "var(--danger)" }}>
+          <div style={{ background: "var(--danger-s)", border: "1px solid var(--danger)", borderRadius: "10px", padding: "10px 14px", fontSize: "var(--ts-body-sm)", color: "var(--danger)" }}>
             {saveError}
           </div>
         )}
         {saveSuccess && (
-          <div style={{ background: "var(--success-s)", border: "1px solid var(--success)", borderRadius: "10px", padding: "10px 14px", fontSize: "13px", color: "var(--success)" }}>
+          <div style={{ background: "var(--success-s)", border: "1px solid var(--success)", borderRadius: "10px", padding: "10px 14px", fontSize: "var(--ts-body-sm)", color: "var(--success)" }}>
             Changes saved!
           </div>
         )}
         <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
           <label style={labelStyle}>Name</label>
           <input {...register("name")} style={inputStyle} onFocus={handleFocus} onBlur={handleBlur} />
-          {errors.name && <p style={{ color: "var(--danger)", fontSize: "12px" }}>{errors.name.message}</p>}
+          {errors.name && <p style={{ color: "var(--danger)", fontSize: "var(--ts-label)" }}>{errors.name.message}</p>}
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
           <label style={labelStyle}>Description</label>
           <textarea
             {...register("description")}
             rows={3}
-            style={{ padding: "10px 12px", background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: "12px", color: "var(--text)", fontSize: "14px", outline: "none", width: "100%", resize: "none", fontFamily: "var(--ff-body)" }}
+            style={{ padding: "10px 12px", background: "var(--surface-2)", border: "1px solid var(--border)", borderRadius: "12px", color: "var(--text)", fontSize: "var(--ts-body)", outline: "none", width: "100%", resize: "none", fontFamily: "var(--ff-body)" }}
             onFocus={handleFocus}
             onBlur={handleBlur}
           />
-          {errors.description && <p style={{ color: "var(--danger)", fontSize: "12px" }}>{errors.description.message}</p>}
+          {errors.description && <p style={{ color: "var(--danger)", fontSize: "var(--ts-label)" }}>{errors.description.message}</p>}
         </div>
         <div className="form-grid-2">
           <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
@@ -131,7 +131,7 @@ export function SettingsForm({ household }: { household: Household }) {
             <select {...register("currencyCode")} style={{ ...inputStyle, appearance: "none", cursor: "pointer" }} onFocus={handleFocus} onBlur={handleBlur}>
               {CURRENCIES.map((c) => <option key={c} value={c}>{c}</option>)}
             </select>
-            {errors.currencyCode && <p style={{ color: "var(--danger)", fontSize: "12px" }}>{errors.currencyCode.message}</p>}
+            {errors.currencyCode && <p style={{ color: "var(--danger)", fontSize: "var(--ts-label)" }}>{errors.currencyCode.message}</p>}
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
             <label style={labelStyle}>Default Split</label>

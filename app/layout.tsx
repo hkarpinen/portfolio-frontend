@@ -1,23 +1,31 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Inter } from "next/font/google";
+import { Instrument_Serif, Newsreader, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { QueryProvider } from "@/components/layout/query-provider";
 
-const jakarta = Plus_Jakarta_Sans({
+const instrumentSerif = Instrument_Serif({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800"],
-  variable: "--ff-display",
+  weight: ["400"],
+  style: ["normal", "italic"],
+  variable: "--ff-serif",
 });
 
-const inter = Inter({
+const newsreader = Newsreader({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
+  weight: ["300", "400", "500", "600", "700"],
+  style: ["normal", "italic"],
   variable: "--ff-body",
 });
 
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "700"],
+  variable: "--ff-mono",
+});
+
 export const metadata: Metadata = {
-  title: "Portfolio",
-  description: "Portfolio, Forum, and Finance Application",
+  title: "The Stack.",
+  description: "All the code that's fit to ship.",
 };
 
 export default function RootLayout({
@@ -26,7 +34,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" data-theme="dark" className={`h-full ${jakarta.variable} ${inter.variable}`}>
+    <html
+      lang="en"
+      className={`h-full ${instrumentSerif.variable} ${newsreader.variable} ${jetbrainsMono.variable}`}
+      style={{ "--ff-display": "var(--ff-serif)" } as React.CSSProperties}
+    >
       <body className="h-full">
         <QueryProvider>
           {children}

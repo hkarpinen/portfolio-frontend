@@ -5,7 +5,7 @@
 }
 
 .label {
-  font-size: 12px;
+  font-size: var(--ts-input-label);
   font-weight: 500;
   color: var(--text-2);
   letter-spacing: 0.02em;
@@ -25,7 +25,7 @@
   border: 1px solid var(--border);
   border-radius: var(--r-md);
   padding: 0 32px 0 12px;
-  font-size: 14px;
+  font-size: var(--ts-input);
   font-family: var(--ff-body);
   color: var(--text);
   appearance: none;
@@ -58,13 +58,13 @@
 }
 
 .errorText {
-  font-size: 11px;
+  font-size: var(--ts-meta);
   color: var(--danger);
   font-family: var(--ff-body);
 }
 
 .hintText {
-  font-size: 11px;
+  font-size: var(--ts-meta);
   color: var(--text-3);
   font-family: var(--ff-body);
 }
