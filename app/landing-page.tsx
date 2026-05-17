@@ -36,9 +36,9 @@ function Btn({
         color: isPrimary ? "var(--paper)" : "var(--ink)",
         border: "1.5px solid var(--ink)",
         fontFamily: "var(--ff-mono)",
-        fontSize: "var(--ts-label)",
+        fontSize: "var(--bs-micro)",
         textTransform: "uppercase" as const,
-        letterSpacing: "0.20em",
+        letterSpacing: "0.18em",
         textDecoration: "none",
         cursor: "pointer",
         whiteSpace: "nowrap" as const,
@@ -51,8 +51,9 @@ function Btn({
 
 /* ── Ticker ──────────────────────────────────────────────────────────────────*/
 const TICKER_PHRASES = [
-  "Now hiring me", "Five services running", "Thirty-odd screens shipped",
-  "Open to remote, hybrid, or on-site", "References on file", "Based in Pullman, WA", "Go Cougs",
+  "Now hiring me", "Five services standing", "30+ screens shipped",
+  "RabbitMQ humming", "Zero downtime since last Tuesday", "Coffee consumed: 1,284 cups",
+  "Open to relocate", "References available",
 ];
 
 function Ticker() {
@@ -73,9 +74,9 @@ function Ticker() {
       overflow: "hidden",
       whiteSpace: "nowrap",
       fontFamily: "var(--ff-mono)",
-      fontSize: "var(--ts-meta)",
+      fontSize: "var(--bs-eyebrow)",
       textTransform: "uppercase",
-      letterSpacing: "0.20em",
+      letterSpacing: "0.18em",
       color: "var(--ink-2)",
     }}>
       <span className="pulse-dot" style={{ marginLeft: 32 }} aria-hidden="true" />
@@ -109,15 +110,15 @@ function Masthead() {
       {/* Left */}
       <div style={{
         fontFamily: "var(--ff-mono)",
-        fontSize: "var(--ts-meta)",
+        fontSize: "var(--bs-meta)",
         color: "var(--ink-2)",
         textTransform: "uppercase",
-        letterSpacing: "0.16em",
-        lineHeight: "var(--lh-body)",
+        letterSpacing: "0.1em",
+        lineHeight: 1.55,
         textAlign: "left",
       }}>
         <div><b style={{ color: "var(--ink)" }}>Vol. I · No. 04</b></div>
-        <div>Filed Thursday</div>
+        <div>Thursday, 15 May 2026</div>
         <div>The portfolio edition</div>
       </div>
 
@@ -127,9 +128,9 @@ function Masthead() {
           <span style={{
             fontFamily: "var(--ff-serif)",
             fontStyle: "italic",
-            fontSize: "var(--ts-nameplate)",
+            fontSize: "var(--bs-nameplate)",
             letterSpacing: "-0.035em",
-            lineHeight: "var(--lh-tight)",
+            lineHeight: 0.9,
             whiteSpace: "nowrap",
             color: "var(--ink)",
             display: "block",
@@ -140,33 +141,25 @@ function Masthead() {
         <p style={{
           fontFamily: "var(--ff-serif)",
           fontStyle: "italic",
-          fontSize: "var(--ts-sub)",
+          fontSize: "0.95rem",
           color: "var(--ink-2)",
-          marginTop: 12,
+          marginTop: 16,
         }}>&ldquo;All the code that&rsquo;s fit to ship.&rdquo;</p>
-        <p style={{
-          fontFamily: "var(--ff-mono)",
-          fontSize: "var(--ts-meta)",
-          color: "var(--ink-3)",
-          textTransform: "uppercase",
-          letterSpacing: "0.30em",
-          marginTop: 8,
-        }}>By Hank Karpinen · Full-Stack Engineer · Est. 2026</p>
       </div>
 
       {/* Right */}
       <div style={{
         fontFamily: "var(--ff-mono)",
-        fontSize: "var(--ts-meta)",
+        fontSize: "var(--bs-meta)",
         color: "var(--ink-2)",
         textTransform: "uppercase",
-        letterSpacing: "0.16em",
-        lineHeight: "var(--lh-body)",
+        letterSpacing: "0.1em",
+        lineHeight: 1.55,
         textAlign: "right",
       }}>
-        <div><b style={{ color: "var(--ink)" }}>Issue price · Free</b></div>
-        <div>Hiring me costs more</div>
-        <div>Pullman, WA · 99163</div>
+        <div><b style={{ color: "var(--ink)" }}>Issue Price</b> · Free<span style={{ color: "var(--red)" }}>*</span></div>
+        <div>Circulation: One reader</div>
+        <div><span style={{ color: "var(--red)" }}>*</span>Hiring me costs more</div>
       </div>
     </div>
   );
@@ -184,7 +177,7 @@ function EditionNav() {
       gap: 16,
       flexWrap: "wrap",
       fontFamily: "var(--ff-mono)",
-      fontSize: "var(--ts-meta)",
+      fontSize: "var(--bs-meta)",
       textTransform: "uppercase",
       letterSpacing: "0.20em",
       color: "var(--ink-2)",
@@ -192,6 +185,7 @@ function EditionNav() {
       <span>Sections within →</span>
       <div className="edition-nav-center" style={{ display: "flex", gap: 24 }}>
         {[
+          { label: "Front Page", href: "#lede" },
           { label: "Architecture", href: "#dispatches" },
           { label: "Modules", href: "#modules" },
           { label: "Stack", href: "#stack" },
@@ -210,7 +204,7 @@ function EditionNav() {
           >{item.label}</a>
         ))}
       </div>
-      <span style={{ color: "var(--red)", fontWeight: 700 }}>Filed today</span>
+      <span style={{ color: "var(--red)", fontWeight: 700 }}>Filed: 15·V·2026</span>
     </div>
   );
 }
@@ -223,15 +217,15 @@ function Lede() {
       borderBottom: "3px double var(--ink)",
     }}>
       {/* Kicker */}
-      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 32 }}>
-        <span style={{ width: 26, height: 1, background: "var(--red)", display: "inline-block" }} />
+      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 14 }}>
+        <span style={{ width: 28, height: 1, background: "var(--red)", display: "inline-block" }} />
         <span style={{
           fontFamily: "var(--ff-mono)",
-          fontSize: "var(--ts-meta)",
+          fontSize: "var(--bs-meta)",
           color: "var(--red)",
           textTransform: "uppercase",
-          letterSpacing: "0.30em",
-        }}>Lead Story · Engineering desk</span>
+          letterSpacing: "0.32em",
+        }}>Lead Story · Engineering desk · 4 min read</span>
       </div>
 
       <div style={{
@@ -245,20 +239,18 @@ function Lede() {
           <h1 style={{
             fontFamily: "var(--ff-serif)",
             fontWeight: 400,
-            fontSize: "var(--ts-h1)",
-            lineHeight: "var(--lh-tight)",
+            fontSize: "var(--bs-headline)",
+            lineHeight: 0.86,
             letterSpacing: "-0.03em",
             color: "var(--ink)",
           }}>
             A full-stack app,<br />
-            <span style={{ display: "inline-block", marginLeft: "clamp(0.3em, 1.2vw, 1.4em)" }}>
-              <em style={{ color: "var(--red)" }}>built</em>
-            </span><br />
-            <em>from scratch.</em>
+            <span style={{ display: "block", fontStyle: "italic", color: "var(--red)", textIndent: "1.6em" }}>built</span>
+            <span style={{ display: "block", fontStyle: "italic" }}>from scratch.</span>
           </h1>
           <p style={{
             fontFamily: "var(--ff-mono)",
-            fontSize: "var(--ts-meta)",
+            fontSize: "var(--bs-meta)",
             color: "var(--ink-3)",
             textTransform: "uppercase",
             letterSpacing: "0.24em",
@@ -266,31 +258,31 @@ function Lede() {
           }}>By Hank Karpinen · Filed from localhost</p>
           <div style={{ display: "flex", gap: 12, marginTop: 30, flexWrap: "wrap" }}>
             <Btn href="/about" variant="primary">View the work <Icon path={arrowRight} size={14} /></Btn>
-            <Btn href="/households" variant="secondary">Explore the modules <Icon path={arrowRight} size={14} /></Btn>
+            <Btn href="/bills" variant="secondary">Explore the modules</Btn>
           </div>
         </div>
 
         {/* Aside — dropcap column */}
         <div style={{
           borderLeft: "1.5px solid var(--ink)",
-          paddingLeft: 26,
+          paddingLeft: 28,
           fontFamily: "var(--ff-body)",
-          fontSize: "var(--ts-lead)",
-          lineHeight: "var(--lh-loose)",
+          fontSize: "var(--bs-col)",
+          lineHeight: 1.55,
           color: "var(--ink-2)",
         }} className="lede-aside">
           {/* Dropcap paragraph */}
-          <p>
+          <p style={{ marginBottom: 14 }}>
             <span style={{
               fontFamily: "var(--ff-serif)",
               fontStyle: "italic",
-              fontSize: "clamp(52px, 6vw, 72px)",
+              fontSize: "var(--bs-dropcap)",
               color: "var(--red)",
               float: "left",
-              lineHeight: 0.78,
-              padding: "4px 10px 0 0",
+              lineHeight: 0.85,
+              padding: "6px 10px 0 0",
             }}>I</span>
-            t started because microservices articles always handwave the boundaries. Five services, five Postgres databases, one Compose file. Within a week you find out which of your choices were lazy. Some were mine. I rewrote the Bills service twice.
+            t started because microservices articles always handwave the boundaries. Six services, six Postgres databases, one Compose file. Within a week you find out which of your choices were lazy. Some were mine. I rewrote the Household service twice.
           </p>
 
           {/* Pull quote */}
@@ -301,11 +293,11 @@ function Lede() {
             margin: "16px 0",
             fontFamily: "var(--ff-serif)",
             fontStyle: "italic",
-            fontSize: "var(--ts-card-h)",
+            fontSize: "var(--bs-card-h)",
             color: "var(--ink)",
-            lineHeight: "var(--lh-snug)",
+            lineHeight: 1.25,
           }}>
-            &ldquo;Identity, Bills, Forum, Notifications. Plus a Next.js frontend that sits on top of all four.&rdquo;
+            &ldquo;Identity, Household, Finance, Forum, Notifications. Six services. One frontend that ties them together.&rdquo;
           </blockquote>
 
           <p>
@@ -320,9 +312,9 @@ function Lede() {
 /* ── Ledger strip ─────────────────────────────────────────────────────────────*/
 function LedgerStrip() {
   const cells = [
-    { n: "04",   italic: false, desc: "Modules shipped" },
+    { n: "05",   italic: false, desc: "Modules shipped" },
     { n: "30+",  italic: true,  desc: "Screens designed" },
-    { n: "05",   italic: false, desc: "Services standing" },
+    { n: "06",   italic: false, desc: "Services standing" },
     { n: "100%", italic: true,  desc: "TypeScript" },
   ];
 
@@ -337,19 +329,19 @@ function LedgerStrip() {
       {/* Label cell — desktop only */}
       <div className="ledger-label" style={{
         fontFamily: "var(--ff-mono)",
-        fontSize: "var(--ts-meta)",
+        fontSize: "var(--bs-eyebrow)",
         color: "var(--ink-3)",
         textTransform: "uppercase",
         letterSpacing: "0.22em",
         alignSelf: "end",
-        paddingRight: 26,
+        paddingRight: 28,
         borderRight: "1.5px solid var(--ink)",
         maxWidth: 200,
       }}>The figures, at a glance →</div>
 
       {cells.map((cell, i) => (
         <div key={i} style={{
-          padding: "6px 18px",
+          padding: "6px 22px",
           borderRight: i < cells.length - 1 ? "1.5px solid var(--ink)" : undefined,
           display: "flex",
           flexDirection: "column",
@@ -358,14 +350,14 @@ function LedgerStrip() {
           <span style={{
             fontFamily: "var(--ff-serif)",
             fontStyle: cell.italic ? "italic" : "normal",
-            fontSize: "var(--ts-numeral)",
-            lineHeight: "var(--lh-tight)",
-            letterSpacing: "-0.02em",
+            fontSize: "var(--bs-lede-num)",
+            lineHeight: 0.9,
+            letterSpacing: "-0.025em",
             color: cell.italic ? "var(--red)" : "var(--ink)",
           }}>{cell.n}</span>
           <span style={{
             fontFamily: "var(--ff-mono)",
-            fontSize: "var(--ts-meta)",
+            fontSize: "var(--bs-eyebrow)",
             color: "var(--ink-3)",
             textTransform: "uppercase",
             letterSpacing: "0.18em",
@@ -399,29 +391,29 @@ function SectionHead({
       <span style={{
         fontFamily: "var(--ff-serif)",
         fontStyle: "italic",
-        fontSize: "var(--ts-h2)",
+        fontSize: "2.4rem",
         color: "var(--red)",
-        lineHeight: "var(--lh-display)",
+        lineHeight: 1,
         flexShrink: 0,
       }}>{numeral}</span>
       <h2 style={{
         fontFamily: "var(--ff-serif)",
         fontStyle: "italic",
         fontWeight: 400,
-        fontSize: "var(--ts-h2)",
-        lineHeight: "var(--lh-display)",
+        fontSize: "var(--bs-sec-h)",
+        lineHeight: 1,
         letterSpacing: "-0.02em",
         color: "var(--ink)",
         flex: 1,
-        marginLeft: 16,
+        marginLeft: 18,
       }}>{title}</h2>
       <p style={{
         fontFamily: "var(--ff-mono)",
-        fontSize: "var(--ts-meta)",
+        fontSize: "var(--bs-eyebrow)",
         color: "var(--ink-3)",
         textTransform: "uppercase",
         letterSpacing: "0.20em",
-        maxWidth: 260,
+        maxWidth: 280,
         lineHeight: 1.6,
         textAlign: "right",
       }}>{meta}</p>
@@ -475,27 +467,28 @@ function Dispatches() {
           }} className="dispatch-cell">
             <p style={{
               fontFamily: "var(--ff-mono)",
-              fontSize: "var(--ts-meta)",
+              fontSize: "var(--bs-meta)",
               color: "var(--red)",
               textTransform: "uppercase",
-              letterSpacing: "0.28em",
-              marginBottom: 12,
+              letterSpacing: "0.30em",
+              marginBottom: 14,
             }}>{d.kicker}</p>
             <h3 style={{
               fontFamily: "var(--ff-serif)",
               fontWeight: 400,
-              fontSize: "var(--ts-h3)",
-              lineHeight: "var(--lh-snug)",
+              fontSize: "var(--bs-dispatch)",
+              lineHeight: 1.05,
+              letterSpacing: "-0.015em",
               marginBottom: 14,
               color: "var(--ink)",
             }}>{d.h3}</h3>
-            <p style={{ fontFamily: "var(--ff-body)", fontSize: "var(--ts-body)", lineHeight: "var(--lh-body)", color: "var(--ink-2)", flex: 1 }}>{d.body}</p>
+            <p style={{ fontFamily: "var(--ff-body)", fontSize: "var(--bs-body)", lineHeight: 1.55, color: "var(--ink-2)", flex: 1 }}>{d.body}</p>
             <div style={{
               borderTop: "1px solid var(--ink)",
               marginTop: 18,
               paddingTop: 12,
               fontFamily: "var(--ff-mono)",
-              fontSize: "var(--ts-meta)",
+              fontSize: "var(--bs-eyebrow)",
               color: "var(--ink-3)",
               textTransform: "uppercase",
               letterSpacing: "0.16em",
@@ -517,37 +510,37 @@ function Dispatches() {
 /* ── Modules (Classifieds) ────────────────────────────────────────────────────*/
 const MODULES = [
   {
-    ad: "Ad № 001",
-    title: <><em style={{ color: "var(--red)" }}>Households</em> & Planning</>,
-    body: "Shared ledger, chore rotation, calendar planning, and contribution tracking — all under one roof. Because managing a household is more than splitting the Wi-Fi bill.",
-    sub: "6 sub-pages",
-    href: "/households",
+    ad: "Ad  № 001",
+    title: <>Household <em style={{ color: "var(--red)" }}>&amp; Chores</em></>,
+    body: "Shared household management. Members, chores roster, calendar events, contribution tracking. The glue between housemates that isn't a group chat.",
+    sub: "4 sub-pages",
+    href: "/bills",
   },
   {
-    ad: "Ad № 002",
-    title: <><em style={{ color: "var(--red)" }}>Finance</em> Tracker</>,
-    body: "Personal income sources, recurring expenses, and a budget overview. Tracks what you owe yourself before you figure out what you owe everyone else.",
-    sub: "3 sub-pages",
+    ad: "Ad  № 002",
+    title: <>Finance <em style={{ color: "var(--red)" }}>&amp; Expenses</em></>,
+    body: "Personal finance engine. Log expenses, split costs, track income, connect bank accounts. Budgets that don't require a spreadsheet.",
+    sub: "5 sub-pages",
     href: "/expenses",
   },
   {
-    ad: "Ad № 003",
+    ad: "Ad  № 003",
     title: <>Community <em style={{ color: "var(--red)" }}>Forum</em></>,
-    body: "Threaded discussions, nested comments, upvotes, mod queue, mod log. Smaller than Reddit. Quieter, too. Comments collapse at 5 levels deep, which I learned the hard way.",
+    body: "Threaded discussions, nested comments, upvotes, communities with mod queues and full mod-log auditing. Reddit, but smaller and angrier.",
     sub: "8 sub-pages",
-    href: "/communities",
+    href: "/forum",
   },
   {
-    ad: "Ad № 004",
-    title: <><em style={{ color: "var(--red)" }}>Portfolio</em> Pages</>,
-    body: "The personal corner. Projects, skills, links, and a contact form that sends real email, not the kind that gets eaten by SendGrid's free tier.",
+    ad: "Ad  № 004",
+    title: <>Portfolio <em style={{ color: "var(--red)" }}>Pages</em></>,
+    body: "The personal corner. Project showcase, skill cards, social links, and a contact form that actually delivers — to a real address, not the void.",
     sub: "3 sub-pages",
     href: "/about",
   },
   {
-    ad: "Ad № 005",
-    title: <>Account & <em style={{ color: "var(--red)" }}>Auth</em></>,
-    body: "Sign-up, sign-in, password reset, email confirm, 2FA toggle, sessions, avatar upload, notification prefs. Boring. Took longer than the forum.",
+    ad: "Ad  № 005",
+    title: <>Account <em style={{ color: "var(--red)" }}>&amp; Auth</em></>,
+    body: "Sign-up, sign-in, password reset, email confirm, 2FA toggle, session list, avatar upload, notification preferences. The boring bits, done.",
     sub: "6 sub-pages",
     href: "/settings/profile",
   },
@@ -563,7 +556,7 @@ function Modules() {
       />
       <div style={{
         display: "grid",
-        gridTemplateColumns: "repeat(5, 1fr)",
+        gridTemplateColumns: "repeat(4, 1fr)",
         alignItems: "stretch",
         borderTop: "1.5px solid var(--ink)",
         borderLeft: "1.5px solid var(--ink)",
@@ -588,28 +581,29 @@ function Modules() {
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
               <span style={{
                 fontFamily: "var(--ff-mono)",
-                fontSize: "var(--ts-meta)",
+                fontSize: "var(--bs-eyebrow)",
                 color: "var(--ink-3)",
                 textTransform: "uppercase",
                 letterSpacing: "0.22em",
               }}>{m.ad}</span>
-              <span style={{ color: "var(--red)", fontSize: 14 }}>★</span>
+              <span style={{ color: "var(--red)", fontSize: "var(--bs-meta)" }}>★</span>
             </div>
             {/* Title */}
-            <h3 style={{
+            <h4 style={{
               fontFamily: "var(--ff-serif)",
               fontWeight: 400,
-              fontSize: "var(--ts-card-h)",
-              lineHeight: "var(--lh-display)",
+              fontSize: "var(--bs-card-h)",
+              lineHeight: 1,
+              letterSpacing: "-0.015em",
               color: "var(--ink)",
-              marginBottom: 10,
-            }}>{m.title}</h3>
+              marginBottom: 12,
+            }}>{m.title}</h4>
             {/* Body — grows to fill remaining space */}
             <p style={{
               fontFamily: "var(--ff-body)",
-              fontSize: "var(--ts-body)",
+              fontSize: "var(--bs-small-p)",
               color: "var(--ink-2)",
-              lineHeight: "var(--lh-body)",
+              lineHeight: 1.5,
               flex: 1,
             }}>{m.body}</p>
             {/* Footer — pinned to bottom */}
@@ -619,9 +613,9 @@ function Modules() {
               alignItems: "center",
               borderTop: "1px dashed var(--ink-3)",
               paddingTop: 10,
-              marginTop: 16,
+              marginTop: 14,
               fontFamily: "var(--ff-mono)",
-              fontSize: "var(--ts-meta)",
+              fontSize: "0.5rem",
               color: "var(--ink-3)",
               textTransform: "uppercase",
               letterSpacing: "0.18em",
@@ -665,13 +659,13 @@ function StackSpecimen() {
       {/* Left */}
       <div>
         <div style={{ display: "flex", alignItems: "baseline", gap: 16, marginBottom: 20 }}>
-          <span style={{ fontFamily: "var(--ff-serif)", fontStyle: "italic", fontSize: "var(--ts-h2)", color: "var(--red)", lineHeight: "var(--lh-display)" }}>№ 03</span>
+          <span style={{ fontFamily: "var(--ff-serif)", fontStyle: "italic", fontSize: "2.4rem", color: "var(--red)", lineHeight: 1 }}>№ 03</span>
           <h2 style={{
             fontFamily: "var(--ff-serif)",
             fontStyle: "italic",
             fontWeight: 400,
-            fontSize: "var(--ts-h2)",
-            lineHeight: "var(--lh-display)",
+            fontSize: "var(--bs-sec-h)",
+            lineHeight: 1,
             letterSpacing: "-0.02em",
             color: "var(--ink)",
           }}>The <span style={{ color: "var(--red)" }}>stack,</span> set in type.</h2>
@@ -679,12 +673,13 @@ function StackSpecimen() {
         <p style={{
           fontFamily: "var(--ff-serif)",
           fontStyle: "italic",
-          fontSize: "var(--ts-h3)",
-          lineHeight: "var(--lh-snug)",
+          fontSize: "var(--bs-specimen)",
+          lineHeight: 1.02,
           letterSpacing: "-0.02em",
           color: "var(--ink)",
+          marginTop: 24,
         }}>
-          Twelve tools. <span style={{ color: "var(--red)" }}>One app.</span> A few I&rsquo;d swap if I started over today. The rest earned their place.
+          Twelve tools. <span style={{ color: "var(--red)" }}>One app.</span> Each chosen for a reason — none for fashion.
         </p>
       </div>
 
@@ -705,8 +700,8 @@ function StackSpecimen() {
             alignItems: "baseline",
             gap: 16,
           }}>
-            <span style={{ fontFamily: "var(--ff-serif)", fontSize: "var(--ts-sub)", letterSpacing: "-0.01em", color: "var(--ink)" }}>{item.name}</span>
-            <span style={{ fontFamily: "var(--ff-mono)", fontSize: "var(--ts-meta)", color: "var(--ink-3)", textTransform: "uppercase", letterSpacing: "0.18em", flexShrink: 0 }}>{item.role}</span>
+            <span style={{ fontFamily: "var(--ff-serif)", fontSize: "var(--bs-lede)", letterSpacing: "-0.01em", color: "var(--ink)" }}>{item.name}</span>
+            <span style={{ fontFamily: "var(--ff-mono)", fontSize: "var(--bs-eyebrow)", color: "var(--ink-3)", textTransform: "uppercase", letterSpacing: "0.18em", flexShrink: 0 }}>{item.role}</span>
           </div>
         ))}
       </div>
@@ -731,15 +726,15 @@ function Wanted() {
           <p style={{
             fontFamily: "var(--ff-serif)",
             fontStyle: "italic",
-            fontSize: "var(--ts-stamp)",
+            fontSize: "var(--bs-wanted-st)",
             color: "var(--red)",
             letterSpacing: "-0.02em",
-            lineHeight: "var(--lh-tight)",
+            lineHeight: 0.9,
           }}>Wanted</p>
-          <div style={{ width: "60%", height: 1, background: "var(--ink)", margin: "14px auto 10px" }} />
+          <div style={{ width: "60%", height: 1, background: "var(--ink)", margin: "14px auto" }} />
           <p style={{
             fontFamily: "var(--ff-mono)",
-            fontSize: "var(--ts-label)",
+            fontSize: "var(--bs-meta)",
             textTransform: "uppercase",
             letterSpacing: "0.28em",
             color: "var(--ink)",
@@ -747,12 +742,12 @@ function Wanted() {
           }}>Full-Stack Roles</p>
           <p style={{
             fontFamily: "var(--ff-mono)",
-            fontSize: "var(--ts-meta)",
+            fontSize: "0.5rem",
             textTransform: "uppercase",
             letterSpacing: "0.18em",
             color: "var(--ink-3)",
             lineHeight: 1.8,
-          }}>Apply within<br />References on file</p>
+          }}>Apply within<br />References on file<br />Reward: gainful employment</p>
         </div>
       </div>
 
@@ -761,21 +756,21 @@ function Wanted() {
         <h2 style={{
           fontFamily: "var(--ff-serif)",
           fontWeight: 400,
-          fontSize: "var(--ts-stamp)",
-          lineHeight: "var(--lh-tight)",
+          fontSize: "var(--bs-wanted)",
+          lineHeight: 0.95,
           letterSpacing: "-0.025em",
-          marginBottom: 24,
+          marginBottom: 18,
           color: "var(--ink)",
-        }}><em style={{ color: "var(--red)" }}>Hire</em> me.</h2>
+        }}>Let&rsquo;s <em style={{ color: "var(--red)" }}>work</em> together.</h2>
         <p style={{
           fontFamily: "var(--ff-body)",
-          fontSize: "var(--ts-lead)",
+          fontSize: "var(--bs-note)",
           color: "var(--ink-2)",
-          lineHeight: "var(--lh-loose)",
+          lineHeight: 1.5,
           maxWidth: 520,
-          marginBottom: 24,
+          marginBottom: 22,
         }}>
-          Open to senior or staff full-stack roles. Remote first. Pullman is a short flight from Seattle, Portland, or Boise. I&rsquo;m happy to come to you for a few days a quarter. Small companies where one person owns a feature end-to-end are my favorite, but I&rsquo;ve shipped at big ones too.
+          Currently open to full-stack engineering roles — remote, hybrid, or on-site for the right team. Senior or staff. I write the database migrations, the auth flows, <em>and</em> the marketing site.
         </p>
 
         {/* Contact lines */}
@@ -786,16 +781,17 @@ function Wanted() {
           flexDirection: "column",
           gap: 12,
           fontFamily: "var(--ff-mono)",
-          fontSize: "var(--ts-label)",
+          fontSize: "var(--bs-micro)",
           textTransform: "uppercase",
-          letterSpacing: "0.16em",
+          letterSpacing: "0.18em",
           color: "var(--ink-2)",
           marginBottom: 24,
         }}>
           {[
-            { label: "Email",  value: "hank@thestack.dev", href: "mailto:hank@thestack.dev" },
-            { label: "Based",  value: "Pullman, WA · Remote or relocating", href: undefined },
-            { label: "GitHub", value: "github.com/hankk", href: "https://github.com/hankk" },
+            { label: "Email",    value: "hank@thestack.dev", href: "mailto:hank@thestack.dev" },
+            { label: "Based",    value: "Pullman, WA · open to relocate", href: undefined },
+            { label: "GitHub",   value: "github.com/hkarpinen", href: "https://github.com/hkarpinen" },
+            { label: "LinkedIn", value: "/in/hank-karpinen", href: "https://linkedin.com/in/hank-karpinen" },
           ].map(row => (
             <div key={row.label} style={{ display: "flex", gap: 16 }}>
               <span style={{ color: "var(--ink-3)", minWidth: 60 }}>{row.label}</span>
@@ -827,23 +823,24 @@ function Colophon() {
       gap: 32,
     }} className="colophon-grid">
       <div>
-        <h5 style={{ fontFamily: "var(--ff-serif)", fontStyle: "italic", fontSize: "var(--ts-sub)", marginBottom: 10, color: "var(--ink)" }}>Colophon</h5>
-        <p style={{ fontFamily: "var(--ff-body)", fontSize: "var(--ts-body)", color: "var(--ink-2)", lineHeight: "var(--lh-body)" }}>
-          Set in Instrument Serif for display and JetBrains Mono for the supporting copy. Printed on the web at 96 DPI.
+        <h5 style={{ fontFamily: "var(--ff-serif)", fontStyle: "italic", fontSize: "var(--bs-lede)", marginBottom: 10, color: "var(--ink)" }}>Colophon</h5>
+        <p style={{ fontFamily: "var(--ff-body)", fontSize: "0.7rem", color: "var(--ink-2)", lineHeight: 1.55 }}>
+          Set in <em>Instrument Serif</em> for display and <em>JetBrains Mono</em> for body copy. Printed on the web at 96 DPI. No models were prompted in the making of this page.
         </p>
       </div>
       <div>
-        <h5 style={{ fontFamily: "var(--ff-serif)", fontStyle: "italic", fontSize: "var(--ts-sub)", marginBottom: 10, color: "var(--ink)" }}>Departments</h5>
+        <h5 style={{ fontFamily: "var(--ff-serif)", fontStyle: "italic", fontSize: "var(--bs-lede)", marginBottom: 10, color: "var(--ink)" }}>Departments</h5>
         <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
           {[
-            { label: "Architecture", href: "#dispatches" },
-            { label: "Modules", href: "#modules" },
+            { label: "Front Page", href: "#lede" },
+            { label: "Architecture Desk", href: "#dispatches" },
+            { label: "Module Classifieds", href: "#modules" },
             { label: "The Stack", href: "#stack" },
             { label: "Want Ads", href: "#wanted" },
           ].map(item => (
             <a key={item.href} href={item.href} className="lp-colophon-link" style={{
               fontFamily: "var(--ff-mono)",
-              fontSize: "var(--ts-label)",
+              fontSize: "var(--bs-meta)",
               color: "var(--ink)",
               textTransform: "uppercase",
               letterSpacing: "0.16em",
@@ -853,16 +850,16 @@ function Colophon() {
         </div>
       </div>
       <div>
-        <h5 style={{ fontFamily: "var(--ff-serif)", fontStyle: "italic", fontSize: "var(--ts-sub)", marginBottom: 10, color: "var(--ink)" }}>Contact</h5>
+        <h5 style={{ fontFamily: "var(--ff-serif)", fontStyle: "italic", fontSize: "var(--bs-lede)", marginBottom: 10, color: "var(--ink)" }}>Contact the editor</h5>
         <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
           {[
             { label: "hank@thestack.dev", href: "mailto:hank@thestack.dev" },
-            { label: "github.com/hankk", href: "https://github.com/hankk" },
-            { label: "linkedin.com/in/hankkarpinen", href: "https://linkedin.com/in/hankkarpinen" },
+            { label: "github.com/hkarpinen", href: "https://github.com/hkarpinen" },
+            { label: "linkedin.com/in/hank-karpinen", href: "https://linkedin.com/in/hank-karpinen" },
           ].map(item => (
             <a key={item.href} href={item.href} className="lp-colophon-link" style={{
               fontFamily: "var(--ff-mono)",
-              fontSize: "var(--ts-label)",
+              fontSize: "var(--bs-meta)",
               color: "var(--ink)",
               textTransform: "uppercase",
               letterSpacing: "0.16em",
@@ -883,7 +880,7 @@ function Endmark() {
       padding: "24px 0 48px",
       fontFamily: "var(--ff-serif)",
       fontStyle: "italic",
-      fontSize: "var(--ts-card-h)",
+      fontSize: "var(--bs-card-h)",
       color: "var(--ink-3)",
       letterSpacing: "0.40em",
     }}>
@@ -960,10 +957,13 @@ export async function LandingPage() {
         @media (min-width: 768px) and (max-width: 1023px) {
           .modules-grid { grid-template-columns: repeat(2, 1fr) !important; }
         }
+        @media (max-width: 560px) {
+          .modules-grid { grid-template-columns: 1fr !important; }
+        }
         @media (min-width: 1400px) {
           .landing-col { padding: 0 6% !important; }
-          .dispatches-grid { grid-template-columns: repeat(4, 1fr) !important; }
-          .modules-grid { grid-template-columns: repeat(5, 1fr) !important; }
+          .dispatches-grid { grid-template-columns: repeat(3, 1fr) !important; }
+          .modules-grid { grid-template-columns: repeat(4, 1fr) !important; }
           .wanted-grid { grid-template-columns: 1fr 1fr !important; gap: 80px !important; }
         }
         @media (min-width: 1800px) {

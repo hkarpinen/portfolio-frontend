@@ -6,10 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { api, ApiError } from "@/lib/api-client";
 import * as Collapsible from "@radix-ui/react-collapsible";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
-import { Toggle } from "@/components/ui/toggle";
+import { Btn, Input, Toggle } from "@/components/editorial";
 
 const passwordSchema = z
   .object({
@@ -37,20 +34,18 @@ const TAB_HREFS: Record<Tab, string> = {
 /* ── Style constants ──────────────────────────────────────────────────────── */
 
 const cardStyle: React.CSSProperties = {
-  background: "var(--surface)",
-  border: "1px solid var(--border)",
-  borderRadius: "16px",
+  background: "var(--paper-2)",
+  border: "1.5px solid var(--ink)",
   padding: "20px",
-  boxShadow: "var(--shadow-sm)",
 };
 
 const inputStyle: React.CSSProperties = {
   width: "100%",
   height: "38px",
   padding: "0 12px",
-  background: "var(--surface-2)",
-  border: "1px solid var(--border)",
-  borderRadius: "12px",
+  background: "var(--paper-2)",
+  border: "1.5px solid var(--ink)",
+  
   color: "var(--text)",
   fontFamily: "var(--ff-body)",
   fontSize: "var(--ts-body)",
@@ -81,24 +76,29 @@ function PrimaryButton({
   children,
   fullWidth,
   className,
-  ...props
+  disabled,
+  type,
+  form,
+  style,
 }: React.ButtonHTMLAttributes<HTMLButtonElement> & { fullWidth?: boolean }) {
   return (
-    <Button variant="primary" fullWidth={fullWidth} className={className} {...props}>
+    <Btn variant="primary" fullWidth={fullWidth} className={className} disabled={disabled} type={type as "button"|"submit"|"reset"} form={form} style={style as React.CSSProperties}>
       {children}
-    </Button>
+    </Btn>
   );
 }
 
 function DangerButton({
   children,
   className,
-  ...props
+  disabled,
+  type,
+  onClick,
 }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
-    <Button variant="danger" className={className} {...props}>
+    <Btn variant="danger" className={className} disabled={disabled} type={type as "button"|"submit"|"reset"} onClick={onClick as ((e: React.MouseEvent) => void) | undefined}>
       {children}
-    </Button>
+    </Btn>
   );
 }
 
@@ -170,35 +170,26 @@ export default function SecuritySettingsPage() {
   };
 
   return (
-    <div className="page-enter" style={{ maxWidth: "620px", margin: "0 auto", padding: "32px 24px" }}>
+    <div className="page-enter max-w-[620px] mx-auto py-16 px-12" >
       {/* Header */}
-      <div style={{ marginBottom: "28px" }}>
-        <h1 style={{ fontFamily: "var(--ff-display)", fontSize: "var(--ts-h2)", lineHeight: "var(--lh-display)", letterSpacing: "-0.02em", fontWeight: 700, color: "var(--text)" }}>
+      <div className="mb-[28px]">
+        <h1 className="font-serif text-4xl leading-none tracking-snug font-bold text-ink">
           Settings
         </h1>
-        <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)", marginTop: "4px" }}>
+        <p className="text-base text-ink-3 mt-2">
           Manage your account, security, and preferences
         </p>
       </div>
 
       {/* Tabs */}
-      <div style={{ borderBottom: "1px solid var(--border)", marginBottom: "28px", display: "flex", gap: "4px" }}>
+      <div className="mb-[28px] flex gap-2" style={{ borderBottom: "1.5px solid var(--ink)" }}>
         {TABS.map((tab) => {
           const active = tab === "Security";
           return (
             <a
               key={tab}
               href={TAB_HREFS[tab]}
-              style={{
-                padding: "10px 16px",
-                fontSize: "var(--ts-body)",
-                fontWeight: active ? 600 : 400,
-                color: active ? "var(--text)" : "var(--text-3)",
-                borderBottom: active ? "2px solid var(--accent)" : "2px solid transparent",
-                marginBottom: "-1px",
-                textDecoration: "none",
-                transition: "color 150ms",
-              }}
+              className="py-5 px-8 text-md mb-[-1px] no-underline" style={{ fontWeight: active ? 600 : 400, color: active ? "var(--red)" : "var(--ink-3)", borderBottom: active ? "3px solid var(--red)" : "2px solid transparent", transition: "color 150ms" }}
             >
               {tab}
             </a>
@@ -206,10 +197,10 @@ export default function SecuritySettingsPage() {
         })}
       </div>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+      <div className="flex flex-col gap-8">
         {/* Password card — expandable */}
         <Collapsible.Root
-          className="bg-surface border border-border rounded-2xl p-5 shadow-sm"
+          className="bg-paper-2 p-5"
           onOpenChange={(open) => { if (!open) { setPasswordSaved(false); setPasswordError(null); } }}
         >
           <Collapsible.Trigger asChild>
@@ -219,9 +210,9 @@ export default function SecuritySettingsPage() {
             >
               <div>
                 <p className="text-[10px] font-bold text-text-3 uppercase tracking-widest">Password</p>
-                <p className="text-sm mt-1" style={{ color: "var(--text-2)" }}>Change your account password</p>
+                <p className="text-sm mt-1 text-ink-2" >Change your account password</p>
               </div>
-              <span className="text-lg leading-none" style={{ color: "var(--text-3)" }}>
+              <span className="text-lg leading-none text-ink-3" >
                 <span className="inline group-data-[state=open]:hidden">+</span>
                 <span className="hidden group-data-[state=open]:inline">−</span>
               </span>
@@ -232,15 +223,15 @@ export default function SecuritySettingsPage() {
 
             <form
               onSubmit={handleSubmit(onPasswordSubmit)}
-              style={{ display: "flex", flexDirection: "column", gap: "14px", marginTop: "20px", paddingTop: "20px", borderTop: "1px solid var(--border)" }}
+              className="flex flex-col gap-[14px] mt-10 pt-10" style={{ borderTop: "1.5px solid var(--ink)" }}
             >
               {passwordError && (
-                <div style={{ background: "var(--danger-s)", border: "1px solid oklch(62% 0.21 22 / 0.3)", borderRadius: "10px", padding: "10px 14px", fontSize: "var(--ts-body-sm)", color: "var(--danger)" }}>
+                <div className="bg-[rgba(178,42,26,0.10)] py-[10px] px-[14px] text-base text-red" style={{ border: "1px solid oklch(62% 0.21 22 / 0.3)" }}>
                   {passwordError}
                 </div>
               )}
               {passwordSaved && (
-                <div style={{ background: "var(--success-s)", border: "1px solid oklch(68% 0.18 152 / 0.3)", borderRadius: "10px", padding: "10px 14px", fontSize: "var(--ts-body-sm)", color: "var(--success)" }}>
+                <div className="bg-[rgba(61,107,43,0.10)] py-[10px] px-[14px] text-base text-green" style={{ border: "1px solid oklch(68% 0.18 152 / 0.3)" }}>
                   Password updated successfully!
                 </div>
               )}
@@ -248,21 +239,21 @@ export default function SecuritySettingsPage() {
                 <label style={labelStyle}>Current Password</label>
                 <Input type="password" {...register("currentPassword")} placeholder="••••••••" />
                 {errors.currentPassword && (
-                  <p style={{ color: "var(--danger)", fontSize: "var(--ts-label)", marginTop: "4px" }}>{errors.currentPassword.message}</p>
+                  <p className="text-red text-base mt-2">{errors.currentPassword.message}</p>
                 )}
               </div>
               <div>
                 <label style={labelStyle}>New Password</label>
                 <Input type="password" {...register("newPassword")} placeholder="••••••••" />
                 {errors.newPassword && (
-                  <p style={{ color: "var(--danger)", fontSize: "var(--ts-label)", marginTop: "4px" }}>{errors.newPassword.message}</p>
+                  <p className="text-red text-base mt-2">{errors.newPassword.message}</p>
                 )}
               </div>
               <div>
                 <label style={labelStyle}>Confirm New Password</label>
                 <Input type="password" {...register("confirmPassword")} placeholder="••••••••" />
                 {errors.confirmPassword && (
-                  <p style={{ color: "var(--danger)", fontSize: "var(--ts-label)", marginTop: "4px" }}>{errors.confirmPassword.message}</p>
+                  <p className="text-red text-base mt-2">{errors.confirmPassword.message}</p>
                 )}
               </div>
               <PrimaryButton type="submit" disabled={isSubmitting} fullWidth>
@@ -273,23 +264,15 @@ export default function SecuritySettingsPage() {
         </Collapsible.Root>
 
         {/* 2FA card */}
-        <Card>
+        <div className="bg-paper-2 p-5" style={{ border: "1.5px solid var(--ink)" }}>
           <div className="flex items-center justify-between mb-3">
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: "var(--text-3)" }}>Two-Factor Authentication</p>
-              <p className="text-sm mt-1" style={{ color: "var(--text-2)" }}>Extra security via authenticator app</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-ink-3" >Two-Factor Authentication</p>
+              <p className="text-sm mt-1 text-ink-2" >Extra security via authenticator app</p>
             </div>
             {twoFaEnabled === true && (
               <span
-                style={{
-                  fontSize: "var(--ts-meta)",
-                  fontWeight: 600,
-                  background: "var(--success-s)",
-                  color: "var(--success)",
-                  borderRadius: "9999px",
-                  padding: "3px 10px",
-                  border: "1px solid oklch(68% 0.18 152 / 0.25)",
-                }}
+                className="text-sm font-semibold bg-[rgba(61,107,43,0.10)] text-green py-[3px] px-[10px]" style={{ border: "1px solid oklch(68% 0.18 152 / 0.25)" }}
               >
                 Active
               </span>
@@ -297,41 +280,41 @@ export default function SecuritySettingsPage() {
           </div>
 
           {twoFaEnabled === null && (
-            <p style={{ color: "var(--text-3)", fontSize: "var(--ts-body-sm)" }}>Loading…</p>
+            <p className="text-ink-3 text-base">Loading…</p>
           )}
 
           {twoFaEnabled === false && !qrCodeUrl && (
             <div>
-              <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)", marginBottom: "14px" }}>
+              <p className="text-base text-ink-3 mb-[14px]">
                 Add an extra layer of security to your account using an authenticator app.
               </p>
               {totpError && (
-                <p style={{ color: "var(--danger)", fontSize: "var(--ts-body-sm)", marginBottom: "12px" }}>{totpError}</p>
+                <p className="text-red text-base mb-6">{totpError}</p>
               )}
-              <Toggle checked={false} onChange={handleEnable2FA} />
+              <Toggle checked={false} onCheckedChange={handleEnable2FA} />
             </div>
           )}
 
           {qrCodeUrl && (
-            <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-              <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)" }}>
+            <div className="flex flex-col gap-[14px]">
+              <p className="text-base text-ink-3">
                 Scan the QR code with your authenticator app, then enter the 6-digit code below to confirm.
               </p>
-              <div style={{ background: "#fff", padding: "12px", display: "inline-block", borderRadius: "12px", border: "1px solid var(--border)" }}>
+              <div className="bg-white p-6 inline-block" style={{ border: "1.5px solid var(--ink)" }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={qrCodeUrl} alt="2FA QR Code" style={{ width: "160px", height: "160px", display: "block" }} />
+                <img src={qrCodeUrl} alt="2FA QR Code" className="w-[160px] h-[160px] block" />
               </div>
               {totpError && (
-                <p style={{ color: "var(--danger)", fontSize: "var(--ts-body-sm)" }}>{totpError}</p>
+                <p className="text-red text-base">{totpError}</p>
               )}
               <div className="flex gap-2">
                 <Input
                   type="text"
                   value={totpCode}
-                  onChange={(e) => setTotpCode(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTotpCode(e.target.value)}
                   placeholder="Enter 6-digit code"
                   maxLength={6}
-                  containerClassName="flex-1"
+                  className="flex-1"
                 />
                 <PrimaryButton
                   type="button"
@@ -345,29 +328,29 @@ export default function SecuritySettingsPage() {
           )}
 
           {twoFaEnabled === true && (
-            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-              <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)", flex: 1 }}>
+            <div className="flex items-center gap-6">
+              <p className="text-base text-ink-3 flex-1">
                 Two-factor authentication is enabled on your account.
               </p>
-              <Toggle checked={true} onChange={() => {/* disable 2FA flow */}} />
+              <Toggle checked={true} onCheckedChange={() => {}} />
             </div>
           )}
-        </Card>
+        </div>
 
         {/* Sessions placeholder */}
-        <Card>
-          <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: "var(--text-3)" }}>Active Sessions</p>
-          <p className="text-sm mt-2" style={{ color: "var(--text-3)" }}>You are currently signed in on this device.</p>
-        </Card>
+        <div className="bg-paper-2 p-5" style={{ border: "1.5px solid var(--ink)" }}>
+          <p className="text-[10px] font-bold uppercase tracking-widest text-ink-3" >Active Sessions</p>
+          <p className="text-sm mt-2 text-ink-3" >You are currently signed in on this device.</p>
+        </div>
 
         {/* Danger zone */}
-        <Card className="border-danger/40">
-          <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: "var(--danger)" }}>Danger Zone</p>
-          <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)", marginTop: "8px", marginBottom: "16px" }}>
+        <div className="bg-paper-2 p-5" style={{ border: "1.5px solid var(--red)" }}>
+          <p className="text-[10px] font-bold uppercase tracking-widest text-red" >Danger Zone</p>
+          <p className="text-base text-ink-3 mt-4 mb-8">
             Permanently delete your account and all associated data. This action cannot be undone.
           </p>
           <DangerButton type="button">Delete Account</DangerButton>
-        </Card>
+        </div>
       </div>
     </div>
   );

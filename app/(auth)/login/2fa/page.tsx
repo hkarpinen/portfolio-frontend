@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { api, ApiError } from "@/lib/api-client";
 import { identityKeys } from "@/lib/query-keys";
-import { Button } from "@/components/ui/button";
+import { Btn } from "@/components/editorial";
 
 export default function TwoFactorPage() {
   const router = useRouter();
@@ -21,7 +21,7 @@ export default function TwoFactorPage() {
     try {
       await api.post("/api/identity/2fa/verify", { code });
       queryClient.invalidateQueries({ queryKey: identityKeys.me() });
-      router.push("/communities");
+      router.push("/forum");
       router.refresh();
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Invalid code. Please try again.");
@@ -31,44 +31,25 @@ export default function TwoFactorPage() {
   }
 
   return (
-    <div style={{
-      background: "var(--paper-2)",
-      border: "1.5px solid var(--ink)",
-      boxShadow: "var(--shadow-stamp)",
-      padding: "32px",
-    }}>
-      <div style={{ marginBottom: "28px" }}>
-        <h1 style={{
-          fontFamily: "var(--ff-serif)", fontStyle: "italic", fontWeight: 400,
-          fontSize: "var(--ts-h3)", letterSpacing: "-0.025em", color: "var(--ink)",
-          marginBottom: "6px",
-        }}>
-          Two-factor auth<span style={{ color: "var(--red)" }}>.</span>
+    <div className="bg-paper-2 shadow-stamp p-16" style={{ border: "1.5px solid var(--ink)" }}>
+      <div className="mb-[28px]">
+        <h1 className="font-serif italic font-normal text-3xl tracking-[-0.025em] text-ink mb-3">
+          Two-factor auth<span className="text-red">.</span>
         </h1>
-        <p style={{ fontFamily: "var(--ff-mono)", fontSize: "var(--ts-meta)", color: "var(--ink-3)", textTransform: "uppercase", letterSpacing: "0.20em" }}>
+        <p className="font-mono text-sm text-ink-3 uppercase tracking-wide">
           Enter the 6-digit code from your authenticator app
         </p>
       </div>
 
-      <form onSubmit={onSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+      <form onSubmit={onSubmit} className="flex flex-col gap-8">
         {error && (
-          <div style={{
-            padding: "12px 16px",
-            borderRadius: "10px",
-            background: "var(--danger-s)",
-            border: "1px solid oklch(62% 0.21 22 / 0.3)",
-            fontSize: "var(--ts-body-sm)",
-            color: "var(--danger)",
-          }}>
+          <div className="py-6 px-8 bg-[rgba(178,42,26,0.10)] text-base text-red" style={{ border: "1px solid oklch(62% 0.21 22 / 0.3)" }}>
             {error}
           </div>
         )}
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-          <label style={{
-            fontSize: "var(--ts-label)", fontWeight: "500", color: "var(--text-2)",
-            letterSpacing: "0.02em",
-          }}>
+        <div className="flex flex-col gap-3">
+          <label className="text-base font-medium text-ink-2 tracking-[0.02em]">
             Authenticator code
           </label>
           <input
@@ -79,43 +60,31 @@ export default function TwoFactorPage() {
             value={code}
             onChange={e => setCode(e.target.value.replace(/\D/g, ""))}
             placeholder="000000"
-            style={{
-              height: "38px",
-              background: "var(--surface-2)",
-              border: `1px solid ${error ? "var(--danger)" : "var(--border)"}`,
-              borderRadius: "12px",
-              padding: "0 12px",
-              fontSize: "var(--ts-sub)",
-              letterSpacing: "0.25em",
-              color: "var(--text)",
-              outline: "none",
-              textAlign: "center",
-              transition: "border-color 110ms, box-shadow 110ms",
-            }}
+            className="h-[38px] bg-paper-2 p-[0_12px] text-xl tracking-[0.25em] text-ink outline-none text-center" style={{ border: `1px solid ${error ? "var(--danger)" : "var(--ink-3)"}`, transition: "border-color 110ms, box-shadow 110ms" }}
             onFocus={e => {
               if (!error) {
-                (e.currentTarget as HTMLElement).style.borderColor = "var(--accent)";
-                (e.currentTarget as HTMLElement).style.boxShadow = "0 0 0 3px var(--accent-subtle)";
+                (e.currentTarget as HTMLElement).style.borderColor = "var(--red)";
+                (e.currentTarget as HTMLElement).style.boxShadow = "0 0 0 3px rgba(178,42,26,0.08)";
               }
             }}
             onBlur={e => {
               if (!error) {
-                (e.currentTarget as HTMLElement).style.borderColor = "var(--border)";
+                (e.currentTarget as HTMLElement).style.borderColor = "var(--ink-3)";
                 (e.currentTarget as HTMLElement).style.boxShadow = "none";
               }
             }}
           />
         </div>
 
-        <Button
+        <Btn
           type="submit"
           disabled={isSubmitting || code.length !== 6}
           variant="primary"
           fullWidth
-          style={{ marginTop: "4px", height: "42px" }}
+          className="mt-2 h-[42px]"
         >
           {isSubmitting ? "Verifying…" : "Verify"}
-        </Button>
+        </Btn>
       </form>
     </div>
   );

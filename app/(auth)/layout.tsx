@@ -6,40 +6,15 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
   await requireAnonymous();
 
   return (
-    <div style={{
-      minHeight: "100vh",
-      background: "var(--paper)",
-      display: "flex",
-      flexDirection: "column",
-    }}>
+    <div className="min-h-[100vh] bg-paper flex flex-col">
       {/* Masthead strip */}
-      <header style={{
-        borderBottom: "3px solid var(--ink)",
-        padding: "20px 5%",
-        display: "flex",
-        alignItems: "baseline",
-        justifyContent: "space-between",
-        gap: 16,
-      }}>
-        <Link href="/" style={{ textDecoration: "none" }}>
-          <span style={{
-            fontFamily: "var(--ff-serif)",
-            fontStyle: "italic",
-            fontSize: "var(--ts-card-h)",
-            letterSpacing: "-0.03em",
-            lineHeight: 1,
-            color: "var(--ink)",
-          }}>
-            The Stack<span style={{ color: "var(--red)" }}>.</span>
+      <header className="p-[20px_5%] flex items-baseline justify-between gap-8" style={{ borderBottom: "3px solid var(--ink)" }}>
+        <Link href="/" className="no-underline">
+          <span className="font-serif italic text-2xl tracking-tight leading-none text-ink">
+            The Stack<span className="text-red">.</span>
           </span>
         </Link>
-        <span style={{
-          fontFamily: "var(--ff-mono)",
-          fontSize: "var(--ts-meta)",
-          color: "var(--ink-3)",
-          textTransform: "uppercase",
-          letterSpacing: "0.20em",
-        }}>
+        <span className="font-mono text-sm text-ink-3 uppercase tracking-wide">
           Vol. I · No. 04
         </span>
       </header>
@@ -47,24 +22,12 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
       <div style={{ borderBottom: "1px solid var(--ink-4)" }} />
 
       {/* Content — centered column */}
-      <div style={{
-        flex: 1,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "48px 16px",
-      }}>
-        <div style={{ width: "100%", maxWidth: 420 }}>
+      <div className="flex-1 flex items-center justify-center py-24 px-8">
+        <div className="w-full max-w-[420]">
           {/* Column label */}
-          <div style={{ marginBottom: 24, display: "flex", alignItems: "center", gap: 10 }}>
-            <span style={{ width: 22, height: 1, background: "var(--red)", display: "inline-block" }} />
-            <span style={{
-              fontFamily: "var(--ff-mono)",
-              fontSize: "var(--ts-meta)",
-              color: "var(--red)",
-              textTransform: "uppercase",
-              letterSpacing: "0.30em",
-            }}>
+          <div className="mb-12 flex items-center gap-5">
+            <span className="w-[22] h-[1] bg-red inline-block" />
+            <span className="font-mono text-sm text-red uppercase tracking-[0.30em]">
               Reader access
             </span>
           </div>

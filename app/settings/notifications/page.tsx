@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Toggle } from "@/components/ui/toggle";
+import { Toggle } from "@/components/editorial";
 
 const PREFS_KEY = "notification_prefs";
 
@@ -46,19 +46,13 @@ function NotifRow({
 }) {
   return (
     <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: "12px 0",
-        borderBottom: last ? "none" : "1px solid var(--border)",
-      }}
+      className="flex items-center justify-between p-[12px_0]" style={{ borderBottom: last ? "none" : "1.5px solid var(--ink)" }}
     >
       <div>
-        <p style={{ fontSize: "var(--ts-body)", fontWeight: 500, color: "var(--text)" }}>{label}</p>
-        <p style={{ fontSize: "var(--ts-label)", color: "var(--text-3)", marginTop: "2px" }}>{description}</p>
+        <p className="text-md font-medium text-ink">{label}</p>
+        <p className="text-base text-ink-3 mt-1">{description}</p>
       </div>
-      <Toggle checked={checked} onChange={onChange} />
+      <Toggle checked={checked} onCheckedChange={onChange} />
     </div>
   );
 }
@@ -66,11 +60,9 @@ function NotifRow({
 /* ── Category card ────────────────────────────────────────────────────────── */
 
 const cardStyle: React.CSSProperties = {
-  background: "var(--surface)",
-  border: "1px solid var(--border)",
-  borderRadius: "16px",
+  background: "var(--paper-2)",
+  border: "1.5px solid var(--ink)",
   padding: "20px",
-  boxShadow: "var(--shadow-sm)",
 };
 
 const sectionLabelStyle: React.CSSProperties = {
@@ -155,29 +147,20 @@ export default function NotificationsSettingsPage() {
   ];
 
   return (
-    <div className="page-enter" style={{ maxWidth: "620px", margin: "0 auto", padding: "32px 24px" }}>
+    <div className="page-enter max-w-[620px] mx-auto py-16 px-12" >
       {/* Header */}
-      <div style={{ marginBottom: "28px", display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
+      <div className="mb-[28px] flex items-start justify-between">
         <div>
-          <h1 style={{ fontFamily: "var(--ff-display)", fontSize: "var(--ts-h2)", lineHeight: "var(--lh-display)", letterSpacing: "-0.02em", fontWeight: 700, color: "var(--text)" }}>
+          <h1 className="font-serif text-4xl leading-none tracking-snug font-bold text-ink">
             Settings
           </h1>
-          <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)", marginTop: "4px" }}>
+          <p className="text-base text-ink-3 mt-2">
             Manage your account, security, and preferences
           </p>
         </div>
         {saved && (
           <span
-            style={{
-              fontSize: "var(--ts-label)",
-              fontWeight: 600,
-              color: "var(--success)",
-              background: "var(--success-s)",
-              borderRadius: "9999px",
-              padding: "4px 12px",
-              border: "1px solid oklch(68% 0.18 152 / 0.25)",
-              marginTop: "4px",
-            }}
+            className="text-base font-semibold text-green bg-[rgba(61,107,43,0.10)] py-2 px-6 mt-2" style={{ border: "1px solid oklch(68% 0.18 152 / 0.25)" }}
           >
             Saved
           </span>
@@ -185,23 +168,14 @@ export default function NotificationsSettingsPage() {
       </div>
 
       {/* Tabs */}
-      <div style={{ borderBottom: "1px solid var(--border)", marginBottom: "28px", display: "flex", gap: "4px" }}>
+      <div className="mb-[28px] flex gap-2" style={{ borderBottom: "1.5px solid var(--ink)" }}>
         {TABS.map((tab) => {
           const active = tab === "Notifications";
           return (
             <a
               key={tab}
               href={TAB_HREFS[tab]}
-              style={{
-                padding: "10px 16px",
-                fontSize: "var(--ts-body)",
-                fontWeight: active ? 600 : 400,
-                color: active ? "var(--text)" : "var(--text-3)",
-                borderBottom: active ? "2px solid var(--accent)" : "2px solid transparent",
-                marginBottom: "-1px",
-                textDecoration: "none",
-                transition: "color 150ms",
-              }}
+              className="py-5 px-8 text-md mb-[-1px] no-underline" style={{ fontWeight: active ? 600 : 400, color: active ? "var(--red)" : "var(--ink-3)", borderBottom: active ? "3px solid var(--red)" : "2px solid transparent", transition: "color 150ms" }}
             >
               {tab}
             </a>
@@ -210,10 +184,10 @@ export default function NotificationsSettingsPage() {
       </div>
 
       {/* Notification groups */}
-      <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+      <div className="flex flex-col gap-8">
         {groups.map(({ category, items }) => (
           <div key={category} style={cardStyle}>
-            <p style={{ ...sectionLabelStyle, marginBottom: "4px" }}>{category}</p>
+            <p className="mb-2" style={{ ...sectionLabelStyle }}>{category}</p>
             {items.map((item, idx) => (
               <NotifRow
                 key={item.key}
@@ -228,7 +202,7 @@ export default function NotificationsSettingsPage() {
         ))}
       </div>
 
-      <p style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)", marginTop: "16px" }}>
+      <p className="text-sm text-ink-3 mt-8">
         Preferences are saved locally in your browser.
       </p>
     </div>

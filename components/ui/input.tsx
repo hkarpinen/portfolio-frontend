@@ -1,3 +1,4 @@
+import React from "react";
 import { cn } from "@/lib/utils";
 import styles from "./input.module.css";
 
@@ -10,7 +11,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   containerClassName?: string;
 }
 
-export function Input({
+export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Input({
   label,
   hint,
   error,
@@ -20,7 +21,7 @@ export function Input({
   className,
   containerClassName,
   ...props
-}: InputProps) {
+}, ref) {
   const inputId = id ?? (label ? label.toLowerCase().replace(/\s+/g, "-") : undefined);
   return (
     <div className={cn(styles.wrapper, containerClassName)}>
@@ -32,6 +33,7 @@ export function Input({
       <div className={cn(styles.inputRow, error && styles.hasError)}>
         {iconLeft && <span className={styles.iconLeft}>{iconLeft}</span>}
         <input
+          ref={ref}
           id={inputId}
           className={cn(styles.input, iconLeft && styles.withIconLeft, iconRight && styles.withIconRight, className)}
           aria-invalid={!!error}
@@ -52,4 +54,4 @@ export function Input({
       )}
     </div>
   );
-}
+});

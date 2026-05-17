@@ -55,9 +55,9 @@ function saveStore(collapsed: boolean) {
 const NAV_ITEMS = [
   { label: "Front Page",        desc: "Overview",         href: "/",            icon: "home" as const,      exactMatch: true },
   { label: "About the Author",  desc: "Portfolio",        href: "/about",       icon: "about" as const,     exactMatch: false },
-  { label: "Households",          desc: "Household Hub",    href: "/households",  icon: "household" as const, exactMatch: false, extraPaths: ["/dashboard"] },
-  { label: "Finance",             desc: "Personal Finance", href: "/expenses",   icon: "expenses" as const,  exactMatch: false, extraPaths: ["/income"] },
-  { label: "Letters",           desc: "Community Forum",  href: "/communities", icon: "forum" as const,     exactMatch: false },
+  { label: "The Ledger",        desc: "Household & Chores", href: "/bills",     icon: "household" as const, exactMatch: false, extraPaths: ["/dashboard"] },
+  { label: "Finance",           desc: "Expenses & Income", href: "/expenses",  icon: "expenses" as const,  exactMatch: false, extraPaths: ["/income"] },
+  { label: "Letters",           desc: "Community Forum",  href: "/forum",     icon: "forum" as const,     exactMatch: false },
 ];
 const NAV_OFFICE = [
   { label: "Subscription",      desc: "Settings",         href: "/settings/profile",   icon: "settings" as const, exactMatch: false },
@@ -76,29 +76,11 @@ function Avatar({ name, url, size = 36 }: { name: string | null; url: string | n
   if (url) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
-      <img src={url} alt="" style={{
-        width: size, height: size,
-        objectFit: "cover",
-        border: "1.5px solid var(--ink)",
-        display: "block",
-      }} />
+      <img src={url} alt="" className="object-cover block" style={{ width: size, height: size, border: "1.5px solid var(--ink)" }} />
     );
   }
   return (
-    <span style={{
-      width: size, height: size,
-      background: "var(--paper-3)",
-      border: "1.5px solid var(--ink)",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      fontFamily: "var(--ff-mono)",
-      fontSize: size * 0.36,
-      fontWeight: 700,
-      color: "var(--ink)",
-      letterSpacing: "0.04em",
-      flexShrink: 0,
-    }}>
+    <span className="bg-paper-3 flex items-center justify-center font-mono font-bold text-ink tracking-[0.04em] shrink-0" style={{ width: size, height: size, border: "1.5px solid var(--ink)", fontSize: size * 0.36 }}>
       {initials}
     </span>
   );
@@ -121,20 +103,7 @@ function NavItem({
       href={item.href}
       title={collapsed ? item.label : undefined}
       aria-current={active ? "page" : undefined}
-      style={{
-        display: "flex",
-        alignItems: collapsed ? "center" : "flex-start",
-        gap: 12,
-        width: "100%",
-        padding: collapsed ? "12px 0" : "12px 16px",
-        background: active ? "var(--ink)" : "transparent",
-        borderTop: "1px solid var(--ink)",
-        cursor: "pointer",
-        textDecoration: "none",
-        color: active ? "var(--paper)" : "var(--ink)",
-        transition: "all 140ms",
-        justifyContent: collapsed ? "center" : "flex-start",
-      }}
+      className="flex gap-6 w-full cursor-pointer no-underline" style={{ alignItems: collapsed ? "center" : "flex-start", padding: collapsed ? "12px 0" : "12px 16px", background: active ? "var(--ink)" : "transparent", borderTop: "1px solid var(--ink)", color: active ? "var(--paper)" : "var(--ink)", transition: "all 140ms", justifyContent: collapsed ? "center" : "flex-start" }}
       onMouseEnter={e => {
         if (!active) (e.currentTarget as HTMLElement).style.background = "var(--paper)";
       }}
@@ -142,26 +111,13 @@ function NavItem({
         if (!active) (e.currentTarget as HTMLElement).style.background = "transparent";
       }}
     >
-      <span style={{ flexShrink: 0, strokeWidth: active ? 2 : 1.5 }}>
+      <span className="shrink-0" style={{ strokeWidth: active ? 2 : 1.5 }}>
         <Icon path={(ICONS as Record<string, string>)[item.icon] ?? ""} size={15} />
       </span>
       {!collapsed && (
-        <span style={{ display: "flex", flexDirection: "column", gap: 4, minWidth: 0 }}>
-          <span style={{
-            fontFamily: "var(--ff-serif)",
-            fontStyle: "italic",
-            fontSize: "var(--ts-sub)",
-            lineHeight: 1,
-            color: active ? "var(--paper)" : "var(--ink)",
-          }}>{item.label}</span>
-          <span style={{
-            fontFamily: "var(--ff-mono)",
-            fontSize: "var(--ts-meta)",
-            textTransform: "uppercase",
-            letterSpacing: "0.18em",
-            color: active ? "rgba(241,234,219,0.7)" : "var(--ink-3)",
-            marginTop: 4,
-          }}>{item.desc}</span>
+        <span className="flex flex-col gap-2 min-w-0">
+          <span className="font-serif italic text-xl leading-none" style={{ color: active ? "var(--paper)" : "var(--ink)" }}>{item.label}</span>
+          <span className="font-mono text-sm uppercase tracking-[0.18em] mt-2" style={{ color: active ? "rgba(241,234,219,0.7)" : "var(--ink-3)" }}>{item.desc}</span>
         </span>
       )}
     </Link>
@@ -175,16 +131,7 @@ function NavItem({
           <Tooltip.Content
             side="right"
             sideOffset={8}
-            style={{
-              background: "var(--ink)",
-              color: "var(--paper)",
-              fontFamily: "var(--ff-mono)",
-              fontSize: "var(--ts-meta)",
-              textTransform: "uppercase",
-              letterSpacing: "0.18em",
-              padding: "5px 10px",
-              border: "1.5px solid var(--ink)",
-            }}
+            className="bg-ink text-paper font-mono text-sm uppercase tracking-[0.18em] py-[5px] px-[10px]" style={{ border: "1.5px solid var(--ink)" }}
           >
             {item.label}
             <Tooltip.Arrow style={{ fill: "var(--ink)" }} />
@@ -214,91 +161,35 @@ function Sidebar({
 
   return (
     <Tooltip.Provider delayDuration={300}>
-      <aside style={{
-        width: collapsed ? 64 : 248,
-        minWidth: collapsed ? 64 : 248,
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        background: "var(--paper-2)",
-        borderRight: "1.5px solid var(--ink)",
-        transition: "width 220ms var(--ease-spring), min-width 220ms var(--ease-spring)",
-        overflow: "hidden",
-        flexShrink: 0,
-      }}>
+      <aside className="h-full flex flex-col bg-paper-2 overflow-hidden shrink-0" style={{ width: collapsed ? 64 : 248, minWidth: collapsed ? 64 : 248, borderRight: "1.5px solid var(--ink)", transition: "width 220ms var(--ease-spring), min-width 220ms var(--ease-spring)" }}>
 
         {/* Masthead block */}
-        <div style={{
-          padding: collapsed ? "16px 0" : "20px 14px 16px",
-          borderBottom: "2px solid var(--ink)",
-          textAlign: collapsed ? "center" : "left",
-          overflow: "hidden",
-        }}>
+        <div className="overflow-hidden" style={{ padding: collapsed ? "16px 0" : "20px 14px 16px", borderBottom: "2px solid var(--ink)", textAlign: collapsed ? "center" : "left" }}>
           {collapsed ? (
-            <Link href="/" style={{ textDecoration: "none", display: "block", textAlign: "center" }}>
-              <span style={{
-                fontFamily: "var(--ff-serif)",
-                fontStyle: "italic",
-                fontSize: "var(--ts-h3)",
-                color: "var(--ink)",
-                lineHeight: 1,
-              }}>
-                TS<span style={{ color: "var(--red)" }}>.</span>
+            <Link href="/" className="no-underline block text-center">
+              <span className="font-serif italic text-3xl text-ink leading-none">
+                TS<span className="text-red">.</span>
               </span>
             </Link>
           ) : (
             <>
-              <p style={{
-                fontFamily: "var(--ff-mono)",
-                fontSize: "var(--ts-meta)",
-                color: "var(--ink-3)",
-                textTransform: "uppercase",
-                letterSpacing: "0.28em",
-                marginBottom: 8,
-              }}>Vol. I · No. 04</p>
-              <Link href="/" style={{ textDecoration: "none", display: "block" }}>
-                <span style={{
-                  fontFamily: "var(--ff-serif)",
-                  fontStyle: "italic",
-                  fontSize: "clamp(32px, 2.2vw + 22px, 48px)",
-                  lineHeight: 0.9,
-                  letterSpacing: "-0.025em",
-                  color: "var(--ink)",
-                  display: "block",
-                  whiteSpace: "nowrap",
-                }}>
-                  The Stack<span style={{ color: "var(--red)" }}>.</span>
+              <p className="font-mono text-sm text-ink-3 uppercase tracking-wider mb-4">Vol. I · No. 04</p>
+              <Link href="/" className="no-underline block">
+                <span className="font-serif italic text-[clamp(32px, 2.2vw + 22px, 48px)] leading-[0.9] tracking-[-0.025em] text-ink block whitespace-nowrap">
+                  The Stack<span className="text-red">.</span>
                 </span>
               </Link>
-              <p style={{
-                fontFamily: "var(--ff-mono)",
-                fontSize: "var(--ts-meta)",
-                color: "var(--ink-3)",
-                textTransform: "uppercase",
-                letterSpacing: "0.22em",
-                paddingTop: 8,
-                borderTop: "1px solid var(--ink-3)",
-                marginTop: 8,
-              }}>By Hank K. · Est. 2026</p>
+              <p className="font-mono text-sm text-ink-3 uppercase tracking-[0.22em] pt-4 mt-4" style={{ borderTop: "1px solid var(--ink-3)" }}>By Hank K. · Est. 2026</p>
             </>
           )}
         </div>
 
         {/* Nav */}
-        <nav aria-label="Main navigation" style={{ flex: 1, overflowY: "auto", overflowX: "hidden" }}>
+        <nav aria-label="Main navigation" className="flex-1 overflow-y-auto overflow-x-hidden">
 
           {/* Departments section */}
           {!collapsed && (
-            <div style={{
-              fontFamily: "var(--ff-mono)",
-              fontSize: "var(--ts-meta)",
-              fontWeight: 700,
-              color: "var(--ink-3)",
-              textTransform: "uppercase",
-              letterSpacing: "0.28em",
-              padding: "20px 16px 6px",
-              borderTop: "3px double var(--ink)",
-            }}>— Departments —</div>
+            <div className="font-mono text-sm font-bold text-ink-3 uppercase tracking-wider p-[20px_16px_6px]" style={{ borderTop: "3px double var(--ink)" }}>— Departments —</div>
           )}
           {collapsed && <div style={{ borderTop: "3px double var(--ink)" }} />}
 
@@ -308,18 +199,9 @@ function Sidebar({
 
           {/* The Office section */}
           {!collapsed && (
-            <div style={{
-              fontFamily: "var(--ff-mono)",
-              fontSize: "var(--ts-meta)",
-              fontWeight: 700,
-              color: "var(--ink-3)",
-              textTransform: "uppercase",
-              letterSpacing: "0.28em",
-              padding: "20px 16px 6px",
-              borderTop: "3px double var(--ink)",
-            }}>— The Office —</div>
+            <div className="font-mono text-sm font-bold text-ink-3 uppercase tracking-wider p-[20px_16px_6px]" style={{ borderTop: "3px double var(--ink)" }}>— The Office —</div>
           )}
-          {collapsed && <div style={{ borderTop: "3px double var(--ink)", marginTop: 8 }} />}
+          {collapsed && <div className="mt-4" style={{ borderTop: "3px double var(--ink)" }} />}
 
           {NAV_OFFICE.map(item => (
             <NavItem key={item.href} item={item} pathname={pathname} collapsed={collapsed} />
@@ -335,46 +217,15 @@ function Sidebar({
         </nav>
 
         {/* Footer / Colophon */}
-        <div style={{
-          padding: collapsed ? "10px 0" : "12px 16px",
-          borderTop: "2px solid var(--ink)",
-          background: "var(--paper-3)",
-          display: "flex",
-          flexDirection: "column",
-          gap: 8,
-          alignItems: collapsed ? "center" : "stretch",
-        }}>
+        <div className="bg-paper-3 flex flex-col gap-4" style={{ padding: collapsed ? "10px 0" : "12px 16px", borderTop: "2px solid var(--ink)", alignItems: collapsed ? "center" : "stretch" }}>
           {!collapsed && (
-            <p style={{
-              fontFamily: "var(--ff-mono)",
-              fontSize: "var(--ts-meta)",
-              color: "var(--ink-3)",
-              textTransform: "uppercase",
-              letterSpacing: "0.20em",
-              lineHeight: 1.5,
-            }}>Set in Instrument Serif and JetBrains Mono.</p>
+            <p className="font-mono text-sm text-ink-3 uppercase tracking-wide leading-[1.5]">Set in Instrument Serif and JetBrains Mono.</p>
           )}
           {displayName && (
             <button
               onClick={logout}
               title="Log out"
-              style={{
-                padding: "6px 10px",
-                background: "transparent",
-                border: "1.5px solid var(--ink)",
-                color: "var(--ink)",
-                fontFamily: "var(--ff-mono)",
-                fontSize: "var(--ts-label)",
-                textTransform: "uppercase",
-                letterSpacing: "0.16em",
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-                justifyContent: "center",
-                cursor: "pointer",
-                transition: "background var(--dur-fast), color var(--dur-fast)",
-                width: "100%",
-              }}
+              className="py-3 px-5 bg-transparent text-ink font-mono text-base uppercase tracking-[0.16em] flex items-center gap-4 justify-center cursor-pointer w-full" style={{ border: "1.5px solid var(--ink)", transition: "background var(--dur-fast), color var(--dur-fast)" }}
               onMouseEnter={e => {
                 (e.currentTarget as HTMLElement).style.background = "var(--ink)";
                 (e.currentTarget as HTMLElement).style.color = "var(--paper)";
@@ -392,23 +243,7 @@ function Sidebar({
           <button
             onClick={onToggle}
             title={collapsed ? "Expand sidebar" : "Fold sidebar"}
-            style={{
-              padding: "6px 10px",
-              background: "transparent",
-              border: "1.5px solid var(--ink)",
-              color: "var(--ink)",
-              fontFamily: "var(--ff-mono)",
-              fontSize: "var(--ts-label)",
-              textTransform: "uppercase",
-              letterSpacing: "0.16em",
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-              justifyContent: "center",
-              cursor: "pointer",
-              transition: "background var(--dur-fast), color var(--dur-fast)",
-              width: "100%",
-            }}
+            className="py-3 px-5 bg-transparent text-ink font-mono text-base uppercase tracking-[0.16em] flex items-center gap-4 justify-center cursor-pointer w-full" style={{ border: "1.5px solid var(--ink)", transition: "background var(--dur-fast), color var(--dur-fast)" }}
             onMouseEnter={e => {
               (e.currentTarget as HTMLElement).style.background = "var(--ink)";
               (e.currentTarget as HTMLElement).style.color = "var(--paper)";
@@ -450,90 +285,38 @@ function TopBarStack({
   const dateStr = now.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
 
   return (
-    <div style={{ borderBottom: "2px solid var(--ink)", flexShrink: 0 }}>
+    <div className="shrink-0" style={{ borderBottom: "2px solid var(--ink)" }}>
       {/* Row 1 — Date strip (ink on paper) */}
-      <div style={{
-        background: "var(--ink)",
-        color: "var(--paper)",
-        padding: "6px 18px",
-        fontFamily: "var(--ff-mono)",
-        fontSize: "var(--ts-meta)",
-        textTransform: "uppercase",
-        letterSpacing: "0.24em",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        gap: 10,
-      }}>
-        <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{dateStr}</span>
-        <span style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+      <div className="bg-ink text-paper py-[6px] px-[18px] font-mono text-sm uppercase tracking-[0.24em] flex justify-between items-center gap-5">
+        <span className="overflow-hidden text-ellipsis whitespace-nowrap">{dateStr}</span>
+        <span className="flex items-center gap-4 shrink-0">
           <span className="pulse-dot" aria-hidden="true" />
           <span>Live</span>
         </span>
-        <span className="hidden md:inline" style={{ flexShrink: 0, letterSpacing: "0.20em" }}>96 DPI</span>
+        <span className="hidden md:inline shrink-0 tracking-wide" >96 DPI</span>
       </div>
 
       {/* Row 2 — Section row */}
-      <div style={{
-        minHeight: 72,
-        display: "flex",
-        alignItems: "center",
-        padding: "8px 22px",
-        gap: 12,
-        background: "var(--paper)",
-      }}>
+      <div className="min-h-[72] flex items-center py-[8px] px-[22px] gap-6 bg-paper">
         {/* Left — section info */}
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <p style={{
-            fontFamily: "var(--ff-mono)",
-            fontSize: "var(--ts-meta)",
-            textTransform: "uppercase",
-            letterSpacing: "0.24em",
-            marginBottom: 2,
-          }}>— {section.kicker} —</p>
-          <div style={{ display: "flex", alignItems: "baseline", gap: 10, flexWrap: "wrap" }}>
-            <span style={{
-              fontFamily: "var(--ff-serif)",
-              fontStyle: "italic",
-              fontSize: "var(--ts-h2)",
-              fontWeight: 400,
-              color: "var(--ink)",
-              lineHeight: "var(--lh-display)",
-              letterSpacing: "-0.02em",
-            }}>{section.title}</span>
+        <div className="flex-1 min-w-0">
+          <p className="font-mono text-sm uppercase tracking-[0.24em] mb-1">— {section.kicker} —</p>
+          <div className="flex items-baseline gap-5 flex-wrap">
+            <span className="font-serif italic text-4xl font-normal text-ink leading-none tracking-snug">{section.title}</span>
             {section.subtitle && (
-              <span style={{
-                fontFamily: "var(--ff-mono)",
-                fontSize: "var(--ts-meta)",
-                color: "var(--ink-3)",
-                textTransform: "uppercase",
-                letterSpacing: "0.20em",
-              }}>· {section.subtitle}</span>
+              <span className="font-mono text-sm text-ink-3 uppercase tracking-wide">· {section.subtitle}</span>
             )}
           </div>
         </div>
 
         {/* Right cluster */}
-        <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+        <div className="flex items-center gap-4 shrink-0">
           {/* Notification bell */}
           <Popover.Root>
             <Popover.Trigger asChild>
               <button
                 aria-label={`Notifications${unread > 0 ? `, ${unread} unread` : ""}`}
-                style={{
-                  position: "relative",
-                  width: 38,
-                  height: 38,
-                  background: "transparent",
-                  border: "1.5px solid var(--ink)",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "var(--ink)",
-                  transition: "background var(--dur-fast), color var(--dur-fast)",
-                  flexShrink: 0,
-                }}
+                className="relative w-[38px] h-[38px] bg-transparent cursor-pointer flex items-center justify-center text-ink shrink-0" style={{ border: "1.5px solid var(--ink)", transition: "background var(--dur-fast), color var(--dur-fast)" }}
                 onMouseEnter={e => {
                   (e.currentTarget as HTMLElement).style.background = "var(--ink)";
                   (e.currentTarget as HTMLElement).style.color = "var(--paper)";
@@ -545,24 +328,7 @@ function TopBarStack({
               >
                 <Icon path={ICONS.bell} size={15} />
                 {unread > 0 && (
-                  <span style={{
-                    position: "absolute",
-                    top: -4,
-                    right: -4,
-                    minWidth: 16,
-                    height: 16,
-                    padding: "0 4px",
-                    background: "var(--red)",
-                    color: "var(--paper)",
-                    fontFamily: "var(--ff-mono)",
-                    fontSize: "var(--ts-meta)",
-                    fontWeight: 700,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    border: "1.5px solid var(--paper)",
-                    borderRadius: 0,
-                  }}>
+                  <span className="absolute min-w-[16] h-[16] p-[0_4px] bg-red text-paper font-mono text-sm font-bold flex items-center justify-center" style={{ top: -4, right: -4, border: "1.5px solid var(--paper)" }}>
                     {unread > 9 ? "9+" : unread}
                   </span>
                 )}
@@ -572,103 +338,43 @@ function TopBarStack({
               <Popover.Content
                 align="end"
                 sideOffset={8}
-                style={{
-                  width: "min(320px, calc(100vw - 32px))",
-                  background: "var(--paper)",
-                  border: "2px solid var(--ink)",
-                  boxShadow: "var(--shadow-stamp)",
-                  zIndex: 200,
-                  overflow: "hidden",
-                  animation: "scaleIn 160ms var(--ease-spring)",
-                  transformOrigin: "top right",
-                  borderRadius: 0,
-                }}
+                className="w-[min(320px, calc(100vw - 32px))] bg-paper shadow-stamp z-[200] overflow-hidden" style={{ border: "2px solid var(--ink)", animation: "scaleIn 160ms var(--ease-spring)", transformOrigin: "top right" }}
               >
                 {/* Header */}
-                <div style={{
-                  padding: "12px 16px",
-                  borderBottom: "1.5px solid var(--ink)",
-                  background: "var(--paper-2)",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}>
-                  <span style={{
-                    fontFamily: "var(--ff-mono)",
-                    fontSize: "var(--ts-meta)",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.22em",
-                    fontWeight: 700,
-                    color: "var(--ink)",
-                  }}>Wire Service</span>
+                <div className="py-6 px-8 bg-paper-2 flex justify-between items-center" style={{ borderBottom: "1.5px solid var(--ink)" }}>
+                  <span className="font-mono text-sm uppercase tracking-[0.22em] font-bold text-ink">Wire Service</span>
                   {unread > 0 && (
-                    <span style={{
-                      fontFamily: "var(--ff-mono)",
-                    fontSize: "var(--ts-meta)",
-                      fontWeight: 500,
-                      color: "var(--paper)",
-                      background: "var(--ink)",
-                      border: "1px solid var(--ink)",
-                      padding: "1px 8px",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.14em",
-                    }}>{unread} new</span>
+                    <span className="font-mono text-sm font-medium text-paper bg-ink py-[1px] px-[8px] uppercase tracking-mono" style={{ border: "1px solid var(--ink)" }}>{unread} new</span>
                   )}
                 </div>
                 {/* Body */}
-                <div style={{ maxHeight: 360, overflowY: "auto" }}>
+                <div className="max-h-[360] overflow-y-auto">
                   {notifications.length === 0 ? (
-                    <div style={{
-                      padding: "32px 16px",
-                      textAlign: "center",
-                      fontFamily: "var(--ff-mono)",
-                      fontSize: "var(--ts-meta)",
-                      color: "var(--ink-3)",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.20em",
-                    }}>— No dispatches —</div>
+                    <div className="py-16 px-8 text-center font-mono text-sm text-ink-3 uppercase tracking-wide">— No dispatches —</div>
                   ) : (
                     notifications.map((n, i) => (
                       <div
                         key={n.id}
-                        style={{
-                          padding: "12px 16px",
-                          borderBottom: i < notifications.length - 1 ? "1px solid var(--ink-3)" : undefined,
-                          cursor: "pointer",
-                        }}
+                        className="py-6 px-8 cursor-pointer" style={{ borderBottom: i < notifications.length - 1 ? "1px solid var(--ink-3)" : undefined }}
                       >
-                        <p style={{
-                          fontFamily: "var(--ff-mono)",
-                          fontSize: "var(--ts-meta)",
-                          color: "var(--red)",
-                          textTransform: "uppercase",
-                          letterSpacing: "0.22em",
-                          marginBottom: 4,
-                        }}>
+                        <p className="font-mono text-sm text-red uppercase tracking-[0.22em] mb-2">
                           {n.type === "success" ? "Update" : n.type === "error" ? "Error" : "Notice"} · just now
                         </p>
                         {n.title && (
-                          <p style={{
-                            fontFamily: "var(--ff-serif)",
-                            fontStyle: "italic",
-                            fontSize: "var(--ts-sub)",
-                            lineHeight: "var(--lh-snug)",
-                            marginBottom: 4,
-                            color: "var(--ink)",
-                          }}>{n.title}</p>
+                          <p className="font-serif italic text-xl leading-[1.15] mb-2 text-ink">{n.title}</p>
                         )}
-                        <p style={{ fontFamily: "var(--ff-body)", fontSize: "var(--ts-body)", color: "var(--ink-2)", lineHeight: 1.45 }}>{n.message}</p>
-                        <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
+                        <p className="font-body text-md text-ink-2 leading-[1.45]">{n.message}</p>
+                        <div className="flex gap-4 mt-4">
                           {n.deepLink && (
                             <Link
                               href={n.deepLink}
                               onClick={() => { markRead(n.id); removeNotification(n.id); }}
-                              style={{ fontFamily: "var(--ff-mono)", fontSize: "var(--ts-meta)", color: "var(--red)", textTransform: "uppercase", letterSpacing: "0.16em" }}
+                              className="font-mono text-sm text-red uppercase tracking-[0.16em]"
                             >View →</Link>
                           )}
                           <button
                             onClick={() => { markRead(n.id); removeNotification(n.id); }}
-                            style={{ background: "none", border: "none", cursor: "pointer", fontFamily: "var(--ff-mono)", fontSize: "var(--ts-meta)", color: "var(--ink-3)", textTransform: "uppercase", letterSpacing: "0.14em" }}
+                            className="bg-transparent cursor-pointer font-mono text-sm text-ink-3 uppercase tracking-mono" style={{ border: "none" }}
                           >Dismiss</button>
                         </div>
                       </div>
@@ -676,14 +382,10 @@ function TopBarStack({
                   )}
                 </div>
                 {notifications.length > 0 && (
-                  <div style={{ padding: "10px 16px", borderTop: "1.5px solid var(--ink)" }}>
+                  <div className="py-5 px-8" style={{ borderTop: "1.5px solid var(--ink)" }}>
                     <button
                       onClick={() => { markAllRead(); notifications.forEach(n => removeNotification(n.id)); }}
-                      style={{
-                        fontFamily: "var(--ff-mono)", fontSize: "var(--ts-meta)", textTransform: "uppercase",
-                        letterSpacing: "0.16em", background: "transparent", border: "1.5px solid var(--ink)",
-                        color: "var(--ink)", padding: "5px 10px", cursor: "pointer", width: "100%",
-                      }}
+                      className="font-mono text-sm uppercase tracking-[0.16em] bg-transparent text-ink py-[5px] px-[10px] cursor-pointer w-full" style={{ border: "1.5px solid var(--ink)" }}
                     >Clear all dispatches</button>
                   </div>
                 )}
@@ -695,7 +397,7 @@ function TopBarStack({
           <Link
             href="/settings/profile"
             aria-label="Open subscription settings"
-            style={{ textDecoration: "none", display: "block" }}
+            className="no-underline block"
           >
             <Avatar name={displayName} url={avatarUrl} size={36} />
           </Link>
@@ -709,11 +411,12 @@ function TopBarStack({
 function resolveSection(pathname: string): { kicker: string; title: string; subtitle?: string } {
   if (pathname === "/") return { kicker: "Section", title: "Front Page", subtitle: "Overview" };
   if (pathname.startsWith("/about")) return { kicker: "Portfolio", title: "About the Author", subtitle: "Profile & Projects" };
-  if (pathname.startsWith("/households")) return { kicker: "Households", title: "Households", subtitle: "Shared Finance" };
-  if (pathname.startsWith("/expenses")) return { kicker: "Finance", title: "Expenses", subtitle: "All Expenses" };
-  if (pathname.startsWith("/income")) return { kicker: "Finance", title: "Income", subtitle: "Income Tracking" };
+  if (pathname.startsWith("/contact")) return { kicker: "Portfolio", title: "Contact", subtitle: "Write a Letter" };
+  if (pathname.startsWith("/bills")) return { kicker: "Ledger · Page B-1", title: "The Ledger", subtitle: "Household & Chores" };
   if (pathname.startsWith("/dashboard")) return { kicker: "Ledger", title: "Dashboard", subtitle: "Overview" };
-  if (pathname.startsWith("/communities")) return { kicker: "Forum", title: "Letters", subtitle: "Threaded Discussions" };
+  if (pathname.startsWith("/expenses")) return { kicker: "Finance · Expenses", title: "Finance", subtitle: "Expenses & Payments" };
+  if (pathname.startsWith("/income")) return { kicker: "Finance · Income", title: "Finance", subtitle: "Income" };
+  if (pathname.startsWith("/forum")) return { kicker: "Letters · Community", title: "Letters", subtitle: "Threaded Discussions" };
   if (pathname.startsWith("/settings")) return { kicker: "Account", title: "Subscription", subtitle: "Settings" };
   if (pathname.startsWith("/admin")) return { kicker: "Admin", title: "Moderation", subtitle: "Mod Queue" };
   return { kicker: "Section", title: "The Stack." };
@@ -722,27 +425,18 @@ function resolveSection(pathname: string): { kicker: string; title: string; subt
 /* ── Mobile bottom strip ────────────────────────────────────────────────────── */
 function BottomStrip({ pathname }: { pathname: string }) {
   const cells = [
-    { label: "Home",       href: "/" },
-    { label: "Households", href: "/households" },
-    { label: "Finance",    href: "/expenses" },
-    { label: "Letters",    href: "/communities" },
-    { label: "Account",    href: "/settings/profile" },
+    { label: "Home",     href: "/" },
+    { label: "Bills",    href: "/bills" },
+    { label: "Finance",  href: "/expenses" },
+    { label: "Letters",  href: "/forum" },
+    { label: "Account",  href: "/settings/profile" },
   ];
 
   return (
     <nav
       aria-label="Mobile navigation"
-      className="mobile-only"
-      style={{
-        position: "fixed",
-        bottom: 0,
-        left: 0,
-        right: 0,
-        zIndex: 80,
-        background: "var(--paper)",
-        borderTop: "2px solid var(--ink)",
-        paddingBottom: "env(safe-area-inset-bottom, 4px)",
-      }}
+      className="mobile-only fixed bottom-0 left-0 right-0 z-[80] bg-paper pb-[env(safe-area-inset-bottom, 4px)]"
+      style={{ borderTop: "2px solid var(--ink)" }}
     >
       {cells.map((cell, i) => {
         const active = cell.href === "/"
@@ -756,25 +450,7 @@ function BottomStrip({ pathname }: { pathname: string }) {
             key={cell.href}
             href={cell.href}
             aria-current={active ? "page" : undefined}
-            style={{
-              flex: 1,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              minHeight: 44,
-              padding: "10px 4px",
-              background: active ? "var(--ink)" : "transparent",
-              color: active ? "var(--paper)" : "var(--ink)",
-              borderRight: i < cells.length - 1 ? "1.5px solid var(--ink)" : undefined,
-              textDecoration: "none",
-              fontFamily: "var(--ff-mono)",
-              fontSize: "var(--ts-meta)",
-              textTransform: "uppercase",
-              letterSpacing: "0.18em",
-              fontWeight: active ? 700 : 500,
-              cursor: "pointer",
-              transition: "background var(--dur-fast), color var(--dur-fast)",
-            }}
+            className="flex-1 flex items-center justify-center min-h-[44] py-5 px-2 no-underline font-mono text-sm uppercase tracking-[0.18em] cursor-pointer" style={{ background: active ? "var(--ink)" : "transparent", color: active ? "var(--paper)" : "var(--ink)", borderRight: i < cells.length - 1 ? "1.5px solid var(--ink)" : undefined, fontWeight: active ? 700 : 500, transition: "background var(--dur-fast), color var(--dur-fast)" }}
           >
             {cell.label}
           </Link>
@@ -820,7 +496,7 @@ function AppShellInner({ children, displayName, avatarUrl, role, subnav }: AppSh
   const section = resolveSection(pathname);
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100vh", overflow: "hidden" }}>
+    <div className="flex flex-col h-screen overflow-hidden">
       {/* Top bar stack — full width */}
       <TopBarStack
         displayName={displayName}
@@ -834,9 +510,9 @@ function AppShellInner({ children, displayName, avatarUrl, role, subnav }: AppSh
       {subnav}
 
       {/* Row: sidebar + main */}
-      <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
+      <div className="flex-1 flex overflow-hidden">
         {/* Desktop sidebar — hidden on mobile */}
-        <div className="hidden md:block" style={{ height: "100%" }}>
+        <div className="hidden md:block h-full" >
           <Sidebar
             collapsed={collapsed}
             onToggle={toggleCollapsed}
@@ -849,16 +525,10 @@ function AppShellInner({ children, displayName, avatarUrl, role, subnav }: AppSh
 
         {/* Main content */}
         <main
-          className="app-main"
-          style={{
-            flex: 1,
-            overflowY: "auto",
-            overflowX: "clip",
-            background: "var(--paper)",
-            padding: "clamp(20px, 2vw, 48px) clamp(24px, 4vw, 80px)",
-          }}
+          className="app-main flex-1 overflow-y-auto overflow-x-clip bg-paper p-[clamp(20px,_2vw,_48px)_clamp(24px,_4vw,_80px)]"
+          
         >
-          <div style={{ maxWidth: "clamp(900px, 92%, 1600px)", margin: "0 auto", position: "relative" }} className="page-enter page-container">
+          <div  className="page-enter page-container max-w-[clamp(900px, 92%, 1600px)] mx-auto relative">
             {children}
           </div>
         </main>

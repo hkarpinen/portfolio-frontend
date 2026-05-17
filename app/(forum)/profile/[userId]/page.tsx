@@ -1,6 +1,4 @@
 "use client";
-import styles from "./page.module.css";
-
 import Link from "next/link";
 import { useMe } from "@/hooks/use-identity";
 import { useForumProfile, useProfileThreads, useProfileMemberships, useProfileComments } from "@/hooks/use-forum";
@@ -22,121 +20,83 @@ export default function ProfilePage({ params }: { params: { userId: string } }) 
 
   if (profileLoading) {
     return (
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "200px" }}>
-        <span style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)" }}>Loading profile…</span>
+      <div className="flex items-center justify-center h-[200px]">
+        <span className="text-base text-ink-3">Loading profile…</span>
       </div>
     );
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "24px" }} className="page-enter">
+    <div  className="page-enter flex flex-col gap-12">
       {/* Hero */}
-      <div style={{
-        background: "var(--surface)", border: "1px solid var(--border)",
-        borderRadius: "24px", padding: "32px",
-        boxShadow: "var(--shadow-sm)", position: "relative", overflow: "hidden",
-      }}>
-        <div className="dot-grid" style={{ position: "absolute", inset: 0, opacity: 0.3, pointerEvents: "none" }} />
-        <div style={{ position: "relative", display: "flex", alignItems: "flex-start", gap: "20px", flexWrap: "wrap" }}>
+      <div className="bg-paper p-16 shadow-card relative overflow-hidden" style={{ border: "1.5px solid var(--ink)" }}>
+        <div className="dot-grid absolute inset-0 opacity-[0.3] pointer-events-none"  />
+        <div className="relative flex items-start gap-10 flex-wrap">
           {/* Avatar */}
           {profile?.avatarUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={profile.avatarUrl}
               alt=""
-              style={{ width: "80px", height: "80px", borderRadius: "9999px", objectFit: "cover", border: "3px solid var(--surface)", flexShrink: 0 }}
+              className="w-40 h-40 object-cover shrink-0" style={{ border: "3px solid var(--ink)" }}
             />
           ) : (
-            <div style={{
-              width: "80px", height: "80px",
-              background: "var(--paper-3)",
-              border: "2px solid var(--ink)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: "var(--ts-sub)", fontWeight: 700, color: "var(--ink)",
-              fontFamily: "var(--ff-mono)", flexShrink: 0,
-            }}>
+            <div className="w-40 h-40 bg-paper-3 flex items-center justify-center text-xl font-bold text-ink font-mono shrink-0" style={{ border: "2px solid var(--ink)" }}>
               {initials}
             </div>
           )}
           {/* Info */}
-          <div style={{ flex: 1 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
-              <h1 style={{
-                fontFamily: "var(--ff-display)", fontWeight: "800",
-                fontSize: "var(--ts-card-h)", letterSpacing: "-0.025em", color: "var(--text)", margin: 0,
-              }}>{displayName}</h1>
+          <div className="flex-1">
+            <div className="flex items-center gap-5 flex-wrap">
+              <h1 className="font-serif font-extrabold text-2xl tracking-[-0.025em] text-ink m-0">{displayName}</h1>
               {isOwnProfile && (
-                <span style={{
-                  fontSize: "var(--ts-meta)", fontWeight: "600", color: "var(--accent)",
-                  background: "var(--accent-subtle)", padding: "2px 8px", borderRadius: "9999px",
-                }}>You</span>
+                <span className="text-sm font-mono text-red bg-[rgba(178,42,26,0.10)] py-1 px-4">You</span>
               )}
             </div>
             {profile?.bio && (
-              <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-2)", marginTop: "6px", lineHeight: 1.5 }}>
+              <p className="text-base text-ink-2 mt-3 leading-[1.5]">
                 {profile.bio}
               </p>
             )}
             {profile?.createdAt && (
-              <p style={{ fontSize: "var(--ts-label)", color: "var(--text-3)", marginTop: "8px" }}>
+              <p className="text-base text-ink-3 mt-4">
                 Member since {formatDate(profile.createdAt)}
               </p>
             )}
           </div>
           {isOwnProfile && (
-            <Link href="/settings/profile" className={styles.editLink}
-            >Edit profile</Link>
+            <Link href="/settings/profile" className="text-base font-semibold text-text-2 py-[7px] px-[14px] border border-border no-underline shrink-0 transition-colors duration-fast hover:bg-surface-2">Edit profile</Link>
           )}
         </div>
       </div>
 
       {/* Communities */}
-      <div style={{
-        background: "var(--surface)", border: "1px solid var(--border)",
-        borderRadius: "16px", padding: "20px", boxShadow: "var(--shadow-sm)",
-      }}>
-        <h2 style={{
-          fontFamily: "var(--ff-display)", fontWeight: "700",
-          fontSize: "var(--ts-body)", color: "var(--text)", marginBottom: "16px",
-        }}>Communities</h2>
+      <div className="bg-paper p-10 shadow-stamp" style={{ border: "1.5px solid var(--ink)" }}>
+        <h2 className="font-serif font-bold text-md text-ink mb-8">Communities</h2>
         {!memberships || memberships.length === 0 ? (
-          <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)" }}>Not a member of any communities yet.</p>
+          <p className="text-base text-ink-3">Not a member of any communities yet.</p>
         ) : (
-          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+          <div className="flex flex-col gap-4">
             {memberships.map(m => (
               <Link
                 key={m.membershipId}
-                href={`/communities/${m.communitySlug}`}
-                className={styles.listLink}
-                style={{
-                  display: "flex", alignItems: "center", gap: "12px",
-                  padding: "10px 12px", borderRadius: "12px",
-                  textDecoration: "none",
-                }}
+                href={`/forum/${m.communitySlug}`}
+                className="flex items-center gap-6 py-5 px-6 no-underline transition-colors duration-fast hover:bg-surface-2"
               >
                 {m.communityImageUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={m.communityImageUrl} alt="" style={{ width: "32px", height: "32px", borderRadius: "8px", objectFit: "cover", flexShrink: 0 }} />
+                  <img src={m.communityImageUrl} alt="" className="w-16 h-16 object-cover shrink-0" />
                 ) : (
-                  <div style={{
-                    width: "32px", height: "32px", borderRadius: "8px",
-                    background: "var(--accent-subtle)", display: "flex",
-                    alignItems: "center", justifyContent: "center",
-                    fontSize: "var(--ts-body)", flexShrink: 0,
-                  }}>💬</div>
+                  <div className="w-16 h-16 bg-[rgba(178,42,26,0.10)] flex items-center justify-center text-md shrink-0">💬</div>
                 )}
-                <div style={{ flex: 1 }}>
-                  <p style={{ fontSize: "var(--ts-body-sm)", fontWeight: "600", color: "var(--text)", margin: 0 }}>{m.communityName}</p>
-                  <p style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)", margin: 0 }}>
+                <div className="flex-1">
+                  <p className="text-base font-semibold text-ink m-0">{m.communityName}</p>
+                  <p className="text-sm text-ink-3 m-0">
                     {m.role === "Moderator" ? "Moderator" : "Member"} · Joined {formatDate(m.joinedAt)}
                   </p>
                 </div>
                 {m.role === "Moderator" && (
-                  <span style={{
-                    fontSize: "var(--ts-meta)", fontWeight: "700", color: "var(--warning)",
-                    background: "oklch(from var(--warning) l c h / 0.12)",
-                    padding: "2px 6px", borderRadius: "9999px", flexShrink: 0,
-                  }}>MOD</span>
+                  <span className="text-sm font-mono text-red py-1 px-3 shrink-0" style={{ background: "oklch(from var(--warning) l c h / 0.12)" }}>MOD</span>
                 )}
               </Link>
             ))}
@@ -145,46 +105,32 @@ export default function ProfilePage({ params }: { params: { userId: string } }) 
       </div>
 
       {/* Threads */}
-      <div style={{
-        background: "var(--surface)", border: "1px solid var(--border)",
-        borderRadius: "16px", overflow: "hidden", boxShadow: "var(--shadow-sm)",
-      }}>
-        <div style={{ padding: "20px 20px 12px" }}>
-          <h2 style={{
-            fontFamily: "var(--ff-display)", fontWeight: "700",
-            fontSize: "var(--ts-body)", color: "var(--text)", margin: 0,
-          }}>Recent Threads</h2>
+      <div className="bg-paper overflow-hidden shadow-stamp" style={{ border: "1.5px solid var(--ink)" }}>
+        <div className="p-[20px_20px_12px]">
+          <h2 className="font-serif font-bold text-md text-ink m-0">Recent Threads</h2>
         </div>
         {threads.length === 0 ? (
-          <div style={{ padding: "0 20px 20px" }}>
-            <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)" }}>No threads posted yet.</p>
+          <div className="p-[0_20px_20px]">
+            <p className="text-base text-ink-3">No threads posted yet.</p>
           </div>
         ) : (
           <div>
             {threads.map((thread, i) => (
               <Link
                 key={thread.threadId}
-                href={`/communities/${(thread as {communitySlug?: string}).communitySlug ?? ""}/threads/${thread.threadId}`}
-                className={styles.listLink}
-                style={{
-                  display: "flex", alignItems: "center", gap: "12px",
-                  padding: "12px 20px",
-                  borderTop: i === 0 ? "1px solid var(--border)" : "none",
-                  borderBottom: i < threads.length - 1 ? "1px solid var(--border)" : "none",
-                  textDecoration: "none",
-                }}
+                href={`/forum/${(thread as {communitySlug?: string}).communitySlug ?? ""}/threads/${thread.threadId}`}
+                className="flex items-center gap-6 py-6 px-10 no-underline transition-colors duration-fast hover:bg-surface-2"
+                style={{ borderTop: i === 0 ? "1.5px solid var(--ink)" : "none", borderBottom: i < threads.length - 1 ? "1.5px solid var(--ink)" : "none" }}
               >
-                <div style={{
-                  width: "36px", textAlign: "center", flexShrink: 0,
-                }}>
-                  <span style={{ fontSize: "var(--ts-body-sm)", fontWeight: "700", color: "var(--text)" }}>{thread.voteScore ?? 0}</span>
-                  <div style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)", textTransform: "uppercase" }}>pts</div>
+                <div className="w-[36px] text-center shrink-0">
+                  <span className="text-base font-bold text-ink">{thread.voteScore ?? 0}</span>
+                  <div className="text-sm text-ink-3 uppercase">pts</div>
                 </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ fontSize: "var(--ts-body-sm)", fontWeight: "600", color: "var(--text)", margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                <div className="flex-1 min-w-0">
+                  <p className="text-base font-semibold text-ink m-0 whitespace-nowrap overflow-hidden text-ellipsis">
                     {thread.title}
                   </p>
-                  <p style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)", margin: 0 }}>
+                  <p className="text-sm text-ink-3 m-0">
                     {timeAgo(thread.createdAt)}
                   </p>
                 </div>
@@ -195,43 +141,31 @@ export default function ProfilePage({ params }: { params: { userId: string } }) 
       </div>
 
       {/* Recent Comments */}
-      <div style={{
-        background: "var(--surface)", border: "1px solid var(--border)",
-        borderRadius: "16px", overflow: "hidden", boxShadow: "var(--shadow-sm)",
-      }}>
-        <div style={{ padding: "20px 20px 12px" }}>
-          <h2 style={{
-            fontFamily: "var(--ff-display)", fontWeight: "700",
-            fontSize: "var(--ts-body)", color: "var(--text)", margin: 0,
-          }}>Recent Comments</h2>
+      <div className="bg-paper overflow-hidden shadow-stamp" style={{ border: "1.5px solid var(--ink)" }}>
+        <div className="p-[20px_20px_12px]">
+          <h2 className="font-serif font-bold text-md text-ink m-0">Recent Comments</h2>
         </div>
         {comments.length === 0 ? (
-          <div style={{ padding: "0 20px 20px" }}>
-            <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)" }}>No comments posted yet.</p>
+          <div className="p-[0_20px_20px]">
+            <p className="text-base text-ink-3">No comments posted yet.</p>
           </div>
         ) : (
           <div>
             {comments.map((comment, i) => (
               <Link
                 key={comment.commentId}
-                href={`/communities/${comment.communitySlug}/threads/${comment.threadId}`}
-                className={styles.listLink}
-                style={{
-                  display: "flex", flexDirection: "column", gap: "4px",
-                  padding: "12px 20px",
-                  borderTop: i === 0 ? "1px solid var(--border)" : "none",
-                  borderBottom: i < comments.length - 1 ? "1px solid var(--border)" : "none",
-                  textDecoration: "none",
-                }}
+                href={`/forum/${comment.communitySlug}/threads/${comment.threadId}`}
+                className="flex flex-col gap-2 py-6 px-10 no-underline transition-colors duration-fast hover:bg-surface-2"
+                style={{ borderTop: i === 0 ? "1.5px solid var(--ink)" : "none", borderBottom: i < comments.length - 1 ? "1.5px solid var(--ink)" : "none" }}
               >
-                <div style={{ display: "flex", alignItems: "center", gap: "8px", justifyContent: "space-between" }}>
-                  <p style={{ fontSize: "var(--ts-label)", color: "var(--accent)", margin: 0, fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                <div className="flex items-center gap-4 justify-between">
+                  <p className="text-base text-red m-0 font-semibold whitespace-nowrap overflow-hidden text-ellipsis">
                     {comment.threadTitle}
                   </p>
-                  <span style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)", flexShrink: 0 }}>{timeAgo(comment.createdAt)}</span>
+                  <span className="text-sm text-ink-3 shrink-0">{timeAgo(comment.createdAt)}</span>
                 </div>
-                <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-2)", margin: 0, lineHeight: 1.45 }}>{comment.content}</p>
-                <p style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)", margin: 0 }}>in {comment.communityName}</p>
+                <p className="text-base text-ink-2 m-0 leading-[1.45]">{comment.content}</p>
+                <p className="text-sm text-ink-3 m-0">in {comment.communityName}</p>
               </Link>
             ))}
           </div>

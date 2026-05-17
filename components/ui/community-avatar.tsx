@@ -22,14 +22,7 @@ export function CommunityAvatar({
       <img
         src={img}
         alt=""
-        style={{
-          width: `${size}px`,
-          height: `${size}px`,
-          borderRadius: radius,
-          objectFit: "cover",
-          flexShrink: 0,
-          border: "1px solid var(--border)",
-        }}
+        className="object-cover shrink-0" style={{ width: `${size}px`, height: `${size}px`, border: "1.5px solid var(--ink)" }}
       />
     );
   }
@@ -40,21 +33,7 @@ export function CommunityAvatar({
 
   return (
     <span
-      style={{
-        width: `${size}px`,
-        height: `${size}px`,
-        borderRadius: radius,
-        background: color ? `${color}33` : "var(--accent-subtle)",
-        border: color ? `1px solid ${color}66` : "1px solid var(--border)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        flexShrink: 0,
-        fontFamily: "var(--ff-display)",
-        fontWeight: 700,
-        fontSize: `${fontSize}px`,
-        color: color ?? "var(--accent)",
-      }}
+      className="flex items-center justify-center shrink-0 font-serif italic font-normal" style={{ width: `${size}px`, height: `${size}px`, background: color ? `${color}1a` : "var(--paper-3)", border: "1.5px solid var(--ink)", fontSize: `${fontSize}px`, color: color ?? "var(--ink)" }}
     >
       {initial}
     </span>

@@ -17,7 +17,7 @@ const typeStyles: Record<"success" | "error" | "info", React.CSSProperties> = {
     color: "var(--danger)",
   },
   info: {
-    background: "var(--surface)",
+    background: "var(--paper-2)",
     border: "1px solid var(--border-2)",
     color: "var(--text)",
   },
@@ -38,21 +38,16 @@ export function NotificationsToaster() {
               removeToast(n.id);
             }
           }}
-          style={{
-            ...typeStyles[n.type],
-            borderRadius: "12px",
-            padding: "12px 14px",
-            boxShadow: "var(--shadow-md)",
-          }}
+          className="py-[12px] px-[14px] shadow-stamp" style={{ ...typeStyles[n.type] }}
         >
-          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "8px" }}>
-            <div style={{ flex: 1 }}>
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex-1">
               {n.title && (
-                <Toast.Title style={{ fontSize: "var(--ts-body)", fontWeight: "600", fontFamily: "var(--ff-display)", marginBottom: "2px", display: "block" }}>
+                <Toast.Title className="text-md font-semibold font-serif mb-1 block">
                   {n.title}
                 </Toast.Title>
               )}
-              <Toast.Description style={{ fontSize: "var(--ts-body)", lineHeight: "1.4" }}>
+              <Toast.Description className="text-md leading-[1.4]">
                 {n.message}
               </Toast.Description>
               {n.deepLink && (
@@ -60,11 +55,7 @@ export function NotificationsToaster() {
                   <Link
                     href={n.deepLink}
                     onClick={() => { markRead(n.id); removeToast(n.id); }}
-                    style={{
-                      marginTop: "4px", display: "inline-block",
-                      fontSize: "var(--ts-meta)", fontWeight: "500",
-                      color: "var(--accent)", textDecoration: "underline",
-                    }}
+                    className="mt-2 inline-block text-sm font-medium text-red underline"
                   >
                     View
                   </Link>
@@ -84,21 +75,7 @@ export function NotificationsToaster() {
         </Toast.Root>
       ))}
       <Toast.Viewport
-        style={{
-          position: "fixed",
-          bottom: "20px",
-          right: "20px",
-          display: "flex",
-          flexDirection: "column",
-          gap: "8px",
-          width: "320px",
-          maxWidth: "calc(100vw - 32px)",
-          zIndex: 100,
-          listStyle: "none",
-          padding: 0,
-          margin: 0,
-          outline: "none",
-        }}
+        className="fixed bottom-[20px] right-[20px] flex flex-col gap-4 w-[320px] max-w-[calc(100vw - 32px)] z-[100] list-none p-0 m-0 outline-none"
       />
     </Toast.Provider>
   );

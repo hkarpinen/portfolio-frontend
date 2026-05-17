@@ -43,21 +43,18 @@ function FinancialSummary({ initialMonths }: { initialMonths: ContributionPeriod
   ];
 
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap",
-                  padding: "10px 14px", background: "var(--surface)", border: "1px solid var(--border)",
-                  borderRadius: "var(--r-lg)", boxShadow: "var(--shadow-sm)" }}>
+    <div className="flex items-center gap-3 flex-wrap py-[10px] px-[14px] bg-paper shadow-stamp" style={{ border: "1.5px solid var(--ink)" }}>
       {monthLabel && (
-        <span style={{ fontSize: "var(--ts-label)", fontWeight: 600, color: "var(--text-2)", marginRight: "4px" }}>
+        <span className="text-base font-semibold text-ink-2 mr-2">
           {monthLabel}
         </span>
       )}
       {stats.map((s, i) => (
-        <span key={s.label} style={{ display: "inline-flex", alignItems: "center", gap: "4px",
-                                     fontSize: "var(--ts-label)", color: "var(--text-3)" }}>
-          {i > 0 && <span style={{ color: "var(--border-2)", userSelect: "none", margin: "0 2px" }}>·</span>}
+        <span key={s.label} className="inline-flex items-center gap-2 text-base text-ink-3">
+          {i > 0 && <span className="text-[var(--border-2)] select-none" style={{ margin: "0 2px" }}>·</span>}
           {s.label}{" "}
-          <span style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "var(--ts-body-sm)", color: s.color }}>{s.value}</span>
-          {s.sub && <span style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)", fontWeight: 500 }}>({s.sub})</span>}
+          <span className="font-serif font-bold text-base" style={{ color: s.color }}>{s.value}</span>
+          {s.sub && <span className="text-sm text-ink-3 font-medium">({s.sub})</span>}
         </span>
       ))}
     </div>
@@ -85,31 +82,18 @@ export function ExpensesClient({
   const months = liveMonths ?? initialMonths;
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+    <div className="flex flex-col gap-8">
       {/* Financial summary */}
       <FinancialSummary initialMonths={months} />
 
       {/* Tab bar */}
-      <div style={{ borderBottom: "1px solid var(--border)", display: "flex", gap: "0" }}>
+      <div className="flex gap-0" style={{ borderBottom: "1.5px solid var(--ink)" }}>
         {TABS.map((t) => (
           <button
             key={t.key}
             type="button"
             onClick={() => setTab(t.key)}
-            style={{
-              padding: "10px 16px",
-              fontSize: "var(--ts-body-sm)",
-              fontWeight: tab === t.key ? 600 : 400,
-              color: tab === t.key ? "var(--text)" : "var(--text-3)",
-              background: "none",
-              borderTop: "none",
-              borderLeft: "none",
-              borderRight: "none",
-              borderBottom: tab === t.key ? "2px solid var(--accent)" : "2px solid transparent",
-              marginBottom: "-1px",
-              cursor: "pointer",
-              transition: "color 110ms",
-            }}
+            className="py-5 px-8 text-base bg-transparent mb-[-1px] cursor-pointer" style={{ fontWeight: tab === t.key ? 600 : 400, color: tab === t.key ? "var(--text)" : "var(--text-3)", borderTop: "none", borderLeft: "none", borderRight: "none", borderBottom: tab === t.key ? "3px solid var(--red)" : "2px solid transparent", transition: "color 110ms" }}
           >
             {t.label}
           </button>
@@ -119,20 +103,14 @@ export function ExpensesClient({
       {tab === "payments" ? (
         <BudgetView months={months} />
       ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)", margin: 0 }}>
+        <div className="flex flex-col gap-10">
+          <div className="flex items-center justify-between">
+            <p className="text-base text-ink-3 m-0">
               Manage your recurring personal expense definitions — phone, gym, streaming, insurance.
             </p>
             <Link
               href="/expenses/new"
-              style={{
-                display: "inline-flex", alignItems: "center", gap: "6px",
-                padding: "8px 16px", borderRadius: "10px",
-                background: "var(--accent)", color: "#fff",
-                fontSize: "var(--ts-body-sm)", fontWeight: "600", textDecoration: "none",
-                flexShrink: 0,
-              }}
+              className="inline-flex items-center gap-3 py-4 px-8 bg-red text-white text-base font-semibold no-underline shrink-0"
             >
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
               Add expense

@@ -14,11 +14,7 @@ export function NavAuth({ displayName, avatarUrl = null }: NavAuthProps) {
 
   if (!displayName) {
     return (
-      <Link href="/login" style={{
-        fontSize: "var(--ts-body)", fontWeight: "600", color: "var(--accent)",
-        textDecoration: "none", padding: "6px 14px", borderRadius: "8px",
-        background: "var(--accent-subtle)", transition: "background 110ms",
-      }}>
+      <Link href="/login" className="text-md font-semibold text-red no-underline py-[6px] px-[14px] bg-[rgba(178,42,26,0.10)]" style={{ transition: "background 110ms" }}>
         Sign in
       </Link>
     );
@@ -33,7 +29,7 @@ export function NavAuth({ displayName, avatarUrl = null }: NavAuthProps) {
     .toUpperCase();
 
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+    <div className="flex items-center gap-4">
       <Link
         href="/settings/profile"
         aria-label="Your profile"
@@ -44,28 +40,20 @@ export function NavAuth({ displayName, avatarUrl = null }: NavAuthProps) {
           <img
             src={avatarUrl}
             alt=""
-            style={{ width: "28px", height: "28px", borderRadius: "9999px", objectFit: "cover", border: "2px solid var(--surface)" }}
+            className="w-[28px] h-[28px] rounded-full object-cover" style={{ border: "2px solid var(--surface)" }}
           />
         ) : (
-          <span style={{
-            width: "28px", height: "28px", borderRadius: "9999px",
-            background: "var(--accent-subtle)", color: "var(--accent)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: "var(--ts-meta)", fontWeight: "700", fontFamily: "var(--ff-display)",
-          }}>
+          <span className="w-[28px] h-[28px] bg-[rgba(178,42,26,0.10)] text-red flex items-center justify-center text-sm font-bold font-serif">
             {initials || "?"}
           </span>
         )}
-        <span style={{ fontSize: "var(--ts-body)", fontWeight: "500", color: "var(--text-2)" }}>
+        <span className="text-md font-medium text-ink-2">
           {displayName}
         </span>
       </Link>
       <button
         onClick={logout}
-        style={{
-          fontSize: "var(--ts-label)", fontWeight: "500", color: "var(--danger)",
-          background: "none", border: "none", cursor: "pointer", padding: "4px 8px",
-        }}
+        className="text-base font-medium text-red bg-transparent cursor-pointer py-2 px-4" style={{ border: "none" }}
       >
         Logout
       </button>

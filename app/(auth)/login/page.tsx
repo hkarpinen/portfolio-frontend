@@ -1,9 +1,9 @@
 import { LoginForm } from "./login-form";
 
 function getSafeRedirectPath(from?: string): string {
-  if (!from) return "/communities";
-  if (!from.startsWith("/")) return "/communities";
-  if (from.startsWith("//")) return "/communities";
+  if (!from) return "/forum";
+  if (!from.startsWith("/")) return "/forum";
+  if (from.startsWith("//")) return "/forum";
   return from;
 }
 

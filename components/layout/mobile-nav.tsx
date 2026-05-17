@@ -24,8 +24,8 @@ export function MobileNav({ displayName, avatarUrl, initials }: MobileNavProps) 
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
         <button
-          className="md:hidden"
-          style={{ background: "transparent", border: "none", cursor: "pointer", color: "var(--text-2)", padding: "4px" }}
+          className="md:hidden bg-transparent cursor-pointer text-ink-2 p-2"
+          style={{ border: "none" }}
           aria-label="Open navigation menu"
         >
           <Icon path={MENU_ICON} size={20} />
@@ -36,35 +36,26 @@ export function MobileNav({ displayName, avatarUrl, initials }: MobileNavProps) 
         <DropdownMenu.Content
           align="end"
           sideOffset={8}
-          style={{
-            borderRadius: "12px",
-            padding: "8px",
-            background: "oklch(from var(--surface) l c h / 0.95)",
-            backdropFilter: "blur(12px)",
-            border: "1px solid var(--border)",
-            boxShadow: "var(--shadow-lg)",
-            minWidth: "200px",
-            zIndex: 50,
-          }}
+          className="p-4 shadow-modal min-w-[200px] z-[50]" style={{ background: "oklch(from var(--surface) l c h / 0.95)", backdropFilter: "blur(12px)", border: "1.5px solid var(--ink)" }}
         >
           {[
             { href: "/about",       label: "About" },
             { href: "/contact",     label: "Contact" },
-            { href: "/communities", label: "Forum" },
-            { href: "/households",  label: "Expenses" },
+            { href: "/forum", label: "Forum" },
+            { href: "/bills",  label: "Expenses" },
           ].map((item) => (
             <DropdownMenu.Item key={item.href} asChild>
               <Link
                 href={item.href}
-                className="block px-3 py-[10px] rounded-lg text-sm no-underline outline-none cursor-pointer transition-colors data-[highlighted]:bg-surface-2"
-                style={{ color: "var(--text-2)" }}
+                className="block px-3 py-[10px] rounded-lg text-sm no-underline outline-none cursor-pointer transition-colors data-[highlighted]:bg-surface-2 text-ink-2"
+                
               >
                 {item.label}
               </Link>
             </DropdownMenu.Item>
           ))}
 
-          <DropdownMenu.Separator style={{ height: "1px", background: "var(--border)", margin: "4px 0" }} />
+          <DropdownMenu.Separator className="h-[1px]" style={{ background: "var(--ink-3)", margin: "4px 0" }} />
 
           {displayName ? (
             <DropdownMenu.Item asChild>
@@ -74,27 +65,22 @@ export function MobileNav({ displayName, avatarUrl, initials }: MobileNavProps) 
               >
                 {avatarUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={avatarUrl} alt="" style={{ width: "24px", height: "24px", borderRadius: "9999px", objectFit: "cover" }} />
+                  <img src={avatarUrl} alt="" className="w-12 h-12 rounded-full object-cover" />
                 ) : (
-                  <span style={{
-                    width: "24px", height: "24px", borderRadius: "9999px",
-                    background: "var(--accent-subtle)", color: "var(--accent)",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    fontSize: "var(--ts-meta)", fontWeight: "700",
-                  }}>{initials ?? "?"}</span>
+                  <span className="w-12 h-12 rounded-full bg-[rgba(178,42,26,0.10)] text-red flex items-center justify-center text-sm font-bold">{initials ?? "?"}</span>
                 )}
-                <span style={{ fontSize: "var(--ts-body)", color: "var(--text)" }}>{displayName}</span>
+                <span className="text-md text-ink">{displayName}</span>
               </Link>
             </DropdownMenu.Item>
           ) : (
             <>
               <DropdownMenu.Item asChild>
-                <Link href="/login" className="block px-3 py-[10px] rounded-lg text-sm no-underline outline-none cursor-pointer transition-colors data-[highlighted]:bg-surface-2" style={{ color: "var(--text-2)" }}>
+                <Link href="/login" className="block px-3 py-[10px] rounded-lg text-sm no-underline outline-none cursor-pointer transition-colors data-[highlighted]:bg-surface-2 text-ink-2" >
                   Sign in
                 </Link>
               </DropdownMenu.Item>
               <DropdownMenu.Item asChild>
-                <Link href="/register" className="block px-3 py-[10px] rounded-lg text-sm font-semibold text-center no-underline outline-none cursor-pointer transition-colors data-[highlighted]:brightness-110" style={{ color: "#fff", background: "var(--accent)" }}>
+                <Link href="/register" className="block px-3 py-[10px] rounded-lg text-sm font-semibold text-center no-underline outline-none cursor-pointer transition-colors data-[highlighted]:brightness-110 text-white bg-red" >
                   Get started
                 </Link>
               </DropdownMenu.Item>

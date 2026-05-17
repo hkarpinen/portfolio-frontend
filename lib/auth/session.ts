@@ -111,7 +111,7 @@ export async function requireRole(role: Role): Promise<Session> {
  * Inverse of requireUser(): authed users on `(auth)` routes get bounced to
  * the app. Used by the `(auth)/layout.tsx` guard.
  */
-export async function requireAnonymous(redirectTo: string = "/communities"): Promise<void> {
+export async function requireAnonymous(redirectTo: string = "/forum"): Promise<void> {
   const session = await getSession();
   if (session) redirect(redirectTo);
 }

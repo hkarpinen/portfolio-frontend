@@ -6,9 +6,9 @@ function inputStyle(hasError = false): React.CSSProperties {
   return {
     height: "38px",
     width: "100%",
-    background: "var(--surface-2)",
-    border: `1px solid ${hasError ? "var(--danger)" : "var(--border)"}`,
-    borderRadius: "12px",
+    background: "var(--paper-2)",
+    border: `1px solid ${hasError ? "var(--danger)" : "var(--ink-3)"}`,
+    
     padding: "0 12px",
     fontSize: "var(--ts-body-sm)",
     color: "var(--text)",
@@ -19,12 +19,12 @@ function inputStyle(hasError = false): React.CSSProperties {
 
 function Field({ label, children, hint }: { label: string; children: React.ReactNode; hint?: string }) {
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-      <label style={{ fontSize: "var(--ts-label)", fontWeight: "500", color: "var(--text-2)", letterSpacing: "0.02em" }}>
+    <div className="flex flex-col gap-3">
+      <label className="text-base font-medium text-ink-2 tracking-[0.02em]">
         {label}
       </label>
       {children}
-      {hint && <span style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)" }}>{hint}</span>}
+      {hint && <span className="text-sm text-ink-3">{hint}</span>}
     </div>
   );
 }
@@ -60,72 +60,42 @@ export default function ContactPage() {
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+    <div className="flex flex-col gap-12">
       {/* Section header */}
       <div>
-        <h1 style={{
-          fontFamily: "var(--ff-display)", fontWeight: "800",
-          fontSize: "var(--ts-card-h)", letterSpacing: "-0.025em", color: "var(--text)",
-          marginBottom: "6px",
-        }}>
+        <h1 className="font-serif font-extrabold text-2xl tracking-[-0.025em] text-ink mb-3">
           Get in touch
         </h1>
-        <p style={{ fontSize: "var(--ts-body)", color: "var(--text-3)" }}>
+        <p className="text-md text-ink-3">
           Have a project in mind or want to collaborate? Send me a message.
         </p>
       </div>
 
-      <div style={{
-        display: "grid",
-        gridTemplateColumns: "1fr 280px",
-        gap: "24px",
-        alignItems: "start",
-      }} className="contact-grid">
+      <div style={{ gridTemplateColumns: "1fr 280px", alignItems: "start" }} className="contact-grid grid gap-12">
         {/* Form */}
         {submitted ? (
-          <div style={{
-            background: "var(--surface)", border: "1px solid var(--border)",
-            borderRadius: "16px", padding: "40px 32px",
-            boxShadow: "var(--shadow-sm)", textAlign: "center",
-          }}>
-            <div style={{
-              width: "56px", height: "56px", borderRadius: "16px",
-              background: "var(--success-s)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              margin: "0 auto 16px",
-            }}>
+          <div className="bg-paper py-20 px-16 shadow-card text-center" style={{ border: "1.5px solid var(--ink)" }}>
+            <div className="w-[56px] h-[56px] bg-[rgba(61,107,43,0.10)] flex items-center justify-center" style={{ margin: "0 auto 16px" }}>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--success)" strokeWidth={2}>
                 <path d="M20 6L9 17l-5-5" />
               </svg>
             </div>
-            <h2 style={{
-              fontFamily: "var(--ff-display)", fontWeight: "700",
-              fontSize: "var(--ts-sub)", color: "var(--text)", marginBottom: "8px",
-            }}>Message sent!</h2>
-            <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)", lineHeight: "1.6", marginBottom: "24px" }}>
+            <h2 className="font-serif font-bold text-xl text-ink mb-4">Message sent!</h2>
+            <p className="text-base text-ink-3 leading-[1.6] mb-12">
               Thanks for reaching out. I&apos;ll get back to you as soon as possible.
             </p>
             <button
               onClick={() => { setSubmitted(false); setForm({ name: "", email: "", subject: "", message: "" }); }}
-              style={{
-                padding: "8px 20px", borderRadius: "10px",
-                background: "var(--surface-2)", color: "var(--text-2)",
-                border: "1px solid var(--border)",
-                fontSize: "var(--ts-body-sm)", fontWeight: "500", cursor: "pointer",
-                transition: "background 110ms",
-              }}
+              className="py-4 px-10 bg-paper-2 text-ink-2 text-base font-medium cursor-pointer" style={{ border: "1.5px solid var(--ink)", transition: "background 110ms" }}
             >
               Send another
             </button>
           </div>
         ) : (
-          <div style={{
-            background: "var(--surface)", border: "1px solid var(--border)",
-            borderRadius: "16px", padding: "24px", boxShadow: "var(--shadow-sm)",
-          }}>
-            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+          <div className="bg-paper p-12 shadow-card" style={{ border: "1.5px solid var(--ink)" }}>
+            <form onSubmit={handleSubmit} className="flex flex-col gap-8">
               {/* Name + Email row */}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }} className="name-email-grid">
+              <div style={{ gridTemplateColumns: "1fr 1fr" }} className="name-email-grid grid gap-6">
                 <Field label="Name">
                   <input
                     type="text"
@@ -169,34 +139,15 @@ export default function ContactPage() {
                   placeholder="Tell me about your project…"
                   required
                   rows={6}
-                  className="contact-input"
-                  style={{
-                    width: "100%",
-                    background: "var(--surface-2)",
-                    border: "1px solid var(--border)",
-                    borderRadius: "12px",
-                    padding: "10px 12px",
-                    fontSize: "var(--ts-body-sm)",
-                    color: "var(--text)",
-                    outline: "none",
-                    resize: "vertical",
-                    lineHeight: "1.6",
-                    transition: "border-color 110ms, box-shadow 110ms",
-                    fontFamily: "var(--ff-body)",
-                  }}
+                  className="contact-input w-full bg-paper-2 py-5 px-6 text-base text-ink outline-none leading-[1.6] font-body"
+                  style={{ border: "1.5px solid var(--ink)", resize: "vertical", transition: "border-color 110ms, box-shadow 110ms" }}
                 />
               </Field>
 
               <button
                 type="submit"
-                className="contact-submit"
-                style={{
-                  height: "42px", borderRadius: "12px",
-                  background: "var(--accent)", color: "#fff",
-                  border: "none", cursor: "pointer",
-                  fontSize: "var(--ts-body)", fontWeight: "600", fontFamily: "var(--ff-display)",
-                  transition: "background 110ms, transform 100ms",
-                }}
+                className="contact-submit h-[42px] bg-red text-white cursor-pointer text-md font-semibold font-serif"
+                style={{ border: "none", transition: "background 110ms, transform 100ms" }}
               >
                 Send message
               </button>
@@ -205,48 +156,33 @@ export default function ContactPage() {
         )}
 
         {/* Contact info sidebar */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-          <div style={{
-            background: "var(--surface)", border: "1px solid var(--border)",
-            borderRadius: "16px", padding: "20px", boxShadow: "var(--shadow-sm)",
-          }}>
-            <h3 style={{
-              fontFamily: "var(--ff-display)", fontWeight: "700",
-              fontSize: "var(--ts-body)", color: "var(--text)", marginBottom: "16px",
-            }}>
+        <div className="flex flex-col gap-6">
+          <div className="bg-paper p-10 shadow-card" style={{ border: "1.5px solid var(--ink)" }}>
+            <h3 className="font-serif font-bold text-md text-ink mb-8">
               Contact info
             </h3>
-            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+            <div className="flex flex-col gap-5">
               {CONTACT_INFO.map(info => (
                   <a
                   key={info.label}
                   href={info.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="contact-info-link"
-                  style={{
-                    display: "flex", alignItems: "center", gap: "10px",
-                    padding: "10px 12px", borderRadius: "10px",
-                    background: "var(--surface-2)", textDecoration: "none",
-                    transition: "background 110ms",
-                  }}
+                  className="contact-info-link flex items-center gap-5 py-5 px-6 bg-paper-2 no-underline"
+                  style={{ transition: "background 110ms" }}
                 >
-                  <span style={{ fontSize: "var(--ts-lead)" }}>{info.icon}</span>
+                  <span className="text-lg">{info.icon}</span>
                   <div>
-                    <div style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)", fontWeight: "500" }}>{info.label}</div>
-                    <div style={{ fontSize: "var(--ts-label)", color: "var(--accent)" }}>{info.value}</div>
+                    <div className="text-sm text-ink-3 font-medium">{info.label}</div>
+                    <div className="text-base text-red">{info.value}</div>
                   </div>
                 </a>
               ))}
             </div>
           </div>
 
-          <div style={{
-            background: "var(--accent-subtle)",
-            border: "1px solid oklch(63% 0.22 252 / 0.25)",
-            borderRadius: "16px", padding: "20px",
-          }}>
-            <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--accent)", lineHeight: "1.6" }}>
+          <div className="bg-[rgba(178,42,26,0.10)] p-10" style={{ border: "1px solid oklch(63% 0.22 252 / 0.25)" }}>
+            <p className="text-base text-red leading-[1.6]">
               <strong>Response time:</strong> I typically reply within 24–48 hours.
             </p>
           </div>
@@ -259,8 +195,8 @@ export default function ContactPage() {
           .name-email-grid { grid-template-columns: 1fr !important; }
         }
         .contact-input:focus {
-          border-color: var(--accent) !important;
-          box-shadow: 0 0 0 3px var(--accent-subtle);
+          border-color: var(--ink) !important;
+          box-shadow: 0 0 0 3px rgba(178,42,26,0.08);
         }
         .contact-submit:hover  { background: var(--accent-hi) !important; }
         .contact-submit:active { transform: scale(0.97); }

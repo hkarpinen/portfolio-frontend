@@ -65,45 +65,39 @@ function IncomeCard({
   return (
     <>
       <div
-        style={{
-          background: "var(--surface)",
-          border: "1px solid var(--border)",
-          borderRadius: "14px",
-          padding: "14px 16px",
-          boxShadow: "var(--shadow-sm)",
-        }}
+        className="bg-paper py-[14px] px-[16px] shadow-stamp" style={{ border: "1.5px solid var(--ink)" }}
       >
         {/* Single row: name · freq — amounts — icon actions — chevron */}
         <div
-          style={{ display: "flex", alignItems: "center", gap: "12px", cursor: "pointer" }}
+          className="flex items-center gap-6 cursor-pointer"
           onClick={() => setExpanded((e) => !e)}
         >
           {/* Left: name + frequency */}
-          <div style={{ minWidth: 0, flex: 1 }}>
-            <p style={{ fontWeight: "600", fontSize: "var(--ts-body)", color: "var(--text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+          <div className="min-w-0 flex-1">
+            <p className="font-semibold text-md text-ink overflow-hidden text-ellipsis whitespace-nowrap">
               {source.source}
             </p>
-            <p style={{ fontSize: "var(--ts-label)", color: "var(--text-3)", marginTop: "2px", textTransform: "capitalize" }}>
+            <p className="text-base text-ink-3 mt-1 capitalize">
               {source.paidEvery?.toLowerCase() ?? "biweekly"}{source.currency ? ` · ${source.currency}` : ""}
             </p>
           </div>
 
           {/* Amounts */}
-          <div style={{ display: "flex", alignItems: "center", gap: "10px", flexShrink: 0 }}>
-            <div style={{ textAlign: "right" }}>
-              <div style={{ fontSize: "var(--ts-meta)", fontWeight: "700", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "1px" }}>
+          <div className="flex items-center gap-5 shrink-0">
+            <div className="text-right">
+              <div className="text-sm font-bold text-ink-3 uppercase tracking-[0.08em] mb-[1px]">
                 Gross · {periodLabel}
               </div>
-              <span style={{ fontFamily: "var(--ff-display)", fontWeight: "700", fontSize: "var(--ts-body)", color: "var(--text)", letterSpacing: "-0.02em" }}>
+              <span className="font-serif font-bold text-md text-ink tracking-snug">
                 ${(grossMonthly * factor).toFixed(2)}
               </span>
             </div>
             {netMonthly !== null && netMonthly !== grossMonthly && (
               <>
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--border-2)" strokeWidth="2.5" strokeLinecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-                <div style={{ textAlign: "right" }}>
-                  <div style={{ fontSize: "var(--ts-meta)", fontWeight: "700", color: "var(--accent)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "1px" }}>Net</div>
-                  <span style={{ fontFamily: "var(--ff-display)", fontWeight: "700", fontSize: "var(--ts-body)", color: "var(--accent)", letterSpacing: "-0.02em" }}>
+                <div className="text-right">
+                  <div className="text-sm font-bold text-red uppercase tracking-[0.08em] mb-[1px]">Net</div>
+                  <span className="font-serif font-bold text-md text-red tracking-snug">
                     ${(netMonthly * factor).toFixed(2)}
                   </span>
                 </div>
@@ -112,18 +106,12 @@ function IncomeCard({
           </div>
 
           {/* Icon actions — stopPropagation so they don't toggle expand */}
-          <div style={{ display: "flex", alignItems: "center", gap: "4px", flexShrink: 0 }} onClick={(e) => e.stopPropagation()}>
+          <div className="flex items-center gap-2 shrink-0" onClick={(e) => e.stopPropagation()}>
             {/* Edit icon button */}
             <button
               onClick={() => { setEditOpen((v) => !v); setExpanded(false); }}
               title="Edit income"
-              style={{
-                width: "32px", height: "32px", borderRadius: "8px", border: "none",
-                background: editOpen ? "var(--accent-subtle)" : "var(--surface-2)",
-                color: editOpen ? "var(--accent)" : "var(--text-3)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                cursor: "pointer", flexShrink: 0,
-              }}
+              className="w-16 h-16 flex items-center justify-center cursor-pointer shrink-0" style={{ border: "none", background: editOpen ? "rgba(178,42,26,0.08)" : "var(--paper-2)", color: editOpen ? "var(--red)" : "var(--text-3)" }}
             >
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
@@ -135,13 +123,7 @@ function IncomeCard({
             <button
               onClick={() => setModalOpen(true)}
               title="Manage deductions"
-              style={{
-                width: "32px", height: "32px", borderRadius: "8px", border: "none",
-                background: hasDeductions ? "var(--accent-subtle)" : "var(--surface-2)",
-                color: hasDeductions ? "var(--accent)" : "var(--text-3)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                cursor: "pointer", flexShrink: 0,
-              }}
+              className="w-16 h-16 flex items-center justify-center cursor-pointer shrink-0" style={{ border: "none", background: hasDeductions ? "rgba(178,42,26,0.08)" : "var(--paper-2)", color: hasDeductions ? "var(--red)" : "var(--text-3)" }}
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
@@ -158,7 +140,7 @@ function IncomeCard({
           {/* Chevron */}
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
             stroke="var(--text-3)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-            style={{ transform: expanded ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 200ms", flexShrink: 0 }}>
+            className="shrink-0" style={{ transform: expanded ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 200ms" }}>
             <polyline points="6 9 12 15 18 9" />
           </svg>
         </div>
@@ -167,11 +149,11 @@ function IncomeCard({
         {editOpen && (
           <form
             onSubmit={handleSubmit(onEditSubmit)}
-            style={{ marginTop: "14px", paddingTop: "14px", borderTop: "1px solid var(--border)", display: "flex", flexDirection: "column", gap: "10px" }}
+            className="mt-[14px] pt-[14px] flex flex-col gap-5" style={{ borderTop: "1.5px solid var(--ink)" }}
           >
-            <p style={{ fontSize: "var(--ts-meta)", fontWeight: "700", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.08em", margin: 0 }}>Edit income source</p>
+            <p className="text-sm font-bold text-ink-3 uppercase tracking-[0.08em] m-0">Edit income source</p>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+            <div className="grid gap-5" style={{ gridTemplateColumns: "1fr 1fr" }}>
               <Field label="Source name" error={editErrors.source?.message}>
                 <input {...register("source")} style={iStyle} onFocus={onFocusField} onBlur={onBlurField} />
               </Field>
@@ -200,15 +182,15 @@ function IncomeCard({
             </div>
 
             {updateIncome.isError && (
-              <p style={{ fontSize: "var(--ts-label)", color: "var(--danger)", margin: 0 }}>Failed to save. Please try again.</p>
+              <p className="text-base text-red m-0">Failed to save. Please try again.</p>
             )}
-            <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
+            <div className="flex gap-4 justify-end">
               <button type="button" onClick={() => { setEditOpen(false); resetForm(); }}
-                style={{ padding: "6px 14px", borderRadius: "10px", background: "var(--surface-2)", border: "1px solid var(--border)", fontSize: "var(--ts-label)", fontWeight: "600", color: "var(--text-2)", cursor: "pointer" }}>
+                className="py-[6px] px-[14px] bg-paper-2 text-base font-semibold text-ink-2 cursor-pointer" style={{ border: "1.5px solid var(--ink)" }}>
                 Cancel
               </button>
               <button type="submit" disabled={updateIncome.isPending}
-                style={{ padding: "6px 14px", borderRadius: "10px", background: "var(--accent)", border: "none", fontSize: "var(--ts-label)", fontWeight: "600", color: "#fff", cursor: "pointer", opacity: updateIncome.isPending ? 0.6 : 1 }}>
+                className="py-[6px] px-[14px] bg-red text-base font-semibold text-white cursor-pointer" style={{ border: "none", opacity: updateIncome.isPending ? 0.6 : 1 }}>
                 {updateIncome.isPending ? "Saving…" : "Save"}
               </button>
             </div>
@@ -233,34 +215,22 @@ export function IncomeList({ initialData }: { initialData: IncomeListResponse })
 
   if (sources.length === 0) {
     return (
-      <div style={{
-        background: "var(--surface)",
-        border: "1px solid var(--border)",
-        borderRadius: "16px",
-        padding: "48px 24px",
-        textAlign: "center",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: "10px",
-        marginBottom: "24px",
-        boxShadow: "var(--shadow-sm)",
-      }}>
-        <div style={{ width: "56px", height: "56px", borderRadius: "16px", background: "var(--accent-subtle)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <div className="bg-paper py-24 px-12 text-center flex flex-col items-center gap-5 mb-12 shadow-stamp" style={{ border: "1.5px solid var(--ink)" }}>
+        <div className="w-[56px] h-[56px] bg-[rgba(178,42,26,0.10)] flex items-center justify-center">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
           </svg>
         </div>
-        <p style={{ fontFamily: "var(--ff-display)", fontWeight: "700", fontSize: "var(--ts-body)", color: "var(--text)" }}>
+        <p className="font-serif font-bold text-md text-ink">
           No income sources yet
         </p>
-        <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)" }}>Add one below to start tracking coverage.</p>
+        <p className="text-base text-ink-3">Add one below to start tracking coverage.</p>
       </div>
     );
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginBottom: "24px" }}>
+    <div className="flex flex-col gap-4 mb-12">
       {sources.map((source) => (
         <IncomeCard
           key={source.incomeId}

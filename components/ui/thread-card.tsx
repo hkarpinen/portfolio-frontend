@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { timeAgo } from "@/lib/utils";
-import { ThreadActions } from "@/app/(forum)/communities/[slug]/threads/[threadId]/thread-actions";
+import { ThreadActions } from "@/app/(forum)/forum/[slug]/threads/[threadId]/thread-actions";
 import type { ThreadSummaryResponse } from "@/types/forum";
 
 interface ThreadCardProps {
@@ -34,75 +34,40 @@ export function ThreadCard({
 
   return (
     <div
-      className="thread-card"
-      style={{
-        padding: "16px 18px",
-        background: "var(--surface)",
-        border: "1px solid var(--border)",
-        borderRadius: "var(--r-lg)",
-        transition: "transform 200ms var(--ease-spring), box-shadow 200ms",
-      }}
+      className="thread-card py-[16px] px-[18px] bg-paper"
+      style={{ border: "1.5px solid var(--ink)", transition: "transform 200ms var(--ease-spring), box-shadow 200ms" }}
     >
       {/* Desktop: horizontal vote + content */}
       <div
-        className="thread-card-inner"
-        style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}
+        className="thread-card-inner flex gap-6 items-start"
+        
       >
           {/* Vote controls — desktop column */}
           <div
-            className="thread-vote-col"
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: "4px",
-              flexShrink: 0,
-              width: "28px",
-            }}
+            className="thread-vote-col flex flex-col items-center gap-2 shrink-0 w-[28px]"
+            
           >
             <button
               onClick={(e) => handleVote(e, "up")}
-              style={{
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                padding: "4px",
-                borderRadius: "4px",
-                color: voted === "up" ? "var(--accent)" : "var(--text-3)",
-                transition: "color 150ms",
-              }}
+              className="bg-transparent cursor-pointer p-2" style={{ border: "none", color: voted === "up" ? "var(--red)" : "var(--text-3)", transition: "color 150ms" }}
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M18 15l-6-6-6 6" />
               </svg>
             </button>
             <span
-              style={{
-                fontSize: "var(--ts-label)",
-                fontWeight: 700,
-                minWidth: "28px",
-                textAlign: "center",
-                color:
+              className="text-base font-bold min-w-[28px] text-center" style={{ color:
                   voted === "up"
-                    ? "var(--accent)"
+                    ? "var(--red)"
                     : voted === "down"
                     ? "var(--danger)"
-                    : "var(--text-2)",
-              }}
+                    : "var(--text-2)" }}
             >
               {score}
             </span>
             <button
               onClick={(e) => handleVote(e, "down")}
-              style={{
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                padding: "4px",
-                borderRadius: "4px",
-                color: voted === "down" ? "var(--danger)" : "var(--text-3)",
-                transition: "color 150ms",
-              }}
+              className="bg-transparent cursor-pointer p-2" style={{ border: "none", color: voted === "down" ? "var(--danger)" : "var(--text-3)", transition: "color 150ms" }}
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M6 9l6 6 6-6" />
@@ -111,57 +76,37 @@ export function ThreadCard({
           </div>
 
           {/* Content */}
-          <div style={{ flex: 1, minWidth: 0 }}>
+          <div className="flex-1 min-w-0">
             {/* Clickable meta + title */}
             <Link
-              href={`/communities/${displaySlug}/threads/${thread.threadId}`}
-              style={{ textDecoration: "none", display: "block" }}
+              href={`/forum/${displaySlug}/threads/${thread.threadId}`}
+              className="no-underline block"
             >
               {/* Meta row */}
               <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  marginBottom: "4px",
-                  flexWrap: "wrap",
-                }}
+                className="flex items-center gap-3 mb-2 flex-wrap"
               >
                 {showCommunity && displayCommunity && (
-                  <span style={{ fontSize: "var(--ts-meta)", fontWeight: 600, color: "var(--accent)" }}>
+                  <span className="text-sm font-semibold text-red">
                     {displayCommunity}
                   </span>
                 )}
                 {showCommunity && displayCommunity && (
-                  <span style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)" }}>·</span>
+                  <span className="text-sm text-ink-3">·</span>
                 )}
-                <span style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)" }}>
+                <span className="text-sm text-ink-3">
                   Posted by {thread.authorDisplayName ?? "Unknown"} · {timeAgo(thread.createdAt)}
                 </span>
                 {thread.isPinned && (
                   <span
-                    style={{
-                      fontSize: "var(--ts-meta)",
-                      fontWeight: 600,
-                      color: "var(--success)",
-                      background: "var(--success-s)",
-                      borderRadius: "9999px",
-                      padding: "1px 6px",
-                    }}
+                    className="font-mono text-green bg-[rgba(61,107,43,0.10)] py-[1px] px-[6px]" style={{ fontSize: "0.594rem", letterSpacing: "0.12em" }}
                   >
                     Pinned
                   </span>
                 )}
                 {thread.flair && thread.flair !== "None" && (
                   <span
-                    style={{
-                      fontSize: "var(--ts-meta)",
-                      fontWeight: 600,
-                      color: "var(--accent-v)",
-                      background: "var(--accent-v-subtle)",
-                      borderRadius: "9999px",
-                      padding: "1px 6px",
-                    }}
+                    className="font-mono text-red bg-[rgba(178,42,26,0.10)] py-[1px] px-[6px]" style={{ fontSize: "0.594rem", letterSpacing: "0.12em" }}
                   >
                     {thread.flair}
                   </span>
@@ -170,30 +115,18 @@ export function ThreadCard({
 
               {/* Title */}
               <h3
-                style={{
-                  fontFamily: "var(--ff-display)",
-                  fontWeight: 600,
-                  fontSize: "var(--ts-h3)",
-                  lineHeight: "var(--lh-snug)",
-                  color: "var(--text)",
-                  margin: 0,
-                  marginBottom: "8px",
-                }}
+                className="font-serif font-semibold text-xl leading-[1.2] text-ink m-0 mb-4"
               >
                 {thread.title}
               </h3>
             </Link>
 
             {/* Action buttons */}
-            <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+            <div className="flex items-center gap-2">
               <Link
-                href={`/communities/${displaySlug}/threads/${thread.threadId}`}
-                style={{
-                  display: "flex", alignItems: "center", gap: "4px",
-                  padding: "4px 10px", borderRadius: "6px",
-                  fontSize: "var(--ts-meta)", color: "var(--text-3)", textDecoration: "none", fontWeight: 500,
-                }}
-                className="row-hover"
+                href={`/forum/${displaySlug}/threads/${thread.threadId}`}
+                
+                className="row-hover flex items-center gap-2 py-2 px-5 text-sm text-ink-3 no-underline font-medium"
               >
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
@@ -202,7 +135,7 @@ export function ThreadCard({
               </Link>
               <ThreadActions
                 threadId={thread.threadId}
-                threadUrl={`/communities/${displaySlug}/threads/${thread.threadId}`}
+                threadUrl={`/forum/${displaySlug}/threads/${thread.threadId}`}
               />
             </div>
           </div>

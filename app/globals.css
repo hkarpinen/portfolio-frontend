@@ -80,26 +80,26 @@
   --r-full: 9999px;
   --r-xs: 0; --r-sm: 0; --r-md: 0; --r-lg: 0; --r-xl: 0; --r-2xl: 0;
 
-  /* ─── Fluid type scale ─────────────────────────────────────────────────────
-     Range: 360px viewport → 1920px viewport.
-     Past 1920 the size stops growing (good — text shouldn't
-     be 80px at 4K).                                                           */
+  /* ─── App type scale — rem, ride the fluid html root ──────────────────────
+     html root: clamp(14px, calc(11.5px + 0.55vw), 24px)
+     Calibrated at ~18.8px design-width root (1320px viewport).
+     All tokens are rem so they scale uniformly with the viewport.             */
 
-  --ts-meta:        clamp(11px,  0.55vw + 9px,   14px);   /* mono kicker, byline, date strip, breadcrumb, tag, badge */
-  --ts-label:       clamp(12px,  0.6vw + 10px,   15px);   /* button label, input label, table header */
-  --ts-body-sm:     clamp(13px,  0.55vw + 11px,  15px);   /* meta line under a list row, small caption */
-  --ts-body:        clamp(15px,  0.7vw + 12.5px, 17px);   /* default body paragraph, alert body, card description */
-  --ts-lead:        clamp(17px,  0.95vw + 13.5px,21px);   /* lede dropcap paragraph, lead post body, alert title */
-  --ts-sub:         clamp(20px,  1.3vw + 15px,   26px);   /* sidebar nav title, list-row name, modal title, comment header */
-  --ts-card-h:      clamp(22px,  1.6vw + 16px,   32px);   /* card heading, sidebar widget heading */
-  --ts-h3:          clamp(24px,  2vw + 16px,     36px);   /* Dispatch H3, thread row title, settings section H3 */
-  --ts-h2:          clamp(32px,  3.2vw + 20px,   60px);   /* SectionHeader page title, page H1 ("Forum", "Bills") */
-  --ts-numeral:     clamp(36px,  3vw + 25px,     64px);   /* ledger cell number, contribution total */
+  --ts-meta:    0.6rem;     /* ≈11.3px @ design width — mono kicker, byline, tag, badge */
+  --ts-label:   0.65rem;    /* ≈12.2px — button label, input label, table header */
+  --ts-body-sm: 0.65rem;    /* ≈12.2px — small caption, meta line */
+  --ts-body:    0.938rem;   /* ≈14.6px — default body paragraph, card description */
+  --ts-lead:    0.875rem;   /* ≈16.5px — lede paragraph, alert title */
+  --ts-sub:     1.1rem;     /* ≈20.7px — sidebar nav title, modal title, list-row name */
+  --ts-card-h:  1.35rem;    /* ≈25.4px — card heading, widget heading */
+  --ts-h3:      1.25rem;    /* thread row title, settings section H3 */
+  --ts-h2:      1.6rem;     /* thread detail H1, page H1 */
+  --ts-numeral: 2.7rem;     /* ≈50.8px — ledger cell number, contribution total */
 
   /* ─── Display tier (LANDING ONLY — do not use elsewhere) ─── */
-  --ts-h1:          clamp(48px,  6.5vw + 20px, 144px);    /* landing lede H1 */
-  --ts-nameplate:   clamp(40px,  5.5vw + 20px, 120px);    /* "The Stack." landing nameplate */
-  --ts-stamp:       clamp(56px,  3.5vw + 30px, 96px);     /* Wanted stamp */
+  --ts-h1:        var(--bs-headline);    /* clamp(3.2rem, 9.2vw, 9.8rem) */
+  --ts-nameplate: var(--bs-nameplate);   /* clamp(2.2rem, 5.76vw, 5.8rem) */
+  --ts-stamp:     var(--bs-wanted-st);   /* 3.9rem */
 
   /* Compat aliases */
   --ts-input:       var(--ts-body);
@@ -111,6 +111,29 @@
   --lh-snug:    1.15;
   --lh-body:    1.55;
   --lh-loose:   1.7;
+
+  /* ─── Broadsheet scale — all rem, ride the fluid html root ──────────────────
+     html root: clamp(14px, calc(11.5px + 0.55vw), 24px)
+     ~14px @ 360w → ~18.8px @ 1320w → ~24px @ 2200w+                          */
+  --bs-eyebrow:   0.525rem;  /* mono kickers / labels / ad-no / tags */
+  --bs-meta:      0.55rem;   /* ticker, byline, section meta, nav */
+  --bs-micro:     0.6rem;    /* buttons, wanted contact rows */
+  --bs-arrow:     0.65rem;
+  --bs-small-p:   0.675rem;  /* classified ad body */
+  --bs-body:      0.75rem;   /* dispatch body copy */
+  --bs-col:       0.8rem;    /* lede aside column body */
+  --bs-note:      0.9rem;    /* wanted body paragraph */
+  --bs-lede:      1.1rem;    /* pullquote, colophon h5, stack item name */
+  --bs-card-h:    1.4rem;    /* module title, pullquote, endmark */
+  --bs-dispatch:  1.7rem;    /* dispatch H3 */
+  --bs-specimen:  2.2rem;    /* stack lead paragraph */
+  --bs-sec-h:     2.8rem;    /* section head title */
+  --bs-wanted:    clamp(2rem, 4vw, 3.9rem);  /* wanted H2 */
+  --bs-lede-num:  3.2rem;    /* ledger numerals */
+  --bs-dropcap:   4.3rem;    /* lede dropcap first-letter */
+  --bs-wanted-st: 3.9rem;    /* wanted stamp "Wanted" */
+  --bs-nameplate: clamp(2.2rem, 5.76vw, 5.8rem); /* masthead nameplate */
+  --bs-headline:  clamp(3.2rem, 9.2vw, 9.8rem);  /* lede H1 */
 
   /* ── Motion ──────────────────────────────────────────────────────────────── */
   --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
@@ -175,8 +198,13 @@
   }
 
   html {
+    font-size: clamp(14px, calc(11.5px + 0.55vw), 24px);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
   }
 
   body {
@@ -434,3 +462,21 @@ select:focus, select:focus-visible {
   transition: color var(--dur-fast);
 }
 .lp-colophon-link:hover { color: var(--red) !important; }
+
+/* ── Landing page mobile type overrides ───────────────────────────────────────
+   The bs- tokens are calibrated for print-scale desktop. On narrow viewports
+   they land below 9px and become illegible. Override to readable floors.       */
+@media (max-width: 767px) {
+  :root {
+    --bs-eyebrow:  0.72rem;   /* was 0.525 → ~10.8px @ 15px root */
+    --bs-meta:     0.75rem;   /* was 0.55  → ~11.3px */
+    --bs-micro:    0.75rem;   /* was 0.6   → ~11.3px */
+    --bs-arrow:    0.8rem;    /* was 0.65  → ~12px   */
+    --bs-small-p:  0.85rem;   /* was 0.675 → ~12.8px */
+    --bs-body:     0.9rem;    /* was 0.75  → ~13.5px */
+    --bs-col:      0.9rem;    /* was 0.8   → ~13.5px */
+    --bs-note:     0.95rem;   /* was 0.9   → ~14.3px */
+    --bs-lede:     1.15rem;
+    --bs-card-h:   1.3rem;
+  }
+}

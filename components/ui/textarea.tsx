@@ -1,3 +1,4 @@
+import React from "react";
 import { cn } from "@/lib/utils";
 import styles from "./textarea.module.css";
 
@@ -8,7 +9,7 @@ interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement
   containerClassName?: string;
 }
 
-export function Textarea({
+export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(function Textarea({
   label,
   hint,
   error,
@@ -16,7 +17,7 @@ export function Textarea({
   className,
   containerClassName,
   ...props
-}: TextareaProps) {
+}, ref) {
   const inputId = id ?? (label ? label.toLowerCase().replace(/\s+/g, "-") : undefined);
   return (
     <div className={cn(styles.wrapper, containerClassName)}>
@@ -26,6 +27,7 @@ export function Textarea({
         </label>
       )}
       <textarea
+        ref={ref}
         id={inputId}
         className={cn(styles.textarea, error && styles.hasError, className)}
         aria-invalid={!!error}
@@ -44,4 +46,4 @@ export function Textarea({
       )}
     </div>
   );
-}
+});

@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { VoteButtons } from "./communities/[slug]/threads/[threadId]/vote-buttons";
-import { ThreadActions } from "./communities/[slug]/threads/[threadId]/thread-actions";
+import { VoteButtons } from "./forum/[slug]/threads/[threadId]/vote-buttons";
+import { ThreadActions } from "./forum/[slug]/threads/[threadId]/thread-actions";
 import { fetchThreadsServer } from "@/lib/api/forum";
 import { fetchCommunitiesServer, fetchMyMembershipsServer } from "@/lib/api/communities";
 import { getCookieHeader } from "@/lib/server-cookies";
@@ -50,46 +50,32 @@ export default async function ForumFeedPage({
   ];
 
   return (
-    <div className="page-enter" style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+    <div className="page-enter flex flex-col gap-12" >
       {/* Header */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "12px" }}>
+      <div className="flex items-center justify-between flex-wrap gap-6">
         <div>
-          <h1 style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "var(--ts-card-h)", letterSpacing: "-0.025em", color: "var(--text)", margin: 0 }}>
+          <h1 className="font-serif font-extrabold text-2xl tracking-[-0.025em] text-ink m-0">
             Forum
           </h1>
-          <p style={{ color: "var(--text-3)", marginTop: "4px", fontSize: "var(--ts-body-sm)" }}>
+          <p className="text-ink-3 mt-2 text-base">
             Discussions, communities, and ideas
           </p>
         </div>
         <Link
-          href="/communities/new"
-          style={{
-            background: "var(--accent)", color: "#fff",
-            padding: "8px 16px", borderRadius: "12px",
-            fontSize: "var(--ts-body-sm)", fontWeight: 600,
-            textDecoration: "none",
-          }}
+          href="/forum/new"
+          className="bg-red text-white py-4 px-8 text-base font-semibold no-underline"
         >
           + New Community
         </Link>
       </div>
 
       {/* Tabs */}
-      <div style={{ borderBottom: "1px solid var(--border)", display: "flex", gap: "0" }}>
+      <div className="flex gap-0" style={{ borderBottom: "1.5px solid var(--ink)" }}>
         {tabs.map((t) => (
           <Link
             key={t.key}
             href={`/forum?tab=${t.key}`}
-            style={{
-              padding: "10px 16px",
-              fontSize: "var(--ts-body-sm)",
-              fontWeight: tab === t.key ? 600 : 400,
-              color: tab === t.key ? "var(--text)" : "var(--text-3)",
-              borderBottom: tab === t.key ? "2px solid var(--accent)" : "2px solid transparent",
-              marginBottom: "-1px",
-              textDecoration: "none",
-              transition: "color 110ms",
-            }}
+            className="py-5 px-8 text-base mb-[-1px] no-underline" style={{ fontWeight: tab === t.key ? 600 : 400, color: tab === t.key ? "var(--text)" : "var(--text-3)", borderBottom: tab === t.key ? "3px solid var(--red)" : "2px solid transparent", transition: "color 110ms" }}
           >
             {t.label}
           </Link>
@@ -97,61 +83,48 @@ export default async function ForumFeedPage({
       </div>
 
       {/* Two-column layout */}
-      <div className="sidebar-grid" style={{ gap: "24px" }}>
+      <div className="sidebar-grid gap-12" >
         {/* Main content */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+        <div className="flex flex-col gap-4">
           {tab === "communities" ? (
             <>
               {communities.length === 0 ? (
-                <div style={{
-                  background: "var(--surface)", border: "1px solid var(--border)",
-                  borderRadius: "16px", padding: "48px 24px",
-                  textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: "12px",
-                }}>
-                  <div style={{ width: "56px", height: "56px", borderRadius: "16px", background: "var(--accent-subtle)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <div className="bg-paper py-24 px-12 text-center flex flex-col items-center gap-6" style={{ border: "1.5px solid var(--ink)" }}>
+                  <div className="w-[56px] h-[56px] bg-[rgba(178,42,26,0.10)] flex items-center justify-center">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
                     </svg>
                   </div>
-                  <p style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "var(--ts-body)", color: "var(--text)" }}>No communities yet</p>
-                  <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)" }}>Be the first to create one</p>
-                  <Link href="/communities/new" style={{ background: "var(--accent)", color: "#fff", padding: "8px 20px", borderRadius: "12px", fontSize: "var(--ts-body-sm)", fontWeight: 600, textDecoration: "none" }}>
+                  <p className="font-serif font-bold text-md text-ink">No communities yet</p>
+                  <p className="text-base text-ink-3">Be the first to create one</p>
+                  <Link href="/forum/new" className="bg-red text-white py-4 px-10 text-base font-semibold no-underline">
                     Create Community
                   </Link>
                 </div>
               ) : (
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: "12px" }}>
+                <div className="grid gap-6" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))" }}>
                   {communities.map((c) => (
                     <Link
                       key={c.communityId}
-                      href={`/communities/${c.slug ?? c.name}`}
-                      style={{ textDecoration: "none" }}
+                      href={`/forum/${c.slug ?? c.name}`}
+                      className="no-underline"
                     >
-                      <div className="card-hover" style={{
-                        background: "var(--surface)", border: "1px solid var(--border)",
-                        borderRadius: "14px", padding: "16px",
-                        boxShadow: "var(--shadow-sm)", cursor: "pointer",
-                      }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "8px" }}>
-                          <div style={{
-                            width: "36px", height: "36px", borderRadius: "10px",
-                            background: "var(--accent-subtle)",
-                            display: "flex", alignItems: "center", justifyContent: "center",
-                            fontSize: "var(--ts-body)", flexShrink: 0,
-                          }}>
+                      <div className="card-hover bg-paper p-8 shadow-card cursor-pointer" style={{ border: "1.5px solid var(--ink)" }}>
+                        <div className="flex items-center gap-5 mb-4">
+                          <div className="w-[36px] h-[36px] bg-[rgba(178,42,26,0.10)] flex items-center justify-center text-md shrink-0">
                             {c.name.charAt(0).toUpperCase()}
                           </div>
                           <div>
-                            <p style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "var(--ts-body)", color: "var(--text)" }}>
+                            <p className="font-serif font-bold text-md text-ink">
                               {c.name}
                             </p>
-                            <p style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)" }}>
+                            <p className="text-sm text-ink-3">
                               {c.description ?? ""}
                             </p>
                           </div>
                         </div>
                         {c.description && (
-                          <p style={{ fontSize: "var(--ts-label)", color: "var(--text-2)", overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>
+                          <p className="text-base text-ink-2 overflow-hidden" style={{ display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>
                             {c.description}
                           </p>
                         )}
@@ -162,29 +135,20 @@ export default async function ForumFeedPage({
               )}
             </>
           ) : threads.length === 0 ? (
-            <div style={{
-              background: "var(--surface)", border: "1px solid var(--border)",
-              borderRadius: "16px", padding: "48px 24px",
-              textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: "12px",
-            }}>
-              <div style={{ width: "56px", height: "56px", borderRadius: "16px", background: "var(--accent-subtle)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <div className="bg-paper py-24 px-12 text-center flex flex-col items-center gap-6" style={{ border: "1.5px solid var(--ink)" }}>
+              <div className="w-[56px] h-[56px] bg-[rgba(178,42,26,0.10)] flex items-center justify-center">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
                 </svg>
               </div>
-              <p style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "var(--ts-body)", color: "var(--text)" }}>No threads yet</p>
-              <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)" }}>Join a community and start a discussion</p>
+              <p className="font-serif font-bold text-md text-ink">No threads yet</p>
+              <p className="text-base text-ink-3">Join a community and start a discussion</p>
             </div>
           ) : (
             threads.map((thread) => (
               <div
                 key={thread.threadId}
-                style={{
-                  background: "var(--surface)", border: "1px solid var(--border)",
-                  borderRadius: "14px", padding: "14px 16px",
-                  boxShadow: "var(--shadow-sm)",
-                  display: "flex", gap: "12px", alignItems: "flex-start",
-                }}
+                className="bg-paper py-[14px] px-[16px] shadow-card flex gap-6 items-start" style={{ border: "1.5px solid var(--ink)" }}
               >
                 {/* Vote column */}
                 <VoteButtons
@@ -195,39 +159,36 @@ export default async function ForumFeedPage({
                 />
 
                 {/* Thread content */}
-                <div style={{ flex: 1, minWidth: 0 }}>
+                <div className="flex-1 min-w-0">
                   {/* Meta row */}
-                  <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap", marginBottom: "4px" }}>
-                    <span style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)" }}>
+                  <div className="flex items-center gap-3 flex-wrap mb-2">
+                    <span className="text-sm text-ink-3">
                       {thread.authorDisplayName ?? "Anonymous"}
                     </span>
-                    <span style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)" }}>·</span>
-                    <span style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)" }}>
+                    <span className="text-sm text-ink-3">·</span>
+                    <span className="text-sm text-ink-3">
                       {timeAgo(thread.createdAt)}
                     </span>
                   </div>
 
                   {/* Title */}
                   <Link
-                    href={`/communities/${thread.communityId}/threads/${thread.threadId}`}
-                    style={{ textDecoration: "none" }}
+                    href={`/forum/${thread.communityId}/threads/${thread.threadId}`}
+                    className="no-underline"
                   >
-                    <p style={{
-                      fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "var(--ts-body)",
-                      color: "var(--text)", lineHeight: "1.4", marginBottom: "8px",
-                    }}
-                      className="row-hover"
+                    <p 
+                      className="row-hover font-serif font-bold text-md text-ink leading-[1.4] mb-4"
                     >
                       {thread.title}
                     </p>
                   </Link>
 
                   {/* Actions row */}
-                  <div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
+                  <div className="flex gap-2 items-center">
                     <Link
-                      href={`/communities/${thread.communityId}/threads/${thread.threadId}`}
-                      style={{ display: "flex", alignItems: "center", gap: "4px", padding: "4px 10px", borderRadius: "6px", fontSize: "var(--ts-label)", color: "var(--text-3)", textDecoration: "none", fontWeight: 500 }}
-                      className="row-hover"
+                      href={`/forum/${thread.communityId}/threads/${thread.threadId}`}
+                      
+                      className="row-hover flex items-center gap-2 py-2 px-5 text-base text-ink-3 no-underline font-medium"
                     >
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
@@ -246,39 +207,29 @@ export default async function ForumFeedPage({
         </div>
 
         {/* Sidebar */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+        <div className="flex flex-col gap-8">
           {/* Your communities */}
-          <div style={{
-            background: "var(--surface)", border: "1px solid var(--border)",
-            borderRadius: "14px", padding: "16px",
-            boxShadow: "var(--shadow-sm)",
-          }}>
-            <p style={{ fontSize: "var(--ts-meta)", fontWeight: 700, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "12px" }}>
+          <div className="bg-paper p-8 shadow-stamp" style={{ border: "1.5px solid var(--ink)" }}>
+            <p className="text-sm font-bold text-ink-3 uppercase tracking-[0.1em] mb-6">
               Your Communities
             </p>
             {myCommunities.length === 0 ? (
-              <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)" }}>
+              <p className="text-base text-ink-3">
                 Join communities to see them here.
               </p>
             ) : (
-              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              <div className="flex flex-col gap-3">
                 {myCommunities.map((c) => (
                   <Link
                     key={c.communityId}
-                    href={`/communities/${c.slug ?? c.name}`}
-                    style={{ display: "flex", alignItems: "center", gap: "8px", textDecoration: "none", padding: "6px 8px", borderRadius: "8px" }}
-                    className="row-hover"
+                    href={`/forum/${c.slug ?? c.name}`}
+                    
+                    className="row-hover flex items-center gap-4 no-underline py-3 px-4"
                   >
-                    <div style={{
-                      width: "24px", height: "24px", borderRadius: "6px",
-                      background: "var(--accent-subtle)",
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      fontSize: "var(--ts-meta)", fontWeight: 700, color: "var(--accent)",
-                      flexShrink: 0,
-                    }}>
+                    <div className="w-12 h-12 bg-[rgba(178,42,26,0.10)] flex items-center justify-center text-sm font-bold text-red shrink-0">
                       {c.name.charAt(0).toUpperCase()}
                     </div>
-                    <span style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-2)", fontWeight: 500 }}>
+                    <span className="text-base text-ink-2 font-medium">
                       {c.name}
                     </span>
                   </Link>
@@ -286,25 +237,21 @@ export default async function ForumFeedPage({
               </div>
             )}
             <Link
-              href="/communities"
-              style={{ display: "block", fontSize: "var(--ts-label)", color: "var(--accent)", textDecoration: "none", marginTop: "12px" }}
+              href="/forum"
+              className="block text-base text-red no-underline mt-6"
             >
               Browse all communities →
             </Link>
           </div>
 
           {/* Forum rules */}
-          <div style={{
-            background: "var(--surface)", border: "1px solid var(--border)",
-            borderRadius: "14px", padding: "16px",
-            boxShadow: "var(--shadow-sm)",
-          }}>
-            <p style={{ fontSize: "var(--ts-meta)", fontWeight: 700, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "12px" }}>
+          <div className="bg-paper p-8 shadow-stamp" style={{ border: "1.5px solid var(--ink)" }}>
+            <p className="text-sm font-bold text-ink-3 uppercase tracking-[0.1em] mb-6">
               Forum Rules
             </p>
-            <ol style={{ padding: "0 0 0 16px", margin: 0, display: "flex", flexDirection: "column", gap: "6px" }}>
+            <ol className="p-[0_0_0_16px] m-0 flex flex-col gap-3">
               {FORUM_RULES.map((rule) => (
-                <li key={rule} style={{ fontSize: "var(--ts-label)", color: "var(--text-2)", lineHeight: "1.5" }}>
+                <li key={rule} className="text-base text-ink-2 leading-[1.5]">
                   {rule}
                 </li>
               ))}
@@ -313,16 +260,8 @@ export default async function ForumFeedPage({
 
           {/* Create community CTA */}
           <Link
-            href="/communities/new"
-            style={{
-              display: "flex", alignItems: "center", justifyContent: "center",
-              gap: "6px",
-              background: "var(--accent-subtle)", border: "1px solid var(--accent)",
-              borderRadius: "12px", padding: "10px 16px",
-              fontSize: "var(--ts-body-sm)", fontWeight: 600, color: "var(--accent)",
-              textDecoration: "none",
-              transition: "background 110ms",
-            }}
+            href="/forum/new"
+            className="flex items-center justify-center gap-3 bg-[rgba(178,42,26,0.10)] py-5 px-8 text-base font-semibold text-red no-underline" style={{ border: "1.5px solid var(--red)", transition: "background 110ms" }}
           >
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>

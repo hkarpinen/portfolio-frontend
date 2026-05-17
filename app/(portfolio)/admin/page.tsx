@@ -18,49 +18,32 @@ export default function AdminPage() {
   const totalPages = 1; // server handles pageSize
 
   return (
-    <div style={{ maxWidth: "900px", display: "flex", flexDirection: "column", gap: "24px" }} className="page-enter">
+    <div  className="page-enter max-w-[900px] flex flex-col gap-12">
       <div>
-        <h1 style={{
-          fontFamily: "var(--ff-display)", fontWeight: "800",
-          fontSize: "var(--ts-card-h)", letterSpacing: "-0.025em", color: "var(--text)",
-        }}>
+        <h1 className="font-serif font-extrabold text-2xl tracking-[-0.025em] text-ink">
           Admin Panel
         </h1>
-        <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)", marginTop: "4px" }}>
+        <p className="text-base text-ink-3 mt-2">
           Manage users, roles, and access.
         </p>
       </div>
 
-      <div style={{
-        background: "var(--surface)", border: "1px solid var(--border)",
-        borderRadius: "16px", overflow: "hidden",
-      }}>
+      <div className="bg-paper overflow-hidden" style={{ border: "1.5px solid var(--ink)" }}>
         {/* Table header */}
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr 120px 100px 160px",
-          gap: "12px",
-          padding: "10px 16px",
-          borderBottom: "1px solid var(--border)",
-          background: "var(--surface-2)",
-        }}>
+        <div className="grid gap-6 py-5 px-8 bg-paper-2" style={{ gridTemplateColumns: "1fr 1fr 120px 100px 160px", borderBottom: "1.5px solid var(--ink)" }}>
           {["User", "Email", "Role", "Status", "Actions"].map((col) => (
-            <span key={col} style={{ fontSize: "var(--ts-meta)", fontWeight: "600", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+            <span key={col} className="text-sm font-semibold text-ink-3 uppercase tracking-[0.06em]">
               {col}
             </span>
           ))}
         </div>
 
         {isLoading ? (
-          <div style={{ display: "flex", justifyContent: "center", padding: "40px" }}>
-            <div style={{
-              width: "28px", height: "28px", borderRadius: "9999px",
-              border: "2px solid var(--border-2)", borderTopColor: "var(--accent)",
-              animation: "spin 0.8s linear infinite",
-            }} />
+          <div className="flex justify-center p-20">
+            <div className="w-[28px] h-[28px] "  style={{ border: "2px solid var(--ink-4)", borderTopColor: "var(--ink)", animation: "spin 0.8s linear infinite" }} />
           </div>
         ) : users.length === 0 ? (
-          <p style={{ padding: "32px", textAlign: "center", fontSize: "var(--ts-body-sm)", color: "var(--text-3)" }}>No users found.</p>
+          <p className="p-16 text-center text-base text-ink-3">No users found.</p>
         ) : (
           users.map((user, i) => {
             const isSelf = me?.id === user.id;
@@ -70,34 +53,21 @@ export default function AdminPage() {
             return (
               <div
                 key={user.id}
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1fr 120px 100px 160px",
-                  gap: "12px",
-                  padding: "12px 16px",
-                  alignItems: "center",
-                  borderBottom: i < users.length - 1 ? "1px solid var(--border)" : "none",
-                  background: user.isBanned ? "oklch(62% 0.21 22 / 0.04)" : "transparent",
-                }}
+                className="grid gap-6 py-6 px-8 items-center" style={{ gridTemplateColumns: "1fr 1fr 120px 100px 160px", borderBottom: i < users.length - 1 ? "1.5px solid var(--ink)" : "none", background: user.isBanned ? "oklch(62% 0.21 22 / 0.04)" : "transparent" }}
               >
                 {/* User */}
-                <div style={{ display: "flex", alignItems: "center", gap: "8px", minWidth: 0 }}>
-                  <span style={{
-                    width: "28px", height: "28px", flexShrink: 0, borderRadius: "9999px",
-                    background: "var(--accent-subtle)", color: "var(--accent)",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    fontSize: "var(--ts-meta)", fontWeight: "700",
-                  }}>
+                <div className="flex items-center gap-4 min-w-0">
+                  <span className="w-[28px] h-[28px] shrink-0 bg-[rgba(178,42,26,0.10)] text-red flex items-center justify-center text-sm font-bold">
                     {(user.displayName ?? "?").slice(0, 2).toUpperCase()}
                   </span>
-                  <span style={{ fontSize: "var(--ts-body-sm)", fontWeight: "500", color: "var(--text)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  <span className="text-base font-medium text-ink overflow-hidden text-ellipsis whitespace-nowrap">
                     {user.displayName}
-                    {isSelf && <span style={{ fontSize: "var(--ts-meta)", color: "var(--accent)", marginLeft: "6px" }}>you</span>}
+                    {isSelf && <span className="text-sm text-red ml-3">you</span>}
                   </span>
                 </div>
 
                 {/* Email */}
-                <span style={{ fontSize: "var(--ts-label)", color: "var(--text-3)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                <span className="text-base text-ink-3 overflow-hidden text-ellipsis whitespace-nowrap">
                   {user.email}
                 </span>
 
@@ -106,25 +76,14 @@ export default function AdminPage() {
                   value={user.role}
                   disabled={isSelf || isChangingRole}
                   onChange={(e) => changeRole.mutate({ userId: user.id, role: e.target.value })}
-                  style={{
-                    height: "30px", background: "var(--surface-2)",
-                    border: "1px solid var(--border)", borderRadius: "8px",
-                    padding: "0 8px", fontSize: "var(--ts-label)", color: "var(--text)", outline: "none",
-                    cursor: isSelf ? "not-allowed" : "pointer",
-                    opacity: isSelf ? 0.5 : 1,
-                  }}
+                  className="h-[30px] bg-paper-2 p-[0_8px] text-base text-ink outline-none" style={{ border: "1.5px solid var(--ink)", cursor: isSelf ? "not-allowed" : "pointer", opacity: isSelf ? 0.5 : 1 }}
                 >
                   <option value="Member">Member</option>
                   <option value="Admin">Admin</option>
                 </select>
 
                 {/* Status */}
-                <span style={{
-                  padding: "2px 8px", borderRadius: "9999px", display: "inline-block",
-                  fontSize: "var(--ts-meta)", fontWeight: "600",
-                  background: user.isBanned ? "var(--danger-s)" : "var(--success-s)",
-                  color: user.isBanned ? "var(--danger)" : "var(--success)",
-                }}>
+                <span className="py-1 px-4 inline-block text-sm font-mono text-[0.594rem] uppercase tracking-wide" style={{ background: user.isBanned ? "var(--danger-s)" : "var(--success-s)", color: user.isBanned ? "var(--danger)" : "var(--success)" }}>
                   {user.isBanned ? "Banned" : "Active"}
                 </span>
 
@@ -134,15 +93,7 @@ export default function AdminPage() {
                     <button
                       disabled={isBanning}
                       onClick={() => banUser.mutate(user.id)}
-                      style={{
-                        padding: "4px 12px", borderRadius: "8px",
-                        background: user.isBanned ? "var(--surface-3)" : "var(--danger-s)",
-                        color: user.isBanned ? "var(--text-3)" : "var(--danger)",
-                        border: `1px solid ${user.isBanned ? "var(--border)" : "oklch(62% 0.21 22 / 0.25)"}`,
-                        fontSize: "var(--ts-meta)", fontWeight: "500",
-                        cursor: isBanning ? "not-allowed" : "pointer",
-                        opacity: isBanning ? 0.5 : 1,
-                      }}
+                      className="py-2 px-6 text-sm font-medium" style={{ background: user.isBanned ? "var(--paper-3)" : "var(--danger-s)", color: user.isBanned ? "var(--text-3)" : "var(--danger)", border: `1px solid ${user.isBanned ? "var(--ink-3)" : "oklch(62% 0.21 22 / 0.25)"}`, cursor: isBanning ? "not-allowed" : "pointer", opacity: isBanning ? 0.5 : 1 }}
                     >
                       {isBanning ? "…" : user.isBanned ? "Unban" : "Ban"}
                     </button>
@@ -156,33 +107,21 @@ export default function AdminPage() {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div style={{ display: "flex", gap: "8px", justifyContent: "center" }}>
+        <div className="flex gap-4 justify-center">
           <button
             disabled={page <= 1}
             onClick={() => setPage((p) => p - 1)}
-            style={{
-              padding: "6px 16px", borderRadius: "10px",
-              background: "var(--surface-2)", border: "1px solid var(--border)",
-              fontSize: "var(--ts-label)", fontWeight: "500", color: "var(--text-2)",
-              cursor: page <= 1 ? "not-allowed" : "pointer",
-              opacity: page <= 1 ? 0.5 : 1,
-            }}
+            className="py-3 px-8 bg-paper-2 text-base font-medium text-ink-2" style={{ border: "1.5px solid var(--ink)", cursor: page <= 1 ? "not-allowed" : "pointer", opacity: page <= 1 ? 0.5 : 1 }}
           >
             ← Prev
           </button>
-          <span style={{ display: "flex", alignItems: "center", fontSize: "var(--ts-label)", color: "var(--text-3)" }}>
+          <span className="flex items-center text-base text-ink-3">
             {page} / {totalPages}
           </span>
           <button
             disabled={page >= totalPages}
             onClick={() => setPage((p) => p + 1)}
-            style={{
-              padding: "6px 16px", borderRadius: "10px",
-              background: "var(--surface-2)", border: "1px solid var(--border)",
-              fontSize: "var(--ts-label)", fontWeight: "500", color: "var(--text-2)",
-              cursor: page >= totalPages ? "not-allowed" : "pointer",
-              opacity: page >= totalPages ? 0.5 : 1,
-            }}
+            className="py-3 px-8 bg-paper-2 text-base font-medium text-ink-2" style={{ border: "1.5px solid var(--ink)", cursor: page >= totalPages ? "not-allowed" : "pointer", opacity: page >= totalPages ? 0.5 : 1 }}
           >
             Next →
           </button>

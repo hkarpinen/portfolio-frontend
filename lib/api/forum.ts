@@ -94,8 +94,8 @@ export const castVote = (body: { targetType: 0 | 1; targetId: string; direction:
 // ─── Search ──────────────────────────────────────────────────────────────────
 
 export const searchForum = (query: string) =>
-  api.get<{ items?: SearchResult[] } | SearchResult[]>(
-    `/api/forum/search?q=${encodeURIComponent(query)}&type=thread`
+  api.get<{ items: SearchResult[]; totalCount: number }>(
+    `/api/forum/search?query=${encodeURIComponent(query)}&scope=All&sort=Relevance`
   );
 
 export const searchThreads = (query: string) =>

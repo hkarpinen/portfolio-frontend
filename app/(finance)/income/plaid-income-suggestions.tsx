@@ -17,23 +17,10 @@ const FREQ_LABELS: Record<string, string> = {
 
 function StreamCard({ stream, onAccept, accepting }: { stream: RecurringSuggestion; onAccept: () => void; accepting: boolean }) {
   return (
-    <div style={{
-      background: "var(--surface)",
-      border: "1px solid var(--border)",
-      borderRadius: "14px",
-      padding: "16px 18px",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-      gap: "16px",
-      boxShadow: "var(--shadow-sm)",
-    }}>
-      <div style={{ display: "flex", alignItems: "center", gap: "14px", minWidth: 0 }}>
+    <div className="bg-paper py-[16px] px-[18px] flex items-center justify-between gap-8 shadow-stamp" style={{ border: "1.5px solid var(--ink)" }}>
+      <div className="flex items-center gap-[14px] min-w-0">
         {/* Icon */}
-        <div style={{
-          width: "40px", height: "40px", borderRadius: "12px",
-          background: "var(--success-s)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
-        }}>
+        <div className="w-20 h-20 bg-[rgba(61,107,43,0.10)] flex items-center justify-center shrink-0">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--success)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
             <polyline points="17 6 23 6 23 12" />
@@ -41,11 +28,11 @@ function StreamCard({ stream, onAccept, accepting }: { stream: RecurringSuggesti
         </div>
 
         {/* Info */}
-        <div style={{ minWidth: 0 }}>
-          <p style={{ fontWeight: 600, fontSize: "var(--ts-body)", color: "var(--text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+        <div className="min-w-0">
+          <p className="font-semibold text-md text-ink whitespace-nowrap overflow-hidden text-ellipsis">
             {stream.merchantName ?? stream.description}
           </p>
-          <p style={{ fontSize: "var(--ts-label)", color: "var(--text-3)", marginTop: "2px" }}>
+          <p className="text-base text-ink-3 mt-1">
             {FREQ_LABELS[stream.frequency] ?? stream.frequency}
             {" · "}
             <span style={{ fontVariantNumeric: "tabular-nums" }}>
@@ -62,12 +49,7 @@ function StreamCard({ stream, onAccept, accepting }: { stream: RecurringSuggesti
       {stream.isLinked ? (
         <a
           href="/income"
-          style={{
-            fontSize: "var(--ts-label)", fontWeight: 600, color: "var(--success)",
-            textDecoration: "none", padding: "6px 12px", borderRadius: "8px",
-            background: "var(--success-s)", border: "1px solid oklch(68% 0.18 152 / 0.25)",
-            flexShrink: 0,
-          }}
+          className="text-base font-semibold text-green no-underline py-3 px-6 bg-[rgba(61,107,43,0.10)] shrink-0" style={{ border: "1px solid oklch(68% 0.18 152 / 0.25)" }}
         >
           ✓ Added
         </a>
@@ -75,13 +57,7 @@ function StreamCard({ stream, onAccept, accepting }: { stream: RecurringSuggesti
         <button
           onClick={onAccept}
           disabled={accepting}
-          style={{
-            background: "var(--accent)", color: "#fff", border: "none",
-            borderRadius: "8px", padding: "7px 16px", fontSize: "var(--ts-body-sm)",
-            fontWeight: 600, cursor: accepting ? "not-allowed" : "pointer",
-            opacity: accepting ? 0.6 : 1, flexShrink: 0,
-            transition: "opacity 150ms",
-          }}
+          className="bg-red text-white py-[7px] px-[16px] text-base font-semibold shrink-0" style={{ border: "none", cursor: accepting ? "not-allowed" : "pointer", opacity: accepting ? 0.6 : 1, transition: "opacity 150ms" }}
         >
           {accepting ? "Adding…" : "Add to income"}
         </button>
@@ -123,29 +99,22 @@ export function PlaidIncomeSuggestions() {
   return (
     <div>
       {/* Section header */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <p style={{
-            fontSize: "var(--ts-meta)", fontWeight: 700, color: "var(--text-3)",
-            textTransform: "uppercase", letterSpacing: "0.1em",
-          }}>
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-4">
+          <p className="text-sm font-bold text-ink-3 uppercase tracking-[0.1em]">
             Detected from bank
           </p>
           {(streamsQuery.isLoading || refresh.isPending) && (
-            <span style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)" }}>Loading…</span>
+            <span className="text-sm text-ink-3">Loading…</span>
           )}
           {inflows.length > 0 && (
-            <span style={{
-              fontSize: "var(--ts-meta)", fontWeight: 700, color: "var(--accent)",
-              background: "var(--accent-subtle)", borderRadius: "99px",
-              padding: "1px 8px",
-            }}>
+            <span className="text-sm font-bold text-red bg-[rgba(178,42,26,0.10)] py-[1px] px-[8px]">
               {inflows.filter(s => !s.isLinked).length} new
             </span>
           )}
         </div>
 
-        <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+        <div className="flex gap-4 items-center">
           {/* Refresh / detect button */}
           {itemsQuery.data && itemsQuery.data.length > 0 && (
             <button
@@ -154,12 +123,7 @@ export function PlaidIncomeSuggestions() {
                 itemsQuery.data!.forEach(item => refresh.mutate(item.connectionId));
               }}
               disabled={refresh.isPending}
-              style={{
-                background: "none", border: "1px solid var(--border)",
-                borderRadius: "8px", padding: "4px 10px", fontSize: "var(--ts-label)",
-                color: "var(--text-3)", cursor: "pointer",
-                opacity: refresh.isPending ? 0.5 : 1, transition: "opacity 150ms",
-              }}
+              className="bg-transparent py-2 px-5 text-base text-ink-3 cursor-pointer" style={{ border: "1.5px solid var(--ink)", opacity: refresh.isPending ? 0.5 : 1, transition: "opacity 150ms" }}
             >
               {refresh.isPending ? "Detecting…" : "↺ Refresh"}
             </button>
@@ -169,10 +133,7 @@ export function PlaidIncomeSuggestions() {
           {inflows.length > 0 && (
             <button
               onClick={() => setCollapsed(c => !c)}
-              style={{
-                background: "none", border: "none", padding: "4px 6px",
-                fontSize: "var(--ts-label)", color: "var(--text-3)", cursor: "pointer",
-              }}
+              className="bg-transparent py-2 px-3 text-base text-ink-3 cursor-pointer" style={{ border: "none" }}
             >
               {collapsed ? "Show" : "Hide"}
             </button>
@@ -182,21 +143,14 @@ export function PlaidIncomeSuggestions() {
 
       {/* Stream cards */}
       {!collapsed && (
-        <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+        <div className="flex flex-col gap-5">
           {showEmpty ? (
-            <div style={{
-              background: "var(--surface)", border: "1px solid var(--border)",
-              borderRadius: "14px", padding: "20px 18px",
-              textAlign: "center", color: "var(--text-3)", fontSize: "var(--ts-body-sm)",
-            }}>
+            <div className="bg-paper py-[20px] px-[18px] text-center text-ink-3 text-base" style={{ border: "1.5px solid var(--ink)" }}>
               No recurring deposits detected yet.{" "}
               <button
                 onClick={() => itemsQuery.data!.forEach(item => refresh.mutate(item.connectionId))}
                 disabled={refresh.isPending}
-                style={{
-                  background: "none", border: "none", color: "var(--accent)",
-                  cursor: "pointer", fontWeight: 600, fontSize: "var(--ts-body-sm)", padding: 0,
-                }}
+                className="bg-transparent text-red cursor-pointer font-semibold text-base p-0" style={{ border: "none" }}
               >
                 Detect now
               </button>

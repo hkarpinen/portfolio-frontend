@@ -2,9 +2,8 @@
 
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import Link from "next/link";
-import styles from "./page.module.css";
 import { api, ApiError } from "@/lib/api-client";
+import { Btn } from "@/components/editorial";
 
 function ConfirmEmailContent() {
   const searchParams = useSearchParams();
@@ -33,89 +32,39 @@ function ConfirmEmailContent() {
   }, [token, userId]);
 
   return (
-    <div style={{
-      background: "var(--paper-2)",
-      border: "1.5px solid var(--ink)",
-      boxShadow: "var(--shadow-stamp)",
-      padding: "40px 32px",
-      textAlign: "center",
-    }}>
+    <div className="bg-paper-2 shadow-stamp py-20 px-16 text-center" style={{ border: "1.5px solid var(--ink)" }}>
       {status === "loading" && (
         <>
-          <div style={{
-            width: "56px", height: "56px", borderRadius: "9999px",
-            border: "2px solid var(--border-2)",
-            borderTopColor: "var(--accent)",
-            animation: "spin 0.8s linear infinite",
-            margin: "0 auto 20px",
-          }} />
-          <p style={{ fontSize: "var(--ts-body)", color: "var(--text-2)" }}>Confirming your email…</p>
+          <div className="w-[56px] h-[56px]" style={{ border: "2px solid var(--ink-4)", borderTopColor: "var(--ink)", animation: "spin 0.8s linear infinite", margin: "0 auto 20px" }} />
+          <p className="font-mono text-sm text-ink-3 uppercase tracking-wide">Confirming your email…</p>
         </>
       )}
 
       {status === "success" && (
         <>
-          <div style={{
-            width: "56px", height: "56px", borderRadius: "16px",
-            background: "var(--success-s)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            margin: "0 auto 20px",
-          }}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--success)" strokeWidth={2}>
+          <div className="w-[56px] h-[56px] bg-[rgba(61,107,43,0.10)] flex items-center justify-center" style={{ margin: "0 auto 20px", border: "1.5px solid var(--green)" }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--green)" strokeWidth={2}>
               <path d="M20 6L9 17l-5-5" />
             </svg>
           </div>
-          <h1 style={{
-            fontFamily: "var(--ff-display)", fontWeight: "800",
-            fontSize: "var(--ts-card-h)", letterSpacing: "-0.025em", color: "var(--text)",
-            marginBottom: "8px",
-          }}>Email confirmed!</h1>
-          <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)", lineHeight: "1.6", marginBottom: "28px" }}>
-            {message}
-          </p>
-          <Link href="/login" className={styles.primaryLink}
-          >
-            Sign in
-          </Link>
+          <h1 className="font-serif italic font-normal text-3xl tracking-[-0.025em] text-ink mb-4">Email confirmed<span className="text-red">.</span></h1>
+          <p className="text-base text-ink-3 leading-[1.6] mb-[28px]">{message}</p>
+          <Btn href="/login" variant="primary">Sign in</Btn>
         </>
       )}
 
       {status === "error" && (
         <>
-          <div style={{
-            width: "56px", height: "56px", borderRadius: "16px",
-            background: "var(--danger-s)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            margin: "0 auto 20px",
-          }}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" strokeWidth={2}>
+          <div className="w-[56px] h-[56px] bg-[rgba(178,42,26,0.10)] flex items-center justify-center" style={{ margin: "0 auto 20px", border: "1.5px solid var(--red)" }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--red)" strokeWidth={2}>
               <path d="M18 6L6 18M6 6l12 12" />
             </svg>
           </div>
-          <h1 style={{
-            fontFamily: "var(--ff-display)", fontWeight: "800",
-            fontSize: "var(--ts-card-h)", letterSpacing: "-0.025em", color: "var(--text)",
-            marginBottom: "8px",
-          }}>Confirmation failed</h1>
-          <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)", lineHeight: "1.6", marginBottom: "28px" }}>
-            {message}
-          </p>
-          <div style={{ display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap" }}>
-            <Link href="/register" style={{
-              padding: "10px 20px", borderRadius: "12px",
-              background: "var(--accent)", color: "#fff",
-              fontSize: "var(--ts-body-sm)", fontWeight: "600", textDecoration: "none",
-            }}>
-              Try again
-            </Link>
-            <Link href="/login" style={{
-              padding: "10px 20px", borderRadius: "12px",
-              background: "var(--surface-2)", color: "var(--text-2)",
-              border: "1px solid var(--border)",
-              fontSize: "var(--ts-body-sm)", fontWeight: "500", textDecoration: "none",
-            }}>
-              Back to sign in
-            </Link>
+          <h1 className="font-serif italic font-normal text-3xl tracking-[-0.025em] text-ink mb-4">Confirmation failed<span className="text-red">.</span></h1>
+          <p className="text-base text-ink-3 leading-[1.6] mb-[28px]">{message}</p>
+          <div className="flex gap-6 justify-center flex-wrap">
+            <Btn href="/register" variant="primary">Try again</Btn>
+            <Btn href="/login" variant="secondary">Back to sign in</Btn>
           </div>
         </>
       )}
@@ -127,16 +76,8 @@ export default function ConfirmEmailPage() {
   return (
     <Suspense
       fallback={
-        <div style={{
-          background: "var(--surface)", border: "1px solid var(--border)",
-          borderRadius: "24px", padding: "40px 32px", boxShadow: "var(--shadow-lg)",
-          textAlign: "center",
-        }}>
-          <div style={{
-            width: "40px", height: "40px", borderRadius: "9999px",
-            border: "2px solid var(--border-2)", borderTopColor: "var(--accent)",
-            animation: "spin 0.8s linear infinite", margin: "0 auto",
-          }} />
+        <div className="bg-paper-2 py-20 px-16 shadow-stamp text-center" style={{ border: "1.5px solid var(--ink)" }}>
+          <div className="w-[48px] h-[48px] mx-auto" style={{ border: "2px solid var(--ink-4)", borderTopColor: "var(--ink)", animation: "spin 0.8s linear infinite" }} />
         </div>
       }
     >

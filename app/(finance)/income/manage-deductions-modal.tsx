@@ -80,9 +80,9 @@ const DEDUCTION_FREQUENCIES = [
 // ── Shared styles ─────────────────────────────────────────────────────────────
 const fieldStyle: React.CSSProperties = {
   height: "40px", width: "100%",
-  background: "var(--surface-2)",
-  border: "1px solid var(--border)",
-  borderRadius: "10px",
+  background: "var(--paper-2)",
+  border: "1.5px solid var(--ink)",
+  
   padding: "0 12px",
   fontSize: "var(--ts-body-sm)",
   color: "var(--text)",
@@ -91,18 +91,18 @@ const fieldStyle: React.CSSProperties = {
 };
 
 function onFocus(e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) {
-  e.currentTarget.style.borderColor = "var(--accent)";
-  e.currentTarget.style.boxShadow = "0 0 0 3px var(--accent-subtle)";
+  e.currentTarget.style.borderColor = "var(--ink)";
+  e.currentTarget.style.boxShadow = "0 0 0 3px rgba(178,42,26,0.08)";
 }
 function onBlur(e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) {
-  e.currentTarget.style.borderColor = "var(--border)";
+  e.currentTarget.style.borderColor = "var(--ink-3)";
   e.currentTarget.style.boxShadow = "none";
 }
 
 function FieldGroup({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
-      <span style={{ fontSize: "var(--ts-meta)", fontWeight: "600", color: "var(--text-3)", letterSpacing: "0.02em" }}>{label}</span>
+    <div className="flex flex-col gap-[5px]">
+      <span className="text-sm font-semibold text-ink-3 tracking-[0.02em]">{label}</span>
       {children}
     </div>
   );
@@ -197,24 +197,21 @@ export function ManageDeductionsModal({ source, onClose }: ManageDeductionsModal
       <div className="modal-sheet">
 
         {/* ── Drag handle (mobile) ── */}
-        <div style={{ display: "flex", justifyContent: "center", padding: "10px 0 0" }}>
-          <div style={{ width: "36px", height: "4px", borderRadius: "2px", background: "var(--border-2)" }} />
+        <div className="flex justify-center p-[10px_0_0]">
+          <div className="w-[36px] h-2" style={{ background: "var(--border-2)" }} />
         </div>
 
         {/* ── Header ── */}
-        <div style={{
-          display: "flex", alignItems: "center", justifyContent: "space-between",
-          padding: "10px 20px 14px",
-        }}>
+        <div className="flex items-center justify-between p-[10px_20px_14px]">
           <div>
-            <h2 style={{ fontFamily: "var(--ff-display)", fontWeight: "700", fontSize: "var(--ts-body)", color: "var(--text)", margin: 0 }}>
+            <h2 className="font-serif font-bold text-md text-ink m-0">
               Manage Deductions
             </h2>
-            <p style={{ fontSize: "var(--ts-label)", color: "var(--text-3)", marginTop: "2px" }}>{source.source}</p>
+            <p className="text-base text-ink-3 mt-1">{source.source}</p>
           </div>
           <button
             onClick={onClose}
-            style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-3)", padding: "6px", borderRadius: "8px", lineHeight: 0 }}
+            className="bg-transparent cursor-pointer text-ink-3 p-3 leading-[0]" style={{ border: "none" }}
             aria-label="Close"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -224,7 +221,7 @@ export function ManageDeductionsModal({ source, onClose }: ManageDeductionsModal
         </div>
 
         {/* ── Segmented tabs ── */}
-        <div style={{ padding: "0 20px 16px", borderBottom: "1px solid var(--border)" }}>
+        <div className="p-[0_20px_16px]" style={{ borderBottom: "1.5px solid var(--ink)" }}>
           <div className="seg-control">
             <button className={`seg-btn ${activeTab === "tax" ? "seg-btn-active" : "seg-btn-inactive"}`} onClick={() => setActiveTab("tax")}>
               Tax Withholding
@@ -236,37 +233,32 @@ export function ManageDeductionsModal({ source, onClose }: ManageDeductionsModal
         </div>
 
         {/* ── Scrollable content ── */}
-        <div style={{ overflowY: "auto", padding: "20px 20px 28px", flex: 1 }}>
+        <div className="overflow-y-auto p-[20px_20px_28px] flex-1">
 
           {/* ═══════ TAX WITHHOLDING TAB ═══════ */}
           {activeTab === "tax" && (
-            <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+            <div className="flex flex-col gap-8">
 
               {/* Enable toggle row */}
-              <label style={{
-                display: "flex", alignItems: "center", justifyContent: "space-between",
-                padding: "12px 14px", borderRadius: "12px",
-                background: "var(--surface-2)", border: "1px solid var(--border)",
-                cursor: "pointer",
-              }}>
+              <label className="flex items-center justify-between py-[12px] px-[14px] bg-paper-2 cursor-pointer" style={{ border: "1.5px solid var(--ink)" }}>
                 <div>
-                  <span style={{ fontSize: "var(--ts-body-sm)", fontWeight: "600", color: "var(--text)" }}>
+                  <span className="text-base font-semibold text-ink">
                     Calculate tax withholding
                   </span>
-                  <p style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)", marginTop: "2px" }}>
+                  <p className="text-sm text-ink-3 mt-1">
                     Estimates federal + state income tax deducted from your pay
                   </p>
                 </div>
                 {/* Toggle switch */}
-                <div style={{ position: "relative", width: "40px", height: "22px", flexShrink: 0, marginLeft: "12px" }}>
+                <div className="relative w-20 h-[22px] shrink-0 ml-6">
                   <input
                     type="checkbox" checked={taxEnabled}
                     onChange={(e) => setTaxEnabled(e.target.checked)}
-                    style={{ position: "absolute", inset: 0, opacity: 0, cursor: "pointer", width: "100%", height: "100%", zIndex: 1, margin: 0 }}
+                    className="absolute inset-0 opacity-[0] cursor-pointer w-full h-full z-[1] m-0"
                     aria-label="Enable tax withholding"
                   />
-                  <div style={{ position: "absolute", inset: 0, borderRadius: "11px", background: taxEnabled ? "var(--accent)" : "var(--surface-3)", transition: "background 150ms" }} />
-                  <div style={{ position: "absolute", top: "3px", left: taxEnabled ? "21px" : "3px", width: "16px", height: "16px", borderRadius: "50%", background: "#fff", transition: "left 150ms var(--ease-spring)", boxShadow: "0 1px 3px rgba(0,0,0,0.25)" }} />
+                  <div className="absolute inset-0" style={{ background: taxEnabled ? "var(--ink)" : "var(--paper-3)", transition: "background 150ms" }} />
+                  <div className="absolute top-[3px] w-8 h-8 rounded-full bg-white" style={{ left: taxEnabled ? "21px" : "3px", transition: "left 150ms var(--ease-spring)", boxShadow: "0 1px 3px rgba(0,0,0,0.25)" }} />
                 </div>
               </label>
 
@@ -274,7 +266,7 @@ export function ManageDeductionsModal({ source, onClose }: ManageDeductionsModal
                 <>
                   <div className="form-grid-2">
                     <FieldGroup label="Filing Status">
-                      <select value={filingStatus} onChange={(e) => setFilingStatus(e.target.value as FilingStatus)} style={{ ...fieldStyle, cursor: "pointer" }} onFocus={onFocus} onBlur={onBlur}>
+                      <select value={filingStatus} onChange={(e) => setFilingStatus(e.target.value as FilingStatus)} className="cursor-pointer" style={{ ...fieldStyle }} onFocus={onFocus} onBlur={onBlur}>
                         {FILING_STATUS_OPTIONS.map((o) => (
                           <option key={o.value} value={o.value}>{o.label}</option>
                         ))}
@@ -282,7 +274,7 @@ export function ManageDeductionsModal({ source, onClose }: ManageDeductionsModal
                     </FieldGroup>
 
                     <FieldGroup label="State">
-                      <select value={stateCode} onChange={(e) => setStateCode(e.target.value)} style={{ ...fieldStyle, cursor: "pointer" }} onFocus={onFocus} onBlur={onBlur}>
+                      <select value={stateCode} onChange={(e) => setStateCode(e.target.value)} className="cursor-pointer" style={{ ...fieldStyle }} onFocus={onFocus} onBlur={onBlur}>
                         <option value="">\u2014 None / no state income tax \u2014</option>
                         {US_STATES.map((s) => (
                           <option key={s.code} value={s.code}>{s.code} \u2013 {s.name}</option>
@@ -298,36 +290,28 @@ export function ManageDeductionsModal({ source, onClose }: ManageDeductionsModal
               <button
                 onClick={handleSaveTaxProfile}
                 disabled={setTaxProfileMutation.isPending}
-                style={{
-                  padding: "11px", borderRadius: "12px", border: "none",
-                  background: taxEnabled ? "var(--accent)" : "var(--surface-3)",
-                  color: taxEnabled ? "#fff" : "var(--text-3)",
-                  fontSize: "var(--ts-body-sm)", fontWeight: "600",
-                  cursor: setTaxProfileMutation.isPending ? "not-allowed" : "pointer",
-                  opacity: setTaxProfileMutation.isPending ? 0.7 : 1,
-                  transition: "background 150ms, color 150ms",
-                }}
+                className="p-[11px] text-base font-semibold" style={{ border: "none", background: taxEnabled ? "var(--ink)" : "var(--paper-3)", color: taxEnabled ? "#fff" : "var(--text-3)", cursor: setTaxProfileMutation.isPending ? "not-allowed" : "pointer", opacity: setTaxProfileMutation.isPending ? 0.7 : 1, transition: "background 150ms, color 150ms" }}
               >
                 {setTaxProfileMutation.isPending ? "Saving\u2026" : taxEnabled ? "Save Tax Profile" : "Clear Tax Profile"}
               </button>
 
               {setTaxProfileMutation.isSuccess && (
-                <p style={{ fontSize: "var(--ts-label)", color: "var(--success)", textAlign: "center" }}>\u2713 Saved</p>
+                <p className="text-base text-green text-center">\u2713 Saved</p>
               )}
             </div>
           )}
 
           {/* ═══════ DEDUCTIONS TAB ═══════ */}
           {activeTab === "deductions" && (
-            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+            <div className="flex flex-col gap-5">
 
               {existingDeductions.length === 0 && !addOpen ? (
-                <div style={{ padding: "28px 20px", textAlign: "center", border: "1px dashed var(--border)", borderRadius: "14px" }}>
-                  <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)", fontStyle: "italic" }}>No deductions added yet.</p>
-                  <p style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)", marginTop: "4px" }}>401(k), health insurance, HSA, and more.</p>
+                <div className="py-[28px] px-[20px] text-center" style={{ border: "1.5px dashed var(--ink-3)" }}>
+                  <p className="text-base text-ink-3 italic">No deductions added yet.</p>
+                  <p className="text-sm text-ink-3 mt-2">401(k), health insurance, HSA, and more.</p>
                 </div>
               ) : (
-                <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <div className="flex flex-col gap-3">
                   {existingDeductions.map((d, i) => (
                     <DeductionChip key={i} d={d} onRemove={handleRemove} removeDisabled={removeDeductionMutation.isPending} />
                   ))}
@@ -337,13 +321,7 @@ export function ManageDeductionsModal({ source, onClose }: ManageDeductionsModal
               {!addOpen ? (
                 <button
                   onClick={() => setAddOpen(true)}
-                  style={{
-                    display: "flex", alignItems: "center", justifyContent: "center", gap: "6px",
-                    padding: "11px", borderRadius: "12px",
-                    border: "1px dashed var(--accent-border)",
-                    background: "var(--accent-subtle)", color: "var(--accent)",
-                    fontSize: "var(--ts-body-sm)", fontWeight: "600", cursor: "pointer",
-                  }}
+                  className="flex items-center justify-center gap-3 p-[11px] bg-[rgba(178,42,26,0.10)] text-red text-base font-semibold cursor-pointer" style={{ border: "1px dashed var(--accent-border)" }}
                 >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
@@ -367,7 +345,7 @@ export function ManageDeductionsModal({ source, onClose }: ManageDeductionsModal
               )}
 
               {addDeductionMutation.isError && (
-                <p style={{ fontSize: "var(--ts-label)", color: "var(--danger)" }}>Failed to add deduction \u2014 please try again.</p>
+                <p className="text-base text-red">Failed to add deduction \u2014 please try again.</p>
               )}
             </div>
           )}
@@ -388,24 +366,24 @@ function DeductionChip({ d, onRemove, removeDisabled }: {
   const cfg = TYPE_CONFIGS[d.type as string];
 
   return (
-    <div style={{ borderRadius: "12px", background: "var(--surface-2)", border: "1px solid var(--border)", overflow: "hidden" }}>
+    <div className="bg-paper-2 overflow-hidden" style={{ border: "1.5px solid var(--ink)" }}>
       <div
-        style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "11px 14px", cursor: "pointer" }}
+        className="flex items-center justify-between py-[11px] px-[14px] cursor-pointer"
         onClick={() => setExpanded((v) => !v)}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: "7px", minWidth: 0 }}>
-          <span style={{ fontSize: "var(--ts-body-sm)", fontWeight: "600", color: "var(--text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+        <div className="flex items-center gap-[7px] min-w-0">
+          <span className="text-base font-semibold text-ink whitespace-nowrap overflow-hidden text-ellipsis">
             {d.label}
           </span>
           {d.isTaxExempt && (
-            <span style={{ flexShrink: 0, fontSize: "var(--ts-meta)", fontWeight: "600", padding: "1px 6px", borderRadius: "9999px", background: "var(--accent-subtle)", color: "var(--accent)" }}>Pre-tax</span>
+            <span className="shrink-0 text-sm font-semibold py-[1px] px-[6px] bg-[rgba(178,42,26,0.10)] text-red">Pre-tax</span>
           )}
           {d.isEmployerSponsored && (
-            <span style={{ flexShrink: 0, fontSize: "var(--ts-meta)", fontWeight: "600", padding: "1px 6px", borderRadius: "9999px", background: "var(--success-s)", color: "var(--success)" }}>Employer</span>
+            <span className="shrink-0 text-sm font-semibold py-[1px] px-[6px] bg-[rgba(61,107,43,0.10)] text-green">Employer</span>
           )}
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "6px", flexShrink: 0 }}>
-          <span style={{ fontSize: "var(--ts-label)", fontWeight: "600", color: "var(--text-2)" }}>
+        <div className="flex items-center gap-3 shrink-0">
+          <span className="text-base font-semibold text-ink-2">
             {d.method === "PercentOfGross" ? `${d.value}%` : `$${d.value.toFixed(2)}`}
           </span>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
@@ -416,8 +394,8 @@ function DeductionChip({ d, onRemove, removeDisabled }: {
       </div>
 
       {expanded && (
-        <div style={{ padding: "0 14px 12px", borderTop: "1px solid var(--border)", display: "flex", flexDirection: "column", gap: "10px" }}>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", paddingTop: "10px" }}>
+        <div className="p-[0_14px_12px] flex flex-col gap-5" style={{ borderTop: "1.5px solid var(--ink)" }}>
+          <div className="flex flex-wrap gap-3 pt-5">
             <DetailPill label="Type" value={cfg?.label ?? d.type} />
             <DetailPill label="Amount" value={d.method === "PercentOfGross" ? `${d.value}% of gross` : `$${d.value.toFixed(2)} fixed`} />
             <DetailPill label="Frequency" value={d.frequency ?? "Monthly"} />
@@ -426,14 +404,7 @@ function DeductionChip({ d, onRemove, removeDisabled }: {
           <button
             onClick={() => onRemove(d.type, d.label)}
             disabled={removeDisabled}
-            style={{
-              display: "flex", alignItems: "center", gap: "6px",
-              padding: "7px 12px", borderRadius: "8px",
-              border: "1px solid var(--danger-border)", background: "var(--danger-s)", color: "var(--danger)",
-              fontSize: "var(--ts-label)", fontWeight: "600",
-              cursor: removeDisabled ? "not-allowed" : "pointer",
-              alignSelf: "flex-start", opacity: removeDisabled ? 0.5 : 1,
-            }}
+            className="flex items-center gap-3 py-[7px] px-[12px] bg-[rgba(178,42,26,0.10)] text-red text-base font-semibold self-start" style={{ border: "1px solid var(--danger-border)", cursor: removeDisabled ? "not-allowed" : "pointer", opacity: removeDisabled ? 0.5 : 1 }}
           >
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2"/>
@@ -448,8 +419,8 @@ function DeductionChip({ d, onRemove, removeDisabled }: {
 
 function DetailPill({ label, value }: { label: string; value: string }) {
   return (
-    <div style={{ padding: "3px 10px", borderRadius: "9999px", background: "var(--surface-3)", border: "1px solid var(--border)", fontSize: "var(--ts-meta)", color: "var(--text-2)" }}>
-      <span style={{ color: "var(--text-3)" }}>{label}: </span>{value}
+    <div className="py-[3px] px-[10px] bg-paper-3 text-sm font-mono text-ink-2" style={{ border: "1.5px solid var(--ink)" }}>
+      <span className="text-ink-3">{label}: </span>{value}
     </div>
   );
 }
@@ -480,20 +451,16 @@ function AddDeductionForm({
   const canAdd = dValue && !isNaN(val) && val > 0;
 
   return (
-    <div style={{
-      background: "var(--surface-2)", border: "1px solid var(--accent-border)",
-      borderRadius: "14px", padding: "16px",
-      display: "flex", flexDirection: "column", gap: "14px",
-    }}>
+    <div className="bg-paper-2 p-8 flex flex-col gap-[14px]" style={{ border: "1px solid var(--accent-border)" }}>
 
       {/* Type (full-width, prominent) */}
       <FieldGroup label="Type">
-        <select value={dType} onChange={(e) => setDType(e.target.value as DeductionType)} style={{ ...fieldStyle, cursor: "pointer" }} onFocus={onFocus} onBlur={onBlur}>
+        <select value={dType} onChange={(e) => setDType(e.target.value as DeductionType)} className="cursor-pointer" style={{ ...fieldStyle }} onFocus={onFocus} onBlur={onBlur}>
           {VOLUNTARY_TYPES.map((t) => (
             <option key={t} value={t}>{TYPE_CONFIGS[t as string]?.label ?? t}</option>
           ))}
         </select>
-        {cfg?.hint ? <span style={{ fontSize: "var(--ts-meta)", color: "var(--accent)", marginTop: "1px" }}>{cfg.hint}</span> : null}
+        {cfg?.hint ? <span className="text-sm text-red mt-[1px]">{cfg.hint}</span> : null}
       </FieldGroup>
 
       {/* Label (optional) */}
@@ -505,7 +472,7 @@ function AddDeductionForm({
       </FieldGroup>
 
       {/* Amount / Frequency / Method — 3-up auto-fit grid (stacks on narrow screens) */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))", gap: "10px" }}>
+      <div className="grid gap-5" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))" }}>
         <FieldGroup label={dMethod === "PercentOfGross" ? "Percentage" : "Amount ($)"}>
           <input type="number" min={0} step="0.01" value={dValue} onChange={(e) => setDValue(e.target.value)}
             placeholder={dMethod === "PercentOfGross" ? "e.g. 6" : "e.g. 214.00"}
@@ -513,12 +480,12 @@ function AddDeductionForm({
           />
         </FieldGroup>
         <FieldGroup label="Frequency">
-          <select value={dFreq} onChange={(e) => setDFreq(e.target.value)} style={{ ...fieldStyle, cursor: "pointer" }} onFocus={onFocus} onBlur={onBlur}>
+          <select value={dFreq} onChange={(e) => setDFreq(e.target.value)} className="cursor-pointer" style={{ ...fieldStyle }} onFocus={onFocus} onBlur={onBlur}>
             {DEDUCTION_FREQUENCIES.map((f) => <option key={f.value} value={f.value}>{f.label}</option>)}
           </select>
         </FieldGroup>
         <FieldGroup label="Method">
-          <select value={dMethod} onChange={(e) => setDMethod(e.target.value as DeductionCalculationMethod)} style={{ ...fieldStyle, cursor: "pointer" }} onFocus={onFocus} onBlur={onBlur}>
+          <select value={dMethod} onChange={(e) => setDMethod(e.target.value as DeductionCalculationMethod)} className="cursor-pointer" style={{ ...fieldStyle }} onFocus={onFocus} onBlur={onBlur}>
             <option value="FixedAmount">Fixed ($)</option>
             <option value="PercentOfGross">% of Gross</option>
           </select>
@@ -526,19 +493,19 @@ function AddDeductionForm({
       </div>
 
       {/* Advanced (employer / pre-tax) — collapsed by default */}
-      <div style={{ borderRadius: "10px", border: "1px solid var(--border)", overflow: "hidden" }}>
+      <div className="overflow-hidden" style={{ border: "1.5px solid var(--ink)" }}>
         <button type="button" onClick={() => setAdvancedOpen(!advancedOpen)}
-          style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "9px 12px", background: "none", border: "none", cursor: "pointer" }}
+          className="w-full flex items-center justify-between py-[9px] px-[12px] bg-transparent cursor-pointer" style={{ border: "none" }}
         >
-          <span style={{ fontSize: "var(--ts-label)", fontWeight: "600", color: "var(--text-3)" }}>Advanced</span>
+          <span className="text-base font-semibold text-ink-3">Advanced</span>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
             style={{ transform: advancedOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 180ms" }}>
             <polyline points="6 9 12 15 18 9"/>
           </svg>
         </button>
         {advancedOpen && (
-          <div style={{ padding: "0 12px 12px", display: "flex", flexDirection: "column", gap: "10px", borderTop: "1px solid var(--border)" }}>
-            <p style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)", paddingTop: "10px", lineHeight: 1.5 }}>
+          <div className="p-[0_12px_12px] flex flex-col gap-5" style={{ borderTop: "1.5px solid var(--ink)" }}>
+            <p className="text-sm text-ink-3 pt-5 leading-[1.5]">
               Auto-set from type. Override only if your plan is non-standard.
             </p>
             <CheckRow label="Pre-tax deduction" hint="Reduces federal + state taxable wages (W-2 Box 1)" checked={dPreTax} onChange={setDPreTax} />
@@ -548,21 +515,14 @@ function AddDeductionForm({
       </div>
 
       {/* Actions */}
-      <div style={{ display: "flex", gap: "8px" }}>
+      <div className="flex gap-4">
         <button type="button" onClick={onCancel}
-          style={{ flex: 1, padding: "11px", borderRadius: "12px", border: "1px solid var(--border)", background: "transparent", color: "var(--text-2)", fontSize: "var(--ts-body-sm)", fontWeight: "600", cursor: "pointer" }}
+          className="flex-1 p-[11px] bg-transparent text-ink-2 text-base font-semibold cursor-pointer" style={{ border: "1.5px solid var(--ink)" }}
         >
           Cancel
         </button>
         <button type="button" onClick={onAdd} disabled={isPending || !canAdd}
-          style={{
-            flex: 2, padding: "11px", borderRadius: "12px", border: "none",
-            background: canAdd && !isPending ? "var(--accent)" : "var(--surface-3)",
-            color: canAdd && !isPending ? "#fff" : "var(--text-3)",
-            fontSize: "var(--ts-body-sm)", fontWeight: "600",
-            cursor: isPending || !canAdd ? "not-allowed" : "pointer",
-            transition: "background 150ms, color 150ms",
-          }}
+          className="p-[11px] text-base font-semibold" style={{ flex: 2, border: "none", background: canAdd && !isPending ? "var(--ink)" : "var(--paper-3)", color: canAdd && !isPending ? "#fff" : "var(--text-3)", cursor: isPending || !canAdd ? "not-allowed" : "pointer", transition: "background 150ms, color 150ms" }}
         >
           {isPending ? "Adding\u2026" : "Add Deduction"}
         </button>
@@ -576,13 +536,13 @@ function CheckRow({ label, hint, checked, onChange }: {
   label: string; hint: string; checked: boolean; onChange: (v: boolean) => void;
 }) {
   return (
-    <label style={{ display: "flex", alignItems: "flex-start", gap: "10px", cursor: "pointer" }}>
+    <label className="flex items-start gap-5 cursor-pointer">
       <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)}
-        style={{ marginTop: "2px", cursor: "pointer", accentColor: "var(--accent)", width: "15px", height: "15px", flexShrink: 0 }}
+        className="mt-1 cursor-pointer w-[15px] h-[15px] shrink-0" style={{ accentColor: "var(--red)" }}
       />
       <div>
-        <span style={{ fontSize: "var(--ts-label)", fontWeight: "600", color: "var(--text-2)", display: "block" }}>{label}</span>
-        <span style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)" }}>{hint}</span>
+        <span className="text-base font-semibold text-ink-2 block">{label}</span>
+        <span className="text-sm text-ink-3">{hint}</span>
       </div>
     </label>
   );

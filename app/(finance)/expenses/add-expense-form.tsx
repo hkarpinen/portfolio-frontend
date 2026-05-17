@@ -51,25 +51,19 @@ export function AddExpenseForm() {
   };
 
   return (
-    <div style={{
-      background: "var(--surface)",
-      border: "1px solid var(--border)",
-      borderRadius: "16px",
-      padding: "20px",
-      boxShadow: "var(--shadow-sm)",
-    }}>
-      <h2 style={{ fontFamily: "var(--ff-display)", fontWeight: "700", fontSize: "var(--ts-body)", color: "var(--text)", marginBottom: "16px" }}>
+    <div className="bg-paper p-10 shadow-stamp" style={{ border: "1.5px solid var(--ink)" }}>
+      <h2 className="font-serif font-bold text-md text-ink mb-8">
         Add Personal Expense
       </h2>
 
-      <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-[14px]">
         {create.isError && (
-          <div style={{ padding: "10px 14px", borderRadius: "10px", background: "var(--danger-s)", border: "1px solid oklch(62% 0.21 22 / 0.3)", fontSize: "var(--ts-body-sm)", color: "var(--danger)" }}>
+          <div className="py-[10px] px-[14px] bg-[rgba(178,42,26,0.10)] text-base text-red" style={{ border: "1px solid oklch(62% 0.21 22 / 0.3)" }}>
             {create.error instanceof ApiError ? create.error.message : "Something went wrong. Please try again."}
           </div>
         )}
         {create.isSuccess && (
-          <div style={{ padding: "10px 14px", borderRadius: "10px", background: "var(--success-s)", border: "1px solid oklch(68% 0.18 152 / 0.25)", fontSize: "var(--ts-body-sm)", color: "var(--success)" }}>
+          <div className="py-[10px] px-[14px] bg-[rgba(61,107,43,0.10)] text-base text-green" style={{ border: "1px solid oklch(68% 0.18 152 / 0.25)" }}>
             Expense added!
           </div>
         )}
@@ -79,7 +73,7 @@ export function AddExpenseForm() {
             type="text"
             {...register("title")}
             placeholder="Netflix, Rent, Gym, etc."
-            style={{ ...iStyle, borderColor: errors.title ? "var(--danger)" : "var(--border)" }}
+            style={{ ...iStyle, borderColor: errors.title ? "var(--danger)" : "var(--ink-3)" }}
             onFocus={onFocusField}
             onBlur={onBlurField}
           />
@@ -92,7 +86,7 @@ export function AddExpenseForm() {
               step="0.01"
               {...register("amount")}
               placeholder="0.00"
-              style={{ ...iStyle, borderColor: errors.amount ? "var(--danger)" : "var(--border)" }}
+              style={{ ...iStyle, borderColor: errors.amount ? "var(--danger)" : "var(--ink-3)" }}
               onFocus={onFocusField}
               onBlur={onBlurField}
             />
@@ -119,7 +113,7 @@ export function AddExpenseForm() {
             <input
               type="date"
               {...register("dueDate")}
-              style={{ ...iStyle, borderColor: errors.dueDate ? "var(--danger)" : "var(--border)" }}
+              style={{ ...iStyle, borderColor: errors.dueDate ? "var(--danger)" : "var(--ink-3)" }}
               onFocus={onFocusField}
               onBlur={onBlurField}
             />
@@ -155,18 +149,7 @@ export function AddExpenseForm() {
         <button
           type="submit"
           disabled={create.isPending}
-          style={{
-            height: "40px",
-            borderRadius: "12px",
-            border: "none",
-            background: create.isPending ? "var(--surface-2)" : "var(--accent)",
-            color: create.isPending ? "var(--text-3)" : "white",
-            fontFamily: "var(--ff-body)",
-            fontWeight: "600",
-            fontSize: "var(--ts-body-sm)",
-            cursor: create.isPending ? "not-allowed" : "pointer",
-            transition: "background 110ms",
-          }}
+          className="h-20 font-body font-semibold text-base" style={{ border: "none", background: create.isPending ? "var(--paper-2)" : "var(--red)", color: create.isPending ? "var(--text-3)" : "white", cursor: create.isPending ? "not-allowed" : "pointer", transition: "background 110ms" }}
         >
           {create.isPending ? "Adding…" : "Add Expense"}
         </button>

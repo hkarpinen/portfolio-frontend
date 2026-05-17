@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useCreateIncomeSource } from "@/hooks/use-income";
 import { ApiError } from "@/lib/api-client";
 import { FREQUENCIES, FREQUENCY_LABELS, incomeSchema, IncomeFormData, iStyle, Field, onFocusField, onBlurField } from "./_income-form-shared";
-import { Button } from "@/components/ui/button";
+import { Btn } from "@/components/editorial";
 import type { DeductionType, DeductionCalculationMethod, PayrollDeduction } from "@/types/finance";
 
 const DEDUCTION_TYPES: { value: DeductionType; label: string }[] = [
@@ -98,33 +98,30 @@ export function AddIncomeForm() {
   };
 
   return (
-    <div style={{
-      background: "var(--surface)", border: "1px solid var(--border)",
-      borderRadius: "16px", padding: "20px", boxShadow: "var(--shadow-sm)",
-    }}>
-      <h2 style={{ fontFamily: "var(--ff-display)", fontWeight: "700", fontSize: "var(--ts-body)", color: "var(--text)", marginBottom: "16px" }}>
+    <div className="bg-paper p-10 shadow-stamp" style={{ border: "1.5px solid var(--ink)" }}>
+      <h2 className="font-serif font-bold text-md text-ink mb-8">
         Add Income Source
       </h2>
 
-      <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-[14px]">
         {createIncome.isError && (
-          <div style={{ padding: "10px 14px", borderRadius: "10px", background: "var(--danger-s)", border: "1px solid oklch(62% 0.21 22 / 0.3)", fontSize: "var(--ts-body-sm)", color: "var(--danger)" }}>
+          <div className="py-[10px] px-[14px] bg-[rgba(178,42,26,0.10)] text-base text-red" style={{ border: "1px solid oklch(62% 0.21 22 / 0.3)" }}>
             {createIncome.error instanceof ApiError ? createIncome.error.message : "Something went wrong. Please try again."}
           </div>
         )}
         {createIncome.isSuccess && (
-          <div style={{ padding: "10px 14px", borderRadius: "10px", background: "var(--success-s)", border: "1px solid oklch(68% 0.18 152 / 0.25)", fontSize: "var(--ts-body-sm)", color: "var(--success)" }}>
+          <div className="py-[10px] px-[14px] bg-[rgba(61,107,43,0.10)] text-base text-green" style={{ border: "1px solid oklch(68% 0.18 152 / 0.25)" }}>
             Income source added!
           </div>
         )}
 
         <Field label="Source" error={errors.source?.message}>
-          <input type="text" {...register("source")} placeholder="Salary, Freelance, etc." style={{ ...iStyle, borderColor: errors.source ? "var(--danger)" : "var(--border)" }} onFocus={onFocusField} onBlur={onBlurField} />
+          <input type="text" {...register("source")} placeholder="Salary, Freelance, etc." style={{ ...iStyle, borderColor: errors.source ? "var(--danger)" : "var(--ink-3)" }} onFocus={onFocusField} onBlur={onBlurField} />
         </Field>
 
         <div className="form-grid-2">
           <Field label="Amount" error={errors.amount?.message}>
-            <input type="number" step="0.01" {...register("amount")} placeholder="0.00" style={{ ...iStyle, borderColor: errors.amount ? "var(--danger)" : "var(--border)" }} onFocus={onFocusField} onBlur={onBlurField} />
+            <input type="number" step="0.01" {...register("amount")} placeholder="0.00" style={{ ...iStyle, borderColor: errors.amount ? "var(--danger)" : "var(--ink-3)" }} onFocus={onFocusField} onBlur={onBlurField} />
           </Field>
           <Field label="Currency">
             <select {...register("currency")} style={iStyle} onFocus={onFocusField} onBlur={onBlurField}>
@@ -151,27 +148,22 @@ export function AddIncomeForm() {
 
         <div className="form-grid-2">
           <Field label="Income start date" error={errors.startDate?.message}>
-            <input type="date" {...register("startDate")} style={{ ...iStyle, borderColor: errors.startDate ? "var(--danger)" : "var(--border)" }} onFocus={onFocusField} onBlur={onBlurField} />
+            <input type="date" {...register("startDate")} style={{ ...iStyle, borderColor: errors.startDate ? "var(--danger)" : "var(--ink-3)" }} onFocus={onFocusField} onBlur={onBlurField} />
           </Field>
           <Field label="Last paycheck date" error={errors.lastPaycheckDate?.message}>
-            <input type="date" {...register("lastPaycheckDate")} style={{ ...iStyle, borderColor: errors.lastPaycheckDate ? "var(--danger)" : "var(--border)" }} onFocus={onFocusField} onBlur={onBlurField} />
+            <input type="date" {...register("lastPaycheckDate")} style={{ ...iStyle, borderColor: errors.lastPaycheckDate ? "var(--danger)" : "var(--ink-3)" }} onFocus={onFocusField} onBlur={onBlurField} />
           </Field>
         </div>
 
         <div>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "10px" }}>
-            <span style={{ fontSize: "var(--ts-meta)", fontWeight: "700", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+          <div className="flex items-center justify-between mb-5">
+            <span className="text-sm font-bold text-ink-3 uppercase tracking-[0.08em]">
               Payroll Deductions {deductions.length > 0 ? `(${deductions.length})` : "(optional)"}
             </span>
             <button
               type="button"
               onClick={() => setShowDeductionForm((v) => !v)}
-              style={{
-                background: "none", border: "none", cursor: "pointer",
-                fontSize: "var(--ts-label)", fontWeight: "600",
-                color: showDeductionForm ? "var(--text-3)" : "var(--accent)",
-                padding: 0,
-              }}
+              className="bg-transparent cursor-pointer text-base font-semibold p-0" style={{ border: "none", color: showDeductionForm ? "var(--text-3)" : "var(--red)" }}
             >
               {showDeductionForm ? "− Hide" : "+ Add deduction"}
             </button>
@@ -179,16 +171,12 @@ export function AddIncomeForm() {
 
           {/* Pending deduction chips */}
           {deductions.length > 0 && (
-            <div style={{ display: "flex", flexDirection: "column", gap: "4px", marginBottom: "10px" }}>
+            <div className="flex flex-col gap-2 mb-5">
               {deductions.map((d, i) => (
-                <div key={i} style={{
-                  display: "flex", alignItems: "center", justifyContent: "space-between",
-                  padding: "6px 10px", borderRadius: "10px",
-                  background: "var(--surface-2)", border: "1px solid var(--border)",
-                }}>
+                <div key={i} className="flex items-center justify-between py-3 px-5 bg-paper-2" style={{ border: "1.5px solid var(--ink)" }}>
                   <div>
-                    <span style={{ fontSize: "var(--ts-label)", fontWeight: "600", color: "var(--text)" }}>{d.label}</span>
-                    <span style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)", marginLeft: "8px" }}>
+                    <span className="text-base font-semibold text-ink">{d.label}</span>
+                    <span className="text-sm text-ink-3 ml-4">
                       {d.method === "PercentOfGross" ? `${d.value}%` : `$${d.value.toFixed(2)}`}
                       {" · "}{d.frequency.toLowerCase()}
                       {d.isEmployerSponsored ? " · employer" : ""}
@@ -197,7 +185,7 @@ export function AddIncomeForm() {
                   <button
                     type="button"
                     onClick={() => removePendingDeduction(i)}
-                    style={{ background: "none", border: "none", cursor: "pointer", color: "var(--danger)", padding: "2px 4px", fontSize: "var(--ts-body)", lineHeight: 1 }}
+                    className="bg-transparent cursor-pointer text-red py-1 px-2 text-md leading-none" style={{ border: "none" }}
                     aria-label="Remove"
                   >
                     ×
@@ -209,12 +197,8 @@ export function AddIncomeForm() {
 
           {/* Inline add-deduction mini-form */}
           {showDeductionForm && (
-            <div style={{
-              background: "var(--surface-2)", border: "1px solid var(--border)",
-              borderRadius: "12px", padding: "14px",
-              display: "flex", flexDirection: "column", gap: "10px",
-            }}>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+            <div className="bg-paper-2 p-[14px] flex flex-col gap-5" style={{ border: "1.5px solid var(--ink)" }}>
+              <div className="grid gap-5" style={{ gridTemplateColumns: "1fr 1fr" }}>
                 <Field label="Type">
                   <select value={dType} onChange={(e) => setDType(e.target.value as DeductionType)} style={iStyle} onFocus={onFocusField} onBlur={onBlurField}>
                     {DEDUCTION_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
@@ -225,7 +209,7 @@ export function AddIncomeForm() {
                 </Field>
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "10px" }}>
+              <div className="grid gap-5" style={{ gridTemplateColumns: "1fr 1fr 1fr" }}>
                 <Field label="Method">
                   <select value={dMethod} onChange={(e) => setDMethod(e.target.value as DeductionCalculationMethod)} style={iStyle} onFocus={onFocusField} onBlur={onBlurField}>
                     <option value="FixedAmount">Fixed ($)</option>
@@ -242,8 +226,8 @@ export function AddIncomeForm() {
                 </Field>
               </div>
 
-              <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", fontSize: "var(--ts-label)", color: "var(--text-2)" }}>
-                <input type="checkbox" checked={dEmployer} onChange={(e) => setDEmployer(e.target.checked)} style={{ cursor: "pointer" }} />
+              <label className="flex items-center gap-4 cursor-pointer text-base text-ink-2">
+                <input type="checkbox" checked={dEmployer} onChange={(e) => setDEmployer(e.target.checked)} className="cursor-pointer" />
                 Employer-sponsored benefit
               </label>
 
@@ -251,15 +235,7 @@ export function AddIncomeForm() {
                 type="button"
                 onClick={addPendingDeduction}
                 disabled={!dValue}
-                style={{
-                  padding: "7px 16px", borderRadius: "9999px",
-                  border: "1px solid var(--accent)",
-                  background: "transparent",
-                  color: "var(--accent)",
-                  fontSize: "var(--ts-label)", fontWeight: "600", cursor: "pointer",
-                  opacity: !dValue ? 0.5 : 1,
-                  alignSelf: "flex-start",
-                }}
+                className="py-[7px] px-[16px] bg-transparent text-red text-base font-semibold cursor-pointer self-start" style={{ border: "1.5px solid var(--red)", opacity: !dValue ? 0.5 : 1 }}
               >
                 + Add to list
               </button>
@@ -267,14 +243,14 @@ export function AddIncomeForm() {
           )}
         </div>
 
-        <Button
+        <Btn
           type="submit"
           disabled={createIncome.isPending}
           variant="primary"
           fullWidth
         >
           {createIncome.isPending ? "Adding…" : `Add Income Source${deductions.length > 0 ? ` with ${deductions.length} deduction${deductions.length > 1 ? "s" : ""}` : ""}`}
-        </Button>
+        </Btn>
       </form>
     </div>
   );

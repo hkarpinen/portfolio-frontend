@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { api, ApiError } from "@/lib/api-client";
 import { identityKeys, forumKeys } from "@/lib/query-keys";
-import { Button } from "@/components/ui/button";
+import { Btn } from "@/components/editorial";
 import pageStyles from "./page.module.css";
 
 const identitySchema = z.object({
@@ -40,28 +40,29 @@ const inputStyle: React.CSSProperties = {
   width: "100%",
   height: "38px",
   padding: "0 12px",
-  background: "var(--surface-2)",
-  border: "1px solid var(--border)",
-  borderRadius: "12px",
-  color: "var(--text)",
+  background: "transparent",
+  border: "none",
+  borderBottom: "1.5px solid var(--ink-3)",
+  color: "var(--ink)",
   fontFamily: "var(--ff-body)",
-  fontSize: "var(--ts-body)",
+  fontSize: "0.938rem",
   outline: "none",
-  transition: "border-color 150ms, box-shadow 150ms",
+  transition: "border-color 150ms",
+  borderRadius: 0,
 };
 
 const textareaStyle: React.CSSProperties = {
   width: "100%",
   padding: "10px 12px",
-  background: "var(--surface-2)",
-  border: "1px solid var(--border)",
-  borderRadius: "12px",
-  color: "var(--text)",
+  background: "var(--paper-2)",
+  border: "1.5px solid var(--ink-3)",
+  color: "var(--ink)",
   fontFamily: "var(--ff-body)",
-  fontSize: "var(--ts-body)",
+  fontSize: "0.938rem",
   outline: "none",
   resize: "vertical",
-  transition: "border-color 150ms, box-shadow 150ms",
+  transition: "border-color 150ms",
+  borderRadius: 0,
 };
 
 const labelStyle: React.CSSProperties = {
@@ -82,11 +83,10 @@ const sectionLabelStyle: React.CSSProperties = {
 };
 
 const cardStyle: React.CSSProperties = {
-  background: "var(--surface)",
-  border: "1px solid var(--border)",
-  borderRadius: "16px",
+  background: "var(--paper-2)",
+  border: "1.5px solid var(--ink)",
   padding: "20px",
-  boxShadow: "var(--shadow-sm)",
+  boxShadow: "var(--shadow-stamp)",
 };
 
 function FocusInput({
@@ -101,8 +101,8 @@ function FocusInput({
         ...style,
         ...(focused
           ? {
-              borderColor: "var(--accent)",
-              boxShadow: "0 0 0 3px var(--accent-subtle)",
+              borderColor: "var(--ink)",
+              boxShadow: "0 0 0 3px rgba(178,42,26,0.08)",
             }
           : {}),
       }}
@@ -125,8 +125,8 @@ function FocusTextarea({
         ...style,
         ...(focused
           ? {
-              borderColor: "var(--accent)",
-              boxShadow: "0 0 0 3px var(--accent-subtle)",
+              borderColor: "var(--ink)",
+              boxShadow: "0 0 0 3px rgba(178,42,26,0.08)",
             }
           : {}),
       }}
@@ -224,35 +224,26 @@ export default function ProfileSettingsPage() {
   };
 
   return (
-    <div className="page-enter" style={{ maxWidth: "860px", margin: "0 auto", padding: "32px 24px" }}>
+    <div className="page-enter max-w-[860px] mx-auto py-16 px-12" >
       {/* Header */}
-      <div style={{ marginBottom: "28px" }}>
-        <h1 style={{ fontFamily: "var(--ff-display)", fontSize: "var(--ts-h2)", lineHeight: "var(--lh-display)", letterSpacing: "-0.02em", fontWeight: 700, color: "var(--text)" }}>
+      <div className="mb-[28px]">
+        <h1 className="font-serif text-4xl leading-none tracking-snug font-bold text-ink">
           Settings
         </h1>
-        <p style={{ fontSize: "var(--ts-body-sm)", color: "var(--text-3)", marginTop: "4px" }}>
+        <p className="text-base text-ink-3 mt-2">
           Manage your account, security, and preferences
         </p>
       </div>
 
       {/* Tabs */}
-      <div style={{ borderBottom: "1px solid var(--border)", marginBottom: "28px", display: "flex", gap: "4px" }}>
+      <div className="mb-[28px] flex gap-2" style={{ borderBottom: "1.5px solid var(--ink)" }}>
         {TABS.map((tab) => {
           const active = tab === "Profile";
           return (
             <a
               key={tab}
               href={TAB_HREFS[tab]}
-              style={{
-                padding: "10px 16px",
-                fontSize: "var(--ts-body)",
-                fontWeight: active ? 600 : 400,
-                color: active ? "var(--text)" : "var(--text-3)",
-                borderBottom: active ? "2px solid var(--accent)" : "2px solid transparent",
-                marginBottom: "-1px",
-                textDecoration: "none",
-                transition: "color 150ms",
-              }}
+              className="py-5 px-8 text-md mb-[-1px] no-underline" style={{ fontWeight: active ? 600 : 400, color: active ? "var(--red)" : "var(--ink-3)", borderBottom: active ? "3px solid var(--red)" : "2px solid transparent", transition: "color 150ms" }}
             >
               {tab}
             </a>
@@ -261,24 +252,24 @@ export default function ProfileSettingsPage() {
       </div>
 
       {loading ? (
-        <div style={{ ...cardStyle, textAlign: "center", padding: "48px 20px" }}>
-          <p style={{ color: "var(--text-3)", fontSize: "var(--ts-body)" }}>Loading...</p>
+        <div className="text-center py-24 px-10" style={{ ...cardStyle }}>
+          <p className="text-ink-3 text-md">Loading...</p>
         </div>
       ) : (
-        <div className="sidebar-grid" style={{ gap: "20px" }}>
+        <div className="sidebar-grid gap-10" >
           {/* Left column — forms */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+          <div className="flex flex-col gap-10">
             {/* Account form */}
             <div style={cardStyle}>
-              <p style={{ ...sectionLabelStyle, marginBottom: "16px" }}>Account</p>
-              <form onSubmit={identityForm.handleSubmit(onIdentitySubmit)} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+              <p className="mb-8" style={{ ...sectionLabelStyle }}>Account</p>
+              <form onSubmit={identityForm.handleSubmit(onIdentitySubmit)} className="flex flex-col gap-8">
                 {identityError && (
-                  <div style={{ background: "var(--danger-s)", border: "1px solid oklch(62% 0.21 22 / 0.3)", borderRadius: "10px", padding: "10px 14px", fontSize: "var(--ts-body-sm)", color: "var(--danger)" }}>
+                  <div className="bg-[rgba(178,42,26,0.10)] py-[10px] px-[14px] text-base text-red" style={{ border: "1px solid oklch(62% 0.21 22 / 0.3)" }}>
                     {identityError}
                   </div>
                 )}
                 {identitySaved && (
-                  <div style={{ background: "var(--success-s)", border: "1px solid oklch(68% 0.18 152 / 0.3)", borderRadius: "10px", padding: "10px 14px", fontSize: "var(--ts-body-sm)", color: "var(--success)" }}>
+                  <div className="bg-[rgba(61,107,43,0.10)] py-[10px] px-[14px] text-base text-green" style={{ border: "1px solid oklch(68% 0.18 152 / 0.3)" }}>
                     Account updated.
                   </div>
                 )}
@@ -290,7 +281,7 @@ export default function ProfileSettingsPage() {
                     placeholder="Your display name"
                   />
                   {identityForm.formState.errors.displayName && (
-                    <p style={{ color: "var(--danger)", fontSize: "var(--ts-label)", marginTop: "4px" }}>
+                    <p className="text-red text-base mt-2">
                       {identityForm.formState.errors.displayName.message}
                     </p>
                   )}
@@ -303,25 +294,25 @@ export default function ProfileSettingsPage() {
 
             {/* Forum profile form */}
             <div style={cardStyle}>
-              <p style={{ ...sectionLabelStyle, marginBottom: "4px" }}>Forum Profile</p>
-              <p style={{ fontSize: "var(--ts-label)", color: "var(--text-3)", marginBottom: "16px" }}>
+              <p className="mb-2" style={{ ...sectionLabelStyle }}>Forum Profile</p>
+              <p className="text-base text-ink-3 mb-8">
                 Visible on your forum posts and profile.
               </p>
-              <form onSubmit={forumForm.handleSubmit(onForumSubmit)} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+              <form onSubmit={forumForm.handleSubmit(onForumSubmit)} className="flex flex-col gap-8">
                 {forumError && (
-                  <div style={{ background: "var(--danger-s)", border: "1px solid oklch(62% 0.21 22 / 0.3)", borderRadius: "10px", padding: "10px 14px", fontSize: "var(--ts-body-sm)", color: "var(--danger)" }}>
+                  <div className="bg-[rgba(178,42,26,0.10)] py-[10px] px-[14px] text-base text-red" style={{ border: "1px solid oklch(62% 0.21 22 / 0.3)" }}>
                     {forumError}
                   </div>
                 )}
                 {forumSaved && (
-                  <div style={{ background: "var(--success-s)", border: "1px solid oklch(68% 0.18 152 / 0.3)", borderRadius: "10px", padding: "10px 14px", fontSize: "var(--ts-body-sm)", color: "var(--success)" }}>
+                  <div className="bg-[rgba(61,107,43,0.10)] py-[10px] px-[14px] text-base text-green" style={{ border: "1px solid oklch(68% 0.18 152 / 0.3)" }}>
                     Forum profile updated.
                   </div>
                 )}
                 <div>
                   <label style={labelStyle}>
                     Bio{" "}
-                    <span style={{ color: "var(--text-3)", fontWeight: 400 }}>(optional)</span>
+                    <span className="text-ink-3 font-normal">(optional)</span>
                   </label>
                   <FocusTextarea
                     {...forumForm.register("bio")}
@@ -329,7 +320,7 @@ export default function ProfileSettingsPage() {
                     rows={4}
                   />
                   {forumForm.formState.errors.bio && (
-                    <p style={{ color: "var(--danger)", fontSize: "var(--ts-label)", marginTop: "4px" }}>
+                    <p className="text-red text-base mt-2">
                       {forumForm.formState.errors.bio.message}
                     </p>
                   )}
@@ -337,7 +328,7 @@ export default function ProfileSettingsPage() {
                 <div>
                   <label style={labelStyle}>
                     Signature{" "}
-                    <span style={{ color: "var(--text-3)", fontWeight: 400 }}>(optional)</span>
+                    <span className="text-ink-3 font-normal">(optional)</span>
                   </label>
                   <FocusTextarea
                     {...forumForm.register("signature")}
@@ -345,7 +336,7 @@ export default function ProfileSettingsPage() {
                     rows={2}
                   />
                   {forumForm.formState.errors.signature && (
-                    <p style={{ color: "var(--danger)", fontSize: "var(--ts-label)", marginTop: "4px" }}>
+                    <p className="text-red text-base mt-2">
                       {forumForm.formState.errors.signature.message}
                     </p>
                   )}
@@ -358,32 +349,21 @@ export default function ProfileSettingsPage() {
           </div>
 
           {/* Right column — avatar card */}
-          <div style={{ ...cardStyle, display: "flex", flexDirection: "column", alignItems: "center", gap: "16px" }}>
+          <div className="flex flex-col items-center gap-8" style={{ ...cardStyle }}>
             <p style={sectionLabelStyle}>Avatar</p>
 
             {/* Avatar circle */}
-            <div style={{ position: "relative", width: "80px", height: "80px" }}>
+            <div className="relative w-40 h-40">
               {avatarUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={avatarUrl}
                   alt="Your avatar"
-                  style={{ width: "80px", height: "80px", borderRadius: "9999px", objectFit: "cover", border: "2px solid var(--border)" }}
+                  className="w-40 h-40 object-cover" style={{ border: "2px solid var(--ink)" }}
                 />
               ) : (
                 <div
-                  style={{
-                    width: "80px",
-                    height: "80px",
-                    borderRadius: "9999px",
-                    background: "var(--surface-3)",
-                    border: "2px solid var(--border)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: "var(--ts-card-h)",
-                    color: "var(--text-3)",
-                  }}
+                  className="w-40 h-40 bg-paper-3 flex items-center justify-center text-2xl text-ink-3" style={{ border: "2px solid var(--ink)" }}
                 >
                   ?
                 </div>
@@ -406,11 +386,11 @@ export default function ProfileSettingsPage() {
               accept={ACCEPTED_MIME.join(",")}
               onChange={onAvatarChange}
               disabled={uploading}
-              style={{ display: "none" }}
+              className="hidden"
             />
 
             {/* Upload / Remove buttons */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px", width: "100%" }}>
+            <div className="flex flex-col gap-4 w-full">
               <SecondaryButton
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
@@ -430,9 +410,9 @@ export default function ProfileSettingsPage() {
             </div>
 
             {avatarError && (
-              <p style={{ color: "var(--danger)", fontSize: "var(--ts-label)", textAlign: "center" }}>{avatarError}</p>
+              <p className="text-red text-base text-center">{avatarError}</p>
             )}
-            <p style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)", textAlign: "center" }}>
+            <p className="text-sm text-ink-3 text-center">
               PNG, JPEG, WebP or GIF · up to 5 MB
             </p>
           </div>
@@ -447,23 +427,30 @@ export default function ProfileSettingsPage() {
 function PrimaryButton({
   children,
   className,
-  ...props
+  disabled,
+  type,
+  form,
+  style,
 }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
-    <Button variant="primary" fullWidth className={className} {...props}>
+    <Btn variant="primary" fullWidth className={className} disabled={disabled} type={type as "button"|"submit"|"reset"} form={form} style={style}>
       {children}
-    </Button>
+    </Btn>
   );
 }
 
 function SecondaryButton({
   children,
   className,
-  ...props
+  disabled,
+  type,
+  form,
+  style,
+  onClick,
 }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
-    <Button variant="secondary" className={className} {...props}>
+    <Btn variant="secondary" className={className} disabled={disabled} type={type as "button"|"submit"|"reset"} form={form} style={style} onClick={onClick as ((e: React.MouseEvent) => void) | undefined}>
       {children}
-    </Button>
+    </Btn>
   );
 }

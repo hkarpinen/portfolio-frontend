@@ -1,3 +1,4 @@
+import React from "react";
 import { cn } from "@/lib/utils";
 import styles from "./select.module.css";
 
@@ -10,7 +11,7 @@ interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   placeholder?: string;
 }
 
-export function Select({
+export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(function Select({
   label,
   hint,
   error,
@@ -20,7 +21,7 @@ export function Select({
   options,
   placeholder,
   ...props
-}: SelectProps) {
+}, ref) {
   const inputId = id ?? (label ? label.toLowerCase().replace(/\s+/g, "-") : undefined);
   return (
     <div className={cn(styles.wrapper, containerClassName)}>
@@ -31,6 +32,7 @@ export function Select({
       )}
       <div className={styles.selectRow}>
         <select
+          ref={ref}
           id={inputId}
           className={cn(styles.select, error && styles.hasError, className)}
           aria-invalid={!!error}
@@ -62,4 +64,4 @@ export function Select({
       )}
     </div>
   );
-}
+});

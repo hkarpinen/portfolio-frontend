@@ -144,14 +144,16 @@ export interface UserCommunityItem {
 }
 
 export interface SearchResult {
-  id: string;
-  type: "thread" | "community";
-  title?: string;
-  name?: string;
-  slug?: string;
-  communitySlug?: string;
-  excerpt?: string;
-  score?: number;
+  itemId: string;
+  itemType: "thread" | "community";
+  title: string;
+  snippet?: string | null;
+  communityId: string;
+  communitySlug?: string | null;
+  communityName?: string | null;
+  slug?: string | null;
+  createdAt: string;
+  rankScore?: number;
 }
 
 export interface ThreadMutationResponse {

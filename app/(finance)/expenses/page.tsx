@@ -17,12 +17,12 @@ export default async function ExpensesPage() {
   const initialMonths = months ?? [];
 
   return (
-    <div className="page-enter" style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+    <div className="page-enter flex flex-col gap-10" >
       <div>
-        <h1 style={{ fontFamily: "var(--ff-display)", fontWeight: "800", fontSize: "var(--ts-h2)", lineHeight: "var(--lh-display)", letterSpacing: "-0.02em", letterSpacing: "-0.025em", color: "var(--text)", margin: 0 }}>
+        <h1 className="font-serif font-extrabold text-4xl leading-none tracking-snug tracking-[-0.025em] text-ink m-0">
           Expenses
         </h1>
-        <p style={{ color: "var(--text-3)", marginTop: "4px", fontSize: "var(--ts-body-sm)" }}>
+        <p className="text-ink-3 mt-2 text-base">
           Track payments and manage your recurring personal expenses — phone, gym, streaming, insurance.
         </p>
       </div>

@@ -136,15 +136,7 @@ function PayToggle({ paid, pending, onToggle }: {
       type="button"
       disabled={pending}
       onClick={onToggle}
-      style={{
-        padding: "2px 9px", borderRadius: "9999px", fontSize: "var(--ts-meta)", fontWeight: 600,
-        cursor: pending ? "default" : "pointer", flexShrink: 0,
-        background: paid ? "var(--success-s)" : "var(--surface-3)",
-        border: `1px solid ${paid ? "var(--success)" : "var(--border)"}`,
-        color: paid ? "var(--success)" : "var(--text-3)",
-        transition: "all 110ms",
-        opacity: pending ? 0.5 : 1,
-      }}
+      className="py-[2px] px-[9px] text-sm font-semibold shrink-0" style={{ cursor: pending ? "default" : "pointer", background: paid ? "var(--success-s)" : "var(--paper-3)", border: `1px solid ${paid ? "var(--success)" : "var(--ink-3)"}`, color: paid ? "var(--success)" : "var(--text-3)", transition: "all 110ms", opacity: pending ? 0.5 : 1 }}
     >
       {paid ? "Paid" : "Mark paid"}
     </button>
@@ -157,7 +149,7 @@ const tdBase: React.CSSProperties = {
   padding: "9px 10px",
   fontSize: "var(--ts-body-sm)",
   color: "var(--text)",
-  borderBottom: "1px solid var(--border)",
+  borderBottom: "1.5px solid var(--ink)",
   verticalAlign: "middle",
 };
 
@@ -184,27 +176,21 @@ function ItemTableRow({ item, isLast }: { item: TableItem; isLast: boolean }) {
   const lastStyle = isLast ? { borderBottom: "none" } : {};
   return (
     <tr>
-      <td style={{ ...tdMeta, ...lastStyle, paddingLeft: "20px", paddingRight: "8px", width: "44px", textAlign: "right" }}>{item.dayLabel}</td>
-      <td style={{ ...tdBase, ...lastStyle, fontWeight: 600 }}>{item.name}</td>
+      <td className="pl-10 pr-4 w-[44px] text-right" style={{ ...tdMeta, ...lastStyle }}>{item.dayLabel}</td>
+      <td className="font-semibold" style={{ ...tdBase, ...lastStyle }}>{item.name}</td>
       <td style={{ ...tdMeta, ...lastStyle }}>
-        <span style={{
-          display: "inline-block", padding: "1px 7px", borderRadius: "9999px", fontSize: "var(--ts-meta)", fontWeight: 600,
-          background: item.type === "Shared" ? "var(--accent-subtle)" : "var(--surface-3)",
-          color: item.type === "Shared" ? "var(--accent)" : "var(--text-3)",
-          border: `1px solid ${item.type === "Shared" ? "color-mix(in srgb, var(--accent) 30%, transparent)" : "var(--border)"}`,
-        }}>
+        <span className="inline-block py-[1px] px-[7px] text-sm font-mono" style={{ background: item.type === "Shared" ? "rgba(178,42,26,0.08)" : "var(--paper-3)", color: item.type === "Shared" ? "var(--red)" : "var(--text-3)", border: `1px solid ${item.type === "Shared" ? "rgba(178,42,26,0.3)" : "var(--ink-3)"}` }}>
           {item.type}
         </span>
       </td>
-      <td style={{ ...tdBase, ...lastStyle, fontFamily: "var(--ff-display)", fontWeight: 700,
-                   textAlign: "right", whiteSpace: "nowrap", paddingRight: "12px" }}>
+      <td className="font-serif font-bold text-right whitespace-nowrap pr-6" style={{ ...tdBase, ...lastStyle }}>
         {item.count !== undefined && item.count > 1
-          ? <>{item.currency} {item.amount} <span style={{ fontSize: "var(--ts-meta)", fontWeight: 500, color: "var(--text-3)" }}>×{item.count}</span></>
-          : <>{item.currency} {item.amount}</>
+          ? <><span className="text-sm font-mono font-normal text-ink-3 mr-[5px]">{item.currency}</span>{item.amount} <span className="text-sm font-medium text-ink-3">×{item.count}</span></>
+          : <><span className="text-sm font-mono font-normal text-ink-3 mr-[5px]">{item.currency}</span>{item.amount}</>
         }
       </td>
       {item.payToggle !== undefined && (
-        <td style={{ ...tdBase, ...lastStyle, textAlign: "right", paddingRight: "16px", width: "110px", whiteSpace: "nowrap" }}>
+        <td className="text-right pr-8 w-[110px] whitespace-nowrap" style={{ ...tdBase, ...lastStyle }}>
           {item.payToggle}
         </td>
       )}
@@ -214,36 +200,26 @@ function ItemTableRow({ item, isLast }: { item: TableItem; isLast: boolean }) {
 
 function StackedItemRow({ item, isLast }: { item: TableItem; isLast: boolean }) {
   return (
-    <div style={{
-      display: "flex", alignItems: "flex-start", justifyContent: "space-between",
-      gap: "10px", padding: "11px 16px",
-      borderBottom: isLast ? "none" : "1px solid var(--border)",
-    }}>
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontWeight: 600, fontSize: "var(--ts-body-sm)", color: "var(--text)",
-                      overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+    <div className="flex items-start justify-between gap-5 py-[11px] px-[16px]" style={{ borderBottom: isLast ? "none" : "1.5px solid var(--ink)" }}>
+      <div className="flex-1 min-w-0">
+        <div className="font-semibold text-base text-ink overflow-hidden text-ellipsis whitespace-nowrap">
           {item.name}
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "3px", flexWrap: "wrap" }}>
+        <div className="flex items-center gap-3 mt-[3px] flex-wrap">
           {item.dayLabel !== "—" && (
-            <span style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)" }}>Day {item.dayLabel}</span>
+            <span className="text-sm text-ink-3">Day {item.dayLabel}</span>
           )}
-          <span style={{
-            display: "inline-block", padding: "0px 6px", borderRadius: "9999px", fontSize: "var(--ts-meta)", fontWeight: 600,
-            background: item.type === "Shared" ? "var(--accent-subtle)" : "var(--surface-3)",
-            color: item.type === "Shared" ? "var(--accent)" : "var(--text-3)",
-            border: `1px solid ${item.type === "Shared" ? "color-mix(in srgb, var(--accent) 30%, transparent)" : "var(--border)"}`,
-          }}>
+          <span className="inline-block py-0 px-3 text-sm font-mono" style={{ background: item.type === "Shared" ? "rgba(178,42,26,0.08)" : "var(--paper-3)", color: item.type === "Shared" ? "var(--red)" : "var(--text-3)", border: `1px solid ${item.type === "Shared" ? "rgba(178,42,26,0.3)" : "var(--ink-3)"}` }}>
             {item.type}
           </span>
           {item.count !== undefined && item.count > 1 && (
-            <span style={{ fontSize: "var(--ts-meta)", color: "var(--text-3)" }}>×{item.count}</span>
+            <span className="text-sm text-ink-3">×{item.count}</span>
           )}
         </div>
       </div>
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "5px", flexShrink: 0 }}>
-        <span style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "var(--ts-body-sm)", color: "var(--text)", whiteSpace: "nowrap" }}>
-          {item.currency} {item.amount}
+      <div className="flex flex-col items-end gap-[5px] shrink-0">
+        <span className="font-serif font-bold text-base text-ink whitespace-nowrap">
+          <span className="text-sm font-mono font-normal text-ink-3 mr-[5px]">{item.currency}</span>{item.amount}
         </span>
         {item.payToggle}
       </div>
@@ -285,12 +261,12 @@ function PeriodCard({ p, cardRef, granularity }: {
         dayLabel: String(due.getUTCDate()),
         name: (
           <Link
-            href={`/households/${c.groupId ?? c.householdId}/expenses/${c.billId}`}
-            style={{ color: "var(--text)", textDecoration: "none" }}
+            href={`/bills/${c.groupId ?? c.householdId}/expenses/${c.billId}`}
+            className="text-ink no-underline"
             onClick={(e) => e.stopPropagation()}
           >
             {c.billTitle}
-            <span style={{ fontWeight: 400, fontSize: "var(--ts-label)", color: "var(--text-3)", marginLeft: "6px" }}>
+            <span className="font-normal text-base text-ink-3 ml-3">
               {c.householdName}
             </span>
           </Link>
@@ -354,11 +330,11 @@ function PeriodCard({ p, cardRef, granularity }: {
         dayLabel: "—",
         name: (
           <Link
-            href={`/households/${c.groupId ?? c.householdId}/expenses/${c.billId}`}
-            style={{ color: "var(--text)", textDecoration: "none" }}
+            href={`/bills/${c.groupId ?? c.householdId}/expenses/${c.billId}`}
+            className="text-ink no-underline"
           >
             {c.billTitle}
-            <span style={{ fontWeight: 400, fontSize: "var(--ts-label)", color: "var(--text-3)", marginLeft: "6px" }}>
+            <span className="font-normal text-base text-ink-3 ml-3">
               {c.householdName}
             </span>
           </Link>
@@ -391,35 +367,22 @@ function PeriodCard({ p, cardRef, granularity }: {
   return (
     <div
       ref={cardRef as React.RefObject<HTMLDivElement> | undefined}
-      style={{
-        background: "var(--surface)",
-        border: `1px solid ${p.isCurrent ? "var(--accent)" : "var(--border)"}`,
-        borderRadius: "14px",
-        overflow: "hidden",
-        boxShadow: p.isCurrent ? "var(--shadow-md)" : "var(--shadow-sm)",
-      }}
+      className="bg-paper overflow-hidden" style={{ border: `1px solid ${p.isCurrent ? "var(--red)" : "var(--ink-3)"}`, boxShadow: p.isCurrent ? "var(--shadow-md)" : "var(--shadow-sm)" }}
     >
       {/* Clickable header */}
       <div
         role="button"
         onClick={() => hasItems && setExpanded((v) => !v)}
-        style={{
-          display: "flex", flexDirection: "column", gap: "6px",
-          padding: "13px 16px 13px 20px",
-          cursor: hasItems ? "pointer" : "default",
-          background: p.isCurrent ? "color-mix(in srgb, var(--accent) 4%, transparent)" : "transparent",
-        }}
+        className="flex flex-col gap-3 p-[13px_16px_13px_20px]" style={{ cursor: hasItems ? "pointer" : "default", background: p.isCurrent ? "rgba(178,42,26,0.04)" : "transparent" }}
       >
         {/* Row 1: label + chevron */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "8px", minWidth: 0 }}>
-            <h3 style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "var(--ts-body)",
-                         color: "var(--text)", margin: 0, whiteSpace: "nowrap" }}>
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-4 min-w-0">
+            <h3 className="font-serif font-bold text-md text-ink m-0 whitespace-nowrap">
               {p.label}
             </h3>
             {p.isCurrent && (
-              <span style={{ background: "var(--accent-subtle)", color: "var(--accent)", borderRadius: "9999px",
-                             padding: "1px 7px", fontSize: "var(--ts-meta)", fontWeight: 600, flexShrink: 0 }}>
+              <span className="bg-[rgba(178,42,26,0.10)] text-red py-[1px] px-[7px] text-sm font-semibold shrink-0">
                 Current
               </span>
             )}
@@ -427,25 +390,23 @@ function PeriodCard({ p, cardRef, granularity }: {
           {hasItems && (
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
               stroke="var(--text-3)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
-              style={{ transform: expanded ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 200ms", flexShrink: 0 }}>
+              className="shrink-0" style={{ transform: expanded ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 200ms" }}>
               <polyline points="6 9 12 15 18 9" />
             </svg>
           )}
         </div>
         {/* Row 2: stats — wraps naturally on narrow screens */}
-        <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: "10px 16px", fontSize: "var(--ts-label)", color: "var(--text-3)" }}>
-          <span>Due <strong style={{ color: "var(--text)" }}>${obligations.toFixed(2)}</strong></span>
-          <span>Net income <strong style={{ color: "var(--text)" }}>${p.projectedNetIncome.toFixed(2)}</strong></span>
-          <span style={{ fontFamily: "var(--ff-display)", fontWeight: 700, fontSize: "var(--ts-body-sm)",
-                         color: netOver ? "var(--danger)" : "var(--success)", whiteSpace: "nowrap" }}>
+        <div className="flex items-center flex-wrap gap-x-5 gap-y-[6px] text-base text-ink-3">
+          <span>Due <strong className="text-ink">${obligations.toFixed(2)}</strong></span>
+          <span>Net income <strong className="text-ink">${p.projectedNetIncome.toFixed(2)}</strong></span>
+          <span className="font-serif font-bold text-base whitespace-nowrap" style={{ color: netOver ? "var(--danger)" : "var(--success)" }}>
             {netOver ? "−" : "+"}${Math.abs(p.net).toFixed(2)}
           </span>
           {p.disposableIncome != null && (
-            <span style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
+            <span className="inline-flex items-center gap-2">
               {p.disposableIncomeSource === "balance" ? "Available now" : "Disposable"}
               {" "}
-              <strong style={{ fontFamily: "var(--ff-display)", fontWeight: 700,
-                               color: p.disposableIncome < 0 ? "var(--danger)" : "var(--accent)" }}>
+              <strong className="font-serif font-bold" style={{ color: p.disposableIncome < 0 ? "var(--danger)" : "var(--ink)" }}>
                 {p.disposableIncome < 0 ? "−" : "+"}${Math.abs(p.disposableIncome).toFixed(0)}
               </strong>
             </span>
@@ -455,7 +416,7 @@ function PeriodCard({ p, cardRef, granularity }: {
 
       {/* Expandable body */}
       {expanded && hasItems && (
-        <div style={{ borderTop: "1px solid var(--border)" }}>
+        <div style={{ borderTop: "1.5px solid var(--ink)" }}>
           {isMobile ? (
             // Stacked list for mobile
             <div>
@@ -465,31 +426,23 @@ function PeriodCard({ p, cardRef, granularity }: {
             </div>
           ) : (
             // Table for desktop
-            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <table className="w-full" style={{ borderCollapse: "collapse" }}>
               <thead>
-                <tr style={{ background: "var(--surface-2)" }}>
-                  <th style={{ ...tdMeta, paddingLeft: "20px", paddingRight: "8px", fontWeight: 700, fontSize: "var(--ts-meta)",
-                               textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--text-3)",
-                               width: "44px", textAlign: "right", borderBottom: "1px solid var(--border)" }}>
+                <tr className="bg-paper-2">
+                  <th className="pl-10 pr-4 font-bold text-sm uppercase tracking-[0.08em] text-ink-3 w-[44px] text-right" style={{ ...tdMeta, borderBottom: "1.5px solid var(--ink)" }}>
                     {isMonthly ? "Day" : ""}
                   </th>
-                  <th style={{ ...tdMeta, fontWeight: 700, fontSize: "var(--ts-meta)", textTransform: "uppercase",
-                               letterSpacing: "0.08em", color: "var(--text-3)", borderBottom: "1px solid var(--border)" }}>
+                  <th className="font-bold text-sm uppercase tracking-[0.08em] text-ink-3" style={{ ...tdMeta, borderBottom: "1.5px solid var(--ink)" }}>
                     Name
                   </th>
-                  <th style={{ ...tdMeta, fontWeight: 700, fontSize: "var(--ts-meta)", textTransform: "uppercase",
-                               letterSpacing: "0.08em", color: "var(--text-3)", borderBottom: "1px solid var(--border)" }}>
+                  <th className="font-bold text-sm uppercase tracking-[0.08em] text-ink-3" style={{ ...tdMeta, borderBottom: "1.5px solid var(--ink)" }}>
                     Type
                   </th>
-                  <th style={{ ...tdMeta, fontWeight: 700, fontSize: "var(--ts-meta)", textTransform: "uppercase",
-                               letterSpacing: "0.08em", color: "var(--text-3)", textAlign: "right",
-                               paddingRight: "12px", borderBottom: "1px solid var(--border)" }}>
+                  <th className="font-bold text-sm uppercase tracking-[0.08em] text-ink-3 text-right pr-6" style={{ ...tdMeta, borderBottom: "1.5px solid var(--ink)" }}>
                     Amount
                   </th>
                   {isMonthly && (
-                    <th style={{ ...tdMeta, fontWeight: 700, fontSize: "var(--ts-meta)", textTransform: "uppercase",
-                                 letterSpacing: "0.08em", color: "var(--text-3)", textAlign: "right",
-                                 paddingRight: "16px", width: "110px", borderBottom: "1px solid var(--border)" }}>
+                    <th className="font-bold text-sm uppercase tracking-[0.08em] text-ink-3 text-right pr-8 w-[110px]" style={{ ...tdMeta, borderBottom: "1.5px solid var(--ink)" }}>
                       Paid
                     </th>
                   )}
@@ -513,13 +466,7 @@ function GranularityButton({ label, active, onClick }: { label: string; active: 
   return (
     <button
       onClick={onClick}
-      style={{
-        padding: "6px 14px", borderRadius: "9999px", fontSize: "var(--ts-label)", fontWeight: active ? 700 : 500,
-        cursor: "pointer", transition: "all 110ms",
-        border: active ? "1px solid var(--accent)" : "1px solid var(--border)",
-        background: active ? "var(--accent-subtle)" : "var(--surface-2)",
-        color: active ? "var(--accent)" : "var(--text-3)",
-      }}
+      className="py-[6px] px-[14px] text-base cursor-pointer" style={{ fontWeight: active ? 700 : 500, transition: "all 110ms", border: active ? "1.5px solid var(--red)" : "1.5px solid var(--ink)", background: active ? "rgba(178,42,26,0.08)" : "var(--paper-2)", color: active ? "var(--red)" : "var(--text-3)" }}
     >
       {label}
     </button>
@@ -556,9 +503,9 @@ export function BudgetView({ months: initialMonths }: { months: ContributionPeri
   const netOver     = net < 0;
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+    <div className="flex flex-col gap-12">
       {/* Toolbar */}
-      <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+      <div className="flex items-center gap-3">
         {([ "monthly", "quarterly", "yearly"] as GranularityTab[]).map((g) => (
           <GranularityButton
             key={g}
@@ -570,7 +517,7 @@ export function BudgetView({ months: initialMonths }: { months: ContributionPeri
       </div>
 
       {/* Cards — keyed on granularity so PeriodCard state resets on tab switch */}
-      <div key={granularity} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+      <div key={granularity} className="flex flex-col gap-[14px]">
         {periods.map((p) => (
           <PeriodCard key={p.label} p={p} cardRef={p.isCurrent ? currentRef : undefined} granularity={granularity} />
         ))}
