@@ -9,13 +9,10 @@ export function JoinHouseholdButton() {
 
   return (
     <>
-      <button
-        onClick={() => setOpen(true)}
-        className={styles.btn}
-      >
+      <button onClick={() => setOpen(true)} className={styles.btn}>
         Join
       </button>
-      {open && <JoinHouseholdModal onClose={() => setOpen(false)} />}
+      <JoinHouseholdModal open={open} onOpenChange={setOpen} />
     </>
   );
 }

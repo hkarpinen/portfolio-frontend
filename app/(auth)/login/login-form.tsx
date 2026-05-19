@@ -8,7 +8,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { loginSchema, type LoginInput } from "@/schemas/auth";
 import { api, ApiError } from "@/lib/api-client";
-import { Btn, Input } from "@/components/editorial";
+import { Btn, Input, Alert } from "@/components/editorial";
 import { identityKeys } from "@/lib/query-keys";
 
 interface LoginFormProps {
@@ -40,7 +40,7 @@ export function LoginForm({ from }: LoginFormProps) {
   }
 
   return (
-    <div className="bg-paper-2 shadow-stamp p-16" style={{ border: "1.5px solid var(--ink)" }}>
+    <div className="bg-paper-2 shadow-stamp p-16 border-ink">
       <div className="mb-[28px]">
         <h1 className="font-serif italic font-normal text-3xl tracking-[-0.025em] text-ink mb-3">
           Welcome back<span className="text-red">.</span>
@@ -88,11 +88,7 @@ export function LoginForm({ from }: LoginFormProps) {
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-8 mt-8">
-        {serverError && (
-          <div className="py-5 px-8 bg-[rgba(178,42,26,0.08)] text-base text-red" style={{ border: "1.5px solid var(--red)" }}>
-            {serverError}
-          </div>
-        )}
+        {serverError && <Alert variant="danger">{serverError}</Alert>}
 
         <Input
           type="email"
@@ -114,6 +110,7 @@ export function LoginForm({ from }: LoginFormProps) {
             <button
               type="button"
               onClick={() => setShowPw((s) => !s)}
+              aria-label={showPw ? "Hide password" : "Show password"}
               className="absolute right-0 bottom-[7px] bg-transparent cursor-pointer text-ink-3 p-0"
               style={{ border: "none", lineHeight: 1 }}
             >

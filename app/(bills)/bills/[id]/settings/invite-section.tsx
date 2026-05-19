@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Btn } from "@/components/editorial";
+import { Btn, Alert } from "@/components/editorial";
 import { useGenerateInvite } from "@/hooks/use-household";
 
 export function InviteSection({ householdId }: { householdId: string }) {
@@ -31,8 +31,6 @@ export function InviteSection({ householdId }: { householdId: string }) {
 
   const cardStyle: React.CSSProperties = {
     background: "var(--paper-2)",
-    border: "1.5px solid var(--ink)",
-    
     padding: "24px",
     boxShadow: "var(--shadow-sm)",
     display: "flex",
@@ -41,7 +39,7 @@ export function InviteSection({ householdId }: { householdId: string }) {
   };
 
   return (
-    <section style={cardStyle}>
+    <section className="border-ink" style={cardStyle}>
       <p className="text-sm font-bold text-ink-3 uppercase tracking-[0.1em]">
         Invite Someone
       </p>
@@ -52,20 +50,16 @@ export function InviteSection({ householdId }: { householdId: string }) {
         </Link>
         .
       </p>
-      {inviteError && (
-        <div className="bg-[rgba(178,42,26,0.10)] py-[10px] px-[14px] text-base text-red" style={{ border: "1px solid var(--danger)" }}>
-          {inviteError}
-        </div>
-      )}
+      {inviteError && <Alert variant="danger">{inviteError}</Alert>}
       {inviteResult ? (
         <div className="flex flex-col gap-5">
           <div className="flex items-center gap-5">
-            <code className="flex-1 font-mono text-md bg-paper-2 py-5 px-8 text-ink break-all" style={{ border: "1.5px solid var(--ink)" }}>
+            <code className="flex-1 font-mono text-md bg-paper-2 py-5 px-8 text-ink break-all border-ink">
               {inviteResult}
             </code>
             <button
               onClick={onCopy}
-              className="bg-paper-2 py-4 px-8 text-base font-medium cursor-pointer whitespace-nowrap font-body" style={{ border: "1.5px solid var(--ink)", color: copied ? "var(--success)" : "var(--text-2)" }}
+              className="bg-paper-2 py-4 px-8 text-base font-medium cursor-pointer whitespace-nowrap font-body border-ink" style={{color: copied ? "var(--success)" : "var(--text-2)" }}
             >
               {copied ? "Copied!" : "Copy"}
             </button>

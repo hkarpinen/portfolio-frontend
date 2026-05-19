@@ -5,6 +5,7 @@ import {
   fetchHouseholdContributionsServer,
 } from "@/lib/api/households";
 import { getCookieHeader } from "@/lib/server-cookies";
+import { getInitials } from "@/lib/utils";
 import type {
   Household,
   HouseholdMonthlyContributions,
@@ -29,10 +30,6 @@ function avatarColor(name: string) {
   return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
 }
 
-function initials(name?: string) {
-  if (!name) return "?";
-  return name.split(" ").slice(0, 2).map((p) => p.charAt(0).toUpperCase()).join("");
-}
 
 export default async function HouseholdContributionsPage({
   params,
@@ -83,8 +80,8 @@ export default async function HouseholdContributionsPage({
 
       {/* Content */}
       {months.length === 0 ? (
-        <div className="bg-paper py-24 px-12 text-center flex flex-col items-center gap-6 shadow-stamp" style={{ border: "1.5px solid var(--ink)" }}>
-          <div className="w-[56px] h-[56px] bg-[rgba(178,42,26,0.10)] flex items-center justify-center">
+        <div className="bg-paper py-24 px-12 text-center flex flex-col items-center gap-6 shadow-stamp border-ink">
+          <div className="w-[56px] h-[56px] bg-red-soft flex items-center justify-center">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
             </svg>
@@ -107,7 +104,7 @@ export default async function HouseholdContributionsPage({
           {months.map((month) => (
             <div
               key={month.periodStart}
-              className="bg-paper p-10 shadow-stamp" style={{ border: "1.5px solid var(--ink)" }}
+              className="bg-paper p-10 shadow-stamp border-ink"
             >
               {/* Month header */}
               <div className="flex items-center justify-between mb-8">
@@ -129,7 +126,7 @@ export default async function HouseholdContributionsPage({
                       <div className="flex items-center gap-5 mb-3">
                         {/* Avatar */}
                         <div className="w-[28px] h-[28px] shrink-0 flex items-center justify-center text-sm font-bold text-white" style={{ background: color, border: "2px solid var(--ink)" }}>
-                          {initials(member.displayName)}
+                          {getInitials(member.displayName)}
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex justify-between mb-2">
@@ -141,7 +138,14 @@ export default async function HouseholdContributionsPage({
                             </span>
                           </div>
                           {/* Progress bar */}
-                          <div className="bg-paper-3 rounded-full h-[5px] overflow-hidden">
+                          <div
+                            className="bg-paper-3 rounded-full h-[5px] overflow-hidden"
+                            role="progressbar"
+                            aria-valuenow={Math.round(paidRatio * 100)}
+                            aria-valuemin={0}
+                            aria-valuemax={100}
+                            aria-label={`${member.displayName ?? "Member"} payment progress`}
+                          >
                             <div className="rounded-full h-[5px]" style={{ background: paidRatio >= 1 ? "var(--success)" : "var(--red)", width: `${paidRatio * 100}%`, transition: "width 500ms ease" }} />
                           </div>
                           <div className="flex justify-between mt-[3px]">

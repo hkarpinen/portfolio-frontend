@@ -386,6 +386,14 @@
   }
   @media (prefers-reduced-motion: reduce) { .pulse-dot { animation: none; } }
 
+  /* ── Editorial border shorthands ────────────────────────────────────────── */
+  .border-ink        { border: 1.5px solid var(--ink); }
+  .border-ink-t      { border-top: 1.5px solid var(--ink); }
+  .border-ink-b      { border-bottom: 1.5px solid var(--ink); }
+  .border-ink-l      { border-left: 1.5px solid var(--ink); }
+  .border-ink-r      { border-right: 1.5px solid var(--ink); }
+  .border-ink-dashed { border: 1.5px dashed var(--ink-3); }
+
   /* ── Wanted stamp ────────────────────────────────────────────────────────── */
   .wanted-stamp {
     position: relative;
@@ -479,4 +487,40 @@ select:focus, select:focus-visible {
     --bs-lede:     1.15rem;
     --bs-card-h:   1.3rem;
   }
+}
+
+/* ── Landing page responsive layout overrides ────────────────────────────────
+   Moved from inline <style> in landing-page.tsx to avoid SSR hydration
+   mismatch caused by React HTML-encoding > as &gt; in style tag text nodes.   */
+@media (max-width: 767px) {
+  .landing-masthead { grid-template-columns: 1fr !important; text-align: center !important; gap: 12px !important; padding: 22px 18px 16px !important; }
+  .landing-masthead > div { text-align: center !important; }
+  .landing-col { padding: 0 18px !important; }
+  .edition-nav-center { display: none !important; }
+  .lede-grid { grid-template-columns: 1fr !important; gap: 28px !important; }
+  .lede-aside { border-left: none !important; border-top: 1.5px solid var(--ink) !important; padding-left: 0 !important; padding-top: 24px !important; }
+  .ledger-strip { grid-template-columns: 1fr 1fr !important; }
+  .ledger-label { display: none !important; }
+  .dispatches-grid { grid-template-columns: 1fr !important; }
+  .dispatch-cell { border-right: none !important; border-bottom: 1.5px solid var(--ink) !important; padding: 20px 0 !important; }
+  .modules-grid { grid-template-columns: 1fr !important; }
+  .stack-grid { grid-template-columns: 1fr !important; gap: 24px !important; }
+  .stack-columns { columns: 1 !important; }
+  .wanted-grid { grid-template-columns: 1fr !important; gap: 32px !important; }
+  .colophon-grid { grid-template-columns: 1fr !important; }
+}
+@media (min-width: 768px) and (max-width: 1023px) {
+  .modules-grid { grid-template-columns: repeat(2, 1fr) !important; }
+}
+@media (max-width: 560px) {
+  .modules-grid { grid-template-columns: 1fr !important; }
+}
+@media (min-width: 1400px) {
+  .landing-col { padding: 0 6% !important; }
+  .dispatches-grid { grid-template-columns: repeat(3, 1fr) !important; }
+  .modules-grid { grid-template-columns: repeat(4, 1fr) !important; }
+  .wanted-grid { grid-template-columns: 1fr 1fr !important; gap: 80px !important; }
+}
+@media (min-width: 1800px) {
+  .landing-col { max-width: 1680px !important; padding: 0 4% !important; }
 }

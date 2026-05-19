@@ -1,4 +1,3 @@
-"use client";
 import React from "react";
 import Link from "next/link";
 import { Spinner } from "./spinner";
@@ -55,14 +54,21 @@ function getBtnStyles(variant: BtnVariant, size: BtnSize, fullWidth?: boolean, d
   };
 
   switch (variant) {
-    case "primary":   return { ...base, background: "var(--ink)", color: "var(--paper)", border: "1.5px solid var(--ink)" };
-    case "secondary": return { ...base, background: "transparent", color: "var(--ink)", border: "1.5px solid var(--ink)" };
+    case "primary":   return { ...base, background: "var(--ink)", color: "var(--paper)" };
+    case "secondary": return { ...base, background: "transparent", color: "var(--ink)" };
     case "ghost":     return { ...base, background: "transparent", color: "var(--ink)", border: "none", borderBottom: "1px solid var(--ink-3)" };
     case "danger":    return { ...base, background: "var(--red)", color: "var(--paper)", border: "1.5px solid var(--red)" };
     case "outline":   return { ...base, background: "transparent", color: "var(--red)", border: "1.5px solid var(--red)" };
     case "success":   return { ...base, background: "var(--green)", color: "var(--paper)", border: "1.5px solid var(--green)" };
   }
 }
+
+const BTN_CSS = `
+  .btn-primary:not(:disabled):hover { background: var(--red); transform: translate(-2px, -2px); box-shadow: 4px 4px 0 var(--ink); }
+  .btn-secondary:not(:disabled):hover { background: var(--ink); color: var(--paper); transform: translate(-2px, -2px); box-shadow: 4px 4px 0 var(--red); }
+  .btn-danger:not(:disabled):hover { background: var(--red-deep); }
+  .btn-ghost:not(:disabled):hover { background: var(--paper-2); border-bottom-color: var(--red); }
+`;
 
 export function Btn({
   variant = "primary",
@@ -82,41 +88,7 @@ export function Btn({
   formAction,
 }: BtnProps) {
   const styles = getBtnStyles(variant, size, fullWidth, disabled || loading);
-
-  const handleMouseEnter = (e: React.MouseEvent<HTMLElement>) => {
-    if (disabled || loading) return;
-    const el = e.currentTarget;
-    if (variant === "primary") {
-      el.style.background = "var(--red)";
-      el.style.transform = "translate(-2px, -2px)";
-      el.style.boxShadow = "4px 4px 0 var(--ink)";
-    } else if (variant === "secondary") {
-      el.style.background = "var(--ink)";
-      el.style.color = "var(--paper)";
-      el.style.transform = "translate(-2px, -2px)";
-      el.style.boxShadow = "4px 4px 0 var(--red)";
-    } else if (variant === "danger") {
-      el.style.background = "var(--red-deep)";
-    } else if (variant === "ghost") {
-      el.style.background = "var(--paper-2)";
-      el.style.borderBottomColor = "var(--red)";
-    }
-  };
-
-  const handleMouseLeave = (e: React.MouseEvent<HTMLElement>) => {
-    if (variant === "ghost") {
-      const el = e.currentTarget;
-      el.style.background = "transparent";
-      el.style.borderBottomColor = "var(--ink-3)";
-      return;
-    }
-    const el = e.currentTarget;
-    const s = getBtnStyles(variant, size, fullWidth, disabled);
-    el.style.background = s.background as string ?? "";
-    el.style.color = s.color as string ?? "";
-    el.style.transform = "";
-    el.style.boxShadow = "";
-  };
+  const borderInk = variant === "primary" || variant === "secondary" ? " border-ink" : "";
 
   const content = (
     <>
@@ -128,31 +100,33 @@ export function Btn({
 
   if (href) {
     return (
-      <Link
-        href={href}
-        className={className}
-        style={styles}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-      >
-        {content}
-      </Link>
+      <>
+        <style>{BTN_CSS}</style>
+        <Link
+          href={href}
+          className={`btn-${variant}${className ? " " + className : ""}${borderInk}`}
+          style={styles}
+        >
+          {content}
+        </Link>
+      </>
     );
   }
 
   return (
-    <button
-      type={type}
-      disabled={disabled || loading}
-      onClick={onClick}
-      form={form}
-      formAction={formAction as string}
-      className={className}
-      style={{ ...styles, ...styleProp }}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
-      {content}
-    </button>
+    <>
+      <style>{BTN_CSS}</style>
+      <button
+        type={type}
+        disabled={disabled || loading}
+        onClick={onClick}
+        form={form}
+        formAction={formAction as string}
+        className={`btn-${variant}${className ? " " + className : ""}${borderInk}`}
+        style={{ ...styles, ...styleProp }}
+      >
+        {content}
+      </button>
+    </>
   );
 }

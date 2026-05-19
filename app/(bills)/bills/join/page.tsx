@@ -7,7 +7,7 @@ import { z } from "zod";
 import Link from "next/link";
 import { useJoinHousehold } from "@/hooks/use-household";
 import { ApiError } from "@/lib/api-client";
-import { Btn } from "@/components/editorial";
+import { Btn, Alert } from "@/components/editorial";
 
 const joinSchema = z.object({
   invitationCode: z.string().min(1, "Invitation code is required").trim(),
@@ -45,12 +45,12 @@ export default function JoinHouseholdPage() {
         </p>
       </div>
 
-      <div className="bg-paper p-12 shadow-stamp" style={{ border: "1.5px solid var(--ink)" }}>
+      <div className="bg-paper p-12 shadow-stamp border-ink">
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-8">
           {joinHousehold.isError && (
-            <div className="bg-[rgba(178,42,26,0.10)] py-[10px] px-[14px] text-base text-red" style={{ border: "1px solid var(--danger)" }}>
+            <Alert variant="danger">
               {joinHousehold.error instanceof ApiError ? joinHousehold.error.message : "Invalid invitation code. Make sure you typed it correctly."}
-            </div>
+            </Alert>
           )}
 
           <div className="flex flex-col gap-3">
@@ -61,7 +61,7 @@ export default function JoinHouseholdPage() {
               {...register("invitationCode")}
               placeholder="e.g. ABCdef1234"
               autoComplete="off"
-              className="h-[38px] p-[0_12px] bg-paper-2 text-ink text-md font-mono outline-none w-full" style={{ border: "1.5px solid var(--ink)" }}
+              className="h-[38px] p-[0_12px] bg-paper-2 text-ink text-md font-mono outline-none w-full border-ink"
               onFocus={(e) => {
                 e.currentTarget.style.borderColor = "var(--ink)";
                 e.currentTarget.style.boxShadow = "0 0 0 3px rgba(178,42,26,0.08)";

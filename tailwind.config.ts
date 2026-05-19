@@ -21,7 +21,8 @@ const config: Config = {
         'ink-4':  'var(--ink-4)',
         red:      'var(--red)',
         'red-deep':'var(--red-deep)',
-        'red-soft':'var(--red-soft)',
+        'red-soft':  'var(--red-soft)',
+        'green-soft':'var(--green-soft)',
         green:    'var(--green)',
 
         /* ── Semantic aliases (so bg-accent etc. keep working) ─────────── */

@@ -8,8 +8,8 @@ export default function ModQueuePage({ params }: { params: { slug: string } }) {
         </p>
       </div>
 
-      <div className="bg-paper py-24 px-12 text-center shadow-stamp" style={{ border: "1.5px solid var(--ink)" }}>
-        <div className="w-24 h-24 bg-[rgba(61,107,43,0.10)] flex items-center justify-center" style={{ margin: "0 auto 12px" }}>
+      <div className="bg-paper py-24 px-12 text-center shadow-stamp border-ink">
+        <div className="w-24 h-24 bg-green-soft flex items-center justify-center" style={{ margin: "0 auto 12px" }}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--success)" strokeWidth={1.75}>
             <path d="M20 6L9 17l-5-5" />
           </svg>

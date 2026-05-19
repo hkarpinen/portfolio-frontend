@@ -1,37 +1,53 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Icon } from "@/components/editorial/icon";
+import type { IconName } from "@/components/editorial/icon";
 
 
 export const metadata: Metadata = {
   title: "About",
 };
 
-const PROJECTS = [
+const PROJECTS: { icon: IconName; title: string; description: string; tech: string[]; href: string }[] = [
   {
-    icon: "🏠",
+    icon: "home",
     title: "Household",
     description: "Household management service. Create shared households, assign chores, manage a shared calendar, and track who's contributing what. Built on the Household microservice (ASP.NET Core, EF Core).",
     tech: ["ASP.NET Core", "C#", "EF Core", "PostgreSQL", "MassTransit", "React Query", "Docker"],
     href: "/bills",
   },
   {
-    icon: "💰",
+    icon: "dollar",
     title: "Finance",
     description: "Personal finance engine backed by its own microservice. Log expenses, split costs across household members, track income sources, and connect bank accounts via the Finance API.",
     tech: ["ASP.NET Core", "C#", "EF Core", "PostgreSQL", "RabbitMQ", "MassTransit", "React Query", "Docker"],
     href: "/expenses",
   },
   {
-    icon: "💬",
+    icon: "forum",
     title: "Community Forum",
     description: "A Reddit-inspired forum platform with communities, threaded comments, voting, and moderation tools.",
     tech: ["ASP.NET Core", "C#", "EF Core", "PostgreSQL", "SSE", "JWT", "MassTransit", "React Query"],
     href: "/forum",
   },
   {
-    icon: "🎨",
+    icon: "weather",
+    title: "Geography & Weather",
+    description: "Live weather data for any city via OpenWeatherMap, served through a dedicated Geography microservice. Search by city, switch between °F and °C, and overlay cloud, precipitation, wind, pressure, and temperature layers on an interactive Leaflet map.",
+    tech: ["ASP.NET Core", "C#", "OpenWeatherMap API", "Leaflet", "React Query", "Docker"],
+    href: "/weather",
+  },
+  {
+    icon: "math",
+    title: "Math & Unit Conversion",
+    description: "Unit conversion across length, weight, temperature, volume, speed, area, and data. A pure domain engine in the Math microservice handles all computation — no rounding surprises, no external dependencies.",
+    tech: ["ASP.NET Core", "C#", "Domain-Driven Design", "React Query"],
+    href: "/convert",
+  },
+  {
+    icon: "palette",
     title: "Portfolio Platform",
-    description: "This very application — a unified frontend combining portfolio showcase, community forum, household management, and personal finance across six independent microservices.",
+    description: "This very application — a unified frontend combining portfolio showcase, community forum, household management, and personal finance across seven independent microservices.",
     tech: ["Next.js 14", "TypeScript", "Tailwind CSS", "Nginx", "Docker Compose"],
     href: "/about",
   },
@@ -44,7 +60,7 @@ const SKILLS = [
 ];
 
 const FACTS = [
-  { value: "4", label: "Full-stack modules" },
+  { value: "7", label: "Full-stack modules" },
   { value: "10+", label: "Technologies used" },
   { value: "100%", label: "TypeScript coverage" },
 ];
@@ -53,7 +69,7 @@ export default function AboutPage() {
   return (
     <div className="flex flex-col gap-12">
       {/* Hero banner */}
-      <div className="py-20 px-16 bg-paper-2 shadow-card" style={{ border: "1.5px solid var(--ink)" }}>
+      <div className="py-20 px-16 bg-paper-2 shadow-card border-ink">
         <div className="flex items-center gap-12 flex-wrap">
           {/* Avatar — square stamp */}
           <div className="w-40 h-40 bg-paper-3 flex items-center justify-center text-xl font-bold text-ink font-mono shrink-0" style={{ border: "2px solid var(--ink)" }}>
@@ -80,7 +96,7 @@ export default function AboutPage() {
                 { label: "LinkedIn", href: "https://www.linkedin.com/in/hank-karpinen/" },
               ].map(btn => (
                 <a key={btn.label} href={btn.href} target="_blank" rel="noopener noreferrer"
-                  className="inline-flex items-center py-[9px] px-[16px] bg-transparent text-ink text-sm font-mono uppercase tracking-wider no-underline" style={{ border: "1.5px solid var(--ink)", letterSpacing: "0.18em" }}
+                  className="inline-flex items-center py-[9px] px-[16px] bg-transparent text-ink text-sm font-mono uppercase tracking-wider no-underline border-ink" style={{letterSpacing: "0.18em" }}
                 >
                   {btn.label}
                 </a>
@@ -112,10 +128,12 @@ export default function AboutPage() {
             <Link
               key={project.title}
               href={project.href}
-              className="block bg-paper-2 p-10 no-underline" style={{ border: "1.5px solid var(--ink)" }}
+              className="block bg-paper-2 p-10 no-underline border-ink"
             >
               <div className="flex items-start gap-[14px]">
-                <span className="text-2xl shrink-0">{project.icon}</span>
+                <span className="shrink-0 flex items-center justify-center w-[28px]">
+                  <Icon name={project.icon} size={22} strokeWidth={1.5} />
+                </span>
                 <div>
                   <h3 className="font-serif font-bold text-md text-ink mb-3">{project.title}</h3>
                   <p className="text-base text-ink-2 leading-[1.6] mb-6">
@@ -123,7 +141,7 @@ export default function AboutPage() {
                   </p>
                   <div className="flex gap-3 flex-wrap">
                     {project.tech.map(t => (
-                      <span key={t} className="inline-block py-[2px] px-[8px] bg-[rgba(178,42,26,0.10)] text-red font-mono" style={{ fontSize: "0.594rem", letterSpacing: "0.12em", border: "1px solid rgba(178,42,26,0.3)" }}>{t}</span>
+                      <span key={t} className="inline-block py-[2px] px-[8px] bg-red-soft text-red font-mono" style={{ fontSize: "0.594rem", letterSpacing: "0.12em", border: "1px solid rgba(178,42,26,0.3)" }}>{t}</span>
                     ))}
                   </div>
                 </div>
@@ -135,7 +153,7 @@ export default function AboutPage() {
         {/* Sidebar: skills + facts */}
         <div className="flex flex-col gap-8">
           {/* Skills card */}
-          <div className="bg-paper p-10 shadow-card" style={{ border: "1.5px solid var(--ink)" }}>
+          <div className="bg-paper p-10 shadow-card border-ink">
             <h2 className="font-serif font-bold text-md text-ink mb-8">
               Skills
             </h2>
@@ -154,7 +172,7 @@ export default function AboutPage() {
           </div>
 
           {/* Quick facts */}
-          <div className="bg-paper p-10 shadow-card" style={{ border: "1.5px solid var(--ink)" }}>
+          <div className="bg-paper p-10 shadow-card border-ink">
             <h2 className="font-serif font-bold text-md text-ink mb-6">
               Quick Facts
             </h2>

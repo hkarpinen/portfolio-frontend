@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { Modal } from "@/components/ui/modal";
-import { Btn } from "@/components/editorial";
+import { Modal, Btn } from "@/components/editorial";
 
 interface ThreadActionsProps {
   threadId: string;
@@ -128,9 +127,9 @@ export function ThreadActions({ threadId, threadUrl }: ThreadActionsProps) {
 
       <Modal
         open={reportOpen}
-        onClose={handleReportClose}
+        onOpenChange={(o) => { if (!o) handleReportClose(); }}
         title={submitted ? "Report submitted" : "Report thread"}
-        footer={
+        actions={
           submitted ? (
             <Btn variant="primary" onClick={handleReportClose}>
               Close
@@ -149,7 +148,7 @@ export function ThreadActions({ threadId, threadUrl }: ThreadActionsProps) {
       >
         {submitted ? (
           <div className="flex flex-col items-center gap-6 p-[8px_0]">
-            <div className="w-24 h-24 bg-[rgba(178,42,26,0.10)] flex items-center justify-center">
+            <div className="w-24 h-24 bg-red-soft flex items-center justify-center">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="20 6 9 17 4 12"/>
               </svg>
@@ -167,7 +166,7 @@ export function ThreadActions({ threadId, threadUrl }: ThreadActionsProps) {
               <select
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
-                className="w-full py-4 px-6 bg-paper-2 text-ink text-base outline-none" style={{ border: "1.5px solid var(--ink)" }}
+                className="w-full py-4 px-6 bg-paper-2 text-ink text-base outline-none border-ink"
               >
                 {REPORT_REASONS.map((r) => (
                   <option key={r} value={r}>{r}</option>
@@ -184,7 +183,7 @@ export function ThreadActions({ threadId, threadUrl }: ThreadActionsProps) {
                 placeholder="Describe the issue..."
                 rows={3}
                 maxLength={500}
-                className="w-full py-4 px-6 bg-paper-2 text-ink text-base outline-none leading-[1.5]" style={{ border: "1.5px solid var(--ink)", resize: "vertical", boxSizing: "border-box", fontFamily: "inherit" }}
+                className="w-full py-4 px-6 bg-paper-2 text-ink text-base outline-none leading-[1.5] border-ink" style={{resize: "vertical", boxSizing: "border-box", fontFamily: "inherit" }}
               />
               <p className="text-sm text-ink-3 text-right" style={{ margin: "4px 0 0" }}>
                 {details.length}/500

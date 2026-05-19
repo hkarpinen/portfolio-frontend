@@ -1,17 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { Menu } from "lucide-react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-
-function Icon({ path, size = 16 }: { path: string; size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round">
-      <path d={path} />
-    </svg>
-  );
-}
-
-const MENU_ICON = "M3 12h18M3 6h18M3 18h18";
 
 interface MobileNavProps {
   displayName?: string | null;
@@ -28,7 +19,7 @@ export function MobileNav({ displayName, avatarUrl, initials }: MobileNavProps) 
           style={{ border: "none" }}
           aria-label="Open navigation menu"
         >
-          <Icon path={MENU_ICON} size={20} />
+          <Menu size={20} strokeWidth={1.75} />
         </button>
       </DropdownMenu.Trigger>
 
@@ -36,7 +27,7 @@ export function MobileNav({ displayName, avatarUrl, initials }: MobileNavProps) 
         <DropdownMenu.Content
           align="end"
           sideOffset={8}
-          className="p-4 shadow-modal min-w-[200px] z-[50]" style={{ background: "oklch(from var(--surface) l c h / 0.95)", backdropFilter: "blur(12px)", border: "1.5px solid var(--ink)" }}
+          className="p-4 shadow-modal min-w-[200px] z-[50] border-ink" style={{ background: "oklch(from var(--surface) l c h / 0.95)", backdropFilter: "blur(12px)"}}
         >
           {[
             { href: "/about",       label: "About" },
@@ -67,7 +58,7 @@ export function MobileNav({ displayName, avatarUrl, initials }: MobileNavProps) 
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={avatarUrl} alt="" className="w-12 h-12 rounded-full object-cover" />
                 ) : (
-                  <span className="w-12 h-12 rounded-full bg-[rgba(178,42,26,0.10)] text-red flex items-center justify-center text-sm font-bold">{initials ?? "?"}</span>
+                  <span className="w-12 h-12 rounded-full bg-red-soft text-red flex items-center justify-center text-sm font-bold">{initials ?? "?"}</span>
                 )}
                 <span className="text-md text-ink">{displayName}</span>
               </Link>

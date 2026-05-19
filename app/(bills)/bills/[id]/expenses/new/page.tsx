@@ -7,7 +7,7 @@ import { z } from "zod";
 import Link from "next/link";
 import { useCreateHouseholdExpense } from "@/hooks/use-expenses";
 import { ApiError } from "@/lib/api-client";
-import { Btn } from "@/components/editorial";
+import { Btn, Alert, Input, Textarea, SelectField } from "@/components/editorial";
 
 const CATEGORIES = [
   "Rent", "Utilities", "Groceries", "Transportation", "Entertainment",
@@ -28,27 +28,6 @@ const schema = z.object({
 });
 
 type FormData = z.infer<typeof schema>;
-
-const inputStyle: React.CSSProperties = {
-  height: "38px", padding: "0 12px",
-  background: "var(--paper-2)", border: "1.5px solid var(--ink)",
-  color: "var(--text)", fontSize: "var(--ts-body)",
-  outline: "none", width: "100%", fontFamily: "var(--ff-body)",
-};
-
-const labelStyle: React.CSSProperties = {
-  fontSize: "var(--ts-label)", fontWeight: "500", color: "var(--text-2)", letterSpacing: "0.02em",
-};
-
-function handleFocus(e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
-  e.currentTarget.style.borderColor = "var(--ink)";
-  e.currentTarget.style.boxShadow = "0 0 0 3px rgba(178,42,26,0.08)";
-}
-
-function handleBlur(e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
-  e.currentTarget.style.borderColor = "var(--ink-3)";
-  e.currentTarget.style.boxShadow = "none";
-}
 
 export default function NewExpensePage({ params }: { params: { id: string } }) {
   const router = useRouter();
@@ -94,56 +73,57 @@ export default function NewExpensePage({ params }: { params: { id: string } }) {
         </p>
       </div>
 
-      <div className="bg-paper p-12 shadow-stamp" style={{ border: "1.5px solid var(--ink)" }}>
+      <div className="bg-paper p-12 shadow-stamp border-ink">
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-8">
           {createExpense.isError && (
-            <div className="bg-[rgba(178,42,26,0.10)] py-[10px] px-[14px] text-base text-red" style={{ border: "1px solid var(--danger)" }}>
+            <Alert variant="danger">
               {createExpense.error instanceof ApiError ? createExpense.error.message : "Something went wrong. Please try again."}
-            </div>
+            </Alert>
           )}
 
-          <div className="flex flex-col gap-3">
-            <label style={labelStyle}>Name</label>
-            <input type="text" {...register("title")} placeholder="Rent, Electricity, etc." style={inputStyle} onFocus={handleFocus} onBlur={handleBlur} />
-            {errors.title && <p className="text-red text-base">{errors.title.message}</p>}
-          </div>
+          <Input
+            label="Name"
+            type="text"
+            {...register("title")}
+            placeholder="Rent, Electricity, etc."
+            error={errors.title?.message}
+          />
 
           <div className="form-grid-2">
-            <div className="flex flex-col gap-3">
-              <label style={labelStyle}>Amount</label>
-              <input type="number" step="0.01" {...register("amount")} placeholder="0.00" style={inputStyle} onFocus={handleFocus} onBlur={handleBlur} />
-              {errors.amount && <p className="text-red text-base">{errors.amount.message}</p>}
-            </div>
-            <div className="flex flex-col gap-3">
-              <label style={labelStyle}>Currency</label>
-              <select {...register("currency")} style={inputStyle} onFocus={handleFocus} onBlur={handleBlur}>
-                <option value="USD">USD</option>
-                <option value="EUR">EUR</option>
-                <option value="GBP">GBP</option>
-                <option value="CAD">CAD</option>
-              </select>
-            </div>
+            <Input
+              label="Amount"
+              type="number"
+              step="0.01"
+              {...register("amount")}
+              placeholder="0.00"
+              error={errors.amount?.message}
+            />
+            <SelectField label="Currency" {...register("currency")}>
+              <option value="USD">USD</option>
+              <option value="EUR">EUR</option>
+              <option value="GBP">GBP</option>
+              <option value="CAD">CAD</option>
+            </SelectField>
           </div>
 
-          <div className="flex flex-col gap-3">
-            <label style={labelStyle}>Category</label>
-            <select {...register("category")} style={inputStyle} onFocus={handleFocus} onBlur={handleBlur}>
-              <option value="">Select category</option>
-              {CATEGORIES.map((c) => <option key={c} value={c}>{c.charAt(0) + c.slice(1).toLowerCase()}</option>)}
-            </select>
-            {errors.category && <p className="text-red text-base">{errors.category.message}</p>}
-          </div>
+          <SelectField label="Category" {...register("category")} error={errors.category?.message}>
+            <option value="">Select category</option>
+            {CATEGORIES.map((c) => <option key={c} value={c}>{c.charAt(0) + c.slice(1).toLowerCase()}</option>)}
+          </SelectField>
 
-          <div className="flex flex-col gap-3">
-            <label style={labelStyle}>Due Date</label>
-            <input type="date" {...register("dueDate")} style={inputStyle} onFocus={handleFocus} onBlur={handleBlur} />
-            {errors.dueDate && <p className="text-red text-base">{errors.dueDate.message}</p>}
-          </div>
+          <Input
+            label="Due Date"
+            type="date"
+            {...register("dueDate")}
+            error={errors.dueDate?.message}
+          />
 
-          <div className="flex flex-col gap-3">
-            <label style={labelStyle}>Description <span className="text-ink-3 font-normal">(optional)</span></label>
-            <textarea {...register("description")} rows={2} placeholder="Any additional notes" className="py-5 px-6 bg-paper-2 text-ink text-md outline-none w-full font-body" style={{ border: "1.5px solid var(--ink)", resize: "vertical" }} onFocus={handleFocus} onBlur={handleBlur} />
-          </div>
+          <Textarea
+            label="Description (optional)"
+            {...register("description")}
+            rows={2}
+            placeholder="Any additional notes"
+          />
 
           <label className="flex items-center gap-5 cursor-pointer">
             <input id="isRecurring" type="checkbox" {...register("isRecurring")} className="w-8 h-8" style={{ accentColor: "var(--red)" }} />
@@ -151,12 +131,9 @@ export default function NewExpensePage({ params }: { params: { id: string } }) {
           </label>
 
           {isRecurring && (
-            <div className="flex flex-col gap-3">
-              <label style={labelStyle}>Frequency</label>
-              <select {...register("recurrenceFrequency")} style={inputStyle} onFocus={handleFocus} onBlur={handleBlur}>
-                {FREQUENCIES.map((f) => <option key={f} value={f}>{f.charAt(0) + f.slice(1).toLowerCase()}</option>)}
-              </select>
-            </div>
+            <SelectField label="Frequency" {...register("recurrenceFrequency")}>
+              {FREQUENCIES.map((f) => <option key={f} value={f}>{f.charAt(0) + f.slice(1).toLowerCase()}</option>)}
+            </SelectField>
           )}
 
           <Btn

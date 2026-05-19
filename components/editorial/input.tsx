@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import { Icon } from "./icon";
 
 /* ── Input ──────────────────────────────────────────────────────────────────*/
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -71,7 +72,8 @@ interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement
   error?: string;
 }
 
-export function Textarea({ label, hint, error, className = "", ...props }: TextareaProps) {
+export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
+  function Textarea({ label, hint, error, className = "", onFocus, onBlur, ...props }, ref) {
   return (
     <div className="flex flex-col gap-[6px]">
       {label && (
@@ -84,6 +86,7 @@ export function Textarea({ label, hint, error, className = "", ...props }: Texta
       )}
       <textarea
         {...props}
+        ref={ref}
         className={`w-full bg-paper font-body text-ink ${className}`}
         style={{
           border: error ? "1.5px solid var(--red)" : "1.5px solid var(--ink-3)",
@@ -96,9 +99,11 @@ export function Textarea({ label, hint, error, className = "", ...props }: Texta
         }}
         onFocus={e => {
           e.currentTarget.style.borderColor = "var(--ink)";
+          onFocus?.(e);
         }}
         onBlur={e => {
           e.currentTarget.style.borderColor = error ? "var(--red)" : "var(--ink-3)";
+          onBlur?.(e);
         }}
       />
       {error && (
@@ -113,17 +118,17 @@ export function Textarea({ label, hint, error, className = "", ...props }: Texta
       )}
     </div>
   );
-}
+});
 
 /* ── Select ─────────────────────────────────────────────────────────────────*/
 interface SelectFieldProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   label?: string;
   hint?: string;
   error?: string;
-  options: { value: string; label: string }[];
 }
 
-export function SelectField({ label, hint, error, options, className = "", ...props }: SelectFieldProps) {
+export const SelectField = React.forwardRef<HTMLSelectElement, SelectFieldProps>(
+  function SelectField({ label, hint, error, children, className = "", ...props }, ref) {
   return (
     <div className="flex flex-col gap-[6px]">
       {label && (
@@ -137,6 +142,7 @@ export function SelectField({ label, hint, error, options, className = "", ...pr
       <div className="relative">
         <select
           {...props}
+          ref={ref}
           className={`w-full bg-transparent font-body text-ink appearance-none pr-8 ${className}`}
           style={{
             border: "none",
@@ -149,14 +155,10 @@ export function SelectField({ label, hint, error, options, className = "", ...pr
             ...props.style,
           }}
         >
-          {options.map(opt => (
-            <option key={opt.value} value={opt.value}>{opt.label}</option>
-          ))}
+          {children}
         </select>
         <span className="absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-ink-3">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M6 9l6 6 6-6"/>
-          </svg>
+          <Icon name="chevDown" size={13} strokeWidth={2} />
         </span>
       </div>
       {error && (
@@ -171,4 +173,4 @@ export function SelectField({ label, hint, error, options, className = "", ...pr
       )}
     </div>
   );
-}
+});

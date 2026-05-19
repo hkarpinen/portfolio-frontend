@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ForumTabs } from "./forum-tabs";
+import { getInitials } from "@/lib/utils";
 import { fetchCommunitiesServer } from "@/lib/api/communities";
 import { fetchThreadsServer } from "@/lib/api/forum";
 import type { CommunitySummaryResponse } from "@/types/forum";
@@ -60,7 +61,7 @@ export default async function CommunitiesPage() {
         {/* Right sidebar */}
         <div className="forum-sidebar flex flex-col gap-8">
           {/* Your desks card */}
-          <div className="bg-paper" style={{ border: "1.5px solid var(--ink)", padding: "16px 18px" }}>
+          <div className="bg-paper border-ink" style={{padding: "16px 18px" }}>
             <p className="font-mono uppercase text-red m-0 mb-[8px]" style={{ fontSize: "0.594rem", letterSpacing: "0.26em" }}>
               — Your desks —
             </p>
@@ -72,10 +73,10 @@ export default async function CommunitiesPage() {
                 <Link key={c.communityId} href={`/forum/${c.slug}`} className="flex items-center gap-[10px] no-underline">
                   {/* Community avatar */}
                   <div
-                    className="flex items-center justify-center shrink-0 font-serif italic text-ink"
-                    style={{ width: 26, height: 26, background: "var(--paper-2)", border: "1.5px solid var(--ink)", fontSize: "0.8125rem" }}
+                    className="flex items-center justify-center shrink-0 font-serif italic text-ink border-ink"
+                    style={{ width: 26, height: 26, background: "var(--paper-2)", fontSize: "0.8125rem" }}
                   >
-                    {c.name[0]?.toUpperCase()}
+                    {getInitials(c.name)}
                   </div>
                   <span className="font-serif italic text-ink flex-1 min-w-0 overflow-hidden text-ellipsis whitespace-nowrap" style={{ fontSize: "1.0625rem" }}>
                     {c.name}
@@ -95,7 +96,7 @@ export default async function CommunitiesPage() {
           </div>
 
           {/* House rules card */}
-          <div className="bg-paper" style={{ border: "1.5px solid var(--ink)", padding: "16px 18px" }}>
+          <div className="bg-paper border-ink" style={{padding: "16px 18px" }}>
             <p className="font-mono uppercase text-red m-0 mb-[8px]" style={{ fontSize: "0.594rem", letterSpacing: "0.26em" }}>
               — House rules —
             </p>

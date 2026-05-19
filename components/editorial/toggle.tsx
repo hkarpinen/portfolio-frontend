@@ -23,11 +23,10 @@ export function Toggle({ checked, onCheckedChange, size = "md", id, label, disab
         checked={checked}
         onCheckedChange={onCheckedChange}
         disabled={disabled}
-        style={{
+ className="border-ink" style={{
           width: trackW,
           height: trackH,
           background: checked ? "var(--ink)" : "var(--paper-3)",
-          border: "1.5px solid var(--ink)",
           position: "relative",
           cursor: disabled ? "not-allowed" : "pointer",
           flexShrink: 0,

@@ -67,3 +67,16 @@ export const identityKeys = {
   me: () => [...identityKeys.all, "me"] as const,
   adminUsers: (page: number) => [...identityKeys.all, "admin-users", page] as const,
 } as const;
+
+export const geographyKeys = {
+  all: ["geography"] as const,
+  weather: (city: string) => [...geographyKeys.all, "weather", city.toLowerCase()] as const,
+} as const;
+
+export const mathKeys = {
+  all: ["math"] as const,
+  units: () => [...mathKeys.all, "units"] as const,
+  conversion: (from: string, to: string, value: number) =>
+    [...mathKeys.all, "conversion", from, to, value] as const,
+} as const;
+

@@ -2,6 +2,7 @@
 import React from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Btn } from "./button";
+import { Icon } from "./icon";
 
 interface ModalProps {
   open: boolean;
@@ -44,14 +45,13 @@ export function Modal({ open, onOpenChange, title, children, actions, maxWidth =
               </Dialog.Title>
               <Dialog.Close asChild>
                 <button
+                  aria-label="Close"
                   className="bg-transparent border-none cursor-pointer text-ink-3 flex items-center justify-center"
                   style={{ width: 28, height: 28, transition: "color 110ms" }}
                   onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = "var(--ink)"; }}
                   onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = "var(--ink-3)"; }}
                 >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                    <path d="M18 6L6 18M6 6l12 12"/>
-                  </svg>
+                  <Icon name="x" size={14} strokeWidth={2} />
                 </button>
               </Dialog.Close>
             </div>

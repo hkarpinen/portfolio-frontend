@@ -10,11 +10,8 @@ import {
   FREQUENCIES,
   expenseSchema,
   ExpenseFormData,
-  iStyle,
-  Field,
-  onFocusField,
-  onBlurField,
 } from "./_expense-form-shared";
+import { Alert, Btn, Input, SelectField, Textarea } from "@/components/editorial";
 
 export function AddExpenseForm() {
   const router = useRouter();
@@ -51,108 +48,78 @@ export function AddExpenseForm() {
   };
 
   return (
-    <div className="bg-paper p-10 shadow-stamp" style={{ border: "1.5px solid var(--ink)" }}>
+    <div className="bg-paper p-10 shadow-stamp border-ink">
       <h2 className="font-serif font-bold text-md text-ink mb-8">
         Add Personal Expense
       </h2>
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-[14px]">
         {create.isError && (
-          <div className="py-[10px] px-[14px] bg-[rgba(178,42,26,0.10)] text-base text-red" style={{ border: "1px solid oklch(62% 0.21 22 / 0.3)" }}>
+          <Alert variant="danger">
             {create.error instanceof ApiError ? create.error.message : "Something went wrong. Please try again."}
-          </div>
+          </Alert>
         )}
         {create.isSuccess && (
-          <div className="py-[10px] px-[14px] bg-[rgba(61,107,43,0.10)] text-base text-green" style={{ border: "1px solid oklch(68% 0.18 152 / 0.25)" }}>
-            Expense added!
-          </div>
+          <Alert variant="success">Expense added!</Alert>
         )}
 
-        <Field label="Title" error={errors.title?.message}>
-          <input
-            type="text"
-            {...register("title")}
-            placeholder="Netflix, Rent, Gym, etc."
-            style={{ ...iStyle, borderColor: errors.title ? "var(--danger)" : "var(--ink-3)" }}
-            onFocus={onFocusField}
-            onBlur={onBlurField}
+        <Input
+          type="text"
+          label="Title"
+          placeholder="Netflix, Rent, Gym, etc."
+          error={errors.title?.message}
+          {...register("title")}
+        />
+
+        <div className="form-grid-2">
+          <Input
+            type="number"
+            step="0.01"
+            label="Amount"
+            placeholder="0.00"
+            error={errors.amount?.message}
+            {...register("amount")}
           />
-        </Field>
-
-        <div className="form-grid-2">
-          <Field label="Amount" error={errors.amount?.message}>
-            <input
-              type="number"
-              step="0.01"
-              {...register("amount")}
-              placeholder="0.00"
-              style={{ ...iStyle, borderColor: errors.amount ? "var(--danger)" : "var(--ink-3)" }}
-              onFocus={onFocusField}
-              onBlur={onBlurField}
-            />
-          </Field>
-          <Field label="Currency">
-            <select {...register("currency")} style={iStyle} onFocus={onFocusField} onBlur={onBlurField}>
-              <option value="USD">USD</option>
-              <option value="EUR">EUR</option>
-              <option value="GBP">GBP</option>
-              <option value="CAD">CAD</option>
-            </select>
-          </Field>
+          <SelectField label="Currency" {...register("currency")}>
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+            <option value="GBP">GBP</option>
+            <option value="CAD">CAD</option>
+          </SelectField>
         </div>
 
         <div className="form-grid-2">
-          <Field label="Category">
-            <select {...register("category")} style={iStyle} onFocus={onFocusField} onBlur={onBlurField}>
-              {BILL_CATEGORIES.map((c) => (
-                <option key={c} value={c}>{c}</option>
-              ))}
-            </select>
-          </Field>
-          <Field label="Due Date" error={errors.dueDate?.message}>
-            <input
-              type="date"
-              {...register("dueDate")}
-              style={{ ...iStyle, borderColor: errors.dueDate ? "var(--danger)" : "var(--ink-3)" }}
-              onFocus={onFocusField}
-              onBlur={onBlurField}
-            />
-          </Field>
-        </div>
-
-        <Field label="Recurrence (optional)">
-          <select {...register("recurrenceFrequency")} style={iStyle} onFocus={onFocusField} onBlur={onBlurField}>
-            <option value="">One-time</option>
-            {FREQUENCIES.map((f) => (
-              <option key={f} value={f}>{f.charAt(0) + f.slice(1).toLowerCase()}</option>
+          <SelectField label="Category" {...register("category")}>
+            {BILL_CATEGORIES.map((c) => (
+              <option key={c} value={c}>{c}</option>
             ))}
-          </select>
-        </Field>
-
-        <Field label="Description (optional)" error={errors.description?.message}>
-          <textarea
-            {...register("description")}
-            placeholder="Optional notes..."
-            rows={2}
-            style={{
-              ...iStyle,
-              height: "auto",
-              padding: "10px 12px",
-              resize: "none",
-              lineHeight: "1.5",
-            } as React.CSSProperties}
-            onFocus={onFocusField}
-            onBlur={onBlurField}
+          </SelectField>
+          <Input
+            type="date"
+            label="Due Date"
+            error={errors.dueDate?.message}
+            {...register("dueDate")}
           />
-        </Field>
+        </div>
 
-        <button
-          type="submit"
-          disabled={create.isPending}
-          className="h-20 font-body font-semibold text-base" style={{ border: "none", background: create.isPending ? "var(--paper-2)" : "var(--red)", color: create.isPending ? "var(--text-3)" : "white", cursor: create.isPending ? "not-allowed" : "pointer", transition: "background 110ms" }}
-        >
+        <SelectField label="Recurrence (optional)" {...register("recurrenceFrequency")}>
+          <option value="">One-time</option>
+          {FREQUENCIES.map((f) => (
+            <option key={f} value={f}>{f.charAt(0) + f.slice(1).toLowerCase()}</option>
+          ))}
+        </SelectField>
+
+        <Textarea
+          label="Description (optional)"
+          placeholder="Optional notes..."
+          rows={2}
+          error={errors.description?.message}
+          {...register("description")}
+        />
+
+        <Btn type="submit" disabled={create.isPending} variant="primary" fullWidth>
           {create.isPending ? "Adding…" : "Add Expense"}
-        </button>
+        </Btn>
       </form>
     </div>
   );

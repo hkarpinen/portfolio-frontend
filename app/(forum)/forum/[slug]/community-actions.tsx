@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCommunityMembership, useJoinCommunity } from "@/hooks/use-community";
+import { Icon } from "@/components/editorial/icon";
 import { ApiError } from "@/lib/api-client";
 import styles from "./community-actions.module.css";
 
@@ -51,9 +52,9 @@ function AuthedActions({ communityId, slug }: { communityId: string; slug: strin
           {canManage && (
             <Link
               href={`/forum/${slug}/settings`}
-              className={styles.btnSecondary}
+              className={`${styles.btnSecondary} inline-flex items-center gap-[5px]`}
             >
-              ⚙ Settings
+              <Icon name="settings" size={13} strokeWidth={2} /> Settings
             </Link>
           )}
           <Link

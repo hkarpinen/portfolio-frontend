@@ -62,12 +62,11 @@ export function LedgerStrip({ label, cells, columns }: LedgerStripProps) {
 
   return (
     <div
-      className="grid"
+      className="grid border-ink"
       style={{
         gridTemplateColumns: label
           ? `auto repeat(${cols}, 1fr)`
           : `repeat(${cols}, 1fr)`,
-        border: "1.5px solid var(--ink)",
         borderRight: "none",
       }}
     >

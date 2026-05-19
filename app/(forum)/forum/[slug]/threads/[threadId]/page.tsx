@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { parseMarkdown } from "@/lib/markdown";
 import { CommentTree } from "./comment-tree";
-import { timeAgo } from "@/lib/utils";
+import { timeAgo, getInitials } from "@/lib/utils";
 import { CommentForm } from "./comment-form";
 import { VoteButtons } from "./vote-buttons";
 import { ThreadActions } from "./thread-actions";
@@ -47,7 +47,7 @@ export default async function ThreadPage({
       </nav>
 
       {/* Thread */}
-      <article className="bg-paper overflow-hidden shadow-stamp" style={{ border: "1.5px solid var(--ink)" }}>
+      <article className="bg-paper overflow-hidden shadow-stamp border-ink">
         <div className="flex gap-0">
           {/* Vote column */}
           <div className="w-24 shrink-0 flex flex-col items-center p-[20px_0]" style={{ borderRight: "1.5px solid var(--ink)" }}>
@@ -60,7 +60,7 @@ export default async function ThreadPage({
               {thread.title}
             </h1>
             {thread.flair && thread.flair !== "None" && (
-              <span className="inline-block mt-4 py-1 px-5 text-sm font-semibold tracking-[0.03em] bg-[rgba(178,42,26,0.10)] text-red" style={{ border: "1px solid var(--accent-border)" }}>
+              <span className="inline-block mt-4 py-1 px-5 text-sm font-semibold tracking-[0.03em] bg-red-soft text-red" style={{ border: "1px solid var(--accent-border)" }}>
                 {thread.flair}
               </span>
             )}
@@ -72,11 +72,11 @@ export default async function ThreadPage({
                     <img
                       src={thread.authorAvatarUrl}
                       alt=""
-                      className="w-[18px] h-[18px] object-cover shrink-0" style={{ border: "1.5px solid var(--ink)" }}
+                      className="w-[18px] h-[18px] object-cover shrink-0 border-ink"
                     />
                   ) : (
                     <span className="w-[18px] h-[18px] bg-paper-3 flex items-center justify-center text-sm font-semibold text-ink-2 shrink-0">
-                      {(thread.authorDisplayName ?? thread.authorUsername ?? "?")[0].toUpperCase()}
+                      {getInitials(thread.authorDisplayName ?? thread.authorUsername)}
                     </span>
                   )}
                   <span className="text-base text-ink-3">
@@ -113,7 +113,7 @@ export default async function ThreadPage({
       </article>
 
       {/* Comment form */}
-      <section className="bg-paper p-10 shadow-stamp" style={{ border: "1.5px solid var(--ink)" }}>
+      <section className="bg-paper p-10 shadow-stamp border-ink">
         <h2 className="font-serif font-semibold text-md text-ink mb-6">
           Leave a comment
         </h2>
@@ -127,7 +127,7 @@ export default async function ThreadPage({
     {/* Right sidebar */}
     <aside className="flex flex-col gap-8 sticky top-[16px]" style={{ alignSelf: "start" }}>
       {community && (
-        <div className="bg-paper overflow-hidden shadow-stamp" style={{ border: "1.5px solid var(--ink)" }}>
+        <div className="bg-paper overflow-hidden shadow-stamp border-ink">
           {/* Banner strip */}
           <div className="h-2 bg-ink" />
           <div className="p-[0_16px_16px]">

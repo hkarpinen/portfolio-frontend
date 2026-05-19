@@ -21,14 +21,14 @@ export function Card({
 }: CardProps) {
   const borderStyle = accent
     ? { borderTop: "6px solid var(--red)", borderRight: "1.5px solid var(--ink)", borderBottom: "1.5px solid var(--ink)", borderLeft: "1.5px solid var(--ink)" }
-    : { border: "1.5px solid var(--ink)" };
+    : {};
 
   const Tag = onClick ? "button" : "div";
 
   return (
     <Tag
       onClick={onClick}
-      className={`bg-paper ${hover ? "card-hover" : ""} ${onClick ? "cursor-pointer w-full text-left" : ""} ${className}`}
+      className={`bg-paper ${hover ? "card-hover" : ""} ${onClick ? "cursor-pointer w-full text-left" : ""} ${accent ? "" : "border-ink"} ${className}`}
       style={{
         padding,
         background: "var(--paper)",

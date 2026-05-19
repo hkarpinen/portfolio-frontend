@@ -21,7 +21,7 @@ export function JoinButton({ communityId }: JoinButtonProps) {
 
   if (joined) {
     return (
-      <span className="py-[5px] px-[12px] text-base font-semibold text-ink-3 bg-paper-2 shrink-0" style={{ border: "1.5px solid var(--ink)" }}>
+      <span className="py-[5px] px-[12px] text-base font-semibold text-ink-3 bg-paper-2 shrink-0 border-ink">
         Joined
       </span>
     );
@@ -41,7 +41,7 @@ export function JoinButton({ communityId }: JoinButtonProps) {
         });
       }}
       disabled={joinMutation.isPending}
-      className="py-[5px] px-[12px] text-base font-semibold text-red bg-[rgba(178,42,26,0.10)] shrink-0" style={{ border: "1.5px solid var(--red)", cursor: joinMutation.isPending ? "not-allowed" : "pointer", opacity: joinMutation.isPending ? 0.6 : 1 }}
+      className="py-[5px] px-[12px] text-base font-semibold text-red bg-red-soft shrink-0" style={{ border: "1.5px solid var(--red)", cursor: joinMutation.isPending ? "not-allowed" : "pointer", opacity: joinMutation.isPending ? 0.6 : 1 }}
     >
       {joinMutation.isPending ? "…" : "Join"}
     </button>

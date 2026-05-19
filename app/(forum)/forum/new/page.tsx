@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCreateCommunity, useUploadCommunityImage } from "@/hooks/use-community";
 import { ApiError } from "@/lib/api-client";
+import { Btn, Input, Textarea, SelectField } from "@/components/editorial";
 
 export default function NewCommunityPage() {
   const router = useRouter();
@@ -45,10 +46,10 @@ export default function NewCommunityPage() {
         </p>
       </div>
 
-      <div className="bg-paper p-12 shadow-stamp" style={{ border: "1.5px solid var(--ink)" }}>
+      <div className="bg-paper p-12 shadow-stamp border-ink">
         <form onSubmit={handleSubmit} className="flex flex-col gap-8">
           {createCommunity.isError && (
-            <div className="text-base text-red bg-[rgba(178,42,26,0.10)] py-[10px] px-[14px]" style={{ border: "1px solid var(--danger)" }}>
+            <div className="text-base text-red bg-red-soft py-[10px] px-[14px]" style={{ border: "1px solid var(--danger)" }}>
               {createCommunity.error instanceof ApiError ? createCommunity.error.message : "An unexpected error occurred."}
             </div>
           )}
@@ -82,7 +83,7 @@ export default function NewCommunityPage() {
             <div className="flex flex-col gap-2">
               <span className="text-base font-medium text-ink-2">Community image</span>
               {imageUrl ? (
-                <button type="button" onClick={() => setImageUrl("")} className="self-start py-2 px-5 bg-transparent text-ink-3 text-base cursor-pointer" style={{ border: "1.5px solid var(--ink)" }}>
+                <button type="button" onClick={() => setImageUrl("")} className="self-start py-2 px-5 bg-transparent text-ink-3 text-base cursor-pointer border-ink">
                   Remove
                 </button>
               ) : null}
@@ -95,11 +96,9 @@ export default function NewCommunityPage() {
             </div>
           </div>
 
-          <div className="flex flex-col gap-3">
-            <label className="text-sm font-bold text-ink-3 uppercase tracking-[0.1em]">
-              Name
-            </label>
-            <input
+          <div>
+            <Input
+              label="Name"
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -107,55 +106,45 @@ export default function NewCommunityPage() {
               minLength={1}
               maxLength={64}
               placeholder="Community Name"
-              className="w-full py-[10px] px-[14px] bg-paper-2 text-ink text-md outline-none" style={{ border: "1.5px solid var(--ink)", boxSizing: "border-box" }}
             />
             <span className="text-sm text-ink-3">Lowercase letters, numbers, underscores only.</span>
           </div>
-          <div className="flex flex-col gap-3">
-            <label className="text-sm font-bold text-ink-3 uppercase tracking-[0.1em]">
-              Description
-              <span className="font-medium text-ink-3 ml-3 normal-case tracking-normal">
-                optional · {description.length}/1000
-              </span>
-            </label>
-            <textarea
+          <div>
+            <Textarea
+              label={`Description (optional · ${description.length}/1000)`}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               maxLength={1000}
               rows={3}
               placeholder="What's this community about?"
-              className="w-full py-[10px] px-[14px] bg-paper-2 text-ink text-md outline-none leading-[1.6] font-body" style={{ border: "1.5px solid var(--ink)", boxSizing: "border-box", resize: "vertical" }}
             />
           </div>
-          <div className="flex flex-col gap-3">
-            <label className="text-sm font-bold text-ink-3 uppercase tracking-[0.1em]">
-              Visibility
-            </label>
-            <select
-              value={privacy}
-              onChange={(e) => setPrivacy(e.target.value)}
-              className="w-full py-[10px] px-[14px] bg-paper-2 text-ink text-md outline-none cursor-pointer" style={{ border: "1.5px solid var(--ink)", boxSizing: "border-box" }}
-            >
-              <option value="Public">Public</option>
-              <option value="Private">Private</option>
-              <option value="Restricted">Restricted</option>
-            </select>
-          </div>
+          <SelectField
+            label="Visibility"
+            value={privacy}
+            onChange={(e) => setPrivacy(e.target.value)}
+          >
+            <option value="Public">Public</option>
+            <option value="Private">Private</option>
+            <option value="Restricted">Restricted</option>
+          </SelectField>
           <div className="flex gap-5">
-            <button
+            <Btn
               type="button"
+              variant="secondary"
               onClick={() => router.back()}
-              className="flex-1 bg-paper-2 text-ink-2 py-5 px-10 font-semibold text-md cursor-pointer font-body" style={{ border: "1.5px solid var(--ink)" }}
+              className="flex-1"
             >
               Cancel
-            </button>
-            <button
+            </Btn>
+            <Btn
               type="submit"
+              variant="primary"
               disabled={createCommunity.isPending}
-              className="bg-red text-white py-5 px-10 font-semibold text-md font-body" style={{ flex: 2, border: "none", cursor: createCommunity.isPending ? "not-allowed" : "pointer", opacity: createCommunity.isPending ? 0.6 : 1 }}
+              style={{ flex: 2 }}
             >
               {createCommunity.isPending ? "Creating…" : "Create Community"}
-            </button>
+            </Btn>
           </div>
         </form>
       </div>

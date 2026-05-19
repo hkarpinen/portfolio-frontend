@@ -63,7 +63,7 @@ export default async function HouseholdPage({ params }: { params: { id: string }
           {isOwner && (
             <Link
               href={`/bills/${params.id}/settings`}
-              className="bg-paper-2 text-ink-2 py-4 px-8 text-base font-medium no-underline" style={{ border: "1.5px solid var(--ink)" }}
+              className="bg-paper-2 text-ink-2 py-4 px-8 text-base font-medium no-underline border-ink"
             >
               Settings
             </Link>
@@ -80,12 +80,12 @@ export default async function HouseholdPage({ params }: { params: { id: string }
       {/* Stat cards */}
       <div className="grid gap-8" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))" }}>
         {/* Monthly Expenses */}
-        <div className="bg-paper p-10 shadow-stamp" style={{ border: "1.5px solid var(--ink)" }}>
+        <div className="bg-paper p-10 shadow-stamp border-ink">
           <div className="flex items-center justify-between mb-6">
             <span className="text-sm font-bold text-ink-3 uppercase tracking-[0.1em]">
               Monthly Expenses
             </span>
-            <div className="w-16 h-16 bg-[rgba(178,42,26,0.10)] flex items-center justify-center">
+            <div className="w-16 h-16 bg-red-soft flex items-center justify-center">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/>
               </svg>
@@ -104,12 +104,12 @@ export default async function HouseholdPage({ params }: { params: { id: string }
         </div>
 
         {/* Total Expenses */}
-        <div className="bg-paper p-10 shadow-stamp" style={{ border: "1.5px solid var(--ink)" }}>
+        <div className="bg-paper p-10 shadow-stamp border-ink">
           <div className="flex items-center justify-between mb-6">
             <span className="text-sm font-bold text-ink-3 uppercase tracking-[0.1em]">
               Total Expenses
             </span>
-            <div className="w-16 h-16 bg-[rgba(178,42,26,0.10)] flex items-center justify-center">
+            <div className="w-16 h-16 bg-red-soft flex items-center justify-center">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
               </svg>
@@ -122,12 +122,12 @@ export default async function HouseholdPage({ params }: { params: { id: string }
         </div>
 
         {/* Members */}
-        <div className="bg-paper p-10 shadow-stamp" style={{ border: "1.5px solid var(--ink)" }}>
+        <div className="bg-paper p-10 shadow-stamp border-ink">
           <div className="flex items-center justify-between mb-6">
             <span className="text-sm font-bold text-ink-3 uppercase tracking-[0.1em]">
               Members
             </span>
-            <div className="w-16 h-16 bg-[rgba(178,42,26,0.10)] flex items-center justify-center">
+            <div className="w-16 h-16 bg-red-soft flex items-center justify-center">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
               </svg>

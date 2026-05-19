@@ -3,6 +3,7 @@
 import * as RadixTabs from "@radix-ui/react-tabs";
 import { CommunitySettingsForm } from "./settings-form";
 import { CommunityMembersTab } from "./members-tab";
+import { tabTriggerBody } from "@/lib/tab-styles";
 
 interface Props {
   communityId: string;
@@ -14,15 +15,6 @@ interface Props {
   initialVisibility: string;
 }
 
-const tabTriggerStyle: React.CSSProperties = {
-  padding: "10px 16px", background: "none", border: "none",
-  fontWeight: 600, fontSize: "var(--ts-body)",
-  color: "var(--text-3)",
-  borderBottom: "2px solid transparent",
-  marginBottom: "-1px",
-  cursor: "pointer", fontFamily: "var(--ff-body)",
-  transition: "color 110ms",
-};
 
 export function SettingsTabs({
   communityId,
@@ -37,15 +29,15 @@ export function SettingsTabs({
     <RadixTabs.Root defaultValue="general">
       {/* Tab bar */}
       <RadixTabs.List className="flex" style={{ borderBottom: "1.5px solid var(--ink)" }}>
-        <RadixTabs.Trigger value="general" style={tabTriggerStyle}>
+        <RadixTabs.Trigger value="general" style={tabTriggerBody}>
           General
         </RadixTabs.Trigger>
-        <RadixTabs.Trigger value="members" style={tabTriggerStyle}>
+        <RadixTabs.Trigger value="members" style={tabTriggerBody}>
           Members
         </RadixTabs.Trigger>
       </RadixTabs.List>
 
-      <div className="bg-paper p-12 shadow-stamp" style={{ border: "1.5px solid var(--ink)" }}>
+      <div className="bg-paper p-12 shadow-stamp border-ink">
         <RadixTabs.Content value="general">
           <CommunitySettingsForm
             communityId={communityId}

@@ -4,6 +4,7 @@ import { fetchIncomeServer } from "@/lib/api/income";
 import { toMonthlyAmount } from "@/lib/utils";
 import type { IncomeSource } from "@/types/finance";
 import Link from "next/link";
+import { Icon } from "@/components/editorial/icon";
 
 export const dynamic = 'force-dynamic';
 
@@ -37,7 +38,7 @@ export default async function IncomePage() {
           href="/income/new"
           className="inline-flex items-center gap-3 py-[9px] px-[18px] bg-red text-white text-base font-semibold no-underline shrink-0 mt-2"
         >
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <Icon name="plus" size={13} strokeWidth={2.5} />
           Add income source
         </Link>
       </div>
@@ -49,7 +50,7 @@ export default async function IncomePage() {
           { label: "Recurring", value: `$${recurringTotal.toFixed(2)}`, icon: <path d="M1 4v6h6M23 20v-6h-6M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4-4.64 4.36A9 9 0 0 1 3.51 15"/>, accent: "var(--success)", bg: "var(--success-s)" },
           { label: "Sources", value: String(sources.length), icon: <><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></>, accent: "var(--warning)", bg: "var(--warning-s)" },
         ].map(({ label, value, icon, accent, bg }) => (
-          <div key={label} className="bg-paper py-[18px] px-[20px] shadow-card flex flex-col gap-5" style={{ border: "1.5px solid var(--ink)" }}>
+          <div key={label} className="bg-paper py-[18px] px-[20px] shadow-card flex flex-col gap-5 border-ink">
             <div className="flex items-center justify-between">
               <span className="text-sm font-bold text-ink-3 uppercase tracking-[0.1em]">{label}</span>
               <div className="w-[30px] h-[30px] flex items-center justify-center" style={{ background: bg }}>

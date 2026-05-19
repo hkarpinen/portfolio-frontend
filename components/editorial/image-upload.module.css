@@ -1,0 +1,21 @@
+.editOverlay {
+  position: absolute;
+  inset: 0;
+  background: oklch(0% 0 0 / 0.45);
+  color: #fff;
+  font-size: var(--ts-meta);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 150ms;
+  cursor: pointer;
+  border: none;
+}
+.editOverlay:hover   { opacity: 1; }
+.editOverlay:disabled { cursor: not-allowed; }
+
+.circleOverlay {
+  border-radius: 9999px;
+}

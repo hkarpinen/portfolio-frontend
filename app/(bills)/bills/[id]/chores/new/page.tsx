@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useCreateChore } from "@/hooks/use-chores";
 import { useHouseholdMembers } from "@/hooks/use-household";
 import type { RecurrenceFrequency } from "@/lib/api/chores";
+import { Btn, Input, Textarea, SelectField } from "@/components/editorial";
 
 const FREQ_OPTIONS: { value: RecurrenceFrequency | ""; label: string }[] = [
   { value: "", label: "None (one-off)" },
@@ -47,28 +48,6 @@ export default function NewChorePage({ params }: { params: { id: string } }) {
     }
   }
 
-  const inputStyle: React.CSSProperties = {
-    width: "100%",
-    padding: "10px 12px",
-    border: "1px solid var(--ink)",
-    background: "var(--paper)",
-    color: "var(--ink)",
-    fontFamily: "var(--ff-body)",
-    fontSize: "var(--ts-body)",
-    outline: "none",
-    boxSizing: "border-box",
-  };
-
-  const labelStyle: React.CSSProperties = {
-    display: "block",
-    fontFamily: "var(--ff-mono)",
-    fontSize: "var(--ts-meta)",
-    letterSpacing: "0.08em",
-    textTransform: "uppercase",
-    color: "var(--ink-3)",
-    marginBottom: 6,
-  };
-
   return (
     <div className="page-enter max-w-[560]" >
       {/* Back */}
@@ -86,51 +65,41 @@ export default function NewChorePage({ params }: { params: { id: string } }) {
       </h1>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-10">
-        <div>
-          <label style={labelStyle}>Title *</label>
-          <input
-            style={inputStyle}
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="e.g. Take out the bins"
-            autoFocus
-          />
-        </div>
+        <Input
+          label="Title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="e.g. Take out the bins"
+          autoFocus
+        />
 
-        <div>
-          <label style={labelStyle}>Description</label>
-          <textarea
-            className="min-h-[80]" style={{ ...inputStyle, resize: "vertical" }}
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Optional notes…"
-          />
-        </div>
+        <Textarea
+          label="Description"
+          className="min-h-[80]"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          placeholder="Optional notes…"
+        />
 
         <div className="grid gap-8" style={{ gridTemplateColumns: "1fr 1fr" }}>
-          <div>
-            <label style={labelStyle}>Due Date</label>
-            <input
-              style={inputStyle}
-              type="date"
-              value={dueDate}
-              onChange={(e) => setDueDate(e.target.value)}
-            />
-          </div>
-          <div>
-            <label style={labelStyle}>Repeats</label>
-            <select
-              className="cursor-pointer" style={{ ...inputStyle }}
-              value={freq}
-              onChange={(e) => setFreq(e.target.value as RecurrenceFrequency | "")}
-            >
-              {FREQ_OPTIONS.map((o) => (
-                <option key={o.value} value={o.value}>
-                  {o.label}
-                </option>
-              ))}
-            </select>
-          </div>
+          <Input
+            label="Due Date"
+            type="date"
+            value={dueDate}
+            onChange={(e) => setDueDate(e.target.value)}
+          />
+          <SelectField
+            label="Repeats"
+            className="cursor-pointer"
+            value={freq}
+            onChange={(e) => setFreq(e.target.value as RecurrenceFrequency | "")}
+          >
+            {FREQ_OPTIONS.map((o) => (
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
+            ))}
+          </SelectField>
         </div>
 
         {error && (
@@ -140,13 +109,13 @@ export default function NewChorePage({ params }: { params: { id: string } }) {
         )}
 
         <div className="flex gap-6 pt-4">
-          <button
+          <Btn
             type="submit"
+            variant="primary"
             disabled={createChore.isPending}
-            className="bg-ink text-paper py-6 px-16 font-mono text-base tracking-[0.05em] uppercase" style={{ border: "none", cursor: createChore.isPending ? "default" : "pointer", opacity: createChore.isPending ? 0.6 : 1 }}
           >
             {createChore.isPending ? "Saving…" : "Create Chore"}
-          </button>
+          </Btn>
           <Link
             href={`/bills/${householdId}/chores`}
             className="py-6 px-12 font-mono text-base tracking-[0.05em] uppercase no-underline text-ink" style={{ border: "1px solid var(--ink)" }}

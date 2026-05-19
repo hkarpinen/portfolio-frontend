@@ -1,6 +1,7 @@
 "use client";
 
 import { usePayHouseholdExpense, useUnpayHouseholdExpense } from "@/hooks/use-expenses";
+import { Icon } from "@/components/editorial/icon";
 
 interface Props {
   householdId: string;
@@ -31,9 +32,7 @@ export function MarkPaidButton({ householdId, householdExpenseId, isPaid = false
         title="Click to mark unpaid"
         className="inline-flex items-center gap-3 py-[6px] px-[14px] rounded-full text-base font-semibold" style={{ background: isPending ? "var(--paper-3)" : "color-mix(in oklch, var(--success) 14%, transparent)", color: isPending ? "var(--text-3)" : "var(--success)", border: "1px solid color-mix(in oklch, var(--success) 30%, transparent)", cursor: isPending ? "not-allowed" : "pointer", transition: "background 110ms", opacity: isPending ? 0.7 : 1 }}
       >
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
-          <path d="M20 6L9 17l-5-5" />
-        </svg>
+        <Icon name="check" size={12} strokeWidth={2.5} />
         Paid
       </button>
     );
@@ -48,9 +47,7 @@ export function MarkPaidButton({ householdId, householdExpenseId, isPaid = false
       {isPending ? (
         <div className="w-6 h-6 rounded-full" style={{ border: "1.5px solid var(--text-3)", borderTopColor: "var(--success)", animation: "spin 0.8s linear infinite" }} />
       ) : (
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
-          <path d="M20 6L9 17l-5-5" />
-        </svg>
+        <Icon name="check" size={12} strokeWidth={2.5} />
       )}
       {isPending ? "Updating…" : "Mark Paid"}
     </button>

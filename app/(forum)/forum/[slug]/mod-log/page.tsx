@@ -8,8 +8,8 @@ export default function ModLogPage({ params }: { params: { slug: string } }) {
         </p>
       </div>
 
-      <div className="bg-paper py-24 px-12 text-center shadow-stamp" style={{ border: "1.5px solid var(--ink)" }}>
-        <div className="w-24 h-24 bg-[rgba(178,42,26,0.10)] flex items-center justify-center" style={{ margin: "0 auto 12px" }}>
+      <div className="bg-paper py-24 px-12 text-center shadow-stamp border-ink">
+        <div className="w-24 h-24 bg-red-soft flex items-center justify-center" style={{ margin: "0 auto 12px" }}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" strokeWidth={1.75}>
             <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2" />
           </svg>

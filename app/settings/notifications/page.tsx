@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Toggle } from "@/components/editorial";
+import { Toggle, Alert } from "@/components/editorial";
 
 const PREFS_KEY = "notification_prefs";
 
@@ -61,7 +61,6 @@ function NotifRow({
 
 const cardStyle: React.CSSProperties = {
   background: "var(--paper-2)",
-  border: "1.5px solid var(--ink)",
   padding: "20px",
 };
 
@@ -158,13 +157,7 @@ export default function NotificationsSettingsPage() {
             Manage your account, security, and preferences
           </p>
         </div>
-        {saved && (
-          <span
-            className="text-base font-semibold text-green bg-[rgba(61,107,43,0.10)] py-2 px-6 mt-2" style={{ border: "1px solid oklch(68% 0.18 152 / 0.25)" }}
-          >
-            Saved
-          </span>
-        )}
+        {saved && <Alert variant="success">Saved</Alert>}
       </div>
 
       {/* Tabs */}
@@ -186,7 +179,7 @@ export default function NotificationsSettingsPage() {
       {/* Notification groups */}
       <div className="flex flex-col gap-8">
         {groups.map(({ category, items }) => (
-          <div key={category} style={cardStyle}>
+          <div key={category} className="border-ink" style={cardStyle}>
             <p className="mb-2" style={{ ...sectionLabelStyle }}>{category}</p>
             {items.map((item, idx) => (
               <NotifRow

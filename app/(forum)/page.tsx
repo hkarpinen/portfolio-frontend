@@ -4,7 +4,8 @@ import { ThreadActions } from "./forum/[slug]/threads/[threadId]/thread-actions"
 import { fetchThreadsServer } from "@/lib/api/forum";
 import { fetchCommunitiesServer, fetchMyMembershipsServer } from "@/lib/api/communities";
 import { getCookieHeader } from "@/lib/server-cookies";
-import { timeAgo } from "@/lib/utils";
+import { timeAgo, getInitials } from "@/lib/utils";
+import { Icon } from "@/components/editorial/icon";
 import type { ThreadSummaryResponse, CommunitySummaryResponse } from "@/types/forum";
 
 export const dynamic = "force-dynamic";
@@ -89,8 +90,8 @@ export default async function ForumFeedPage({
           {tab === "communities" ? (
             <>
               {communities.length === 0 ? (
-                <div className="bg-paper py-24 px-12 text-center flex flex-col items-center gap-6" style={{ border: "1.5px solid var(--ink)" }}>
-                  <div className="w-[56px] h-[56px] bg-[rgba(178,42,26,0.10)] flex items-center justify-center">
+                <div className="bg-paper py-24 px-12 text-center flex flex-col items-center gap-6 border-ink">
+                  <div className="w-[56px] h-[56px] bg-red-soft flex items-center justify-center">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
                     </svg>
@@ -109,10 +110,10 @@ export default async function ForumFeedPage({
                       href={`/forum/${c.slug ?? c.name}`}
                       className="no-underline"
                     >
-                      <div className="card-hover bg-paper p-8 shadow-card cursor-pointer" style={{ border: "1.5px solid var(--ink)" }}>
+                      <div className="card-hover bg-paper p-8 shadow-card cursor-pointer border-ink">
                         <div className="flex items-center gap-5 mb-4">
-                          <div className="w-[36px] h-[36px] bg-[rgba(178,42,26,0.10)] flex items-center justify-center text-md shrink-0">
-                            {c.name.charAt(0).toUpperCase()}
+                          <div className="w-[36px] h-[36px] bg-red-soft flex items-center justify-center text-md shrink-0">
+                            {getInitials(c.name)}
                           </div>
                           <div>
                             <p className="font-serif font-bold text-md text-ink">
@@ -135,11 +136,9 @@ export default async function ForumFeedPage({
               )}
             </>
           ) : threads.length === 0 ? (
-            <div className="bg-paper py-24 px-12 text-center flex flex-col items-center gap-6" style={{ border: "1.5px solid var(--ink)" }}>
-              <div className="w-[56px] h-[56px] bg-[rgba(178,42,26,0.10)] flex items-center justify-center">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
-                </svg>
+            <div className="bg-paper py-24 px-12 text-center flex flex-col items-center gap-6 border-ink">
+              <div className="w-[56px] h-[56px] bg-red-soft flex items-center justify-center">
+                <span style={{ color: "var(--ink)" }}><Icon name="forum" size={24} strokeWidth={2} /></span>
               </div>
               <p className="font-serif font-bold text-md text-ink">No threads yet</p>
               <p className="text-base text-ink-3">Join a community and start a discussion</p>
@@ -148,7 +147,7 @@ export default async function ForumFeedPage({
             threads.map((thread) => (
               <div
                 key={thread.threadId}
-                className="bg-paper py-[14px] px-[16px] shadow-card flex gap-6 items-start" style={{ border: "1.5px solid var(--ink)" }}
+                className="bg-paper py-[14px] px-[16px] shadow-card flex gap-6 items-start border-ink"
               >
                 {/* Vote column */}
                 <VoteButtons
@@ -190,9 +189,7 @@ export default async function ForumFeedPage({
                       
                       className="row-hover flex items-center gap-2 py-2 px-5 text-base text-ink-3 no-underline font-medium"
                     >
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
-                      </svg>
+                      <Icon name="forum" size={13} strokeWidth={2} />
                       {thread.commentCount ?? 0} comments
                     </Link>
                     <ThreadActions
@@ -209,7 +206,7 @@ export default async function ForumFeedPage({
         {/* Sidebar */}
         <div className="flex flex-col gap-8">
           {/* Your communities */}
-          <div className="bg-paper p-8 shadow-stamp" style={{ border: "1.5px solid var(--ink)" }}>
+          <div className="bg-paper p-8 shadow-stamp border-ink">
             <p className="text-sm font-bold text-ink-3 uppercase tracking-[0.1em] mb-6">
               Your Communities
             </p>
@@ -226,8 +223,8 @@ export default async function ForumFeedPage({
                     
                     className="row-hover flex items-center gap-4 no-underline py-3 px-4"
                   >
-                    <div className="w-12 h-12 bg-[rgba(178,42,26,0.10)] flex items-center justify-center text-sm font-bold text-red shrink-0">
-                      {c.name.charAt(0).toUpperCase()}
+                    <div className="w-12 h-12 bg-red-soft flex items-center justify-center text-sm font-bold text-red shrink-0">
+                      {getInitials(c.name)}
                     </div>
                     <span className="text-base text-ink-2 font-medium">
                       {c.name}
@@ -245,7 +242,7 @@ export default async function ForumFeedPage({
           </div>
 
           {/* Forum rules */}
-          <div className="bg-paper p-8 shadow-stamp" style={{ border: "1.5px solid var(--ink)" }}>
+          <div className="bg-paper p-8 shadow-stamp border-ink">
             <p className="text-sm font-bold text-ink-3 uppercase tracking-[0.1em] mb-6">
               Forum Rules
             </p>
@@ -261,11 +258,9 @@ export default async function ForumFeedPage({
           {/* Create community CTA */}
           <Link
             href="/forum/new"
-            className="flex items-center justify-center gap-3 bg-[rgba(178,42,26,0.10)] py-5 px-8 text-base font-semibold text-red no-underline" style={{ border: "1.5px solid var(--red)", transition: "background 110ms" }}
+            className="flex items-center justify-center gap-3 bg-red-soft py-5 px-8 text-base font-semibold text-red no-underline" style={{ border: "1.5px solid var(--red)", transition: "background 110ms" }}
           >
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-            </svg>
+            <Icon name="plus" size={13} strokeWidth={2.5} />
             Create a Community
           </Link>
         </div>

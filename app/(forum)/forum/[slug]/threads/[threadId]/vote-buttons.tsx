@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useCastVote } from "@/hooks/use-forum";
 import { ApiError } from "@/lib/api-client";
+import { VoteArrow } from "@/components/editorial/vote-arrow";
 import styles from "./vote-buttons.module.css";
 
 interface VoteButtonsProps {
@@ -57,9 +58,7 @@ export function VoteButtons({ threadId, targetType, targetId, initialScore }: Vo
           color: voted === 1 ? "var(--success)" : undefined,
         }}
       >
-        <svg width="12" height="12" viewBox="0 0 24 24" fill={voted === 1 ? "currentColor" : "none"} stroke="currentColor" strokeWidth={2.5}>
-          <path d="M12 4l8 8H4l8-8z" />
-        </svg>
+        <VoteArrow direction="up" active={voted === 1} size={12} />
       </button>
 
       <span className="text-base font-bold font-serif leading-none" style={{ color: voted === 1 ? "var(--success)" : voted === -1 ? "var(--danger)" : "var(--text-2)" }}>
@@ -76,9 +75,7 @@ export function VoteButtons({ threadId, targetType, targetId, initialScore }: Vo
           color: voted === -1 ? "var(--danger)" : undefined,
         }}
       >
-        <svg width="12" height="12" viewBox="0 0 24 24" fill={voted === -1 ? "currentColor" : "none"} stroke="currentColor" strokeWidth={2.5}>
-          <path d="M12 20l-8-8h16l-8 8z" />
-        </svg>
+        <VoteArrow direction="down" active={voted === -1} size={12} />
       </button>
     </div>
   );

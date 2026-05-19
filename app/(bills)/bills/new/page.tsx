@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useCreateHousehold } from "@/hooks/use-household";
 import { ApiError } from "@/lib/api-client";
-import { Btn } from "@/components/editorial";
+import { Btn, Alert, Input, Textarea, Icon } from "@/components/editorial";
 
 const schema = z.object({
   name: z.string().min(1, "Name is required").max(100),
@@ -44,61 +44,33 @@ export default function NewHouseholdPage() {
         </p>
       </div>
 
-      <div className="bg-paper p-12 shadow-stamp" style={{ border: "1.5px solid var(--ink)" }}>
+      <div className="bg-paper p-12 shadow-stamp border-ink">
         {/* Info alert */}
-        <div className="flex gap-6 bg-[rgba(178,42,26,0.10)] py-[12px] px-[14px] mb-10" style={{ border: "1px solid var(--accent-border)" }}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 mt-[1px]"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <div className="flex gap-6 bg-red-soft py-[12px] px-[14px] mb-10" style={{ border: "1px solid var(--accent-border)" }}>
+          <span className="shrink-0 mt-[1px]" style={{ color: "var(--ink)" }}><Icon name="info" size={16} strokeWidth={2} /></span>
           <p className="text-base text-red leading-[1.5] m-0">You can invite members after creating the household using a shareable invite code.</p>
         </div>
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-8">
           {createHousehold.isError && (
-            <div className="bg-[rgba(178,42,26,0.10)] py-[10px] px-[14px] text-base text-red" style={{ border: "1px solid var(--danger)" }}>
+            <Alert variant="danger">
               {createHousehold.error instanceof ApiError ? createHousehold.error.message : "Something went wrong. Please try again."}
-            </div>
+            </Alert>
           )}
 
-          <div className="flex flex-col gap-3">
-            <label className="text-base font-medium text-ink-2 tracking-[0.02em]">
-              Name
-            </label>
-            <input
-              type="text"
-              {...register("name")}
-              placeholder="My Household"
-              className="h-[38px] p-[0_12px] bg-paper-2 text-ink text-md outline-none w-full" style={{ border: "1.5px solid var(--ink)" }}
-              onFocus={(e) => {
-                e.currentTarget.style.borderColor = "var(--ink)";
-                e.currentTarget.style.boxShadow = "0 0 0 3px rgba(178,42,26,0.08)";
-              }}
-              onBlur={(e) => {
-                e.currentTarget.style.borderColor = "var(--ink-3)";
-                e.currentTarget.style.boxShadow = "none";
-              }}
-            />
-            {errors.name && (
-              <p className="text-red text-base">{errors.name.message}</p>
-            )}
-          </div>
+          <Input
+            label="Name"
+            type="text"
+            {...register("name")}
+            placeholder="My Household"
+            error={errors.name?.message}
+          />
 
-          <div className="flex flex-col gap-3">
-            <label className="text-base font-medium text-ink-2 tracking-[0.02em]">
-              Description <span className="text-ink-3 font-normal">(optional)</span>
-            </label>
-            <textarea
-              {...register("description")}
-              placeholder="Describe this household"
-              rows={3}
-              className="py-5 px-6 bg-paper-2 text-ink text-md outline-none w-full font-body" style={{ border: "1.5px solid var(--ink)", resize: "vertical" }}
-              onFocus={(e) => {
-                e.currentTarget.style.borderColor = "var(--ink)";
-                e.currentTarget.style.boxShadow = "0 0 0 3px rgba(178,42,26,0.08)";
-              }}
-              onBlur={(e) => {
-                e.currentTarget.style.borderColor = "var(--ink-3)";
-                e.currentTarget.style.boxShadow = "none";
-              }}
-            />
-          </div>
+          <Textarea
+            label="Description (optional)"
+            {...register("description")}
+            placeholder="Describe this household"
+            rows={3}
+          />
 
           <div className="flex gap-5">
             <Btn

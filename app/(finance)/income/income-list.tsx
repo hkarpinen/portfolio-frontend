@@ -3,13 +3,14 @@
 import { useState } from "react";
 import { useDeleteIncomeSource, useIncome, useNetPayBreakdown, useUpdateIncomeSource } from "@/hooks/use-income";
 import type { IncomeListResponse, IncomeSource } from "@/types/finance";
-import { DeleteIconButton } from "@/components/ui/delete-icon-button";
+import { DeleteIconButton } from "@/components/editorial/delete-icon-button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IncomeDetailPanel, PERIODS, type Period } from "./income-detail-panel";
 import { ManageDeductionsModal } from "./manage-deductions-modal";
 import { toMonthlyAmount } from "@/lib/utils";
-import { incomeSchema, FREQUENCIES, FREQUENCY_LABELS, iStyle, Field, onFocusField, onBlurField, type IncomeFormData } from "./_income-form-shared";
+import { incomeSchema, FREQUENCIES, FREQUENCY_LABELS, type IncomeFormData } from "./_income-form-shared";
+import { Input, SelectField, Icon } from "@/components/editorial";
 
 function toMonthly(s: IncomeSource): number {
   return toMonthlyAmount(s.amount, s.quotedAs);
@@ -65,7 +66,7 @@ function IncomeCard({
   return (
     <>
       <div
-        className="bg-paper py-[14px] px-[16px] shadow-stamp" style={{ border: "1.5px solid var(--ink)" }}
+        className="bg-paper py-[14px] px-[16px] shadow-stamp border-ink"
       >
         {/* Single row: name · freq — amounts — icon actions — chevron */}
         <div
@@ -94,7 +95,7 @@ function IncomeCard({
             </div>
             {netMonthly !== null && netMonthly !== grossMonthly && (
               <>
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--border-2)" strokeWidth="2.5" strokeLinecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                <span style={{ color: "var(--border-2)" }}><Icon name="arrowRight" size={10} strokeWidth={2.5} /></span>
                 <div className="text-right">
                   <div className="text-sm font-bold text-red uppercase tracking-[0.08em] mb-[1px]">Net</div>
                   <span className="font-serif font-bold text-md text-red tracking-snug">
@@ -111,23 +112,20 @@ function IncomeCard({
             <button
               onClick={() => { setEditOpen((v) => !v); setExpanded(false); }}
               title="Edit income"
+              aria-label="Edit income"
               className="w-16 h-16 flex items-center justify-center cursor-pointer shrink-0" style={{ border: "none", background: editOpen ? "rgba(178,42,26,0.08)" : "var(--paper-2)", color: editOpen ? "var(--red)" : "var(--text-3)" }}
             >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
-                <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
-              </svg>
+              <Icon name="edit" size={13} strokeWidth={2} />
             </button>
 
             {/* Deductions icon button */}
             <button
               onClick={() => setModalOpen(true)}
               title="Manage deductions"
+              aria-label="Manage deductions"
               className="w-16 h-16 flex items-center justify-center cursor-pointer shrink-0" style={{ border: "none", background: hasDeductions ? "rgba(178,42,26,0.08)" : "var(--paper-2)", color: hasDeductions ? "var(--red)" : "var(--text-3)" }}
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
-              </svg>
+              <Icon name="dollar" size={14} strokeWidth={2} />
             </button>
 
             <DeleteIconButton
@@ -138,11 +136,9 @@ function IncomeCard({
           </div>
 
           {/* Chevron */}
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-            stroke="var(--text-3)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-            className="shrink-0" style={{ transform: expanded ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 200ms" }}>
-            <polyline points="6 9 12 15 18 9" />
-          </svg>
+          <span className="shrink-0" style={{ transform: expanded ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 200ms", display: "inline-flex", color: "var(--text-3)" }}>
+            <Icon name="chevDown" size={14} />
+          </span>
         </div>
 
         {/* Inline edit form */}
@@ -154,31 +150,17 @@ function IncomeCard({
             <p className="text-sm font-bold text-ink-3 uppercase tracking-[0.08em] m-0">Edit income source</p>
 
             <div className="grid gap-5" style={{ gridTemplateColumns: "1fr 1fr" }}>
-              <Field label="Source name" error={editErrors.source?.message}>
-                <input {...register("source")} style={iStyle} onFocus={onFocusField} onBlur={onBlurField} />
-              </Field>
-              <Field label="Currency" error={editErrors.currency?.message}>
-                <input {...register("currency")} style={iStyle} onFocus={onFocusField} onBlur={onBlurField} />
-              </Field>
-              <Field label="Amount" error={editErrors.amount?.message}>
-                <input type="number" step="0.01" {...register("amount")} style={iStyle} onFocus={onFocusField} onBlur={onBlurField} />
-              </Field>
-              <Field label="Amount quoted as" error={editErrors.quotedAs?.message}>
-                <select {...register("quotedAs")} style={iStyle} onFocus={onFocusField} onBlur={onBlurField}>
-                  {FREQUENCIES.map((f) => <option key={f} value={f}>{FREQUENCY_LABELS[f]}</option>)}
-                </select>
-              </Field>
-              <Field label="Paid every" error={editErrors.paidEvery?.message}>
-                <select {...register("paidEvery")} style={iStyle} onFocus={onFocusField} onBlur={onBlurField}>
-                  {FREQUENCIES.map((f) => <option key={f} value={f}>{FREQUENCY_LABELS[f]}</option>)}
-                </select>
-              </Field>
-              <Field label="Start date" error={editErrors.startDate?.message}>
-                <input type="date" {...register("startDate")} style={iStyle} onFocus={onFocusField} onBlur={onBlurField} />
-              </Field>
-              <Field label="Last paycheck date" error={editErrors.lastPaycheckDate?.message}>
-                <input type="date" {...register("lastPaycheckDate")} style={iStyle} onFocus={onFocusField} onBlur={onBlurField} />
-              </Field>
+              <Input label="Source name" error={editErrors.source?.message} {...register("source")} />
+              <Input label="Currency" error={editErrors.currency?.message} {...register("currency")} />
+              <Input type="number" step="0.01" label="Amount" error={editErrors.amount?.message} {...register("amount")} />
+              <SelectField label="Amount quoted as" error={editErrors.quotedAs?.message} {...register("quotedAs")}>
+                {FREQUENCIES.map((f) => <option key={f} value={f}>{FREQUENCY_LABELS[f]}</option>)}
+              </SelectField>
+              <SelectField label="Paid every" error={editErrors.paidEvery?.message} {...register("paidEvery")}>
+                {FREQUENCIES.map((f) => <option key={f} value={f}>{FREQUENCY_LABELS[f]}</option>)}
+              </SelectField>
+              <Input type="date" label="Start date" error={editErrors.startDate?.message} {...register("startDate")} />
+              <Input type="date" label="Last paycheck date" error={editErrors.lastPaycheckDate?.message} {...register("lastPaycheckDate")} />
             </div>
 
             {updateIncome.isError && (
@@ -186,7 +168,7 @@ function IncomeCard({
             )}
             <div className="flex gap-4 justify-end">
               <button type="button" onClick={() => { setEditOpen(false); resetForm(); }}
-                className="py-[6px] px-[14px] bg-paper-2 text-base font-semibold text-ink-2 cursor-pointer" style={{ border: "1.5px solid var(--ink)" }}>
+                className="py-[6px] px-[14px] bg-paper-2 text-base font-semibold text-ink-2 cursor-pointer border-ink">
                 Cancel
               </button>
               <button type="submit" disabled={updateIncome.isPending}
@@ -215,11 +197,9 @@ export function IncomeList({ initialData }: { initialData: IncomeListResponse })
 
   if (sources.length === 0) {
     return (
-      <div className="bg-paper py-24 px-12 text-center flex flex-col items-center gap-5 mb-12 shadow-stamp" style={{ border: "1.5px solid var(--ink)" }}>
-        <div className="w-[56px] h-[56px] bg-[rgba(178,42,26,0.10)] flex items-center justify-center">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
-          </svg>
+      <div className="bg-paper py-24 px-12 text-center flex flex-col items-center gap-5 mb-12 shadow-stamp border-ink">
+        <div className="w-[56px] h-[56px] bg-red-soft flex items-center justify-center">
+          <span style={{ color: "var(--ink)" }}><Icon name="dollar" size={24} strokeWidth={2} /></span>
         </div>
         <p className="font-serif font-bold text-md text-ink">
           No income sources yet

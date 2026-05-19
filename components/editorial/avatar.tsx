@@ -1,5 +1,6 @@
 import React from "react";
 import * as RadixAvatar from "@radix-ui/react-avatar";
+import { getInitials } from "@/lib/utils";
 
 interface AvatarProps {
   name?: string | null;
@@ -9,20 +10,19 @@ interface AvatarProps {
 }
 
 export function Avatar({ name, url, size = 36, online }: AvatarProps) {
-  const initials = name
-    ? name.split(/\s+/).map(p => p[0]).filter(Boolean).slice(0, 2).join("").toUpperCase()
-    : "?";
+  const initials = getInitials(name);
 
   return (
     <div className="relative shrink-0" style={{ width: size, height: size }}>
       <RadixAvatar.Root
-        style={{ width: size, height: size, border: "1.5px solid var(--ink)", background: "var(--paper-3)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}
+        className="border-ink bg-paper-3 flex items-center justify-center shrink-0"
+        style={{ width: size, height: size }}
       >
         {url && (
           <RadixAvatar.Image
             src={url}
             alt={name ?? ""}
-            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+            className="w-full h-full object-cover block"
           />
         )}
         <RadixAvatar.Fallback
@@ -34,13 +34,12 @@ export function Avatar({ name, url, size = 36, online }: AvatarProps) {
       </RadixAvatar.Root>
       {online && (
         <span
+          className="absolute bg-red"
           style={{
-            position: "absolute",
             bottom: -2,
             right: -2,
             width: 8,
             height: 8,
-            background: "var(--red)",
             border: "1.5px solid var(--paper)",
           }}
         />
@@ -57,22 +56,16 @@ interface CommunityAvatarProps {
 }
 
 export function CommunityAvatar({ name, image, size = 48 }: CommunityAvatarProps) {
-  const initial = name.charAt(0).toUpperCase();
+  const initial = getInitials(name);
 
   return (
     <div
-      className="shrink-0 flex items-center justify-center"
-      style={{
-        width: size,
-        height: size,
-        background: "var(--paper-2)",
-        border: "1.5px solid var(--ink)",
-        overflow: "hidden",
-      }}
+      className="shrink-0 flex items-center justify-center border-ink overflow-hidden bg-paper-2"
+      style={{ width: size, height: size }}
     >
       {image ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={image} alt={name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+        <img src={image} alt={name} className="w-full h-full object-cover" />
       ) : (
         <span
           className="font-serif italic text-ink"

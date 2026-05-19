@@ -42,7 +42,7 @@ export function DangerZone({ householdId, members }: DangerZoneProps) {
             </button>
             <button
               onClick={() => setShowDeleteConfirm(false)}
-              className="bg-transparent text-ink-2 py-4 px-10 text-base font-medium cursor-pointer font-body" style={{ border: "1.5px solid var(--ink)" }}
+              className="bg-transparent text-ink-2 py-4 px-10 text-base font-medium cursor-pointer font-body border-ink"
             >
               Cancel
             </button>
@@ -60,7 +60,7 @@ export function DangerZone({ householdId, members }: DangerZoneProps) {
           </p>
           <button
             onClick={() => setShowDeleteConfirm(true)}
-            className="bg-[rgba(178,42,26,0.10)] text-red py-4 px-10 text-base font-medium cursor-pointer self-start font-body" style={{ border: "1px solid var(--danger)" }}
+            className="bg-red-soft text-red py-4 px-10 text-base font-medium cursor-pointer self-start font-body" style={{ border: "1px solid var(--danger)" }}
           >
             Delete Household
           </button>

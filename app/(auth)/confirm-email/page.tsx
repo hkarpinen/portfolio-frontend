@@ -3,7 +3,7 @@
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { api, ApiError } from "@/lib/api-client";
-import { Btn } from "@/components/editorial";
+import { Btn, Icon } from "@/components/editorial";
 
 function ConfirmEmailContent() {
   const searchParams = useSearchParams();
@@ -32,7 +32,7 @@ function ConfirmEmailContent() {
   }, [token, userId]);
 
   return (
-    <div className="bg-paper-2 shadow-stamp py-20 px-16 text-center" style={{ border: "1.5px solid var(--ink)" }}>
+    <div className="bg-paper-2 shadow-stamp py-20 px-16 text-center border-ink">
       {status === "loading" && (
         <>
           <div className="w-[56px] h-[56px]" style={{ border: "2px solid var(--ink-4)", borderTopColor: "var(--ink)", animation: "spin 0.8s linear infinite", margin: "0 auto 20px" }} />
@@ -42,10 +42,8 @@ function ConfirmEmailContent() {
 
       {status === "success" && (
         <>
-          <div className="w-[56px] h-[56px] bg-[rgba(61,107,43,0.10)] flex items-center justify-center" style={{ margin: "0 auto 20px", border: "1.5px solid var(--green)" }}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--green)" strokeWidth={2}>
-              <path d="M20 6L9 17l-5-5" />
-            </svg>
+          <div className="w-[56px] h-[56px] bg-green-soft flex items-center justify-center" style={{ margin: "0 auto 20px", border: "1.5px solid var(--green)" }}>
+            <span style={{ color: "var(--green)" }}><Icon name="check" size={24} strokeWidth={2} /></span>
           </div>
           <h1 className="font-serif italic font-normal text-3xl tracking-[-0.025em] text-ink mb-4">Email confirmed<span className="text-red">.</span></h1>
           <p className="text-base text-ink-3 leading-[1.6] mb-[28px]">{message}</p>
@@ -55,10 +53,8 @@ function ConfirmEmailContent() {
 
       {status === "error" && (
         <>
-          <div className="w-[56px] h-[56px] bg-[rgba(178,42,26,0.10)] flex items-center justify-center" style={{ margin: "0 auto 20px", border: "1.5px solid var(--red)" }}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--red)" strokeWidth={2}>
-              <path d="M18 6L6 18M6 6l12 12" />
-            </svg>
+          <div className="w-[56px] h-[56px] bg-red-soft flex items-center justify-center" style={{ margin: "0 auto 20px", border: "1.5px solid var(--red)" }}>
+            <span style={{ color: "var(--red)" }}><Icon name="x" size={24} strokeWidth={2} /></span>
           </div>
           <h1 className="font-serif italic font-normal text-3xl tracking-[-0.025em] text-ink mb-4">Confirmation failed<span className="text-red">.</span></h1>
           <p className="text-base text-ink-3 leading-[1.6] mb-[28px]">{message}</p>
@@ -76,7 +72,7 @@ export default function ConfirmEmailPage() {
   return (
     <Suspense
       fallback={
-        <div className="bg-paper-2 py-20 px-16 shadow-stamp text-center" style={{ border: "1.5px solid var(--ink)" }}>
+        <div className="bg-paper-2 py-20 px-16 shadow-stamp text-center border-ink">
           <div className="w-[48px] h-[48px] mx-auto" style={{ border: "2px solid var(--ink-4)", borderTopColor: "var(--ink)", animation: "spin 0.8s linear infinite" }} />
         </div>
       }

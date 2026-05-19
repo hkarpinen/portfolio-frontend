@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRecurringStreams, useRefreshRecurring, useAcceptRecurring, usePlaidItems } from "@/hooks/use-connections";
+import { Icon } from "@/components/editorial/icon";
 import type { RecurringSuggestion } from "@/lib/api/plaid";
 
 // Frequency label map
@@ -17,10 +18,10 @@ const FREQ_LABELS: Record<string, string> = {
 
 function StreamCard({ stream, onAccept, accepting }: { stream: RecurringSuggestion; onAccept: () => void; accepting: boolean }) {
   return (
-    <div className="bg-paper py-[16px] px-[18px] flex items-center justify-between gap-8 shadow-stamp" style={{ border: "1.5px solid var(--ink)" }}>
+    <div className="bg-paper py-[16px] px-[18px] flex items-center justify-between gap-8 shadow-stamp border-ink">
       <div className="flex items-center gap-[14px] min-w-0">
         {/* Icon */}
-        <div className="w-20 h-20 bg-[rgba(61,107,43,0.10)] flex items-center justify-center shrink-0">
+        <div className="w-20 h-20 bg-green-soft flex items-center justify-center shrink-0">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--success)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
             <polyline points="17 6 23 6 23 12" />
@@ -49,9 +50,9 @@ function StreamCard({ stream, onAccept, accepting }: { stream: RecurringSuggesti
       {stream.isLinked ? (
         <a
           href="/income"
-          className="text-base font-semibold text-green no-underline py-3 px-6 bg-[rgba(61,107,43,0.10)] shrink-0" style={{ border: "1px solid oklch(68% 0.18 152 / 0.25)" }}
+          className="text-base font-semibold text-green no-underline py-3 px-6 bg-green-soft shrink-0 inline-flex items-center gap-[5px]" style={{ border: "1px solid oklch(68% 0.18 152 / 0.25)" }}
         >
-          ✓ Added
+          <Icon name="check" size={11} strokeWidth={2} /> Added
         </a>
       ) : (
         <button
@@ -108,7 +109,7 @@ export function PlaidIncomeSuggestions() {
             <span className="text-sm text-ink-3">Loading…</span>
           )}
           {inflows.length > 0 && (
-            <span className="text-sm font-bold text-red bg-[rgba(178,42,26,0.10)] py-[1px] px-[8px]">
+            <span className="text-sm font-bold text-red bg-red-soft py-[1px] px-[8px]">
               {inflows.filter(s => !s.isLinked).length} new
             </span>
           )}
@@ -123,7 +124,7 @@ export function PlaidIncomeSuggestions() {
                 itemsQuery.data!.forEach(item => refresh.mutate(item.connectionId));
               }}
               disabled={refresh.isPending}
-              className="bg-transparent py-2 px-5 text-base text-ink-3 cursor-pointer" style={{ border: "1.5px solid var(--ink)", opacity: refresh.isPending ? 0.5 : 1, transition: "opacity 150ms" }}
+              className="bg-transparent py-2 px-5 text-base text-ink-3 cursor-pointer border-ink" style={{opacity: refresh.isPending ? 0.5 : 1, transition: "opacity 150ms" }}
             >
               {refresh.isPending ? "Detecting…" : "↺ Refresh"}
             </button>
@@ -145,7 +146,7 @@ export function PlaidIncomeSuggestions() {
       {!collapsed && (
         <div className="flex flex-col gap-5">
           {showEmpty ? (
-            <div className="bg-paper py-[20px] px-[18px] text-center text-ink-3 text-base" style={{ border: "1.5px solid var(--ink)" }}>
+            <div className="bg-paper py-[20px] px-[18px] text-center text-ink-3 text-base border-ink">
               No recurring deposits detected yet.{" "}
               <button
                 onClick={() => itemsQuery.data!.forEach(item => refresh.mutate(item.connectionId))}

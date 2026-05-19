@@ -27,8 +27,8 @@ export function ExpensesList({ householdId, initialData, canDelete }: ExpensesLi
 
   if (expenses.length === 0) {
     return (
-      <div className="bg-paper py-20 px-12 text-center" style={{ border: "1.5px solid var(--ink)" }}>
-        <div className="w-24 h-24 bg-[rgba(178,42,26,0.10)] flex items-center justify-center" style={{ margin: "0 auto 12px" }}>
+      <div className="bg-paper py-20 px-12 text-center border-ink">
+        <div className="w-24 h-24 bg-red-soft flex items-center justify-center" style={{ margin: "0 auto 12px" }}>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" strokeWidth={1.75}>
             <path d="M17 9V7a5 5 0 0 0-10 0v2M5 9h14l1 12H4L5 9z" />
           </svg>
@@ -59,7 +59,7 @@ export function ExpensesList({ householdId, initialData, canDelete }: ExpensesLi
 
         return (
           <div key={expense.expenseId}  className="expenses-list-item relative">
-            <div className="flex items-center gap-5 bg-paper overflow-hidden" style={{ border: "1.5px solid var(--ink)" }}>
+            <div className="flex items-center gap-5 bg-paper overflow-hidden border-ink">
               {/* Status colour dot */}
               <div className="w-2 self-stretch shrink-0" style={{ background: isOverdue ? "var(--danger)" : isDueSoon ? "var(--warning)" : "var(--red)" }} />
 
@@ -80,10 +80,10 @@ export function ExpensesList({ householdId, initialData, canDelete }: ExpensesLi
                   <div className="flex items-center gap-3 flex-wrap">
                     <span className="text-md font-semibold text-ink">{expense.title}</span>
                     {expense.recurrenceFrequency && (
-                      <span className="py-[1px] px-[7px] bg-[rgba(178,42,26,0.10)] text-red text-sm font-medium">{expense.recurrenceFrequency}</span>
+                      <span className="py-[1px] px-[7px] bg-red-soft text-red text-sm font-medium">{expense.recurrenceFrequency}</span>
                     )}
                     {expense.category && (
-                      <span className="py-[1px] px-[7px] bg-paper-3 text-ink-2 text-sm font-mono" style={{ border: "1.5px solid var(--ink)" }}>{String(expense.category)}</span>
+                      <span className="py-[1px] px-[7px] bg-paper-3 text-ink-2 text-sm font-mono border-ink">{String(expense.category)}</span>
                     )}
                   </div>
                   <p className="text-base text-ink-3 mt-1">
@@ -107,7 +107,7 @@ export function ExpensesList({ householdId, initialData, canDelete }: ExpensesLi
                   <button
                     onClick={(e) => onDelete(e, expense.expenseId)}
                     disabled={deleteMutation.isPending && deleteMutation.variables === expense.expenseId}
-                    className="py-2 px-5 bg-[rgba(178,42,26,0.10)] text-red text-sm font-medium cursor-pointer" style={{ border: "1px solid oklch(62% 0.21 22 / 0.25)", opacity: deleteMutation.isPending && deleteMutation.variables === expense.expenseId ? 0.5 : 1, transition: "opacity 110ms" }}
+                    className="py-2 px-5 bg-red-soft text-red text-sm font-medium cursor-pointer" style={{ border: "1px solid oklch(62% 0.21 22 / 0.25)", opacity: deleteMutation.isPending && deleteMutation.variables === expense.expenseId ? 0.5 : 1, transition: "opacity 110ms" }}
                   >
                     {deleteMutation.isPending && deleteMutation.variables === expense.expenseId ? "…" : "Delete"}
                   </button>

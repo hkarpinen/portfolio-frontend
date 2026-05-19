@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useForumSearch } from "@/hooks/use-forum";
 import { timeAgo } from "@/lib/utils";
+import { Icon } from "@/components/editorial/icon";
 import type { SearchResult } from "@/types/forum";
 
 export const dynamic = 'force-dynamic';
@@ -33,21 +34,17 @@ export default function SearchPage() {
 
       {/* Search input */}
       <div className="relative">
-        <svg
-          width="16" height="16" viewBox="0 0 24 24" fill="none"
-          stroke="var(--text-3)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-          className="absolute left-[14px] top-[50%] pointer-events-none shrink-0" style={{ transform: "translateY(-50%)" }}
-        >
-          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-        </svg>
+        <span className="absolute left-[14px] top-[50%] pointer-events-none shrink-0" style={{ transform: "translateY(-50%)", color: "var(--text-3)", display: "inline-flex" }}>
+          <Icon name="search" size={16} strokeWidth={2} />
+        </span>
         <input
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           autoFocus
           placeholder="Search threads and communities…"
-          className="w-full py-6 px-8 pl-20 bg-paper text-ink text-md outline-none shadow-card"
-          style={{ paddingRight: loading ? "44px" : "16px", border: "1.5px solid var(--ink)", boxSizing: "border-box" }}
+          className="w-full py-6 px-8 pl-20 bg-paper text-ink text-md outline-none shadow-card border-ink"
+          style={{ paddingRight: loading ? "44px" : "16px", boxSizing: "border-box" }}
         />
         {loading && (
           <div className="absolute right-[14px] top-[50%] w-8 h-8 rounded-full" style={{ transform: "translateY(-50%)", border: "2px solid var(--ink-4)", borderTopColor: "var(--red)", animation: "spin 0.7s linear infinite" }} />
@@ -65,9 +62,9 @@ export default function SearchPage() {
       )}
 
       {query && !loading && results.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-24 px-12 bg-paper shadow-card gap-4" style={{ border: "1.5px solid var(--ink)" }}>
-          <div className="w-[56px] h-[56px] bg-[rgba(178,42,26,0.10)] flex items-center justify-center text-xl">
-            🔍
+        <div className="flex flex-col items-center justify-center py-24 px-12 bg-paper shadow-card gap-4 border-ink">
+          <div className="w-[56px] h-[56px] bg-red-soft flex items-center justify-center">
+            <Icon name="search" size={24} strokeWidth={1.75} />
           </div>
           <p className="font-serif font-bold text-md text-ink">No results</p>
           <p className="text-base text-ink-3">Nothing found for &ldquo;{query}&rdquo;</p>
@@ -75,7 +72,7 @@ export default function SearchPage() {
       )}
 
       {results.length > 0 && (
-        <div className="bg-paper overflow-hidden shadow-stamp" style={{ border: "1.5px solid var(--ink)" }}>
+        <div className="bg-paper overflow-hidden shadow-stamp border-ink">
           {results.map((result, i) => {
             const href =
               result.itemType === "community"

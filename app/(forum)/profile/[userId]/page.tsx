@@ -2,7 +2,8 @@
 import Link from "next/link";
 import { useMe } from "@/hooks/use-identity";
 import { useForumProfile, useProfileThreads, useProfileMemberships, useProfileComments } from "@/hooks/use-forum";
-import { timeAgo, formatDate } from "@/lib/utils";
+import { timeAgo, formatDate, getInitials } from "@/lib/utils";
+import { Icon } from "@/components/editorial/icon";
 
 export default function ProfilePage({ params }: { params: { userId: string } }) {
   const { userId } = params;
@@ -14,7 +15,7 @@ export default function ProfilePage({ params }: { params: { userId: string } }) 
 
   const isOwnProfile = me?.id === userId;
   const displayName = profile?.displayName ?? "Unknown User";
-  const initials = displayName.split(/\s+/).map((p: string) => p[0]).filter(Boolean).slice(0, 2).join("").toUpperCase() || "?";
+  const initials = getInitials(displayName);
   const threads = threadsData?.items ?? [];
   const comments = commentsData?.items ?? [];
 
@@ -29,7 +30,7 @@ export default function ProfilePage({ params }: { params: { userId: string } }) 
   return (
     <div  className="page-enter flex flex-col gap-12">
       {/* Hero */}
-      <div className="bg-paper p-16 shadow-card relative overflow-hidden" style={{ border: "1.5px solid var(--ink)" }}>
+      <div className="bg-paper p-16 shadow-card relative overflow-hidden border-ink">
         <div className="dot-grid absolute inset-0 opacity-[0.3] pointer-events-none"  />
         <div className="relative flex items-start gap-10 flex-wrap">
           {/* Avatar */}
@@ -50,7 +51,7 @@ export default function ProfilePage({ params }: { params: { userId: string } }) 
             <div className="flex items-center gap-5 flex-wrap">
               <h1 className="font-serif font-extrabold text-2xl tracking-[-0.025em] text-ink m-0">{displayName}</h1>
               {isOwnProfile && (
-                <span className="text-sm font-mono text-red bg-[rgba(178,42,26,0.10)] py-1 px-4">You</span>
+                <span className="text-sm font-mono text-red bg-red-soft py-1 px-4">You</span>
               )}
             </div>
             {profile?.bio && (
@@ -71,7 +72,7 @@ export default function ProfilePage({ params }: { params: { userId: string } }) 
       </div>
 
       {/* Communities */}
-      <div className="bg-paper p-10 shadow-stamp" style={{ border: "1.5px solid var(--ink)" }}>
+      <div className="bg-paper p-10 shadow-stamp border-ink">
         <h2 className="font-serif font-bold text-md text-ink mb-8">Communities</h2>
         {!memberships || memberships.length === 0 ? (
           <p className="text-base text-ink-3">Not a member of any communities yet.</p>
@@ -87,7 +88,9 @@ export default function ProfilePage({ params }: { params: { userId: string } }) 
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={m.communityImageUrl} alt="" className="w-16 h-16 object-cover shrink-0" />
                 ) : (
-                  <div className="w-16 h-16 bg-[rgba(178,42,26,0.10)] flex items-center justify-center text-md shrink-0">💬</div>
+                  <div className="w-16 h-16 bg-red-soft flex items-center justify-center shrink-0">
+                    <Icon name="forum" size={14} />
+                  </div>
                 )}
                 <div className="flex-1">
                   <p className="text-base font-semibold text-ink m-0">{m.communityName}</p>
@@ -105,7 +108,7 @@ export default function ProfilePage({ params }: { params: { userId: string } }) 
       </div>
 
       {/* Threads */}
-      <div className="bg-paper overflow-hidden shadow-stamp" style={{ border: "1.5px solid var(--ink)" }}>
+      <div className="bg-paper overflow-hidden shadow-stamp border-ink">
         <div className="p-[20px_20px_12px]">
           <h2 className="font-serif font-bold text-md text-ink m-0">Recent Threads</h2>
         </div>
@@ -141,7 +144,7 @@ export default function ProfilePage({ params }: { params: { userId: string } }) 
       </div>
 
       {/* Recent Comments */}
-      <div className="bg-paper overflow-hidden shadow-stamp" style={{ border: "1.5px solid var(--ink)" }}>
+      <div className="bg-paper overflow-hidden shadow-stamp border-ink">
         <div className="p-[20px_20px_12px]">
           <h2 className="font-serif font-bold text-md text-ink m-0">Recent Comments</h2>
         </div>

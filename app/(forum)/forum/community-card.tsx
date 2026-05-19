@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ApiError } from "@/lib/api-client";
+import { getInitials } from "@/lib/utils";
 import { useCommunityMembership, useJoinCommunity } from "@/hooks/use-community";
 import type { CommunityActivitySnapshot } from "@/types/forum";
 
@@ -37,9 +38,9 @@ function ActivityAvatar({ avatarUrl, name }: { avatarUrl?: string; name?: string
       <img src={avatarUrl} alt="" className="w-[18] h-[18] object-cover shrink-0" />
     );
   }
-  const initial = (name ?? "?")[0].toUpperCase();
+  const initial = getInitials(name);
   return (
-    <div className="w-[18] h-[18] bg-[rgba(178,42,26,0.10)] flex items-center justify-center text-sm font-bold text-red shrink-0">{initial}</div>
+    <div className="w-[18] h-[18] bg-red-soft flex items-center justify-center text-sm font-bold text-red shrink-0">{initial}</div>
   );
 }
 
@@ -69,7 +70,7 @@ export function CommunityCard({ communityId, slug, name, description, imageUrl, 
 
   return (
     <div
-      className="bg-paper p-10 shadow-card transition-[box-shadow,transform] duration-[180ms] ease-out hover:shadow-stamp" style={{ border: "1.5px solid var(--ink)" }}
+      className="bg-paper p-10 shadow-card transition-[box-shadow,transform] duration-[180ms] ease-out hover:shadow-stamp border-ink"
     >
       <div className="flex items-start justify-between gap-8">
         <Link href={`/forum/${slug}`} className="flex-1 min-w-0 flex items-center gap-6 no-underline">
@@ -78,11 +79,11 @@ export function CommunityCard({ communityId, slug, name, description, imageUrl, 
             <img
               src={imageUrl}
               alt=""
-              className="w-24 h-24 object-cover shrink-0" style={{ border: "1.5px solid var(--ink)" }}
+              className="w-24 h-24 object-cover shrink-0 border-ink"
             />
           ) : (
-            <div className="w-24 h-24 bg-[rgba(178,42,26,0.10)] shrink-0 flex items-center justify-center text-lg font-bold text-red font-serif">
-              {name[0].toUpperCase()}
+            <div className="w-24 h-24 bg-red-soft shrink-0 flex items-center justify-center text-lg font-bold text-red font-serif">
+              {getInitials(name)}
             </div>
           )}
           <div className="min-w-0">
@@ -108,7 +109,7 @@ export function CommunityCard({ communityId, slug, name, description, imageUrl, 
           {joined === null ? (
             <div  className="skeleton w-32 h-[28px] bg-paper-3" />
           ) : joined ? (
-            <span className="text-sm font-medium text-ink-3 py-1 px-4 bg-paper-3" style={{ border: "1.5px solid var(--ink)" }}>
+            <span className="text-sm font-medium text-ink-3 py-1 px-4 bg-paper-3 border-ink">
               Joined
             </span>
           ) : (

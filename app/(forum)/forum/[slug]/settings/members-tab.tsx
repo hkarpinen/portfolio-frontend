@@ -2,6 +2,7 @@
 
 import { useCommunityMembers, useAppointModerator, useRemoveModerator } from "@/hooks/use-community";
 import { ApiError } from "@/lib/api-client";
+import { getInitials } from "@/lib/utils";
 
 interface Props {
   communityId: string;
@@ -52,15 +53,15 @@ export function CommunityMembersTab({ communityId, currentUserId }: Props) {
           (appointModerator.isPending && appointModerator.variables === m.membershipId) ||
           (removeModerator.isPending && removeModerator.variables === m.membershipId);
 
-        const initials = (m.displayName ?? "?").slice(0, 2).toUpperCase();
+        const initials = getInitials(m.displayName);
 
         return (
           <div
             key={m.membershipId}
-            className="flex items-center justify-between py-[10px] px-[14px] bg-paper-2" style={{ border: "1.5px solid var(--ink)", opacity: isPending ? 0.5 : 1, transition: "opacity 150ms" }}
+            className="flex items-center justify-between py-[10px] px-[14px] bg-paper-2 border-ink" style={{opacity: isPending ? 0.5 : 1, transition: "opacity 150ms" }}
           >
             <div className="flex items-center gap-5">
-              <span className="w-16 h-16 bg-[rgba(178,42,26,0.10)] text-red flex items-center justify-center text-sm font-bold">
+              <span className="w-16 h-16 bg-red-soft text-red flex items-center justify-center text-sm font-bold">
                 {initials}
               </span>
               <div>
@@ -79,7 +80,7 @@ export function CommunityMembersTab({ communityId, currentUserId }: Props) {
                   <button
                     disabled={isPending}
                     onClick={() => removeModerator.mutate(m.membershipId)}
-                    className="py-2 px-5 bg-[rgba(178,42,26,0.10)] text-red text-sm font-medium" style={{ border: "1px solid oklch(62% 0.21 22 / 0.25)", cursor: isPending ? "not-allowed" : "pointer" }}
+                    className="py-2 px-5 bg-red-soft text-red text-sm font-medium" style={{ border: "1px solid oklch(62% 0.21 22 / 0.25)", cursor: isPending ? "not-allowed" : "pointer" }}
                   >
                     Remove Mod
                   </button>
@@ -87,7 +88,7 @@ export function CommunityMembersTab({ communityId, currentUserId }: Props) {
                   <button
                     disabled={isPending}
                     onClick={() => appointModerator.mutate(m.membershipId)}
-                    className="py-2 px-5 bg-[rgba(178,42,26,0.10)] text-red text-sm font-medium" style={{ border: "1.5px solid var(--red)", cursor: isPending ? "not-allowed" : "pointer" }}
+                    className="py-2 px-5 bg-red-soft text-red text-sm font-medium" style={{ border: "1.5px solid var(--red)", cursor: isPending ? "not-allowed" : "pointer" }}
                   >
                     Make Mod
                   </button>

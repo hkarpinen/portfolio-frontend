@@ -1,153 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { timeAgo } from "@/lib/utils";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { createCommentSchema, CreateCommentInput } from "@/schemas/forum";
-import { useCreateComment, useCastVote } from "@/hooks/use-forum";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
+import { timeAgo, getInitials } from "@/lib/utils";
 import type { Comment } from "@/types/forum";
 import styles from "./comment-tree.module.css";
-
-// Compact horizontal vote controls for comments
-function CommentVote({ threadId, commentId, initialScore }: { threadId: string; commentId: string; initialScore: number }) {
-  const [score, setScore] = useState(initialScore);
-  const [voted, setVoted] = useState<1 | -1 | null>(null);
-
-  // Sync with server data after router.refresh() re-renders the parent server component
-  useEffect(() => {
-    setScore(initialScore);
-  }, [initialScore]);
-
-  const { mutate: castVote, isPending } = useCastVote(threadId);
-
-  function vote(direction: 1 | -1) {
-    if (voted === direction || isPending) return;
-    const delta = voted === null ? direction : direction * 2;
-    const previous = voted;
-    setScore(s => s + delta);
-    setVoted(direction);
-    castVote(
-      { targetType: 1, targetId: commentId, direction },
-      {
-        onError: () => {
-          setScore(s => s - delta);
-          setVoted(previous);
-        },
-      }
-    );
-  }
-
-  return (
-    <div className="flex items-center gap-1 shrink-0">
-      <button
-        onClick={() => vote(1)}
-        aria-label="Upvote"
-        title="Upvote"
-        data-voted={voted === 1 ? "true" : undefined}
-        className={`${styles.voteBtn} ${styles.voteBtnUp}`}
-        style={{
-          cursor: isPending ? "not-allowed" : "pointer",
-          background: voted === 1 ? "var(--success-s)" : undefined,
-          color: voted === 1 ? "var(--success)" : undefined,
-        }}
-      >
-        <svg width="10" height="10" viewBox="0 0 24 24" fill={voted === 1 ? "currentColor" : "none"} stroke="currentColor" strokeWidth={2.5}>
-          <path d="M12 4l8 8H4l8-8z" />
-        </svg>
-      </button>
-      <span className="text-sm font-bold min-w-[16px] text-center font-serif" style={{ color: voted === 1 ? "var(--success)" : voted === -1 ? "var(--danger)" : "var(--text-3)" }}>
-        {score}
-      </span>
-      <button
-        onClick={() => vote(-1)}
-        aria-label="Downvote"
-        title="Downvote"
-        data-voted={voted === -1 ? "true" : undefined}
-        className={`${styles.voteBtn} ${styles.voteBtnDown}`}
-        style={{
-          cursor: isPending ? "not-allowed" : "pointer",
-          background: voted === -1 ? "var(--danger-s)" : undefined,
-          color: voted === -1 ? "var(--danger)" : undefined,
-        }}
-      >
-        <svg width="10" height="10" viewBox="0 0 24 24" fill={voted === -1 ? "currentColor" : "none"} stroke="currentColor" strokeWidth={2.5}>
-          <path d="M12 20l-8-8h16l-8 8z" />
-        </svg>
-      </button>
-    </div>
-  );
-}
-
-function InlineReplyForm({
-  threadId,
-  parentCommentId,
-  onDone,
-}: {
-  threadId: string;
-  parentCommentId: string;
-  onDone: () => void;
-}) {
-  const router = useRouter();
-  const createComment = useCreateComment(threadId);
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<CreateCommentInput>({
-    resolver: zodResolver(createCommentSchema),
-  });
-
-  function onSubmit(data: CreateCommentInput) {
-    createComment.mutate({ content: data.content, parentCommentId }, {
-      onSuccess: () => {
-        reset();
-        router.refresh();
-        onDone();
-      },
-    });
-  }
-
-  return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="mt-5 p-6 bg-paper-2 flex flex-col gap-4" style={{ border: "1.5px solid var(--ink)" }}
-    >
-      <textarea
-        {...register("content")}
-        rows={3}
-        autoFocus
-        placeholder="Write a reply…"
-        className="w-full bg-paper py-4 px-5 text-base text-ink outline-none leading-[1.6] font-body" style={{ border: `1px solid ${errors.content ? "var(--danger)" : "var(--ink-3)"}`, resize: "vertical", transition: "border-color 110ms, box-shadow 110ms" }}
-        onFocus={e => {
-          e.currentTarget.style.borderColor = "var(--ink)";
-          e.currentTarget.style.boxShadow = "0 0 0 3px rgba(178,42,26,0.08)";
-        }}
-        onBlur={e => {
-          e.currentTarget.style.borderColor = errors.content ? "var(--danger)" : "var(--ink-3)";
-          e.currentTarget.style.boxShadow = "none";
-        }}
-      />
-      {errors.content && (
-        <span className="text-sm text-red">{errors.content.message}</span>
-      )}
-      <div className="flex gap-4">
-        <button
-          type="submit"
-          disabled={createComment.isPending}
-          className={styles.replySubmit}
-        >
-          {createComment.isPending ? "Posting…" : "Post reply"}
-        </button>
-        <button
-          type="button"
-          onClick={onDone}
-          className={styles.replyCancel}
-        >
-          Cancel
-        </button>
-      </div>
-    </form>
-  );
-}
+import { CommentVote } from "./comment-vote";
+import { InlineReplyForm } from "./inline-reply-form";
 
 // Indent rail colors by depth — accent fades as nesting deepens
 const RAIL_COLORS = [
@@ -173,7 +33,7 @@ function CommentNode({
 }) {
   const pathname = usePathname();
   const authorName = comment.authorDisplayName ?? comment.authorUsername ?? "Anonymous";
-  const initials = authorName[0].toUpperCase();
+  const initials = getInitials(authorName);
   const [replying, setReplying] = useState(false);
 
   return (
@@ -192,10 +52,10 @@ function CommentNode({
             <img
               src={comment.authorAvatarUrl}
               alt=""
-              className="w-12 h-12 object-cover shrink-0" style={{ border: "1.5px solid var(--ink)" }}
+              className="w-12 h-12 object-cover shrink-0 border-ink"
             />
           ) : (
-            <span className="w-12 h-12 bg-paper-3 text-ink-2 flex items-center justify-center text-sm font-bold shrink-0" style={{ border: "1.5px solid var(--ink)" }}>
+            <span className="w-12 h-12 bg-paper-3 text-ink-2 flex items-center justify-center text-sm font-bold shrink-0 border-ink">
               {initials}
             </span>
           )}
@@ -295,7 +155,7 @@ export function CommentTree({
   isAuthed: boolean;
 }) {
   return (
-    <section className="bg-paper overflow-hidden shadow-stamp" style={{ border: "1.5px solid var(--ink)" }}>
+    <section className="bg-paper overflow-hidden shadow-stamp border-ink">
       {/* Header */}
       <div className="py-[14px] px-[20px] flex items-center gap-4" style={{ borderBottom: "1.5px solid var(--ink)" }}>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">

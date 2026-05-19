@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { getInitials } from "@/lib/utils";
 import { useMe, useAdminUsers, useBanUser, useChangeUserRole } from "@/hooks/use-identity";
 
 export default function AdminPage() {
@@ -28,7 +29,7 @@ export default function AdminPage() {
         </p>
       </div>
 
-      <div className="bg-paper overflow-hidden" style={{ border: "1.5px solid var(--ink)" }}>
+      <div className="bg-paper overflow-hidden border-ink">
         {/* Table header */}
         <div className="grid gap-6 py-5 px-8 bg-paper-2" style={{ gridTemplateColumns: "1fr 1fr 120px 100px 160px", borderBottom: "1.5px solid var(--ink)" }}>
           {["User", "Email", "Role", "Status", "Actions"].map((col) => (
@@ -57,8 +58,8 @@ export default function AdminPage() {
               >
                 {/* User */}
                 <div className="flex items-center gap-4 min-w-0">
-                  <span className="w-[28px] h-[28px] shrink-0 bg-[rgba(178,42,26,0.10)] text-red flex items-center justify-center text-sm font-bold">
-                    {(user.displayName ?? "?").slice(0, 2).toUpperCase()}
+                  <span className="w-[28px] h-[28px] shrink-0 bg-red-soft text-red flex items-center justify-center text-sm font-bold">
+                    {getInitials(user.displayName)}
                   </span>
                   <span className="text-base font-medium text-ink overflow-hidden text-ellipsis whitespace-nowrap">
                     {user.displayName}
@@ -76,7 +77,7 @@ export default function AdminPage() {
                   value={user.role}
                   disabled={isSelf || isChangingRole}
                   onChange={(e) => changeRole.mutate({ userId: user.id, role: e.target.value })}
-                  className="h-[30px] bg-paper-2 p-[0_8px] text-base text-ink outline-none" style={{ border: "1.5px solid var(--ink)", cursor: isSelf ? "not-allowed" : "pointer", opacity: isSelf ? 0.5 : 1 }}
+                  className="h-[30px] bg-paper-2 p-[0_8px] text-base text-ink outline-none border-ink" style={{cursor: isSelf ? "not-allowed" : "pointer", opacity: isSelf ? 0.5 : 1 }}
                 >
                   <option value="Member">Member</option>
                   <option value="Admin">Admin</option>
@@ -111,7 +112,7 @@ export default function AdminPage() {
           <button
             disabled={page <= 1}
             onClick={() => setPage((p) => p - 1)}
-            className="py-3 px-8 bg-paper-2 text-base font-medium text-ink-2" style={{ border: "1.5px solid var(--ink)", cursor: page <= 1 ? "not-allowed" : "pointer", opacity: page <= 1 ? 0.5 : 1 }}
+            className="py-3 px-8 bg-paper-2 text-base font-medium text-ink-2 border-ink" style={{cursor: page <= 1 ? "not-allowed" : "pointer", opacity: page <= 1 ? 0.5 : 1 }}
           >
             ← Prev
           </button>
@@ -121,7 +122,7 @@ export default function AdminPage() {
           <button
             disabled={page >= totalPages}
             onClick={() => setPage((p) => p + 1)}
-            className="py-3 px-8 bg-paper-2 text-base font-medium text-ink-2" style={{ border: "1.5px solid var(--ink)", cursor: page >= totalPages ? "not-allowed" : "pointer", opacity: page >= totalPages ? 0.5 : 1 }}
+            className="py-3 px-8 bg-paper-2 text-base font-medium text-ink-2 border-ink" style={{cursor: page >= totalPages ? "not-allowed" : "pointer", opacity: page >= totalPages ? 0.5 : 1 }}
           >
             Next →
           </button>

@@ -67,7 +67,7 @@ export function IncomeDetailPanel({ incomeId, period, onPeriodChange }: IncomeDe
 
       {/* ── Deductions block ── */}
       {deductions.length > 0 ? (
-        <div className="overflow-hidden mb-5" style={{ border: "1.5px solid var(--ink)" }}>
+        <div className="overflow-hidden mb-5 border-ink">
           <div className="py-3 px-6 bg-paper-2" style={{ borderBottom: "1.5px solid var(--ink)" }}>
             <span className="text-sm font-bold text-ink-3 uppercase tracking-[0.08em]">
               Deductions
@@ -80,7 +80,7 @@ export function IncomeDetailPanel({ incomeId, period, onPeriodChange }: IncomeDe
                   {d.label}
                 </span>
                 {d.isEmployerSponsored && (
-                  <span className="shrink-0 text-sm font-semibold py-[1px] px-[5px] bg-[rgba(61,107,43,0.10)] text-green">
+                  <span className="shrink-0 text-sm font-semibold py-[1px] px-[5px] bg-green-soft text-green">
                     Employer
                   </span>
                 )}
@@ -102,7 +102,7 @@ export function IncomeDetailPanel({ incomeId, period, onPeriodChange }: IncomeDe
       )}
 
       {/* ── Net Take-Home ── */}
-      <div className="flex justify-between items-center py-[10px] px-[14px] bg-[rgba(178,42,26,0.10)]" style={{ border: "1px solid var(--accent-border)" }}>
+      <div className="flex justify-between items-center py-[10px] px-[14px] bg-red-soft" style={{ border: "1px solid var(--accent-border)" }}>
         <span className="text-sm font-bold text-red uppercase tracking-[0.08em]">
           Net Take-Home
         </span>

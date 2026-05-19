@@ -3,7 +3,8 @@ import {
   Home, User, FileText, MessageSquare, Settings, Bell, ChevronLeft, ChevronRight,
   ArrowRight, ArrowLeft, Plus, Check, Trash2, LogOut, Hash, Search, Upload,
   Flag, Edit, Shield, DollarSign, TrendingUp, X, Link, AlertTriangle,
-  MoreHorizontal, Calendar, ChevronDown, Info,
+  MoreHorizontal, Calendar, ChevronDown, Info, Cloud, Calculator,
+  Mail, Briefcase, Code, Palette, Landmark, Users, Newspaper, Star,
 } from "lucide-react";
 
 export const ICON_MAP = {
@@ -37,6 +38,16 @@ export const ICON_MAP = {
   calendar: Calendar,
   chevDown: ChevronDown,
   info: Info,
+  weather: Cloud,
+  math: Calculator,
+  mail: Mail,
+  linkedin: Briefcase,
+  github: Code,
+  palette: Palette,
+  bank: Landmark,
+  community: Users,
+  feed: Newspaper,
+  star: Star,
 } as const;
 
 export type IconName = keyof typeof ICON_MAP;

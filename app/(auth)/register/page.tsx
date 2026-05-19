@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { registerSchema, RegisterInput } from "@/schemas/auth";
 import { api, ApiError } from "@/lib/api-client";
-import { Btn, Input } from "@/components/editorial";
+import { Btn, Input, Alert, Icon } from "@/components/editorial";
 
 function PasswordStrength({ password }: { password: string }) {
   const len = password.length;
@@ -60,9 +60,9 @@ export default function RegisterPage() {
 
   if (submitted) {
     return (
-      <div className="bg-paper-2 shadow-stamp py-20 px-16 text-center" style={{ border: "1.5px solid var(--ink)" }}>
-        <div className="w-[56px] h-[56px] bg-[rgba(61,107,43,0.10)] flex items-center justify-center" style={{ margin: "0 auto 20px", border: "1.5px solid var(--green)" }}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--green)" strokeWidth={2}><path d="M20 6L9 17l-5-5" /></svg>
+      <div className="bg-paper-2 shadow-stamp py-20 px-16 text-center border-ink">
+        <div className="w-[56px] h-[56px] bg-green-soft flex items-center justify-center" style={{ margin: "0 auto 20px", border: "1.5px solid var(--green)" }}>
+          <span style={{ color: "var(--green)" }}><Icon name="check" size={24} strokeWidth={2} /></span>
         </div>
         <h1 className="font-serif italic font-normal text-3xl tracking-[-0.025em] text-ink mb-4">Check your inbox<span className="text-red">.</span></h1>
         <p className="text-base text-ink-3 leading-[1.6] mb-12">We&apos;ve sent a confirmation link to your email. Click it to activate your account.</p>
@@ -72,16 +72,14 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="bg-paper-2 shadow-stamp p-16" style={{ border: "1.5px solid var(--ink)" }}>
+    <div className="bg-paper-2 shadow-stamp p-16 border-ink">
       <div className="mb-[28px]">
         <h1 className="font-serif italic font-normal text-3xl tracking-[-0.025em] text-ink mb-3">Create account<span className="text-red">.</span></h1>
         <p className="font-mono text-sm text-ink-3 uppercase tracking-wide">Join the community today</p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-8">
-        {serverError && (
-          <div className="py-5 px-8 bg-[rgba(178,42,26,0.08)] text-base text-red" style={{ border: "1.5px solid var(--red)" }}>{serverError}</div>
-        )}
+        {serverError && <Alert variant="danger">{serverError}</Alert>}
 
         <Input label="Display name" type="text" placeholder="Your name" error={errors.displayName?.message} {...register("displayName")} />
         <Input label="Email address" type="email" placeholder="you@example.com" error={errors.email?.message} {...register("email")} />
@@ -95,7 +93,7 @@ export default function RegisterPage() {
               error={errors.password?.message}
               {...register("password", { onChange: e => setPwValue(e.target.value) })}
             />
-            <button type="button" onClick={() => setShowPw(s => !s)} className="absolute right-0 bottom-[7px] bg-transparent cursor-pointer text-ink-3 p-0" style={{ border: "none", lineHeight: 1 }}>
+            <button type="button" onClick={() => setShowPw(s => !s)} aria-label={showPw ? "Hide password" : "Show password"} className="absolute right-0 bottom-[7px] bg-transparent cursor-pointer text-ink-3 p-0" style={{ border: "none", lineHeight: 1 }}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75}>
                 {showPw ? <><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></> : <><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></>}
               </svg>
@@ -112,7 +110,7 @@ export default function RegisterPage() {
             error={errors.confirmPassword?.message}
             {...register("confirmPassword")}
           />
-          <button type="button" onClick={() => setShowConfirm(s => !s)} className="absolute right-0 bottom-[7px] bg-transparent cursor-pointer text-ink-3 p-0" style={{ border: "none", lineHeight: 1 }}>
+          <button type="button" onClick={() => setShowConfirm(s => !s)} aria-label={showConfirm ? "Hide password" : "Show password"} className="absolute right-0 bottom-[7px] bg-transparent cursor-pointer text-ink-3 p-0" style={{ border: "none", lineHeight: 1 }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75}>
               {showConfirm ? <><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></> : <><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></>}
             </svg>

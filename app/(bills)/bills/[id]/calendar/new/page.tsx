@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useCreateCalendarEvent } from "@/hooks/use-calendar";
+import { Btn, Input, Textarea } from "@/components/editorial";
 
 export default function NewCalendarEventPage({ params }: { params: { id: string } }) {
   const router = useRouter();
@@ -47,28 +48,6 @@ export default function NewCalendarEventPage({ params }: { params: { id: string 
     }
   }
 
-  const inputStyle: React.CSSProperties = {
-    width: "100%",
-    padding: "10px 12px",
-    border: "1px solid var(--ink)",
-    background: "var(--paper)",
-    color: "var(--ink)",
-    fontFamily: "var(--ff-body)",
-    fontSize: "var(--ts-body)",
-    outline: "none",
-    boxSizing: "border-box",
-  };
-
-  const labelStyle: React.CSSProperties = {
-    display: "block",
-    fontFamily: "var(--ff-mono)",
-    fontSize: "var(--ts-meta)",
-    letterSpacing: "0.08em",
-    textTransform: "uppercase",
-    color: "var(--ink-3)",
-    marginBottom: 6,
-  };
-
   return (
     <div className="page-enter max-w-[560]" >
       <Link
@@ -85,26 +64,21 @@ export default function NewCalendarEventPage({ params }: { params: { id: string 
       </h1>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-10">
-        <div>
-          <label style={labelStyle}>Title *</label>
-          <input
-            style={inputStyle}
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="e.g. House inspection"
-            autoFocus
-          />
-        </div>
+        <Input
+          label="Title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="e.g. House inspection"
+          autoFocus
+        />
 
-        <div>
-          <label style={labelStyle}>Description</label>
-          <textarea
-            className="min-h-[80]" style={{ ...inputStyle, resize: "vertical" }}
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Optional notes…"
-          />
-        </div>
+        <Textarea
+          label="Description"
+          className="min-h-[80]"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          placeholder="Optional notes…"
+        />
 
         {/* All-day toggle */}
         <div className="flex items-center gap-5">
@@ -124,28 +98,18 @@ export default function NewCalendarEventPage({ params }: { params: { id: string 
         </div>
 
         <div className="grid gap-8" style={{ gridTemplateColumns: "1fr 1fr" }}>
-          <div>
-            <label style={labelStyle}>
-              {allDay ? "Date *" : "Starts At *"}
-            </label>
-            <input
-              style={inputStyle}
-              type={allDay ? "date" : "datetime-local"}
-              value={startsAt}
-              onChange={(e) => setStartsAt(e.target.value)}
-            />
-          </div>
-          <div>
-            <label style={labelStyle}>
-              {allDay ? "End Date" : "Ends At"}
-            </label>
-            <input
-              style={inputStyle}
-              type={allDay ? "date" : "datetime-local"}
-              value={endsAt}
-              onChange={(e) => setEndsAt(e.target.value)}
-            />
-          </div>
+          <Input
+            label={allDay ? "Date" : "Starts At"}
+            type={allDay ? "date" : "datetime-local"}
+            value={startsAt}
+            onChange={(e) => setStartsAt(e.target.value)}
+          />
+          <Input
+            label={allDay ? "End Date" : "Ends At"}
+            type={allDay ? "date" : "datetime-local"}
+            value={endsAt}
+            onChange={(e) => setEndsAt(e.target.value)}
+          />
         </div>
 
         {error && (
@@ -157,13 +121,13 @@ export default function NewCalendarEventPage({ params }: { params: { id: string 
         )}
 
         <div className="flex gap-6 pt-4">
-          <button
+          <Btn
             type="submit"
+            variant="primary"
             disabled={createEvent.isPending}
-            className="bg-ink text-paper py-6 px-16 font-mono text-base tracking-[0.05em] uppercase" style={{ border: "none", cursor: createEvent.isPending ? "default" : "pointer", opacity: createEvent.isPending ? 0.6 : 1 }}
           >
             {createEvent.isPending ? "Saving…" : "Create Event"}
-          </button>
+          </Btn>
           <Link
             href={`/bills/${householdId}/calendar`}
             className="py-6 px-12 font-mono text-base tracking-[0.05em] uppercase no-underline text-ink" style={{ border: "1px solid var(--ink)" }}

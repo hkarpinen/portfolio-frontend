@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useChores, useCompleteChore, useDeleteChore } from "@/hooks/use-chores";
 import { useHouseholdMembers } from "@/hooks/use-household";
+import { Icon } from "@/components/editorial/icon";
 import type { ChoreDto } from "@/lib/api/chores";
 
 const FREQ_LABEL: Record<string, string> = {
@@ -102,9 +103,10 @@ function ChoreRow({
         onClick={() => onDelete(chore.id)}
         disabled={deleting}
         title="Delete chore"
+        aria-label="Delete chore"
         className="bg-transparent cursor-pointer text-ink-3 text-base py-1 px-3 leading-none" style={{ border: "none" }}
       >
-        ✕
+        <Icon name="x" size={12} strokeWidth={2.5} />
       </button>
     </div>
   );
@@ -219,8 +221,8 @@ export default function ChoresPage({ params }: { params: { id: string } }) {
             members={members}
             onComplete={(id) => complete.mutate(id)}
             onDelete={(id) => del.mutate(id)}
-            completing={complete.isPending}
-            deleting={del.isPending}
+            completing={complete.isPending && complete.variables === chore.id}
+            deleting={del.isPending && del.variables === chore.id}
           />
         ))}
       </div>

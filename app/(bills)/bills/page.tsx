@@ -5,6 +5,8 @@ import { listHouseholdsServer } from "@/lib/api/households";
 import type { HouseholdSummaryDto } from "@/lib/api/households";
 import { SectionHeader } from "@/components/editorial/section-header";
 import { Btn } from "@/components/editorial/button";
+import { Icon } from "@/components/editorial/icon";
+import { getInitials } from "@/lib/utils";
 
 export const dynamic = 'force-dynamic';
 
@@ -47,7 +49,7 @@ export default async function HouseholdsPage() {
       />
 
       {/* ── Ledger strip ───────────────────────────────────────────────────── */}
-      <div className="bills-strip grid" style={{ border: "1.5px solid var(--ink)", gridTemplateColumns: "repeat(4, 1fr)" }}>
+      <div className="bills-strip grid border-ink" style={{gridTemplateColumns: "repeat(4, 1fr)" }}>
         {LEDGER_STRIP_LABELS.map((cell, i) => (
           <div
             key={cell.label}
@@ -70,7 +72,7 @@ export default async function HouseholdsPage() {
       </div>
 
       {/* ── Two callouts ───────────────────────────────────────────────────── */}
-      <div className="bills-callouts grid" style={{ border: "1.5px solid var(--ink)", gridTemplateColumns: "1fr 1fr" }}>
+      <div className="bills-callouts grid border-ink" style={{gridTemplateColumns: "1fr 1fr" }}>
         {[
           { num: "01", title: "Chores & Calendar",  sub: "Shared tasks, rotas, and household events.", href: `/bills/${households[0]?.id ?? ""}` + (households[0] ? "/chores" : "") || "/bills" },
           { num: "02", title: "Expenses & Splits",   sub: "Track payments and split costs. Powered by Finance.", href: "/expenses" },
@@ -91,9 +93,7 @@ export default async function HouseholdsPage() {
                 <p className="font-body text-ink-2 m-0 mt-[6px]" style={{ fontSize: "0.8125rem", lineHeight: 1.45 }}>{cell.sub}</p>
               </div>
             </div>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
-              <path d="M5 12h14M12 5l7 7-7 7" />
-            </svg>
+            <span className="shrink-0" style={{ color: "var(--ink)" }}><Icon name="arrowRight" size={16} strokeWidth={2} /></span>
           </Link>
         ))}
       </div>
@@ -125,7 +125,7 @@ export default async function HouseholdsPage() {
         ) : (
           <div className="bills-grid grid gap-[16px]" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}>
             {households.map((h) => {
-              const initials = h.name.split(/\s+/).map((w: string) => w[0]).filter(Boolean).slice(0, 2).join("").toUpperCase();
+              const initials = getInitials(h.name);
               const balance  = (h.memberCount ?? 1) * 80;
               const share    = Math.round(balance / Math.max(h.memberCount ?? 1, 1));
               const pct      = Math.round((balance / 2400) * 100);
@@ -134,16 +134,16 @@ export default async function HouseholdsPage() {
                 <Link
                   key={h.id}
                   href={`/bills/${h.id}`}
-                  className="no-underline block bg-paper"
-                  style={{ border: "1.5px solid var(--ink)", padding: 22 }}
+                  className="no-underline block bg-paper border-ink"
+                  style={{padding: 22 }}
                 >
                   {/* Top row */}
                   <div className="flex items-start justify-between gap-[12px]">
                     <div className="flex items-start gap-[12px]">
                       {/* Initials square */}
                       <div
-                        className="flex items-center justify-center shrink-0 font-mono font-bold text-ink"
-                        style={{ width: 48, height: 48, background: "var(--paper-2)", border: "1.5px solid var(--ink)", fontSize: "0.8125rem", letterSpacing: "0.04em" }}
+                        className="flex items-center justify-center shrink-0 font-mono font-bold text-ink border-ink"
+                        style={{ width: 48, height: 48, background: "var(--paper-2)", fontSize: "0.8125rem", letterSpacing: "0.04em" }}
                       >
                         {initials}
                       </div>
@@ -156,13 +156,12 @@ export default async function HouseholdsPage() {
                     </div>
                     {/* Balance badge */}
                     <span
-                      className="font-mono shrink-0"
+                      className="font-mono shrink-0 border-ink"
                       style={{
                         fontSize: "0.625rem", letterSpacing: "0.1em", textTransform: "uppercase",
                         padding: "3px 8px",
                         background: balance > 500 ? "var(--ink)" : "var(--paper-2)",
                         color: balance > 500 ? "var(--paper)" : "var(--ink)",
-                        border: "1.5px solid var(--ink)",
                       }}
                     >
                       ${balance}
@@ -170,7 +169,15 @@ export default async function HouseholdsPage() {
                   </div>
 
                   {/* Progress bar */}
-                  <div className="mt-[18px] mb-[12px]" style={{ background: "var(--paper-2)", height: 6, border: "1px solid var(--ink-3)" }}>
+                  <div
+                    className="mt-[18px] mb-[12px]"
+                    style={{ background: "var(--paper-2)", height: 6, border: "1px solid var(--ink-3)" }}
+                    role="progressbar"
+                    aria-valuenow={barW}
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                    aria-label={`${h.name} budget usage`}
+                  >
                     <div style={{ width: `${barW}%`, height: "100%", background: "var(--ink)", transition: "width 400ms" }} />
                   </div>
 

@@ -32,6 +32,14 @@ const nextConfig = {
         destination: "http://localhost:8085/api/households/:path*",
       },
       {
+        source: "/api/geography/:path*",
+        destination: "http://localhost:8087/api/geography/:path*",
+      },
+      {
+        source: "/api/math/:path*",
+        destination: "http://localhost:8086/api/math/:path*",
+      },
+      {
         source: "/uploads/:path*",
         destination: "http://localhost/uploads/:path*",
       },

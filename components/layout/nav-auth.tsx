@@ -14,7 +14,7 @@ export function NavAuth({ displayName, avatarUrl = null }: NavAuthProps) {
 
   if (!displayName) {
     return (
-      <Link href="/login" className="text-md font-semibold text-red no-underline py-[6px] px-[14px] bg-[rgba(178,42,26,0.10)]" style={{ transition: "background 110ms" }}>
+      <Link href="/login" className="text-md font-semibold text-red no-underline py-[6px] px-[14px] bg-red-soft" style={{ transition: "background 110ms" }}>
         Sign in
       </Link>
     );
@@ -43,7 +43,7 @@ export function NavAuth({ displayName, avatarUrl = null }: NavAuthProps) {
             className="w-[28px] h-[28px] rounded-full object-cover" style={{ border: "2px solid var(--surface)" }}
           />
         ) : (
-          <span className="w-[28px] h-[28px] bg-[rgba(178,42,26,0.10)] text-red flex items-center justify-center text-sm font-bold font-serif">
+          <span className="w-[28px] h-[28px] bg-red-soft text-red flex items-center justify-center text-sm font-bold font-serif">
             {initials || "?"}
           </span>
         )}

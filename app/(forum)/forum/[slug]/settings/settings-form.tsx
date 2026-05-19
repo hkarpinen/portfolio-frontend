@@ -5,8 +5,10 @@ import { useRouter } from "next/navigation";
 import { useUpdateCommunity, useUploadCommunityImage, useDeleteCommunity } from "@/hooks/use-community";
 import { useMe } from "@/hooks/use-identity";
 import { ApiError } from "@/lib/api-client";
+import { getInitials } from "@/lib/utils";
 import styles from "./settings-form.module.css";
-import { Btn } from "@/components/editorial";
+import { Btn, Alert, Input, Textarea, SelectField } from "@/components/editorial";
+import { DeleteConfirm } from "./delete-confirm";
 interface Props {
   communityId: string;
   ownerId: string;
@@ -16,30 +18,6 @@ interface Props {
   initialImageUrl: string;
   initialVisibility: string;
 }
-
-function Field({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
-  return (
-    <div className="flex flex-col gap-3">
-      <label className="text-base font-medium text-ink-2 tracking-[0.02em]">
-        {label}
-      </label>
-      {children}
-      {hint && <span className="text-sm text-ink-3">{hint}</span>}
-    </div>
-  );
-}
-
-const iStyle: React.CSSProperties = {
-  height: "38px", width: "100%",
-  background: "var(--paper-2)",
-  border: "1.5px solid var(--ink)",
-  
-  padding: "0 12px",
-  fontSize: "var(--ts-body-sm)",
-  color: "var(--text)",
-  outline: "none",
-  transition: "border-color 110ms, box-shadow 110ms",
-};
 
 export function CommunitySettingsForm({
   communityId,
@@ -70,15 +48,6 @@ export function CommunitySettingsForm({
     setImageUrl(result.url);
   }
 
-  const focusFn = (el: HTMLElement) => {
-    el.style.borderColor = "var(--ink)";
-    el.style.boxShadow = "0 0 0 3px rgba(178,42,26,0.08)";
-  };
-  const blurFn = (el: HTMLElement) => {
-    el.style.borderColor = "var(--ink-3)";
-    el.style.boxShadow = "none";
-  };
-
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!name.trim()) return;
@@ -104,26 +73,24 @@ export function CommunitySettingsForm({
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-10">
       {updateCommunity.isError && (
-        <div className="py-6 px-8 bg-[rgba(178,42,26,0.10)] text-base text-red" style={{ border: "1px solid oklch(62% 0.21 22 / 0.3)" }}>
+        <Alert variant="danger">
           {updateCommunity.error instanceof ApiError ? updateCommunity.error.message : "Something went wrong."}
-        </div>
+        </Alert>
       )}
-      {updateCommunity.isSuccess && (
-        <div className="py-6 px-8 bg-[rgba(61,107,43,0.10)] text-base text-green" style={{ border: "1px solid oklch(68% 0.18 152 / 0.25)" }}>Settings saved.</div>
-      )}
+      {updateCommunity.isSuccess && <Alert variant="success">Settings saved.</Alert>}
 
       {/* Profile image */}
-      <div className="bg-paper-2 p-8 flex items-center gap-8" style={{ border: "1.5px solid var(--ink)" }}>
+      <div className="bg-paper-2 p-8 flex items-center gap-8 border-ink">
         {imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={imageUrl}
             alt=""
-            className="w-[56px] h-[56px] object-cover shrink-0" style={{ border: "1.5px solid var(--ink)" }}
+            className="w-[56px] h-[56px] object-cover shrink-0 border-ink"
           />
         ) : (
-          <div className="w-[56px] h-[56px] bg-[rgba(178,42,26,0.10)] shrink-0 flex items-center justify-center text-xl font-bold font-serif text-red">
-            {name[0]?.toUpperCase() ?? "?"}
+          <div className="w-[56px] h-[56px] bg-red-soft shrink-0 flex items-center justify-center text-xl font-bold font-serif text-red">
+            {getInitials(name)}
           </div>
         )}
         <div className="flex-1 flex flex-col gap-3">
@@ -140,7 +107,7 @@ export function CommunitySettingsForm({
               type="button"
               onClick={() => fileInputRef.current?.click()}
               disabled={uploadImage.isPending}
-              className="py-[7px] px-[14px] bg-paper-3 text-ink-2 text-base font-medium" style={{ border: "1.5px solid var(--ink)", cursor: uploadImage.isPending ? "not-allowed" : "pointer", opacity: uploadImage.isPending ? 0.6 : 1, transition: "background 110ms" }}
+              className="py-[7px] px-[14px] bg-paper-3 text-ink-2 text-base font-medium border-ink" style={{cursor: uploadImage.isPending ? "not-allowed" : "pointer", opacity: uploadImage.isPending ? 0.6 : 1, transition: "background 110ms" }}
             >
               {uploadImage.isPending ? "Uploading…" : "Choose image"}
             </button>
@@ -148,7 +115,7 @@ export function CommunitySettingsForm({
               <button
                 type="button"
                 onClick={() => setImageUrl("")}
-                className="py-[7px] px-[10px] bg-transparent text-ink-3 text-base cursor-pointer" style={{ border: "1.5px solid var(--ink)", transition: "background 110ms, color 110ms" }}
+                className="py-[7px] px-[10px] bg-transparent text-ink-3 text-base cursor-pointer border-ink" style={{transition: "background 110ms, color 110ms" }}
               >
                 Remove
               </button>
@@ -163,44 +130,33 @@ export function CommunitySettingsForm({
         </div>
       </div>
 
-      <Field label="Name">
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-          maxLength={120}
-          style={iStyle}
-          onFocus={e => focusFn(e.currentTarget)}
-          onBlur={e => blurFn(e.currentTarget)}
-        />
-      </Field>
+      <Input
+        type="text"
+        label="Name"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        required
+        maxLength={120}
+      />
 
-      <Field label="Description" hint={`${description.length}/1000`}>
-        <textarea
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          maxLength={1000}
-          rows={3}
-          placeholder="What's this community about?"
-          className="h-auto py-5 px-6 leading-[1.6] font-body" style={{ ...iStyle, resize: "vertical" }}
-          onFocus={e => focusFn(e.currentTarget)}
-          onBlur={e => blurFn(e.currentTarget)}
-        />
-      </Field>
+      <Textarea
+        label="Description"
+        hint={`${description.length}/1000`}
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+        maxLength={1000}
+        rows={3}
+        placeholder="What's this community about?"
+      />
 
-      <Field label="Visibility">
-        <select
-          value={visibility}
-          onChange={(e) => setVisibility(e.target.value)}
-          style={iStyle}
-          onFocus={e => focusFn(e.currentTarget)}
-          onBlur={e => blurFn(e.currentTarget)}
-        >
-          <option value="Public">Public</option>
-          <option value="Private">Private</option>
-        </select>
-      </Field>
+      <SelectField
+        label="Visibility"
+        value={visibility}
+        onChange={(e) => setVisibility(e.target.value)}
+      >
+        <option value="Public">Public</option>
+        <option value="Private">Private</option>
+      </SelectField>
 
       <div>
         <Btn
@@ -253,47 +209,5 @@ export function CommunitySettingsForm({
         </div>
       )}
     </form>
-  );
-}
-
-function DeleteConfirm({
-  communityName,
-  isPending,
-  onCancel,
-  onConfirm,
-}: {
-  communityName: string;
-  isPending: boolean;
-  onCancel: () => void;
-  onConfirm: () => void;
-}) {
-  const [value, setValue] = useState("");
-  const matches = value === communityName;
-  return (
-    <div className="flex gap-4 items-center flex-wrap">
-      <input
-        type="text"
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        placeholder={communityName}
-        className="h-[36px] bg-paper-2 p-[0_12px] text-base text-ink outline-none min-w-[180px]" style={{ border: "1.5px solid var(--ink)" }}
-      />
-      <button
-        type="button"
-        disabled={!matches || isPending}
-        onClick={onConfirm}
-        className="py-[8px] px-[18px] text-base font-semibold" style={{ background: matches && !isPending ? "var(--danger)" : "var(--paper-3)", color: matches && !isPending ? "#fff" : "var(--text-3)", border: "none", cursor: matches && !isPending ? "pointer" : "not-allowed", transition: "background 110ms" }}
-      >
-        {isPending ? "Deleting…" : "Confirm delete"}
-      </button>
-      <button
-        type="button"
-        onClick={onCancel}
-        disabled={isPending}
-        className="py-[8px] px-[14px] bg-transparent text-ink-3 text-base cursor-pointer" style={{ border: "1.5px solid var(--ink)", transition: "background 110ms" }}
-      >
-        Cancel
-      </button>
-    </div>
   );
 }

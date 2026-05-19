@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi } from "vitest";
 
-import { DeleteIconButton } from "@/components/ui/delete-icon-button";
+import { DeleteIconButton } from "@/components/editorial/delete-icon-button";
 
 describe("DeleteIconButton", () => {
   it("renders a button with the provided aria-label", () => {
