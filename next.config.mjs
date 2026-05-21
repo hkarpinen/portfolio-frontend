@@ -39,10 +39,6 @@ const nextConfig = {
         source: "/api/math/:path*",
         destination: "http://localhost:8086/api/math/:path*",
       },
-      {
-        source: "/uploads/:path*",
-        destination: "http://localhost/uploads/:path*",
-      },
     ];
   },
 };
