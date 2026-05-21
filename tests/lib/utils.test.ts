@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { timeAgo, formatDate, cn } from "@/lib/utils";
+import { timeAgo, formatDate, cn, toMonthlyAmount, getInitials } from "@/lib/utils";
 
 describe("cn", () => {
   it("merges class names", () => {
@@ -58,6 +58,75 @@ describe("timeAgo", () => {
     const now = new Date("2024-06-01T12:00:00Z");
     vi.setSystemTime(now);
     expect(timeAgo(now.toISOString())).toBe("0m ago");
+  });
+});
+
+describe("toMonthlyAmount", () => {
+  it("returns amount unchanged for monthly frequency", () => {
+    expect(toMonthlyAmount(1000, "MONTHLY")).toBe(1000);
+  });
+
+  it("returns amount unchanged when frequency is null", () => {
+    expect(toMonthlyAmount(1000, null)).toBe(1000);
+  });
+
+  it("returns amount unchanged when frequency is undefined", () => {
+    expect(toMonthlyAmount(1000, undefined)).toBe(1000);
+  });
+
+  it("converts weekly to monthly (×52÷12)", () => {
+    expect(toMonthlyAmount(1200, "WEEKLY")).toBeCloseTo(1200 * 52 / 12);
+  });
+
+  it("converts biweekly to monthly (×26÷12)", () => {
+    expect(toMonthlyAmount(1200, "BIWEEKLY")).toBeCloseTo(1200 * 26 / 12);
+  });
+
+  it("converts quarterly to monthly (÷3)", () => {
+    expect(toMonthlyAmount(3000, "QUARTERLY")).toBeCloseTo(1000);
+  });
+
+  it("converts semi-annually to monthly (÷6)", () => {
+    expect(toMonthlyAmount(6000, "SEMIANNUALLY")).toBeCloseTo(1000);
+  });
+
+  it("converts annually to monthly (÷12)", () => {
+    expect(toMonthlyAmount(12000, "ANNUALLY")).toBeCloseTo(1000);
+  });
+
+  it("is case-insensitive for frequency string", () => {
+    expect(toMonthlyAmount(1000, "weekly")).toBeCloseTo(toMonthlyAmount(1000, "WEEKLY"));
+  });
+});
+
+describe("getInitials", () => {
+  it("returns initials for a two-word name", () => {
+    expect(getInitials("John Doe")).toBe("JD");
+  });
+
+  it("returns single initial for a one-word name", () => {
+    expect(getInitials("Alice")).toBe("A");
+  });
+
+  it("returns at most two initials for a multi-word name", () => {
+    // splits on whitespace: "Jean-Claude" → J, "Van" → V (hyphenated first word counts as one token)
+    expect(getInitials("Jean-Claude Van Damme")).toBe("JV");
+  });
+
+  it("returns ? for null", () => {
+    expect(getInitials(null)).toBe("?");
+  });
+
+  it("returns ? for undefined", () => {
+    expect(getInitials(undefined)).toBe("?");
+  });
+
+  it("returns ? for empty string", () => {
+    expect(getInitials("")).toBe("?");
+  });
+
+  it("uppercases initials", () => {
+    expect(getInitials("alice bob")).toBe("AB");
   });
 });
 
