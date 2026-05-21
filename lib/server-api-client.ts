@@ -3,7 +3,7 @@
  *
  * The browser-side `api` client uses `CLIENT_API` + `credentials: "include"`,
  * which only works in the browser. Server components must:
- *   - Hit the internal `SERVER_API` URL (nginx / Docker hostname)
+   *   - Hit the internal `SERVER_API` URL (localhost:3000 in dev, internal Docker hostname in prod)
  *   - Manually forward the incoming `Cookie` header for authenticated routes
  *
  * NOTE: this module deliberately does NOT import `next/headers`. Some files

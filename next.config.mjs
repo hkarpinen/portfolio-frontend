@@ -2,10 +2,9 @@
 const nextConfig = {
   output: "standalone",
 
-  // In dev (`npm run dev`), Next.js proxies backend paths to the services
-  // exposed via compose.dev.yaml:
-  //   /api/{identity,forum,bills}/* → direct to each backend container
-  //   /uploads/*                    → nginx (serves avatars from the shared volume)
+  // In dev (`npm run dev`), Next.js proxies backend paths directly to each
+  // backend container exposed via compose.dev.yaml.
+  // /uploads/* is served by the route handler at app/uploads/[...slug]/route.ts.
   // In production everything is same-origin behind nginx, so these rewrites
   // are no-ops.
   async rewrites() {
