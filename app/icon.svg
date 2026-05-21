@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Paper background -->
+  <rect width="32" height="32" fill="#f1eadb"/>
+  <!-- Ink border -->
+  <rect x="0.5" y="0.5" width="31" height="31" fill="none" stroke="#15120a" stroke-width="1"/>
+  <!-- Red accent corner -->
+  <rect x="22" y="22" width="10" height="10" fill="#b22a1a"/>
+  <!-- Monogram -->
+  <text x="15" y="20.5" text-anchor="middle" font-family="monospace" font-weight="700" font-size="13" letter-spacing="-0.5" fill="#15120a">HK</text>
+</svg>
