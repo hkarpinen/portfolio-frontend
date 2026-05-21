@@ -14,7 +14,7 @@ export const NAV_ITEMS = [
   { label: "Finance",           desc: "Expenses & Income",  href: "/expenses",      icon: "expenses" as const,  exactMatch: false, extraPaths: ["/income"] },
   { label: "Letters",           desc: "Community Forum",    href: "/forum",         icon: "forum" as const,     exactMatch: false },
   { label: "Geography",          desc: "Weather & Maps",     href: "/weather",       icon: "weather" as const,   exactMatch: false },
-  { label: "Math",               desc: "Unit Conversion",    href: "/math",          icon: "math" as const,      exactMatch: false },
+  { label: "Math",               desc: "Unit Conversion",    href: "/convert",       icon: "math" as const,      exactMatch: false },
 ];
 export const NAV_OFFICE = [
   { label: "Subscription",      desc: "Settings",           href: "/settings/profile", icon: "settings" as const, exactMatch: false },

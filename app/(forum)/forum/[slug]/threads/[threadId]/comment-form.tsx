@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createCommentSchema, CreateCommentInput } from "@/schemas/forum";
 import { useCreateComment } from "@/hooks/use-forum";
+import { useIsDemo } from "@/hooks/use-demo";
 import { ApiError } from "@/lib/api-client";
 import { Alert, Btn, Textarea } from "@/components/editorial";
 
@@ -18,6 +19,7 @@ interface CommentFormProps {
 export function CommentForm({ threadId, isAuthed }: CommentFormProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const isDemo = useIsDemo();
   const [submitted, setSubmitted] = useState(false);
   const createComment = useCreateComment(threadId);
 
@@ -38,6 +40,16 @@ export function CommentForm({ threadId, isAuthed }: CommentFormProps) {
           Sign in
         </Link>
         {" "}to leave a comment.
+      </p>
+    );
+  }
+
+  if (isDemo) {
+    return (
+      <p className="text-base text-ink-3">
+        Commenting is not available in the demo.{" "}
+        <a href="/register" className="text-red no-underline font-medium">Create a free account</a>
+        {" "}to join the conversation.
       </p>
     );
   }

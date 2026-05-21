@@ -8,6 +8,7 @@ import type { Comment } from "@/types/forum";
 import styles from "./comment-tree.module.css";
 import { CommentVote } from "./comment-vote";
 import { InlineReplyForm } from "./inline-reply-form";
+import { useIsDemo } from "@/hooks/use-demo";
 
 // Indent rail colors by depth — accent fades as nesting deepens
 const RAIL_COLORS = [
@@ -32,6 +33,7 @@ function CommentNode({
   isAuthed: boolean;
 }) {
   const pathname = usePathname();
+  const isDemo = useIsDemo();
   const authorName = comment.authorDisplayName ?? comment.authorUsername ?? "Anonymous";
   const initials = getInitials(authorName);
   const [replying, setReplying] = useState(false);
@@ -85,7 +87,11 @@ function CommentNode({
             <span className="w-[1px] h-[14px] shrink-0" style={{ background: "var(--ink-3)" }} />
           )}
           {depth < 3 && (
-            isAuthed ? (
+            isDemo ? (
+              <span className="text-sm text-ink-3 py-[3px] px-[8px]">
+                Demo — <a href="/register" className="text-red no-underline font-medium">sign up</a> to reply
+              </span>
+            ) : isAuthed ? (
               <button
                 type="button"
                 onClick={() => setReplying(r => !r)}

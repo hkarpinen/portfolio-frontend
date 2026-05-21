@@ -5,9 +5,11 @@ export function FinancialSummary({ initialMonths }: { initialMonths: Contributio
   const nowKey = new Date().toISOString().slice(0, 7);
   const current = months.find((m) => m.periodStart.slice(0, 7) === nowKey);
 
-  const income      = current?.projectedIncome ?? 0;
-  const netIncome   = current?.projectedNetIncome ?? income;
-  const obligations = (current?.totalDue ?? 0) + (current?.personalBillsDue ?? 0);
+  const income         = current?.projectedIncome ?? 0;
+  const netIncome      = current?.projectedNetIncome ?? income;
+  const sharedBillsDue = current?.totalDue ?? 0;
+  const personalDue    = current?.personalBillsDue ?? 0;
+  const obligations    = sharedBillsDue + personalDue;
   // Use backend-computed disposableIncome when available; fall back to local estimate.
   const disposable  = current?.disposableIncome ?? (netIncome - obligations);
   const disposableSource = current?.disposableIncomeSource ?? null;
@@ -25,9 +27,10 @@ export function FinancialSummary({ initialMonths }: { initialMonths: Contributio
       : undefined;
 
   const stats: { label: string; value: string; sub?: string; color: string }[] = [
-    { label: "Net income",       value: `$${netIncome.toFixed(0)}`,                                               color: "var(--text)" },
-    { label: "Obligations",      value: `$${obligations.toFixed(0)}`,                                             color: "var(--text)" },
-    { label: "Disposable",       value: `${netOver ? "−" : "+"}$${Math.abs(disposable).toFixed(0)}`,              sub: disposableLabel, color: netOver ? "var(--danger)" : "var(--success)" },
+    { label: "Net income",    value: `$${netIncome.toFixed(0)}`,                                              color: "var(--text)" },
+    { label: "Shared",        value: `$${sharedBillsDue.toFixed(0)}`,                                        color: "var(--text)" },
+    { label: "Personal",      value: `$${personalDue.toFixed(0)}`,                                           color: "var(--text)" },
+    { label: "Disposable",    value: `${netOver ? "−" : "+"}$${Math.abs(disposable).toFixed(0)}`,            sub: disposableLabel, color: netOver ? "var(--danger)" : "var(--success)" },
     ...(overdue > 0 ? [{ label: "Overdue", value: String(overdue), color: "var(--danger)" }] : []),
   ];
 

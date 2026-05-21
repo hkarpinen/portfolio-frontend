@@ -5,7 +5,7 @@ export function LedgerStrip() {
     { n: "07",   italic: false, desc: "Modules shipped" },
     { n: "30+",  italic: true,  desc: "Screens designed" },
     { n: "07",   italic: false, desc: "Services standing" },
-    { n: "100%", italic: true,  desc: "TypeScript" },
+    { n: "100%", italic: true,  desc: "TypeScript frontend" },
   ];
 
   return (

@@ -54,15 +54,16 @@ const PROJECTS: { icon: IconName; title: string; description: string; tech: stri
 ];
 
 const SKILLS = [
-  { label: "Frontend", items: ["Next.js", "React", "TypeScript", "Tailwind CSS"] },
-  { label: "Backend", items: [".NET / C#", "REST APIs", "SignalR", "Docker"] },
-  { label: "Data", items: ["PostgreSQL", "Entity Framework", "Redis"] },
+  { label: "Frontend", items: ["Next.js", "React", "TypeScript", "Tailwind CSS", "HTML/CSS"] },
+  { label: "Backend", items: [".NET / C#", "Python", "Node.js", "REST APIs", "Microservices"] },
+  { label: "Cloud & DevOps", items: ["AWS", "Azure", "Docker", "CI/CD", "Git"] },
+  { label: "Data", items: ["PostgreSQL", "SQL", "Oracle", "MongoDB", "Entity Framework"] },
 ];
 
 const FACTS = [
-  { value: "7", label: "Full-stack modules" },
-  { value: "10+", label: "Technologies used" },
-  { value: "100%", label: "TypeScript coverage" },
+  { value: "07", label: "Modules shipped" },
+  { value: "30+", label: "Screens designed" },
+  { value: "07", label: "Services standing" },
 ];
 
 export default function AboutPage() {
@@ -82,7 +83,7 @@ export default function AboutPage() {
               Hank Karpinen<span className="text-red">.</span>
             </h1>
             <p className="font-mono text-sm text-ink-3 uppercase tracking-wide mb-8">
-              Full-Stack Developer · Building modern web applications
+              Full-Stack Engineer · AWS Certified · 4+ Years
             </p>
 
             {/* Action buttons */}
@@ -178,9 +179,10 @@ export default function AboutPage() {
             </h2>
             <div className="flex flex-col gap-5">
               {[
-                { label: "Location", value: "Finland" },
+                { label: "Location", value: "Pullman, WA" },
                 { label: "Available", value: "Open to opportunities" },
-                { label: "Focus", value: "Full-stack web" },
+                { label: "Focus", value: "Full-stack · Cloud" },
+                { label: "Certs", value: "AWS SAA · AWS CCP · CSM" },
               ].map(fact => (
                 <div key={fact.label} className="flex justify-between items-center py-4 px-5 bg-paper-2">
                   <span className="text-base text-ink-3">{fact.label}</span>

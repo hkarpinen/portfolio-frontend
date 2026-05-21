@@ -1,15 +1,17 @@
 "use client";
 
-import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useNotificationsContext, NotificationsProvider } from "@/components/layout/notifications-provider";
 import { NotificationsToaster } from "@/components/layout/notifications-toaster";
 import { Sidebar } from "./sidebar-nav";
 import { TopBarStack } from "./top-bar";
+import { logout } from "@/lib/api/identity";
 
 /* ── Storage ─────────────────────────────────────────────────────────────────*/
 const STORE_KEY = "pf_state_editorial";
+const DEMO_EXPIRES_AT_KEY = "demo_expires_at";
 
 function loadStore(): { tweaks: { sidebarCollapsed: boolean } } {
   try {
@@ -40,6 +42,77 @@ function resolveSection(pathname: string): { kicker: string; title: string; subt
   if (pathname.startsWith("/settings")) return { kicker: "Account", title: "Subscription", subtitle: "Settings" };
   if (pathname.startsWith("/admin")) return { kicker: "Admin", title: "Moderation", subtitle: "Mod Queue" };
   return { kicker: "Section", title: "The Stack." };
+}
+
+/* ── Demo banner ─────────────────────────────────────────────────────────────*/
+function useDemoCountdown() {
+  const [secondsLeft, setSecondsLeft] = useState<number | null>(null);
+  const router = useRouter();
+  const expiredRef = useRef(false);
+
+  useEffect(() => {
+    const raw = localStorage.getItem(DEMO_EXPIRES_AT_KEY);
+    if (!raw) return;
+
+    function tick() {
+      const ms = new Date(raw!).getTime() - Date.now();
+      if (ms <= 0) {
+        if (!expiredRef.current) {
+          expiredRef.current = true;
+          localStorage.removeItem(DEMO_EXPIRES_AT_KEY);
+          logout().finally(() => router.replace("/register?reason=demo-expired"));
+        }
+        setSecondsLeft(0);
+        return;
+      }
+      setSecondsLeft(Math.floor(ms / 1000));
+    }
+
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [router]);
+
+  return secondsLeft;
+}
+
+function formatCountdown(seconds: number) {
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = seconds % 60;
+  if (h > 0) return `${h}h ${m}m`;
+  if (m > 0) return `${m}m ${s.toString().padStart(2, "0")}s`;
+  return `${s}s`;
+}
+
+function DemoBanner() {
+  const secondsLeft = useDemoCountdown();
+  if (secondsLeft === null) return null;
+
+  const urgent = secondsLeft <= 300;
+
+  return (
+    <div
+      className="flex items-center justify-between gap-4 px-4 py-2 font-mono text-xs uppercase tracking-widest"
+      style={{
+        background: urgent ? "var(--ink)" : "var(--ink)/10",
+        color: urgent ? "var(--paper)" : "var(--ink)",
+        borderBottom: "1px solid var(--ink)",
+      }}
+    >
+      <span>
+        Demo session — expires in{" "}
+        <strong>{secondsLeft > 0 ? formatCountdown(secondsLeft) : "0s"}</strong>
+      </span>
+      <Link
+        href="/register"
+        className="underline shrink-0"
+        style={{ color: "inherit" }}
+      >
+        Create a free account →
+      </Link>
+    </div>
+  );
 }
 
 /* ── Mobile bottom strip ─────────────────────────────────────────────────────*/
@@ -108,6 +181,7 @@ function AppShellInner({ children, displayName, avatarUrl, role, subnav }: AppSh
 
   return (
     <div className="flex flex-col h-screen overflow-hidden">
+      <DemoBanner />
       <TopBarStack
         displayName={displayName}
         avatarUrl={avatarUrl}

@@ -112,3 +112,6 @@ export const fetchHouseholdContributionsServer = (householdId: string, cookieHea
     `/api/finance/groups/${householdId}/contributions`,
     cookieHeader,
   );
+
+export const checkDemoReady = () =>
+  api.get<{ ready: boolean }>("/api/households/demo/ready");

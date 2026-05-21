@@ -3,11 +3,13 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCreateCommunity, useUploadCommunityImage } from "@/hooks/use-community";
+import { useIsDemo } from "@/hooks/use-demo";
 import { ApiError } from "@/lib/api-client";
 import { Btn, Input, Textarea, SelectField } from "@/components/editorial";
 
 export default function NewCommunityPage() {
   const router = useRouter();
+  const isDemo = useIsDemo();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [privacy, setPrivacy] = useState("Public");
@@ -15,6 +17,26 @@ export default function NewCommunityPage() {
   const createCommunity = useCreateCommunity();
   const uploadImage = useUploadCommunityImage();
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  if (isDemo) {
+    return (
+      <div className="page-enter max-w-[560px] mx-auto flex flex-col gap-12">
+        <div>
+          <h1 className="font-serif font-bold text-4xl leading-none tracking-snug text-ink m-0">
+            Create Community
+          </h1>
+        </div>
+        <div className="bg-paper p-12 shadow-stamp border-ink flex flex-col gap-6">
+          <p className="text-base text-ink-2">
+            Creating communities is not available in the demo.{" "}
+            <a href="/register" className="text-red no-underline font-medium">Create a free account</a>
+            {" "}to get started.
+          </p>
+          <Btn type="button" variant="secondary" onClick={() => router.back()}>Go back</Btn>
+        </div>
+      </div>
+    );
+  }
 
   async function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];

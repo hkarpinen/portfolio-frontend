@@ -50,6 +50,7 @@ export function Lede() {
           <div style={{ display: "flex", gap: 12, marginTop: 30, flexWrap: "wrap" }}>
             <Btn href="/about" variant="primary" size="lg" iconRight={<Icon name="arrowRight" size={14} />}>View the work</Btn>
             <Btn href="/bills" variant="secondary" size="lg">Explore the modules</Btn>
+            <Btn href="/demo" variant="secondary" size="lg">Try the demo</Btn>
           </div>
         </div>
 

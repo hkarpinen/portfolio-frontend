@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCreateThread } from "@/hooks/use-forum";
 import { useCommunities } from "@/hooks/use-community";
+import { useIsDemo } from "@/hooks/use-demo";
 import { ApiError } from "@/lib/api-client";
 import { Btn, Input, Textarea, SelectField } from "@/components/editorial";
 
@@ -13,6 +14,7 @@ export default function NewThreadPage({
   params: { slug: string };
 }) {
   const router = useRouter();
+  const isDemo = useIsDemo();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [flair, setFlair] = useState("None");
@@ -22,6 +24,26 @@ export default function NewThreadPage({
   const communities = communitiesPage?.items ?? [];
 
   const flairOptions = ["None", "Discussion", "Article", "Show & Tell", "Question", "Announcement"];
+
+  if (isDemo) {
+    return (
+      <div className="page-enter max-w-[680px] mx-auto flex flex-col gap-12">
+        <div>
+          <h1 className="font-serif font-bold text-4xl leading-none tracking-snug text-ink m-0">
+            Create Thread
+          </h1>
+        </div>
+        <div className="bg-paper p-12 shadow-stamp border-ink flex flex-col gap-6">
+          <p className="text-base text-ink-2">
+            Posting threads is not available in the demo.{" "}
+            <a href="/register" className="text-red no-underline font-medium">Create a free account</a>
+            {" "}to join the conversation.
+          </p>
+          <Btn type="button" variant="secondary" onClick={() => router.back()}>Go back</Btn>
+        </div>
+      </div>
+    );
+  }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
