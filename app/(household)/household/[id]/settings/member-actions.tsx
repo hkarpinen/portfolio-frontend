@@ -39,11 +39,11 @@ export function MemberActions({ householdId, members, myUserId, isOwner, isPrivi
       <p className="text-sm font-bold text-ink-3 uppercase tracking-[0.1em]">
         Members
       </p>
-      {members.filter((m) => m.isActive).length === 0 ? (
+      {members.length === 0 ? (
         <p className="text-ink-3 text-base">No active members.</p>
       ) : (
         <div className="flex flex-col gap-4">
-          {members.filter((m) => m.isActive).map((m) => {
+          {members.map((m) => {
             const isSelf = m.userId.toLowerCase() === myUserId.toLowerCase();
             const canRemove = isOwner && !isSelf;
             const canChangeRole = isOwner && !isSelf && m.role !== "Owner";

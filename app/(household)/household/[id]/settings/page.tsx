@@ -17,7 +17,7 @@ export default async function HouseholdSettingsPage({ params }: Props) {
   const [household, membersRaw, me] = await Promise.all([
     serverFetch<Household>(`/api/households/${params.id}`, cookieHeader),
     serverFetch<MembershipResponse[]>(`/api/households/${params.id}/members`, cookieHeader),
-    serverFetch<UserProfile>("/api/identity/profile", cookieHeader),
+    serverFetch<UserProfile>("/api/identity/me", cookieHeader),
   ]);
 
   if (!household) {
