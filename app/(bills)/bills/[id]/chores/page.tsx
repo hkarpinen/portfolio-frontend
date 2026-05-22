@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import { useChores, useCompleteChore, useDeleteChore } from "@/hooks/use-chores";
 import { useHouseholdMembers } from "@/hooks/use-household";
@@ -112,9 +112,9 @@ function ChoreRow({
   );
 }
 
-export default function ChoresPage({ params }: { params: { id: string } }) {
+export default function ChoresPage() {
   const router = useRouter();
-  const { id: householdId } = params;
+  const { id: householdId } = useParams<{ id: string }>();
 
   const [showAll, setShowAll] = useState(false);
   const choresQuery = useChores(householdId, !showAll);

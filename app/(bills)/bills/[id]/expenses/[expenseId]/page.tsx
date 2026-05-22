@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useParams } from "next/navigation";
 import { ApiError } from "@/lib/api-client";
 import { useHouseholdExpenseDetail } from "@/hooks/use-expenses";
 import { useMe } from "@/hooks/use-identity";
@@ -10,11 +11,12 @@ import { ExpenseEditForm } from "./expense-edit-form";
 import { ExpenseSplits } from "./expense-splits";
 import { Alert } from "@/components/editorial";
 
-export default function ExpensePage({ params }: { params: { id: string; expenseId: string } }) {
-  const { data: page, isLoading, error: fetchError } = useHouseholdExpenseDetail(params.id, params.expenseId);
+export default function ExpensePage() {
+  const { id, expenseId } = useParams<{ id: string; expenseId: string }>();
+  const { data: page, isLoading, error: fetchError } = useHouseholdExpenseDetail(id, expenseId);
   const { data: me } = useMe();
   const [editOpen, setEditOpen] = useState(false);
-  const { data: householdMembers } = useHouseholdMembers(params.id);
+  const { data: householdMembers } = useHouseholdMembers(id);
 
   const expense = page?.expense;
   const splits = page?.splits ?? [];
@@ -42,7 +44,7 @@ export default function ExpensePage({ params }: { params: { id: string; expenseI
     <div className="page-enter max-w-[720px] flex flex-col gap-12">
       {/* Header */}
       <div>
-        <Link href={`/bills/${params.id}`} className="text-base text-ink-3 no-underline inline-flex items-center gap-2">
+        <Link href={`/bills/${id}`} className="text-base text-ink-3 no-underline inline-flex items-center gap-2">
           ← Household
         </Link>
         <div className="flex items-start justify-between mt-2">
@@ -70,8 +72,8 @@ export default function ExpensePage({ params }: { params: { id: string; expenseI
       {editOpen && isPrivileged && (
         <ExpenseEditForm
           expense={expense}
-          householdId={params.id}
-          expenseId={params.expenseId}
+          householdId={id}
+          expenseId={expenseId}
           onClose={() => setEditOpen(false)}
         />
       )}
@@ -82,8 +84,8 @@ export default function ExpensePage({ params }: { params: { id: string; expenseI
         members={members}
         isPrivileged={isPrivileged}
         currentMembership={currentMembership}
-        householdId={params.id}
-        expenseId={params.expenseId}
+        householdId={id}
+        expenseId={expenseId}
       />
     </div>
   );
