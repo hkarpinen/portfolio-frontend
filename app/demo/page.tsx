@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { startDemo } from "@/lib/api/identity";
 import { checkDemoReady } from "@/lib/api/households";
+import { RecaptchaScript, useRecaptcha } from "@/components/recaptcha";
 
 const DEMO_EXPIRES_AT_KEY = "demo_expires_at";
 const POLL_INTERVAL_MS = 1500;
@@ -11,6 +12,7 @@ const TIMEOUT_MS = 15_000;
 
 export default function DemoPage() {
   const router = useRouter();
+  const executeRecaptcha = useRecaptcha();
   const [status, setStatus] = useState<"starting" | "seeding" | "error">("starting");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const didStart = useRef(false);
@@ -21,7 +23,8 @@ export default function DemoPage() {
 
     async function run() {
       try {
-        const { demoExpiresAt } = await startDemo();
+        const captchaToken = await executeRecaptcha("demo_start");
+        const { demoExpiresAt } = await startDemo(captchaToken);
         localStorage.setItem(DEMO_EXPIRES_AT_KEY, demoExpiresAt);
         setStatus("seeding");
 
@@ -50,28 +53,34 @@ export default function DemoPage() {
 
   if (status === "error") {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-paper px-6">
-        <div className="text-center max-w-sm">
-          <p className="font-mono text-sm uppercase tracking-widest text-ink/60 mb-2">Demo</p>
-          <p className="font-body text-base text-ink mb-6">{errorMessage}</p>
-          <a href="/" className="font-mono text-sm uppercase tracking-widest underline">
-            Back to home
-          </a>
-        </div>
-      </main>
+      <>
+        <main className="flex min-h-screen items-center justify-center bg-paper px-6">
+          <div className="text-center max-w-sm">
+            <p className="font-mono text-sm uppercase tracking-widest text-ink/60 mb-2">Demo</p>
+            <p className="font-body text-base text-ink mb-6">{errorMessage}</p>
+            <a href="/" className="font-mono text-sm uppercase tracking-widest underline">
+              Back to home
+            </a>
+          </div>
+        </main>
+        <RecaptchaScript strategy="afterInteractive" />
+      </>
     );
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-paper px-6">
-      <div className="text-center max-w-sm">
-        <p className="font-mono text-sm uppercase tracking-widest text-ink/60 mb-2">Demo</p>
-        <p className="font-serif text-2xl italic mb-6">
-          {status === "starting" ? "Starting your demo…" : "Setting things up…"}
-        </p>
-        <Spinner />
-      </div>
-    </main>
+    <>
+      <main className="flex min-h-screen items-center justify-center bg-paper px-6">
+        <div className="text-center max-w-sm">
+          <p className="font-mono text-sm uppercase tracking-widest text-ink/60 mb-2">Demo</p>
+          <p className="font-serif text-2xl italic mb-6">
+            {status === "starting" ? "Starting your demo…" : "Setting things up…"}
+          </p>
+          <Spinner />
+        </div>
+      </main>
+      <RecaptchaScript strategy="afterInteractive" />
+    </>
   );
 }
 

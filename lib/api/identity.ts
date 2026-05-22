@@ -11,8 +11,8 @@ export const fetchMeServer = (cookieHeader: string) =>
 
 export const logout = () => api.post<void>("/api/identity/logout");
 
-export const startDemo = () =>
-  api.post<{ demoExpiresAt: string }>("/api/identity/demo/start");
+export const startDemo = (captchaToken: string) =>
+  api.post<{ demoExpiresAt: string }>("/api/identity/demo/start", { captchaToken });
 
 // ─── Admin ────────────────────────────────────────────────────────────────────
 
