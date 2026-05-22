@@ -71,8 +71,8 @@ export const removeMember = (householdId: string, membershipId: string) =>
 export const changeMemberRole = (householdId: string, membershipId: string, role: string) =>
   api.put(`/api/households/${householdId}/members/${membershipId}/role`, { role });
 
-export const generateInvite = (householdId: string) =>
-  api.post(`/api/households/${householdId}/invite`);
+export const generateInvite = (householdId: string, recipientEmail?: string) =>
+  api.post(`/api/households/${householdId}/invite`, recipientEmail ? { recipientEmail } : undefined);
 
 export const fetchHouseholdContributions = (householdId: string) =>
   api.get<HouseholdMonthlyContributions[]>(`/api/finance/groups/${householdId}/contributions`);

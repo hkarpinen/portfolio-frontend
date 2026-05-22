@@ -11,6 +11,15 @@ export const fetchMeServer = (cookieHeader: string) =>
 
 export const logout = () => api.post<void>("/api/identity/logout");
 
+export const resendConfirmationEmail = (email: string) =>
+  api.post<void>("/api/identity/resend-confirmation", { email });
+
+export const forgotPassword = (email: string) =>
+  api.post<void>("/api/identity/forgot-password", { email });
+
+export const resetPassword = (userId: string, token: string, newPassword: string) =>
+  api.post<void>("/api/identity/reset-password", { userId, token, newPassword });
+
 export const startDemo = (captchaToken: string) =>
   api.post<{ demoExpiresAt: string }>("/api/identity/demo/start", { captchaToken });
 

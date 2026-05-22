@@ -7,6 +7,7 @@ import { SectionHeader } from "@/components/editorial/section-header";
 import { Btn } from "@/components/editorial/button";
 import { Icon } from "@/components/editorial/icon";
 import { getInitials } from "@/lib/utils";
+import s from "./page.module.css";
 
 export const dynamic = 'force-dynamic';
 
@@ -49,7 +50,7 @@ export default async function HouseholdsPage() {
       />
 
       {/* ── Ledger strip ───────────────────────────────────────────────────── */}
-      <div className="bills-strip grid border-ink" style={{gridTemplateColumns: "repeat(4, 1fr)" }}>
+      <div className={`${s.strip} grid border-ink`} style={{gridTemplateColumns: "repeat(4, 1fr)" }}>
         {LEDGER_STRIP_LABELS.map((cell, i) => (
           <div
             key={cell.label}
@@ -72,7 +73,7 @@ export default async function HouseholdsPage() {
       </div>
 
       {/* ── Two callouts ───────────────────────────────────────────────────── */}
-      <div className="bills-callouts grid border-ink" style={{gridTemplateColumns: "1fr 1fr" }}>
+      <div className={`${s.callouts} grid border-ink`} style={{gridTemplateColumns: "1fr 1fr" }}>
         {[
           { num: "01", title: "Chores & Calendar",  sub: "Shared tasks, rotas, and household events.", href: `/household/${households[0]?.id ?? ""}` + (households[0] ? "/chores" : "") || "/household" },
           { num: "02", title: "Expenses & Splits",   sub: "Track payments and split costs. Powered by Finance.", href: "/expenses" },
@@ -80,7 +81,7 @@ export default async function HouseholdsPage() {
           <Link
             key={cell.num}
             href={cell.href}
-            className="bills-callout-cell no-underline flex items-center justify-between gap-8"
+            className={`${s.calloutCell} no-underline flex items-center justify-between gap-8`}
             style={{
               padding: "18px 22px",
               borderLeft: i > 0 ? "1.5px solid var(--ink)" : undefined,
@@ -123,7 +124,7 @@ export default async function HouseholdsPage() {
             </div>
           </div>
         ) : (
-          <div className="bills-grid grid gap-[16px]" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}>
+          <div className={`${s.grid} grid gap-[16px]`} style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}>
             {households.map((h) => {
               const initials = getInitials(h.name);
               const balance  = (h.memberCount ?? 1) * 80;
@@ -193,7 +194,7 @@ export default async function HouseholdsPage() {
             {/* + Create tile */}
             <Link
               href="/household/new"
-              className="bills-create-tile no-underline flex flex-col items-center justify-center gap-[10px] font-mono uppercase"
+              className={`${s.createTile} no-underline flex flex-col items-center justify-center gap-[10px] font-mono uppercase`}
               style={{
                 padding: 22,
                 minHeight: 160,
@@ -208,18 +209,6 @@ export default async function HouseholdsPage() {
         )}
       </div>
 
-      <style>{`
-        .bills-callout-cell { background: var(--paper); transition: background 140ms; }
-        .bills-callout-cell:hover { background: var(--paper-2); }
-        .bills-create-tile { border: 1.5px dashed var(--ink-3); color: var(--ink-3); transition: border-color 140ms, color 140ms; }
-        .bills-create-tile:hover { border-color: var(--red); color: var(--red); }
-        @media (max-width: 767px) {
-          .bills-strip { grid-template-columns: repeat(2, 1fr) !important; }
-          .bills-callouts { grid-template-columns: 1fr !important; }
-          .bills-callouts > a + a { border-left: none !important; border-top: 1.5px solid var(--ink); }
-          .bills-grid { grid-template-columns: 1fr !important; }
-        }
-      `}</style>
     </div>
   );
 }

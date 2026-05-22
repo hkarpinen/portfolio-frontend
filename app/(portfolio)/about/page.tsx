@@ -73,8 +73,8 @@ export default function AboutPage() {
       <div className="py-20 px-16 bg-paper-2 shadow-card border-ink">
         <div className="flex items-center gap-12 flex-wrap">
           {/* Avatar — square stamp */}
-          <div className="w-40 h-40 bg-paper-3 flex items-center justify-center text-xl font-bold text-ink font-mono shrink-0" style={{ border: "2px solid var(--ink)" }}>
-            HK
+          <div className="w-40 h-40 shrink-0 overflow-hidden" style={{ border: "2px solid var(--ink)" }}>
+            <img src="/hank_headshot.jpeg" alt="Hank Karpinen" className="w-full h-full object-cover" />
           </div>
 
           {/* Info */}

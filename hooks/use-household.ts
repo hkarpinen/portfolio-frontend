@@ -101,7 +101,7 @@ export function useJoinHousehold() {
 export function useGenerateInvite(householdId: string) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: () => generateInvite(householdId),
+    mutationFn: (recipientEmail?: string) => generateInvite(householdId, recipientEmail),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: financeKeys.householdMembers(householdId) });
     },

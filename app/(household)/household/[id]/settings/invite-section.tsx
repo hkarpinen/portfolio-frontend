@@ -9,13 +9,15 @@ export function InviteSection({ householdId }: { householdId: string }) {
   const [inviteResult, setInviteResult] = useState<string | null>(null);
   const [inviteError, setInviteError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [recipientEmail, setRecipientEmail] = useState("");
   const generateInviteMutation = useGenerateInvite(householdId);
 
   const onGenerateInvite = () => {
     setInviteResult(null);
     setInviteError(null);
     setCopied(false);
-    generateInviteMutation.mutate(undefined, {
+    const email = recipientEmail.trim() || undefined;
+    generateInviteMutation.mutate(email, {
       onSuccess: (result) => setInviteResult((result as { invitationCode?: string })?.invitationCode ?? ""),
       onError: (err) => setInviteError(err instanceof Error ? err.message : "Failed to generate invite."),
     });
@@ -50,6 +52,19 @@ export function InviteSection({ householdId }: { householdId: string }) {
         </Link>
         .
       </p>
+      <div className="flex flex-col gap-2">
+        <label className="text-sm text-ink-3 font-body">
+          Send to email <span className="text-ink-4">(optional)</span>
+        </label>
+        <input
+          type="email"
+          value={recipientEmail}
+          onChange={(e) => setRecipientEmail(e.target.value)}
+          placeholder="recipient@example.com"
+          className="bg-paper py-[10px] px-[12px] text-base text-ink font-body border-ink w-full"
+          style={{ outline: "none" }}
+        />
+      </div>
       {inviteError && <Alert variant="danger">{inviteError}</Alert>}
       {inviteResult ? (
         <div className="flex flex-col gap-5">
@@ -65,7 +80,7 @@ export function InviteSection({ householdId }: { householdId: string }) {
             </button>
           </div>
           <button
-            onClick={() => setInviteResult(null)}
+            onClick={() => { setInviteResult(null); setRecipientEmail(""); }}
             className="text-base text-ink-3 bg-transparent cursor-pointer p-0 text-left font-body" style={{ border: "none" }}
           >
             Generate another

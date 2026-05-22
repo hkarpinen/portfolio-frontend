@@ -8,6 +8,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { loginSchema, type LoginInput } from "@/schemas/auth";
 import { api, ApiError } from "@/lib/api-client";
+import { resendConfirmationEmail } from "@/lib/api/identity";
 import { Btn, Input, Alert } from "@/components/editorial";
 import { identityKeys } from "@/lib/query-keys";
 
@@ -19,6 +20,8 @@ export function LoginForm({ from }: LoginFormProps) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [serverError, setServerError] = useState<string | null>(null);
+  const [unconfirmedEmail, setUnconfirmedEmail] = useState<string | null>(null);
+  const [resendState, setResendState] = useState<"idle" | "sending" | "sent">("idle");
   const [showPw, setShowPw] = useState(false);
 
   const {
@@ -29,13 +32,30 @@ export function LoginForm({ from }: LoginFormProps) {
 
   async function onSubmit(data: LoginInput) {
     setServerError(null);
+    setUnconfirmedEmail(null);
+    setResendState("idle");
     try {
       await api.post("/api/identity/login", data);
       queryClient.invalidateQueries({ queryKey: identityKeys.me() });
       router.push(from);
       router.refresh();
     } catch (err) {
-      setServerError(err instanceof ApiError ? err.message : "Invalid email or password.");
+      const message = err instanceof ApiError ? err.message : "Invalid email or password.";
+      if (message === "Email not confirmed.") {
+        setUnconfirmedEmail(data.email);
+      } else {
+        setServerError(message);
+      }
+    }
+  }
+
+  async function handleResend() {
+    if (!unconfirmedEmail || resendState !== "idle") return;
+    setResendState("sending");
+    try {
+      await resendConfirmationEmail(unconfirmedEmail);
+    } finally {
+      setResendState("sent");
     }
   }
 
@@ -89,6 +109,26 @@ export function LoginForm({ from }: LoginFormProps) {
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-8 mt-8">
         {serverError && <Alert variant="danger">{serverError}</Alert>}
+        {unconfirmedEmail && (
+          <Alert variant="warning" title="Email not confirmed">
+            {resendState === "sent" ? (
+              "Confirmation email sent — check your inbox."
+            ) : (
+              <>
+                Please confirm your email before signing in.{" "}
+                <button
+                  type="button"
+                  onClick={handleResend}
+                  disabled={resendState === "sending"}
+                  className="underline font-semibold text-ink cursor-pointer bg-transparent border-none p-0"
+                  style={{ fontSize: "inherit" }}
+                >
+                  {resendState === "sending" ? "Sending…" : "Resend confirmation email"}
+                </button>
+              </>
+            )}
+          </Alert>
+        )}
 
         <Input
           type="email"
@@ -107,6 +147,13 @@ export function LoginForm({ from }: LoginFormProps) {
               error={errors.password?.message}
               {...register("password")}
             />
+            <Link
+              href="/forgot-password"
+              className="absolute right-0 top-0 font-mono text-ink-3 underline"
+              style={{ fontSize: "0.7rem", letterSpacing: "0.06em" }}
+            >
+              Forgot password?
+            </Link>
             <button
               type="button"
               onClick={() => setShowPw((s) => !s)}
