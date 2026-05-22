@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useOverview } from "@/hooks/use-household";
 
-import { BudgetView } from "../../(bills)/contributions/contributions-view";
+import { BudgetView } from "../../(household)/contributions/contributions-view";
 import { ExpenseList } from "./expense-list";
 import { Icon } from "@/components/editorial/icon";
 import Link from "next/link";

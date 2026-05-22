@@ -10,7 +10,7 @@ import { getInitials } from "@/lib/utils";
 export const NAV_ITEMS = [
   { label: "Front Page",        desc: "Overview",           href: "/",              icon: "home" as const,      exactMatch: true },
   { label: "About the Author",  desc: "Portfolio",          href: "/about",         icon: "about" as const,     exactMatch: false },
-  { label: "The Ledger",        desc: "Household & Chores", href: "/bills",         icon: "household" as const, exactMatch: false, extraPaths: ["/dashboard"] },
+  { label: "The Ledger",        desc: "Household & Chores", href: "/household",         icon: "household" as const, exactMatch: false, extraPaths: ["/dashboard"] },
   { label: "Finance",           desc: "Expenses & Income",  href: "/expenses",      icon: "expenses" as const,  exactMatch: false, extraPaths: ["/income"] },
   { label: "Letters",           desc: "Community Forum",    href: "/forum",         icon: "forum" as const,     exactMatch: false },
   { label: "Geography",          desc: "Weather & Maps",     href: "/weather",       icon: "weather" as const,   exactMatch: false },

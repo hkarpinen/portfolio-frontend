@@ -25,7 +25,7 @@ Requires the backend services running (see `portfolio-infra`).
 ```
 app/
   (auth)/          Login, register, email confirmation, 2FA
-  (bills)/         Household, expense, split, income pages (routes to /api/finance/*)
+  (household)/     Household, expense, split, income pages (routes to /api/finance/*)
   (forum)/         Communities, threads, comments, voting
   (portfolio)/     Portfolio landing pages
   settings/        User profile and account settings

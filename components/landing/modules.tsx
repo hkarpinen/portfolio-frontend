@@ -8,7 +8,7 @@ const MODULES = [
     title: <>Household <em style={{ color: "var(--red)" }}>&amp; Chores</em></>,
     body: "Shared household management. Members, chores roster, calendar events, contribution tracking. The glue between housemates that isn't a group chat.",
     sub: "4 sub-pages",
-    href: "/bills",
+    href: "/household",
   },
   {
     ad: "Ad  № 002",

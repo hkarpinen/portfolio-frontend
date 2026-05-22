@@ -33,7 +33,7 @@ export function MobileNav({ displayName, avatarUrl, initials }: MobileNavProps) 
             { href: "/about",       label: "About" },
             { href: "/contact",     label: "Contact" },
             { href: "/forum", label: "Forum" },
-            { href: "/bills",  label: "Expenses" },
+            { href: "/household",  label: "Expenses" },
           ].map((item) => (
             <DropdownMenu.Item key={item.href} asChild>
               <Link

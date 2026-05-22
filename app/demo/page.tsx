@@ -34,13 +34,13 @@ export default function DemoPage() {
           await sleep(POLL_INTERVAL_MS);
           const { ready } = await checkDemoReady();
           if (ready) {
-            router.replace("/bills");
+            router.replace("/household");
             return;
           }
         }
 
         // Timeout — redirect anyway; data may arrive shortly after.
-        router.replace("/bills");
+        router.replace("/household");
       } catch (err: unknown) {
         const message = err instanceof Error ? err.message : "Something went wrong.";
         setErrorMessage(message);

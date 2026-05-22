@@ -32,7 +32,7 @@ function resolveSection(pathname: string): { kicker: string; title: string; subt
   if (pathname === "/") return { kicker: "Section", title: "Front Page", subtitle: "Overview" };
   if (pathname.startsWith("/about")) return { kicker: "Portfolio", title: "About the Author", subtitle: "Profile & Projects" };
   if (pathname.startsWith("/contact")) return { kicker: "Portfolio", title: "Contact", subtitle: "Write a Letter" };
-  if (pathname.startsWith("/bills")) return { kicker: "Ledger · Page B-1", title: "The Ledger", subtitle: "Household & Chores" };
+  if (pathname.startsWith("/household")) return { kicker: "Ledger · Page B-1", title: "The Ledger", subtitle: "Household & Chores" };
   if (pathname.startsWith("/dashboard")) return { kicker: "Ledger", title: "Dashboard", subtitle: "Overview" };
   if (pathname.startsWith("/expenses")) return { kicker: "Finance · Expenses", title: "Finance", subtitle: "Expenses & Payments" };
   if (pathname.startsWith("/income")) return { kicker: "Finance · Income", title: "Finance", subtitle: "Income" };
@@ -119,7 +119,7 @@ function DemoBanner() {
 function BottomStrip({ pathname }: { pathname: string }) {
   const cells = [
     { label: "Home",    href: "/" },
-    { label: "Bills",   href: "/bills" },
+    { label: "Household", href: "/household" },
     { label: "Finance", href: "/expenses" },
     { label: "Letters", href: "/forum" },
     { label: "Account", href: "/settings/profile" },

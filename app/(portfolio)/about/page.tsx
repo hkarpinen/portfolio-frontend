@@ -14,7 +14,7 @@ const PROJECTS: { icon: IconName; title: string; description: string; tech: stri
     title: "Household",
     description: "Household management service. Create shared households, assign chores, manage a shared calendar, and track who's contributing what. Built on the Household microservice (ASP.NET Core, EF Core).",
     tech: ["ASP.NET Core", "C#", "EF Core", "PostgreSQL", "MassTransit", "React Query", "Docker"],
-    href: "/bills",
+    href: "/household",
   },
   {
     icon: "dollar",
