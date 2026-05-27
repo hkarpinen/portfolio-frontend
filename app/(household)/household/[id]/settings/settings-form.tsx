@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Btn, Alert, Input, Textarea, SelectField } from "@/components/editorial";
 import { useUpdateHousehold } from "@/hooks/use-household";
+import { useFormSubmit } from "@/hooks/use-form-submit";
 import { useRouter } from "next/navigation";
 import type { Household } from "@/types/finance";
 
@@ -23,7 +24,6 @@ type SettingsForm = z.infer<typeof settingsSchema>;
 
 export function SettingsForm({ household }: { household: Household }) {
   const router = useRouter();
-  const [saveError, setSaveError] = useState<string | null>(null);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const updateHouseholdMutation = useUpdateHousehold(household.householdId);
 
@@ -36,20 +36,25 @@ export function SettingsForm({ household }: { household: Household }) {
     },
   });
 
-  const onSave = async (data: SettingsForm) => {
-    setSaveError(null);
-    setSaveSuccess(false);
-    try {
+  const { submit, serverError } = useFormSubmit(
+    async (data: SettingsForm) => {
       await updateHouseholdMutation.mutateAsync({
         name: data.name,
         description: data.description || undefined,
         currencyCode: data.currencyCode,
       });
-      setSaveSuccess(true);
-      router.refresh();
-    } catch (err) {
-      setSaveError(err instanceof Error ? err.message : "Failed to save.");
-    }
+    },
+    {
+      onSuccess: () => {
+        setSaveSuccess(true);
+        router.refresh();
+      },
+    },
+  );
+
+  const onSave = (data: SettingsForm) => {
+    setSaveSuccess(false);
+    submit(data);
   };
 
   return (
@@ -58,7 +63,7 @@ export function SettingsForm({ household }: { household: Household }) {
         Household Details
       </p>
       <form onSubmit={handleSubmit(onSave)} className="flex flex-col gap-[14px]">
-        {saveError && <Alert variant="danger">{saveError}</Alert>}
+        {serverError && <Alert variant="danger">{serverError}</Alert>}
         {saveSuccess && <Alert variant="success">Changes saved!</Alert>}
         <Input label="Name" {...register("name")} error={errors.name?.message} />
         <Textarea

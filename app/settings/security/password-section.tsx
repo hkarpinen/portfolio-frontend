@@ -4,7 +4,8 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { api, ApiError } from "@/lib/api-client";
+import { api } from "@/lib/api-client";
+import { useFormSubmit } from "@/hooks/use-form-submit";
 import { Btn, Input, Alert, Collapsible } from "@/components/editorial";
 
 const passwordSchema = z
@@ -22,7 +23,6 @@ type PasswordFormData = z.infer<typeof passwordSchema>;
 
 export function PasswordSection() {
   const [passwordSaved, setPasswordSaved] = useState(false);
-  const [passwordError, setPasswordError] = useState<string | null>(null);
 
   const {
     register,
@@ -31,32 +31,37 @@ export function PasswordSection() {
     formState: { errors, isSubmitting },
   } = useForm<PasswordFormData>({ resolver: zodResolver(passwordSchema) });
 
-  const onPasswordSubmit = async (data: PasswordFormData) => {
-    setPasswordError(null);
-    setPasswordSaved(false);
-    try {
+  const { submit, serverError, clearError } = useFormSubmit(
+    async (data: PasswordFormData) => {
       await api.put("/api/identity/password", {
         currentPassword: data.currentPassword,
         newPassword: data.newPassword,
       });
-      reset();
-      setPasswordSaved(true);
-    } catch (err) {
-      setPasswordError(err instanceof ApiError ? err.message : "Failed to update password. Check your current password.");
-    }
+    },
+    {
+      onSuccess: () => {
+        reset();
+        setPasswordSaved(true);
+      },
+    },
+  );
+
+  const onPasswordSubmit = (data: PasswordFormData) => {
+    setPasswordSaved(false);
+    submit(data);
   };
 
   return (
     <Collapsible
       title="Password"
       description="Change your account password"
-      onOpenChange={(open) => { if (!open) { setPasswordSaved(false); setPasswordError(null); } }}
+      onOpenChange={(open) => { if (!open) { setPasswordSaved(false); clearError(); } }}
     >
       <form
         onSubmit={handleSubmit(onPasswordSubmit)}
         className="flex flex-col gap-[14px] mt-10 pt-10 border-ink-t"
       >
-        {passwordError && <Alert variant="danger">{passwordError}</Alert>}
+        {serverError && <Alert variant="danger">{serverError}</Alert>}
         {passwordSaved && <Alert variant="success">Password updated successfully!</Alert>}
         <div>
           <label className="ed-label block mb-[6px]">Current Password</label>
