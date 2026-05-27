@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useSyncPlaidItem, useUnlinkPlaidItem } from "@/hooks/use-connections";
 import { Icon } from "@/components/editorial/icon";
+import { Btn } from "@/components/editorial";
 import type { Connection, LinkedAccountResponse } from "@/lib/api/plaid";
 import { formatCurrency } from "@/lib/formatting";
 
@@ -77,41 +78,48 @@ export function ConnectionCard({ item }: { item: Connection }) {
         </div>
 
         <div className="flex items-center gap-3 shrink-0">
-          <button
+          <Btn
+            variant="ghost"
+            size="sm"
             onClick={() => sync.mutate(item.connectionId)}
             disabled={isSyncing || isUnlinking}
-            className={`bg-paper-2 py-3 px-6 text-base font-medium whitespace-nowrap border-ink cursor-pointer disabled:cursor-default ${isSyncing ? "text-ink-3" : "text-ink-2"}`}
+            loading={isSyncing}
+            className="whitespace-nowrap"
           >
             {isSyncing ? "Syncing…" : "↻ Sync"}
-          </button>
+          </Btn>
 
           {confirming ? (
             <>
-              <button
+              <Btn
+                variant="ghost"
+                size="sm"
                 onClick={() => setConfirming(false)}
-                className="bg-transparent py-3 px-5 text-base text-ink-3 cursor-pointer border-ink"
-
               >
                 Cancel
-              </button>
-              <button
+              </Btn>
+              <Btn
+                variant="danger"
+                size="sm"
                 onClick={() => { unlink.mutate(item.connectionId); setConfirming(false); }}
-                className="bg-red py-3 px-6 text-base font-semibold text-white cursor-pointer whitespace-nowrap border-none"
+                className="whitespace-nowrap"
               >
                 Confirm remove
-              </button>
+              </Btn>
             </>
           ) : (
-            <button
+            <Btn
+              variant="danger"
+              size="sm"
               onClick={() => setConfirming(true)}
               disabled={isUnlinking}
-              className="bg-transparent py-3 px-5 text-base text-red cursor-pointer border-[1.5px] border-red"
             >
               Remove
-            </button>
+            </Btn>
           )}
 
           <button
+            type="button"
             onClick={() => setExpanded((v) => !v)}
             className={`bg-transparent py-3 px-2 cursor-pointer text-ink-3 text-md leading-none border-none transition-transform duration-200${expanded ? " rotate-180" : ""}`}
             aria-label={expanded ? "Collapse accounts" : "Expand accounts"}

@@ -2,6 +2,7 @@
 
 import { usePlaidLink, usePlaidItems } from "@/hooks/use-connections";
 import { Icon } from "@/components/editorial/icon";
+import { Btn } from "@/components/editorial";
 import type { Connection } from "@/lib/api/plaid";
 import { ConnectionCard } from "./connection-card";
 
@@ -51,23 +52,27 @@ function OAuthServiceCard({ service }: { service: OAuthService }) {
         </p>
       </div>
       {service.connected ? (
-        <button
+        <Btn
+          variant="danger"
+          size="sm"
           type="button"
           onClick={() => {/* TODO(handoff8): wire to disconnect endpoint */}}
           aria-label={`Disconnect ${service.label}`}
-          className="shrink-0 bg-transparent py-3 px-6 text-base font-semibold text-red border-[1.5px] border-red cursor-pointer whitespace-nowrap"
+          className="shrink-0 whitespace-nowrap"
         >
           Disconnect
-        </button>
+        </Btn>
       ) : (
-        <button
+        <Btn
+          variant="secondary"
+          size="sm"
           type="button"
           onClick={() => {/* TODO(handoff8): wire to OAuth connect flow */}}
           aria-label={`Connect ${service.label}`}
-          className="shrink-0 bg-ink text-paper py-3 px-6 text-base font-semibold cursor-pointer whitespace-nowrap border-none"
+          className="shrink-0 whitespace-nowrap"
         >
           Connect
-        </button>
+        </Btn>
       )}
     </div>
   );
@@ -89,13 +94,15 @@ function EmptyState({ onConnect, loading }: { onConnect: () => void; loading: bo
       >
         Connect a bank to automatically track income and expenses from your transaction history.
       </p>
-      <button
+      <Btn
+        variant="secondary"
+        size="lg"
         onClick={onConnect}
         disabled={loading}
-        className="bg-ink text-paper py-5 px-12 text-md font-semibold tracking-[0.05em] uppercase border-none cursor-pointer disabled:cursor-default disabled:opacity-60"
+        loading={loading}
       >
         {loading ? "Opening…" : "Connect a bank account"}
-      </button>
+      </Btn>
     </div>
   );
 }
@@ -134,17 +141,20 @@ export default function ConnectionsPage() {
             </p>
           </div>
           {!isLoading && items.length > 0 && (
-            <button
+            <Btn
+              variant="primary"
+              size="sm"
               onClick={linkBank.launch}
               disabled={linkBank.isLaunching || linkBank.isExchanging}
-              className="bg-red text-white py-4 px-8 text-base font-semibold shrink-0 whitespace-nowrap border-none cursor-pointer disabled:cursor-default disabled:opacity-60"
+              loading={linkBank.isExchanging || linkBank.isLaunching}
+              className="shrink-0 whitespace-nowrap"
             >
               {linkBank.isExchanging
                 ? "Connecting…"
                 : linkBank.isLaunching
                 ? "Opening…"
                 : "+ Add account"}
-            </button>
+            </Btn>
           )}
         </div>
 

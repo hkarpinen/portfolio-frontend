@@ -125,21 +125,23 @@ export function TwoFactorSection() {
               </p>
             </div>
             <div className="flex items-center gap-3 shrink-0">
-              <button
+              <Btn
+                variant="ghost"
+                size="sm"
                 type="button"
                 onClick={() => { /* TODO(handoff8): wire to /api/identity/2fa/recovery-codes GET endpoint */ }}
-                className="text-base font-medium text-ink-2 underline underline-offset-2 cursor-pointer bg-transparent border-none"
               >
                 View recovery codes
-              </button>
-              <button
+              </Btn>
+              <Btn
+                variant="danger"
+                size="sm"
                 type="button"
                 onClick={() => { /* TODO(handoff8): wire to /api/identity/2fa/disable endpoint */ }}
-                className="bg-transparent py-3 px-6 text-base font-semibold text-red border-[1.5px] border-red cursor-pointer"
                 aria-label="Disable two-factor authentication"
               >
                 Disable
-              </button>
+              </Btn>
             </div>
           </div>
         </div>
