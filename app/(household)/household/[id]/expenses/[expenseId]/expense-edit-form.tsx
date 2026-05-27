@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { ApiError } from "@/lib/api-client";
+import { ERROR } from "@/lib/error-messages";
 import { Alert, Input, Textarea, SelectField, Btn } from "@/components/editorial";
 import { useUpdateHouseholdExpense } from "@/hooks/use-expenses";
 import type { HouseholdExpenseDetailResponse } from "@/types/finance";
@@ -71,7 +72,7 @@ export function ExpenseEditForm({ expense, householdId, expenseId, onClose }: Ex
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
         {updateExpenseMutation.isError && (
           <Alert variant="danger">
-            {updateExpenseMutation.error instanceof ApiError ? updateExpenseMutation.error.message : "Something went wrong."}
+            {updateExpenseMutation.error instanceof ApiError ? updateExpenseMutation.error.message : ERROR.DEFAULT}
           </Alert>
         )}
         <div className="form-grid-2">

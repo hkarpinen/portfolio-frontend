@@ -7,6 +7,7 @@ import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { api, ApiError } from "@/lib/api-client";
+import { ERROR } from "@/lib/error-messages";
 import { identityKeys } from "@/lib/query-keys";
 import { Btn, Alert, Input, Textarea } from "@/components/editorial";
 import { ProfileTabs } from "../profile-tabs";
@@ -62,7 +63,7 @@ export default function AccountSettingsPage() {
       queryClient.invalidateQueries({ queryKey: identityKeys.me() });
       router.refresh();
     } catch (err) {
-      setIdentityError(err instanceof ApiError ? err.message : "Something went wrong. Please try again.");
+      setIdentityError(err instanceof ApiError ? err.message : ERROR.DEFAULT);
     }
   };
 

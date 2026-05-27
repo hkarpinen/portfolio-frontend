@@ -7,6 +7,7 @@ import { startDemo } from "@/lib/api/identity";
 import { checkDemoReady } from "@/lib/api/households";
 import { RecaptchaScript, useRecaptcha } from "@/components/recaptcha";
 import { Btn, Icon } from "@/components/editorial";
+import { ERROR } from "@/lib/error-messages";
 
 const DEMO_EXPIRES_AT_KEY = "demo_expires_at";
 const POLL_INTERVAL_MS = 1500;
@@ -74,7 +75,7 @@ export default function DemoPage() {
 
         router.replace("/household");
       } catch (err: unknown) {
-        const message = err instanceof Error ? err.message : "Something went wrong.";
+        const message = err instanceof Error ? err.message : ERROR.DEFAULT;
         setErrorMessage(message);
         setStatus("error");
       }

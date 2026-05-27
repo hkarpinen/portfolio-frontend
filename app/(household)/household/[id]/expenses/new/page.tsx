@@ -9,6 +9,7 @@ import Link from "next/link";
 import { useCreateHouseholdExpense } from "@/hooks/use-expenses";
 import { useHouseholdMembers } from "@/hooks/use-household";
 import { ApiError } from "@/lib/api-client";
+import { ERROR } from "@/lib/error-messages";
 import { Btn, Alert, Input, Textarea, SelectField, Icon, SectionHeader } from "@/components/editorial";
 
 const CATEGORIES = [
@@ -113,7 +114,7 @@ export default function NewExpensePage({ params }: { params: { id: string } }) {
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
         {createExpense.isError && (
           <Alert variant="danger">
-            {createExpense.error instanceof ApiError ? createExpense.error.message : "Something went wrong. Please try again."}
+            {createExpense.error instanceof ApiError ? createExpense.error.message : ERROR.DEFAULT}
           </Alert>
         )}
 

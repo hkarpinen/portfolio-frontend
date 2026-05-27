@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { forgotPassword } from "@/lib/api/identity";
 import { Btn, Input, Alert, Icon } from "@/components/editorial";
+import { ERROR } from "@/lib/error-messages";
 
 const schema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -27,7 +28,7 @@ export default function ForgotPasswordPage() {
       await forgotPassword(data.email);
       setSubmitted(true);
     } catch {
-      setServerError("Something went wrong. Please try again.");
+      setServerError(ERROR.DEFAULT);
     }
   }
 

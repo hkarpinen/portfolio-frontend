@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useUpdateCommunity, useUploadCommunityImage, useDeleteCommunity } from "@/hooks/use-community";
 import { useMe } from "@/hooks/use-identity";
 import { ApiError } from "@/lib/api-client";
+import { ERROR } from "@/lib/error-messages";
 import { getInitials } from "@/lib/utils";
 import styles from "./settings-form.module.css";
 import { Btn, Alert, Input, Textarea, SelectField } from "@/components/editorial";
@@ -74,7 +75,7 @@ export function CommunitySettingsForm({
     <form onSubmit={handleSubmit} className="flex flex-col gap-10">
       {updateCommunity.isError && (
         <Alert variant="danger">
-          {updateCommunity.error instanceof ApiError ? updateCommunity.error.message : "Something went wrong."}
+          {updateCommunity.error instanceof ApiError ? updateCommunity.error.message : ERROR.DEFAULT}
         </Alert>
       )}
       {updateCommunity.isSuccess && <Alert variant="success">Settings saved.</Alert>}
@@ -201,7 +202,7 @@ export function CommunitySettingsForm({
               />
               {deleteCommunity.isError && (
                 <span className="text-base text-red">
-                  {deleteCommunity.error instanceof ApiError ? deleteCommunity.error.message : "Something went wrong."}
+                  {deleteCommunity.error instanceof ApiError ? deleteCommunity.error.message : ERROR.DEFAULT}
                 </span>
               )}
             </div>

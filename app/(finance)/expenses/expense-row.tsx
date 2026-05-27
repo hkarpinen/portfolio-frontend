@@ -6,6 +6,7 @@ import { useUpdateExpense, usePayExpense, useUnpayExpense } from "@/hooks/use-ex
 import { formatCurrency, formatAmount } from "@/lib/formatting";
 import { BILL_CATEGORIES, FREQUENCIES, expenseSchema, type ExpenseFormData } from "./_expense-form-shared";
 import { ApiError } from "@/lib/api-client";
+import { ERROR } from "@/lib/error-messages";
 import { Alert, Btn, Input, SelectField, Textarea, Icon } from "@/components/editorial";
 import { DeleteIconButton } from "@/components/editorial/delete-icon-button";
 import type { Expense } from "@/types/finance";
@@ -186,7 +187,7 @@ export function ExpenseRow({ expense, isEditing, onEditToggle, onEditDone, onDel
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5" noValidate>
             {updateBill.isError && (
               <Alert variant="danger" role="alert">
-                {updateBill.error instanceof ApiError ? updateBill.error.message : "Something went wrong."}
+                {updateBill.error instanceof ApiError ? updateBill.error.message : ERROR.DEFAULT}
               </Alert>
             )}
             <div className="form-grid-2 gap-4">

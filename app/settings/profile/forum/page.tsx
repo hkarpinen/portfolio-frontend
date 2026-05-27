@@ -7,6 +7,7 @@ import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { api, ApiError } from "@/lib/api-client";
+import { ERROR } from "@/lib/error-messages";
 import { forumKeys } from "@/lib/query-keys";
 import { Btn, Alert } from "@/components/editorial";
 import { ProfileTabs } from "../profile-tabs";
@@ -46,7 +47,7 @@ export default function ForumProfileSettingsPage() {
       queryClient.invalidateQueries({ queryKey: forumKeys.all });
       router.refresh();
     } catch (err) {
-      setForumError(err instanceof ApiError ? err.message : "Something went wrong. Please try again.");
+      setForumError(err instanceof ApiError ? err.message : ERROR.DEFAULT);
     }
   };
 

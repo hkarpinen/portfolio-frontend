@@ -7,6 +7,7 @@ import { z } from "zod";
 import Link from "next/link";
 import { useCreateHousehold } from "@/hooks/use-household";
 import { ApiError } from "@/lib/api-client";
+import { ERROR } from "@/lib/error-messages";
 import { Btn, Alert, Input, Textarea, SelectField, Icon, SectionHeader } from "@/components/editorial";
 
 const schema = z.object({
@@ -90,7 +91,7 @@ export default function NewHouseholdPage() {
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
         {createHousehold.isError && (
           <Alert variant="danger">
-            {createHousehold.error instanceof ApiError ? createHousehold.error.message : "Something went wrong. Please try again."}
+            {createHousehold.error instanceof ApiError ? createHousehold.error.message : ERROR.DEFAULT}
           </Alert>
         )}
 

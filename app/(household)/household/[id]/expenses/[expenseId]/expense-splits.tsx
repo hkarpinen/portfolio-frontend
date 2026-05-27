@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { ApiError } from "@/lib/api-client";
+import { ERROR } from "@/lib/error-messages";
 import { getInitials } from "@/lib/utils";
 import { useAddExpenseSplit, useRemoveExpenseSplit } from "@/hooks/use-expenses";
 import { Btn, Alert, Input, SelectField } from "@/components/editorial";
@@ -162,7 +163,7 @@ export function ExpenseSplits({ expense, splits, members, isPrivileged, currentM
             <form onSubmit={handleSubmit(onAddSplit)} className="flex flex-col gap-6">
               {addExpenseSplitMutation.isError && (
                 <Alert variant="danger">
-                  {addExpenseSplitMutation.error instanceof ApiError ? addExpenseSplitMutation.error.message : "Something went wrong."}
+                  {addExpenseSplitMutation.error instanceof ApiError ? addExpenseSplitMutation.error.message : ERROR.DEFAULT}
                 </Alert>
               )}
 

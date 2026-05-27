@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCreateExpense } from "@/hooks/use-expenses";
 import { ApiError } from "@/lib/api-client";
+import { ERROR } from "@/lib/error-messages";
 import {
   BILL_CATEGORIES,
   FREQUENCIES,
@@ -64,7 +65,7 @@ export function AddExpenseForm() {
       >
         {create.isError && (
           <Alert variant="danger" role="alert">
-            {create.error instanceof ApiError ? create.error.message : "Something went wrong. Please try again."}
+            {create.error instanceof ApiError ? create.error.message : ERROR.DEFAULT}
           </Alert>
         )}
         {create.isSuccess && (

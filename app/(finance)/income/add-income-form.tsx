@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCreateIncomeSource } from "@/hooks/use-income";
 import { ApiError } from "@/lib/api-client";
+import { ERROR } from "@/lib/error-messages";
 import { FREQUENCIES, FREQUENCY_LABELS, incomeSchema, IncomeFormData } from "./_income-form-shared";
 import { formatAmount } from "@/lib/formatting";
 import { Btn, Alert, Input, SelectField } from "@/components/editorial";
@@ -108,7 +109,7 @@ export function AddIncomeForm() {
       >
         {createIncome.isError && (
           <Alert variant="danger" role="alert">
-            {createIncome.error instanceof ApiError ? createIncome.error.message : "Something went wrong. Please try again."}
+            {createIncome.error instanceof ApiError ? createIncome.error.message : ERROR.DEFAULT}
           </Alert>
         )}
         {createIncome.isSuccess && (
