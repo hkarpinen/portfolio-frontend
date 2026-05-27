@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { VoteControl } from "@/components/editorial/vote-control";
 import { ThreadActions } from "./forum/g/[slug]/threads/[threadId]/thread-actions";
 import { fetchThreadsServer } from "@/lib/api/forum";
@@ -7,6 +8,7 @@ import { getCookieHeader } from "@/lib/server-cookies";
 import { timeAgo } from "@/lib/utils";
 import { UserInitials } from "@/components/editorial/user-initials";
 import { Icon } from "@/components/editorial/icon";
+import { LinkTabs } from "@/components/editorial/link-tabs";
 import type { ThreadSummaryResponse, CommunitySummaryResponse } from "@/types/forum";
 
 export const dynamic = "force-dynamic";
@@ -46,10 +48,10 @@ export default async function ForumFeedPage({
   const communities: CommunitySummaryResponse[] = communitiesPage?.items ?? [];
   const myCommunities: CommunitySummaryResponse[] = myCommunitiesPage?.items ?? [];
 
-  const tabs = [
-    { key: "feed", label: "Feed" },
-    { key: "hot", label: "Hot" },
-    { key: "communities", label: "Communities" },
+  const tabItems = [
+    { queryValue: "feed",        label: "Feed",        href: "/forum?tab=feed" },
+    { queryValue: "hot",         label: "Hot",         href: "/forum?tab=hot" },
+    { queryValue: "communities", label: "Communities", href: "/forum?tab=communities" },
   ];
 
   return (
@@ -73,18 +75,13 @@ export default async function ForumFeedPage({
       </div>
 
       {/* Tabs */}
-      <nav aria-label="Feed sort" className="flex gap-0 border-ink-b">
-        {tabs.map((t) => (
-          <Link
-            key={t.key}
-            href={`/forum?tab=${t.key}`}
-            aria-current={tab === t.key ? "page" : undefined}
-            className={`py-5 px-8 text-base mb-[-1px] no-underline transition-colors ${tab === t.key ? "font-semibold text-ink border-b-[3px] border-red" : "font-normal text-ink-3 border-b-2 border-transparent"}`}
-          >
-            {t.label}
-          </Link>
-        ))}
-      </nav>
+      <Suspense fallback={<nav className="ed-tabs-list" role="tablist" aria-label="Feed sort" />}>
+        <LinkTabs
+          items={tabItems}
+          activeValue={tab}
+          aria-label="Feed sort"
+        />
+      </Suspense>
 
       {/* Two-column layout */}
       <div className="sidebar-grid gap-12" >
