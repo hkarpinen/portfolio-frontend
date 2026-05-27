@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { PayrollDeduction } from "@/types/finance";
+import { formatAmount } from "@/lib/formatting";
 import { TYPE_CONFIGS } from "./deduction-config";
 import { Icon } from "@/components/editorial/icon";
 
@@ -32,7 +33,7 @@ export function DeductionChip({ d, onRemove, removeDisabled }: {
         </div>
         <div className="flex items-center gap-3 shrink-0">
           <span className="text-base font-semibold text-ink-2">
-            {d.method === "PercentOfGross" ? `${d.value}%` : `$${d.value.toFixed(2)}`}
+            {d.method === "PercentOfGross" ? `${d.value}%` : `$${formatAmount(d.value)}`}
           </span>
           <span className={`inline-flex text-ink-3 transition-transform duration-200${expanded ? " rotate-180" : ""}`}>
             <Icon name="chevDown" size={12} strokeWidth={2.5} />
@@ -44,7 +45,7 @@ export function DeductionChip({ d, onRemove, removeDisabled }: {
         <div className="p-[0_14px_12px] flex flex-col gap-5 border-t border-ink">
           <div className="flex flex-wrap gap-3 pt-5">
             <DetailPill label="Type" value={cfg?.label ?? d.type} />
-            <DetailPill label="Amount" value={d.method === "PercentOfGross" ? `${d.value}% of gross` : `$${d.value.toFixed(2)} fixed`} />
+            <DetailPill label="Amount" value={d.method === "PercentOfGross" ? `${d.value}% of gross` : `$${formatAmount(d.value)} fixed`} />
             <DetailPill label="Frequency" value={d.frequency ?? "Monthly"} />
             {cfg?.hint ? <DetailPill label="Tax treatment" value={cfg.hint} /> : null}
           </div>

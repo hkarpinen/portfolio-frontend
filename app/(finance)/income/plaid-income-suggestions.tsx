@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRecurringStreams, useRefreshRecurring, useAcceptRecurring, usePlaidItems } from "@/hooks/use-connections";
 import { Icon } from "@/components/editorial/icon";
+import { formatAmount, formatShortDate } from "@/lib/formatting";
 import type { RecurringSuggestion } from "@/lib/api/plaid";
 
 // Frequency label map
@@ -37,10 +38,10 @@ function StreamCard({ stream, onAccept, accepting }: { stream: RecurringSuggesti
             {FREQ_LABELS[stream.frequency] ?? stream.frequency}
             {" · "}
             <span className="[font-variant-numeric:tabular-nums]">
-              {stream.currency} {stream.averageAmount.toFixed(2)} avg
+              {stream.currency} {formatAmount(stream.averageAmount)} avg
             </span>
             {stream.predictedNextDate ? (
-              <> · next {new Date(stream.predictedNextDate).toLocaleDateString(undefined, { month: "short", day: "numeric" })}</>
+              <> · next {formatShortDate(stream.predictedNextDate)}</>
             ) : null}
           </p>
         </div>

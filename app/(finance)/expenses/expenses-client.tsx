@@ -14,14 +14,9 @@ import { buildExpensesTicker, type UpcomingBill } from "@/lib/finance/editorial-
 import type {
   ExpensePage, ContributionPeriodSummary, ExpenseItem, IncomeSource, ContributionItem, PayrollDeduction,
 } from "@/types/finance";
+import { formatCurrency, formatAmount, formatShortDate } from "@/lib/formatting";
 
-function formatDate(dateStr: string): string {
-  const d = new Date(dateStr);
-  return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-}
-
-const fmtUsd = (n: number, currency = "USD") =>
-  new Intl.NumberFormat("en-US", { style: "currency", currency, minimumFractionDigits: 2 }).format(n);
+const fmtUsd = formatCurrency;
 
 const fmt0 = (n: number) => `$${Math.abs(Math.round(n)).toLocaleString("en-US")}`;
 
@@ -52,11 +47,11 @@ function OneTimeTable({ bills }: { bills: ExpenseItem[] }) {
           {bills.map((b) => (
             <tr key={b.expenseId}>
               <td>{b.title}</td>
-              <td className="muted"><time dateTime={b.dueDate}>{formatDate(b.dueDate)}</time></td>
+              <td className="muted"><time dateTime={b.dueDate}>{formatShortDate(b.dueDate)}</time></td>
               <td className="muted">{b.category ?? "—"}</td>
               <td className="num">
                 <span className="ed-agate-currency">{b.currency ?? "USD"}</span>
-                {b.amount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                {formatAmount(b.amount)}
               </td>
             </tr>
           ))}
@@ -158,7 +153,7 @@ function SharedSplitsTable({
                 <td className="muted">{g.billCategory ?? "—"}</td>
                 <td className="num">
                   <span className="ed-agate-currency">{currency}</span>
-                  {g.monthlyAmount.toFixed(2)}
+                  {formatAmount(g.monthlyAmount)}
                 </td>
               </tr>
             );

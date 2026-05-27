@@ -13,12 +13,12 @@ import {
   incomeDeck,
   buildIncomeTicker,
 } from "@/lib/finance/editorial-copy";
+import { formatAmount } from "@/lib/formatting";
 
 export const dynamic = 'force-dynamic';
 
 const fmt0 = (n: number) => `$${Math.abs(Math.round(n)).toLocaleString("en-US")}`;
-const fmt2 = (n: number) =>
-  `$${n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+const fmt2 = (n: number) => `$${formatAmount(n)}`;
 
 export default async function IncomePage() {
   const cookieHeader = await getCookieHeader();

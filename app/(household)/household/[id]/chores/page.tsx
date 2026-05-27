@@ -10,6 +10,7 @@ import { EditorialPageHead } from "@/components/editorial/editorial-page-head";
 import { DepartmentHead } from "@/components/editorial/department-head";
 import { choresHeadline } from "@/lib/household/editorial-copy";
 import type { ChoreDto } from "@/lib/api/chores";
+import { formatShortDate } from "@/lib/formatting";
 
 const FREQ_LABEL: Record<string, string> = {
   Daily: "Daily",
@@ -24,7 +25,7 @@ function formatDue(iso?: string): { text: string; overdue: boolean; srText: stri
   const now = new Date();
   const startOf = (x: Date) => new Date(x.getFullYear(), x.getMonth(), x.getDate());
   const days = Math.round((startOf(d).getTime() - startOf(now).getTime()) / 86_400_000);
-  const dateStr = d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  const dateStr = formatShortDate(d);
   if (days < 0) return { text: dateStr, overdue: true, srText: `Overdue — was due ${dateStr}` };
   if (days === 0) return { text: "Today", overdue: false, srText: "Due today" };
   if (days === 1) return { text: "Tomorrow", overdue: false, srText: "Due tomorrow" };

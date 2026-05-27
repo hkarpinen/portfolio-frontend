@@ -14,6 +14,7 @@ import { useMe } from "@/hooks/use-identity";
 import { useHousehold, useHouseholdMembers } from "@/hooks/use-household";
 import { ExpenseEditForm } from "./expense-edit-form";
 import { Alert, Btn, Input, SelectField } from "@/components/editorial";
+import { formatCurrency, formatFullDate } from "@/lib/formatting";
 
 // TODO(handoff8): activity sidebar — no activity hook exists; omitted per instructions
 
@@ -78,15 +79,9 @@ export default function ExpensePage() {
 
   if (!expense) return null;
 
-  const amountFmt = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: expense.currency ?? "USD",
-    minimumFractionDigits: 2,
-  }).format(Number(expense.amount));
+  const amountFmt = formatCurrency(Number(expense.amount), expense.currency ?? "USD");
 
-  const dateFmt = new Date(expense.dueDate).toLocaleDateString("en-US", {
-    month: "long", day: "numeric", year: "numeric",
-  });
+  const dateFmt = formatFullDate(expense.dueDate);
 
   return (
     <div className="page-enter max-w-[800px] flex flex-col gap-10">
@@ -247,11 +242,7 @@ export default function ExpensePage() {
                       const pct = expense.amount > 0
                         ? ((Number(split.amount) / Number(expense.amount)) * 100).toFixed(1)
                         : "—";
-                      const splitFmt = new Intl.NumberFormat("en-US", {
-                        style: "currency",
-                        currency: split.currency ?? expense.currency ?? "USD",
-                        minimumFractionDigits: 2,
-                      }).format(Number(split.amount));
+                      const splitFmt = formatCurrency(Number(split.amount), split.currency ?? expense.currency ?? "USD");
                       // A member can remove their own split; privileged users can
                       // remove any non-claimed split.
                       const isOwnSplit =

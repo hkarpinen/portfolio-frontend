@@ -9,6 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { IncomeDetailPanel, PERIODS, type Period } from "./income-detail-panel";
 import { ManageDeductionsModal } from "./manage-deductions-modal";
 import { toMonthlyAmount } from "@/lib/utils";
+import { formatAmount } from "@/lib/formatting";
 import { incomeSchema, FREQUENCIES, FREQUENCY_LABELS, type IncomeFormData } from "./_income-form-shared";
 import { Input, SelectField, Icon } from "@/components/editorial";
 import { EmptyState } from "@/components/editorial/empty-state";
@@ -92,13 +93,13 @@ function IncomeCard({
           </div>
 
           {/* Amounts */}
-          <div className="flex items-center gap-5 shrink-0" aria-label={`Gross ${periodLabel}: $${(grossMonthly * factor).toFixed(2)}${netMonthly !== null && netMonthly !== grossMonthly ? `, net: $${(netMonthly * factor).toFixed(2)}` : ""}`}>
+          <div className="flex items-center gap-5 shrink-0" aria-label={`Gross ${periodLabel}: $${formatAmount(grossMonthly * factor)}${netMonthly !== null && netMonthly !== grossMonthly ? `, net: $${formatAmount(netMonthly * factor)}` : ""}`}>
             <div className="text-right">
               <div className="text-sm font-bold text-ink-3 uppercase tracking-[0.08em] mb-[1px]">
                 Gross · {periodLabel}
               </div>
               <span className="font-serif font-bold text-md text-ink tracking-snug tabular-nums">
-                ${(grossMonthly * factor).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                ${formatAmount(grossMonthly * factor)}
               </span>
             </div>
             {netMonthly !== null && netMonthly !== grossMonthly && (
@@ -107,7 +108,7 @@ function IncomeCard({
                 <div className="text-right">
                   <div className="text-sm font-bold text-ink-3 uppercase tracking-[0.08em] mb-[1px]">Net</div>
                   <span className="font-serif font-bold text-md text-ink tracking-snug tabular-nums">
-                    ${(netMonthly * factor).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    ${formatAmount(netMonthly * factor)}
                   </span>
                 </div>
               </>

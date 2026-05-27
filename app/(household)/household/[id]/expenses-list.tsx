@@ -6,6 +6,7 @@ import { useHouseholdExpenses, useDeleteHouseholdExpense, usePayHouseholdExpense
 import { EmptyState } from "@/components/editorial/empty-state";
 import { Icon } from "@/components/editorial/icon";
 import type { HouseholdExpense, HouseholdExpenseListResponse } from "@/types/finance";
+import { formatCurrency, formatShortDate } from "@/lib/formatting";
 
 function StatusCell({ expense, householdId }: { expense: HouseholdExpense; householdId: string }) {
   const payMutation = usePayHouseholdExpense(householdId, expense.expenseId);
@@ -67,8 +68,7 @@ function ExpenseRow({
   isDeleting: boolean;
 }) {
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const date = new Date(expense.dueDate);
-  const formattedDate = date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  const formattedDate = formatShortDate(expense.dueDate);
   const detailHref = `/household/${householdId}/expenses/${expense.expenseId}`;
 
   return (
@@ -94,7 +94,7 @@ function ExpenseRow({
         <span aria-label="Payer not yet available">—</span>
       </td>
       <td className="py-[14px] pr-6 text-right font-serif font-bold text-ink text-[1.0625rem] whitespace-nowrap">
-        {expense.currency} {Number(expense.amount).toFixed(2)}
+        {formatCurrency(Number(expense.amount), expense.currency)}
       </td>
       <td className="py-[14px] whitespace-nowrap">
         <div className="flex items-center gap-3">

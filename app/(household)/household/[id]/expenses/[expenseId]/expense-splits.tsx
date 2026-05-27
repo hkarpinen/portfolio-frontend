@@ -8,6 +8,7 @@ import { getInitials } from "@/lib/utils";
 import { useAddExpenseSplit, useRemoveExpenseSplit } from "@/hooks/use-expenses";
 import { Btn, Alert, Input, SelectField } from "@/components/editorial";
 import type { HouseholdExpenseDetailResponse } from "@/types/finance";
+import { formatCurrency, formatAmount } from "@/lib/formatting";
 
 const splitSchema = z.object({
   membershipId: z.string().optional(),
@@ -66,9 +67,9 @@ export function ExpenseSplits({ expense, splits, members, isPrivileged, currentM
     <>
       {/* Stats */}
       <div className="stats-grid-3">
-        <TintedStatCard label="Total" value={`${expense.currency} ${Number(expense.amount).toFixed(2)}`} />
-        <TintedStatCard label="Allocated" value={`${expense.currency} ${splitTotal.toFixed(2)}`} color={splitTotal > 0 ? "var(--success)" : undefined} />
-        <TintedStatCard label="Unallocated" value={`${expense.currency} ${remaining.toFixed(2)}`} color={remaining > 0.001 ? "var(--warning)" : "var(--success)"} />
+        <TintedStatCard label="Total" value={formatCurrency(Number(expense.amount), expense.currency)} />
+        <TintedStatCard label="Allocated" value={formatCurrency(splitTotal, expense.currency)} color={splitTotal > 0 ? "var(--success)" : undefined} />
+        <TintedStatCard label="Unallocated" value={formatCurrency(remaining, expense.currency)} color={remaining > 0.001 ? "var(--warning)" : "var(--success)"} />
       </div>
 
       {/* Progress bar */}
@@ -131,7 +132,7 @@ export function ExpenseSplits({ expense, splits, members, isPrivileged, currentM
                     </div>
                   </div>
                   <div className="flex items-center gap-6">
-                    <span className="font-serif font-bold text-md text-ink">{split.currency} {Number(split.amount).toFixed(2)}</span>
+                    <span className="font-serif font-bold text-md text-ink">{formatCurrency(Number(split.amount), split.currency)}</span>
                     {split.isClaimed ? (
                       <span className="py-1 px-4 bg-green-soft text-green text-sm font-mono">Claimed</span>
                     ) : (

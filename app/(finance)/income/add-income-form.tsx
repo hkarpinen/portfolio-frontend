@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useCreateIncomeSource } from "@/hooks/use-income";
 import { ApiError } from "@/lib/api-client";
 import { FREQUENCIES, FREQUENCY_LABELS, incomeSchema, IncomeFormData } from "./_income-form-shared";
+import { formatAmount } from "@/lib/formatting";
 import { Btn, Alert, Input, SelectField } from "@/components/editorial";
 import type { DeductionType, DeductionCalculationMethod, PayrollDeduction } from "@/types/finance";
 
@@ -218,7 +219,7 @@ export function AddIncomeForm() {
                   <div>
                     <span className="text-base font-semibold text-ink">{d.label}</span>
                     <span className="text-sm text-ink-3 ml-4">
-                      {d.method === "PercentOfGross" ? `${d.value}% of gross` : `$${d.value.toFixed(2)}`}
+                      {d.method === "PercentOfGross" ? `${d.value}% of gross` : `$${formatAmount(d.value)}`}
                       {" · "}{d.frequency.toLowerCase()}
                       {d.isEmployerSponsored ? " · employer-sponsored" : ""}
                     </span>

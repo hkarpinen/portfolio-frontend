@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useSyncPlaidItem, useUnlinkPlaidItem } from "@/hooks/use-connections";
 import { Icon } from "@/components/editorial/icon";
 import type { Connection, LinkedAccountResponse } from "@/lib/api/plaid";
+import { formatCurrency } from "@/lib/formatting";
 
 const statusColor: Record<Connection["status"], string> = {
   Healthy: "var(--success)",
@@ -22,7 +23,7 @@ const statusLabel: Record<Connection["status"], string> = {
 function AccountRow({ account }: { account: LinkedAccountResponse }) {
   const balance =
     account.currentBalance != null
-      ? `${account.currency} ${account.currentBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+      ? formatCurrency(account.currentBalance, account.currency)
       : "—";
   return (
     <div className="flex justify-between items-center p-[8px_0] border-t border-ink">

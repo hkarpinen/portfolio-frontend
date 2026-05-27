@@ -3,6 +3,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useUpdateExpense, usePayExpense, useUnpayExpense } from "@/hooks/use-expenses";
+import { formatCurrency, formatAmount } from "@/lib/formatting";
 import { BILL_CATEGORIES, FREQUENCIES, expenseSchema, type ExpenseFormData } from "./_expense-form-shared";
 import { ApiError } from "@/lib/api-client";
 import { Alert, Btn, Input, SelectField, Textarea, Icon } from "@/components/editorial";
@@ -111,7 +112,7 @@ export function ExpenseRow({ expense, isEditing, onEditToggle, onEditDone, onDel
     : "ONE-TIME";
   const dayLabel = due.getDate();
 
-  const amountLabel = `${expense.currency ?? "USD"} ${expense.amount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  const amountLabel = formatCurrency(expense.amount, expense.currency ?? "USD");
 
   return (
     <div className="ed-module-card" aria-label={`${expense.title}, ${amountLabel}${expense.isPaid ? ", paid" : isOverdue ? ", overdue" : ""}`}>
@@ -133,7 +134,7 @@ export function ExpenseRow({ expense, isEditing, onEditToggle, onEditDone, onDel
             className={`font-serif font-bold text-lg italic tabular-nums ${isOverdue ? "text-red" : expense.isPaid ? "text-ink-3" : "text-ink"}`}
             aria-label={amountLabel}
           >
-            ${expense.amount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            ${formatAmount(expense.amount)}
           </p>
           {isOverdue && (
             <p className="ed-label-muted text-red" role="status">

@@ -5,6 +5,7 @@ import { ApiError } from "@/lib/api-client";
 import { getInitials } from "@/lib/utils";
 import { useCommunityMembership, useJoinCommunity } from "@/hooks/use-community";
 import type { CommunityActivitySnapshot } from "@/types/forum";
+import { formatShortDate } from "@/lib/formatting";
 
 
 interface CommunityCardProps {
@@ -28,7 +29,7 @@ function formatRelative(dateStr: string) {
   if (hrs < 24) return `${hrs}h ago`;
   const days = Math.floor(hrs / 24);
   if (days < 7) return `${days}d ago`;
-  return new Date(dateStr).toLocaleDateString(undefined, { month: "short", day: "numeric" });
+  return formatShortDate(dateStr);
 }
 
 function ActivityAvatar({ avatarUrl, name }: { avatarUrl?: string; name?: string }) {

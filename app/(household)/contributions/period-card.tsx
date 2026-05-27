@@ -9,6 +9,7 @@ import type { AggregatedPeriod } from "@/lib/contributions";
 import { PayToggle } from "./pay-toggle";
 import { ItemTableRow, StackedItemRow, TableItem, tdMeta } from "./item-table-row";
 import { Icon } from "@/components/editorial/icon";
+import { formatAmount } from "@/lib/formatting";
 
 type GranularityTab = "monthly" | "quarterly" | "yearly";
 
@@ -48,7 +49,7 @@ export function PeriodCard({ p, cardRef, granularity }: {
           </Link>
         ),
         type: "Shared",
-        amount: c.amount.toFixed(2),
+        amount: formatAmount(c.amount),
         currency: c.currency,
         paid: c.isClaimed,
         payToggle: (
@@ -74,7 +75,7 @@ export function PeriodCard({ p, cardRef, granularity }: {
         dayLabel: String(due.getUTCDate()),
         name: pb.title,
         type: "Personal",
-        amount: pb.amount.toFixed(2),
+        amount: formatAmount(pb.amount),
         currency: pb.currency,
         paid: pb.isPaid,
         payToggle: (
@@ -109,7 +110,7 @@ export function PeriodCard({ p, cardRef, granularity }: {
           </Link>
         ),
         type: "Shared",
-        amount: c.amount.toFixed(2),
+        amount: formatAmount(c.amount),
         currency: c.currency,
         count: c.count,
       });
@@ -126,7 +127,7 @@ export function PeriodCard({ p, cardRef, granularity }: {
         dayLabel: "—",
         name: pb.title,
         type: "Personal",
-        amount: pb.amount.toFixed(2),
+        amount: formatAmount(pb.amount),
         currency: pb.currency,
         count: pb.count,
       });
@@ -158,10 +159,10 @@ export function PeriodCard({ p, cardRef, granularity }: {
           )}
         </div>
         <div className="flex items-center flex-wrap gap-x-5 gap-y-[6px] text-base text-ink-3">
-          <span>Due <strong className="text-ink">${obligations.toFixed(2)}</strong></span>
-          <span>Net income <strong className="text-ink">${p.projectedNetIncome.toFixed(2)}</strong></span>
+          <span>Due <strong className="text-ink">${formatAmount(obligations)}</strong></span>
+          <span>Net income <strong className="text-ink">${formatAmount(p.projectedNetIncome)}</strong></span>
           <span className={`font-serif font-bold text-base whitespace-nowrap ${netOver ? "text-red" : "text-green"}`}>
-            {netOver ? "−" : "+"}${Math.abs(p.net).toFixed(2)}
+            {netOver ? "−" : "+"}${formatAmount(Math.abs(p.net))}
           </span>
           {p.disposableIncome != null && (
             <span className="inline-flex items-center gap-2">

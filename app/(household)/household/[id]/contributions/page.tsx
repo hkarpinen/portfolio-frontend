@@ -10,14 +10,10 @@ import { EditorialPageHead } from "@/components/editorial/editorial-page-head";
 import { DepartmentHead } from "@/components/editorial/department-head";
 import { contributionsHeadline } from "@/lib/household/editorial-copy";
 import type { HouseholdMonthlyContributions } from "@/types/finance";
+import { formatCurrency } from "@/lib/formatting";
 
-function fmtCurrency(amount: number | undefined, currency: string): string {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: currency || "USD",
-    minimumFractionDigits: 2,
-  }).format(amount ?? 0);
-}
+const fmtCurrency = (amount: number | undefined, currency: string) =>
+  formatCurrency(amount ?? 0, currency || "USD");
 
 /** Compute the minimal settlement transactions from net member balances. */
 function computeSettlements(
