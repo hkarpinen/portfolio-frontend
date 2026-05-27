@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import { Slot } from "@radix-ui/react-slot";
 import { Spinner } from "./spinner";
 
 /**
@@ -31,6 +32,8 @@ interface BtnProps {
   formAction?: string | ((formData: FormData) => void | Promise<void>);
   "aria-label"?: string;
   style?: React.CSSProperties;
+  /** When true, merges props onto the single child element (Radix Slot). */
+  asChild?: boolean;
 }
 
 const VARIANT_CLASS: Record<BtnVariant, string> = {
@@ -79,6 +82,7 @@ export function Btn({
   formAction,
   "aria-label": ariaLabel,
   style,
+  asChild = false,
 }: BtnProps) {
   const cls = classes(variant, size, fullWidth, className);
   const content = (
@@ -88,6 +92,14 @@ export function Btn({
       {iconRight}
     </>
   );
+
+  if (asChild) {
+    return (
+      <Slot aria-label={ariaLabel} className={cls} style={style}>
+        {children}
+      </Slot>
+    );
+  }
 
   if (href) {
     return (
