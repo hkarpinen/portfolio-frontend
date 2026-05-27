@@ -76,7 +76,7 @@ export function NotificationsToaster() {
         </Toast.Root>
       ))}
       <Toast.Viewport
-        className="fixed bottom-[20px] right-[20px] flex flex-col gap-4 w-[320px] max-w-[calc(100vw - 32px)] z-[100] list-none p-0 m-0 outline-none"
+        className="fixed bottom-[20px] right-[20px] flex flex-col gap-4 w-[320px] max-w-[calc(100vw - 32px)] z-notifications list-none p-0 m-0 outline-none"
       />
     </Toast.Provider>
   );

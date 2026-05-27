@@ -141,7 +141,7 @@ export function ManageDeductionsModal({ source, onClose }: ManageDeductionsModal
                   <input
                     type="checkbox" checked={taxEnabled}
                     onChange={(e) => setTaxEnabled(e.target.checked)}
-                    className="absolute inset-0 opacity-[0] cursor-pointer w-full h-full z-[1] m-0"
+                    className="absolute inset-0 opacity-[0] cursor-pointer w-full h-full z-base m-0"
                     aria-label="Enable tax withholding"
                   />
                   <div className={`absolute inset-0 transition-[background] duration-150${taxEnabled ? " bg-ink" : " bg-paper-3"}`} />

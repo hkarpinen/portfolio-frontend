@@ -153,11 +153,11 @@ function AppShellInner({ children, displayName, avatarUrl, role, subnav, topBand
       {mobileMenuOpen && (
         <>
           <div
-            className="fixed inset-0 z-[150] min-[900px]:hidden"
+            className="fixed inset-0 z-sidebar_overlay min-[900px]:hidden"
             style={{ background: "rgba(20,17,10,0.55)" }}
             onClick={() => setMobileMenuOpen(false)}
           />
-          <div className="fixed inset-y-0 left-0 z-[160] min-[900px]:hidden">
+          <div className="fixed inset-y-0 left-0 z-sidebar_nav min-[900px]:hidden">
             <Sidebar
               displayName={displayName}
               avatarUrl={avatarUrl}

@@ -18,7 +18,7 @@ export function Modal({ open, onOpenChange, title, children, actions, maxWidth =
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
         <Dialog.Overlay
-          className="fixed inset-0 z-[200] flex items-end justify-center md:items-center md:p-4"
+          className="fixed inset-0 z-modal flex items-end justify-center md:items-center md:p-4"
           style={{ background: "var(--overlay)", animation: "fadeIn 150ms" }}
         >
           <Dialog.Content

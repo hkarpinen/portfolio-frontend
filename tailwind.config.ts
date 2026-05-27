@@ -201,6 +201,18 @@ const config: Config = {
         // Touch target floor — every interactive control uses this
         hit: '44px',
       },
+
+      zIndex: {
+        base:            '1',
+        sticky:          '10',
+        topbar:          '20',
+        sidebar:         '30',
+        dropdown:        '50',
+        notifications:   '100',
+        sidebar_overlay: '150',  // sidebar drawer over content
+        sidebar_nav:     '160',  // nav itself above its overlay
+        modal:           '200',
+      },
     },
   },
   plugins: [],
