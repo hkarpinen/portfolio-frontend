@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { VoteButtons } from "./forum/[slug]/threads/[threadId]/vote-buttons";
-import { ThreadActions } from "./forum/[slug]/threads/[threadId]/thread-actions";
+import { VoteButtons } from "./forum/g/[slug]/threads/[threadId]/vote-buttons";
+import { ThreadActions } from "./forum/g/[slug]/threads/[threadId]/thread-actions";
 import { fetchThreadsServer } from "@/lib/api/forum";
 import { fetchCommunitiesServer } from "@/lib/api/communities";
 import { getCookieHeader } from "@/lib/server-cookies";

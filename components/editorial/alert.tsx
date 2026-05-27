@@ -6,6 +6,8 @@ interface AlertProps {
   variant?: AlertVariant;
   title?: string;
   children: React.ReactNode;
+  role?: React.AriaRole;
+  "aria-live"?: React.AriaAttributes["aria-live"];
 }
 
 const VARIANT_COLOR: Record<AlertVariant, string> = {
@@ -22,11 +24,13 @@ const VARIANT_LABEL: Record<AlertVariant, string> = {
   success: "— Note —",
 };
 
-export function Alert({ variant = "info", title, children }: AlertProps) {
+export function Alert({ variant = "info", title, children, role, "aria-live": ariaLive }: AlertProps) {
   const color = VARIANT_COLOR[variant];
   return (
     <div
       className="bg-paper"
+      role={role}
+      aria-live={ariaLive}
       style={{
         border: `1.5px solid ${color}`,
         borderLeftWidth: 4,
