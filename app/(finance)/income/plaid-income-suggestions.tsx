@@ -36,7 +36,7 @@ function StreamCard({ stream, onAccept, accepting }: { stream: RecurringSuggesti
           <p className="text-base text-ink-3 mt-1">
             {FREQ_LABELS[stream.frequency] ?? stream.frequency}
             {" · "}
-            <span style={{ fontVariantNumeric: "tabular-nums" }}>
+            <span className="[font-variant-numeric:tabular-nums]">
               {stream.currency} {stream.averageAmount.toFixed(2)} avg
             </span>
             {stream.predictedNextDate ? (
@@ -50,7 +50,7 @@ function StreamCard({ stream, onAccept, accepting }: { stream: RecurringSuggesti
       {stream.isLinked ? (
         <a
           href="/income"
-          className="text-base font-semibold text-green no-underline py-3 px-6 bg-green-soft shrink-0 inline-flex items-center gap-[5px]" style={{ border: "1px solid oklch(68% 0.18 152 / 0.25)" }}
+          className="text-base font-semibold text-green no-underline py-3 px-6 bg-green-soft shrink-0 inline-flex items-center gap-[5px] border border-[oklch(68%_0.18_152_/_0.25)]"
         >
           <Icon name="check" size={11} strokeWidth={2} /> Added
         </a>
@@ -58,7 +58,7 @@ function StreamCard({ stream, onAccept, accepting }: { stream: RecurringSuggesti
         <button
           onClick={onAccept}
           disabled={accepting}
-          className="bg-red text-white py-[7px] px-[16px] text-base font-semibold shrink-0" style={{ border: "none", cursor: accepting ? "not-allowed" : "pointer", opacity: accepting ? 0.6 : 1, transition: "opacity 150ms" }}
+          className="bg-red text-white py-[7px] px-[16px] text-base font-semibold shrink-0 border-none transition-opacity duration-150 cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
         >
           {accepting ? "Adding…" : "Add to income"}
         </button>
@@ -124,7 +124,7 @@ export function PlaidIncomeSuggestions() {
                 itemsQuery.data!.forEach(item => refresh.mutate(item.connectionId));
               }}
               disabled={refresh.isPending}
-              className="bg-transparent py-2 px-5 text-base text-ink-3 cursor-pointer border-ink" style={{opacity: refresh.isPending ? 0.5 : 1, transition: "opacity 150ms" }}
+              className="bg-transparent py-2 px-5 text-base text-ink-3 cursor-pointer border-ink transition-opacity duration-150 disabled:opacity-50"
             >
               {refresh.isPending ? "Detecting…" : "↺ Refresh"}
             </button>
@@ -134,7 +134,7 @@ export function PlaidIncomeSuggestions() {
           {inflows.length > 0 && (
             <button
               onClick={() => setCollapsed(c => !c)}
-              className="bg-transparent py-2 px-3 text-base text-ink-3 cursor-pointer" style={{ border: "none" }}
+              className="bg-transparent py-2 px-3 text-base text-ink-3 cursor-pointer border-none"
             >
               {collapsed ? "Show" : "Hide"}
             </button>
@@ -151,7 +151,7 @@ export function PlaidIncomeSuggestions() {
               <button
                 onClick={() => itemsQuery.data!.forEach(item => refresh.mutate(item.connectionId))}
                 disabled={refresh.isPending}
-                className="bg-transparent text-red cursor-pointer font-semibold text-base p-0" style={{ border: "none" }}
+                className="bg-transparent text-red cursor-pointer font-semibold text-base p-0 border-none"
               >
                 Detect now
               </button>

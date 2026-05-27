@@ -9,8 +9,6 @@ function formatNumber(n: number): string {
   return dec ? `${intFmt}.${dec}` : intFmt;
 }
 
-const rule = "1.5px solid var(--ink)";
-
 interface ConversionResultData {
   category: string;
   inputValue: number;
@@ -30,60 +28,58 @@ export function ConversionResult({ result, isLoading, isFetching, isError }: Con
   return (
     <>
       {isLoading && isFetching && (
-        <p className="font-mono uppercase text-ink-3" style={{ fontSize: "0.625rem", letterSpacing: "0.2em" }}>
+        <p className="ed-label-muted uppercase" style={{ letterSpacing: "0.2em" }}>
           Computing…
         </p>
       )}
       {isError && (
-        <p className="font-mono uppercase" style={{ fontSize: "0.625rem", letterSpacing: "0.2em", color: "var(--red)" }}>
+        <p className="ed-label-muted uppercase text-red" style={{ letterSpacing: "0.2em" }}>
           Incompatible units — both must belong to the same category.
         </p>
       )}
 
       {result && (
-        <div className="bg-paper shadow-stamp" style={{ border: rule }}>
-          <div style={{ padding: "16px 24px 0" }}>
-            <p className="font-mono uppercase text-red" style={{ fontSize: "0.525rem", letterSpacing: "0.3em" }}>
+        <div className="bg-paper shadow-stamp border-ink">
+          <div className="p-[16px_24px_0]">
+            <p className="ed-kicker" style={{ letterSpacing: "0.3em" }}>
               {result.category} · result
             </p>
           </div>
 
           <div
-            className="flex items-end justify-between gap-6 flex-wrap"
-            style={{ padding: "8px 24px 20px", borderBottom: rule }}
+            className="flex items-end justify-between gap-6 flex-wrap p-[8px_24px_20px] border-ink-b"
           >
             <div className="flex items-baseline gap-3 flex-wrap">
               <span
                 className="font-serif italic text-red"
                 style={{ fontSize: "clamp(3rem, 6vw, 5rem)", letterSpacing: "-0.03em", lineHeight: 0.9 }}
+                /* fontSize is clamp() — responsive runtime value, no Tailwind equivalent */
               >
                 {formatNumber(result.outputValue)}
               </span>
               <span
                 className="font-serif text-ink-2"
                 style={{ fontSize: "clamp(1.25rem, 2.5vw, 2rem)", letterSpacing: "-0.01em", lineHeight: 1 }}
+                /* fontSize is clamp() — responsive runtime value, no Tailwind equivalent */
               >
                 {result.to}
               </span>
             </div>
-            <p
-              className="font-mono text-ink-3"
-              style={{ fontSize: "0.75rem", letterSpacing: "0.08em", lineHeight: 1.5, textAlign: "right" }}
-            >
+            <p className="font-mono text-ink-3 text-xs tracking-[0.08em] leading-[1.5] text-right">
               {formatNumber(result.inputValue)} {result.from}
               <br />
-              <span style={{ color: "var(--ink-4)" }}>converted to {result.to}</span>
+              <span className="text-ink-4">converted to {result.to}</span>
             </p>
           </div>
 
-          <div className="grid" style={{ gridTemplateColumns: "repeat(4, 1fr)" }}>
+          <div className="grid grid-cols-4">
             {[
               { label: "Input",  value: formatNumber(result.inputValue) },
               { label: "Output", value: formatNumber(result.outputValue), italic: true },
               { label: "From",   value: result.from },
               { label: "To",     value: result.to, italic: true },
             ].map((s, i, arr) => (
-              <div key={s.label} style={{ borderRight: i < arr.length - 1 ? rule : undefined }}>
+              <div key={s.label} className={i < arr.length - 1 ? "border-ink-r" : ""}>
                 <StatCard label={s.label} value={s.value} italic={s.italic} />
               </div>
             ))}

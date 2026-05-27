@@ -1,54 +1,128 @@
-import type { ContributionPeriodSummary } from "@/types/finance";
+import { LedeStat } from "@/components/editorial/lede-stat";
+import { PullQuote } from "@/components/editorial/pull-quote";
+import { expensesPullQuote } from "@/lib/finance/editorial-copy";
+import { toMonthlyAmount } from "@/lib/utils";
+import type { ContributionPeriodSummary, IncomeSource, PayrollDeduction } from "@/types/finance";
 
-export function FinancialSummary({ initialMonths }: { initialMonths: ContributionPeriodSummary[] }) {
-  const months = initialMonths;
+const TAX_TYPES = new Set([
+  "FederalIncomeTax",
+  "StateIncomeTax",
+  "SocialSecurity",
+  "Medicare",
+]);
+
+/** Mirrors income/page.tsx so the two pages can't disagree about
+ *  what the user earns per month. */
+function monthlyDeductionAmount(d: PayrollDeduction, monthlyGross: number): number {
+  const base = d.method === "PercentOfGross" ? (d.value / 100) * monthlyGross : d.value;
+  return toMonthlyAmount(base, d.frequency ?? "Monthly");
+}
+
+function computeIncomeMonthly(sources: IncomeSource[]) {
+  let monthlyGross = 0;
+  let monthlyDeductions = 0;
+  for (const source of sources) {
+    const gross = toMonthlyAmount(source.amount, source.quotedAs);
+    monthlyGross += gross;
+    for (const d of source.deductions ?? []) {
+      monthlyDeductions += monthlyDeductionAmount(d, gross);
+    }
+  }
+  return { monthlyGross, monthlyNet: monthlyGross - monthlyDeductions };
+}
+
+const fmt0 = (n: number) => `$${Math.abs(Math.round(n)).toLocaleString("en-US")}`;
+const fmtSigned0 = (n: number) =>
+  Math.round(n) === 0 ? "$0" : `${n < 0 ? "−" : "+"}${fmt0(n)}`;
+
+/**
+ * FinancialSummary — top-of-page editorial figure block.
+ *
+ * Renders a hero `<LedeStat>` for "Net this month" (the figure that
+ * matters), a secondary `<LedgerStrip>` with three supporting metrics, and
+ * — conditionally — a `<PullQuote>` callout when the data has something
+ * noteworthy to say.
+ */
+export function FinancialSummary({
+  initialMonths,
+  incomeSources,
+  monthName,
+}: {
+  initialMonths: ContributionPeriodSummary[];
+  incomeSources: IncomeSource[];
+  monthName: string;
+}) {
   const nowKey = new Date().toISOString().slice(0, 7);
-  const current = months.find((m) => m.periodStart.slice(0, 7) === nowKey);
+  const current = initialMonths.find((m) => m.periodStart.slice(0, 7) === nowKey);
 
-  const income         = current?.projectedIncome ?? 0;
-  const netIncome      = current?.projectedNetIncome ?? income;
+  // Income comes from the income sources directly so the "in" figure matches
+  // the income page's "Gross monthly". The backend's projectedIncome is
+  // paycheck-date-counted for the calendar month, which can read as ~half
+  // for biweekly schedules in months that only catch one paycheck.
+  const { monthlyGross, monthlyNet } = computeIncomeMonthly(incomeSources);
+  const income = monthlyGross;
+  const netIncome = monthlyNet;
+
   const sharedBillsDue = current?.totalDue ?? 0;
-  const personalDue    = current?.personalBillsDue ?? 0;
-  const obligations    = sharedBillsDue + personalDue;
-  // Use backend-computed disposableIncome when available; fall back to local estimate.
-  const disposable  = current?.disposableIncome ?? (netIncome - obligations);
-  const disposableSource = current?.disposableIncomeSource ?? null;
-  const netOver     = disposable < 0;
-  const overdue     = (current?.personalBills ?? [])
-    .filter((b) => !b.isPaid && new Date(b.dueDate) < new Date()).length;
-  const monthLabel  = current
-    ? new Date(current.periodStart).toLocaleString("default", { month: "long", year: "numeric" })
-    : "";
+  const personalDue = current?.personalBillsDue ?? 0;
+  const obligations = sharedBillsDue + personalDue;
+  const disposable = netIncome - obligations;
+  const netOver = disposable < 0;
 
-  const disposableLabel = disposableSource === "balance"
-    ? "from account balance"
-    : disposableSource === "estimate"
-      ? "income estimate"
-      : undefined;
+  const totalOut = obligations;
 
-  const stats: { label: string; value: string; sub?: string; color: string }[] = [
-    { label: "Net income",    value: `$${netIncome.toFixed(0)}`,                                              color: "var(--text)" },
-    { label: "Shared",        value: `$${sharedBillsDue.toFixed(0)}`,                                        color: "var(--text)" },
-    { label: "Personal",      value: `$${personalDue.toFixed(0)}`,                                           color: "var(--text)" },
-    { label: "Disposable",    value: `${netOver ? "−" : "+"}$${Math.abs(disposable).toFixed(0)}`,            sub: disposableLabel, color: netOver ? "var(--danger)" : "var(--success)" },
-    ...(overdue > 0 ? [{ label: "Overdue", value: String(overdue), color: "var(--danger)" }] : []),
-  ];
+  // One-time this month: personal bills without a recurrenceFrequency
+  const oneTimeBills = (current?.personalBills ?? []).filter((b) => !b.recurrenceFrequency);
+  const oneTimeTotal = oneTimeBills.reduce((sum, b) => sum + b.amount, 0);
+
+  // "Monthly recurring" rolls in the user's share of shared household bills
+  // alongside personal recurring outgoings — the user thinks of their
+  // recurring obligations as one number, regardless of which household
+  // produced them.
+  const personalRecurringTotal = (current?.personalBills ?? [])
+    .filter((b) => b.recurrenceFrequency)
+    .reduce((sum, b) => sum + b.amount, 0);
+  const monthlyRecurringTotal = personalRecurringTotal + sharedBillsDue;
+  const personalRecurringCount = (current?.personalBills ?? []).filter((b) => b.recurrenceFrequency).length;
+  const sharedBillIds = new Set((current?.contributions ?? []).map((c) => c.billId));
+
+  const quote = expensesPullQuote({ disposable, monthName });
+
+  // Compact breakdown strings rendered next to the aside figures so the
+  // lede block is the single home for these numbers — the duplicate
+  // LedgerStrip below this block was removed to avoid two readings of
+  // the same figures.
+  const recurringSub = current
+    ? `${personalRecurringCount} personal · ${sharedBillIds.size} shared`
+    : undefined;
+  const oneTimeSub = oneTimeBills.length > 0
+    ? `${oneTimeBills.length} expense${oneTimeBills.length === 1 ? "" : "s"}`
+    : undefined;
 
   return (
-    <div className="flex items-center gap-3 flex-wrap py-[10px] px-[14px] bg-paper shadow-stamp border-ink">
-      {monthLabel && (
-        <span className="text-base font-semibold text-ink-2 mr-2">
-          {monthLabel}
-        </span>
+    <div className="flex flex-col gap-8">
+      <LedeStat
+        label={`Net · ${monthName}`}
+        value={fmtSigned0(disposable)}
+        negative={netOver}
+        deck={
+          income > 0
+            ? `${fmt0(income)} in against ${fmt0(totalOut)} out across ${personalRecurringCount + sharedBillIds.size + oneTimeBills.length} posted item${personalRecurringCount + sharedBillIds.size + oneTimeBills.length === 1 ? "" : "s"}.`
+            : "No income on file — add a source on the Income desk to see this month's read."
+        }
+        aside={[
+          { label: "In · take-home",  value: fmt0(netIncome) },
+          { label: "Out · total",     value: fmt0(totalOut) },
+          { label: "Recurring",       value: fmt0(monthlyRecurringTotal), sub: recurringSub },
+          { label: "One-time",        value: fmt0(oneTimeTotal), sub: oneTimeSub },
+        ]}
+      />
+
+      {quote && (
+        <PullQuote attribution={quote.attribution}>
+          <span dangerouslySetInnerHTML={{ __html: quote.body }} />
+        </PullQuote>
       )}
-      {stats.map((s, i) => (
-        <span key={s.label} className="inline-flex items-center gap-2 text-base text-ink-3">
-          {i > 0 && <span className="text-[var(--border-2)] select-none" style={{ margin: "0 2px" }}>·</span>}
-          {s.label}{" "}
-          <span className="font-serif font-bold text-base" style={{ color: s.color }}>{s.value}</span>
-          {s.sub && <span className="text-sm text-ink-3 font-medium">({s.sub})</span>}
-        </span>
-      ))}
     </div>
   );
 }

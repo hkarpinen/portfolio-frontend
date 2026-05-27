@@ -18,10 +18,10 @@ type FormData = z.infer<typeof splitSchema>;
 
 function TintedStatCard({ label, value, color }: { label: string; value: string; color?: string }) {
   return (
-    <div style={{
+    // background/border/color are runtime CSS-relative-color expressions — kept as dynamic style
+    <div className="p-[16px_20px]" style={{
       background: color ? `oklch(from ${color} l c h / 0.06)` : "var(--paper-2)",
       border: `1px solid ${color ? `oklch(from ${color} l c h / 0.3)` : "var(--ink-3)"}`,
-      padding: "16px 20px",
     } as React.CSSProperties}>
       <p className="text-sm text-ink-3 uppercase tracking-[0.06em] font-medium">{label}</p>
       <p className="font-serif font-extrabold text-2xl tracking-[-0.025em] mt-2" style={{ color: color ?? "var(--text)" }}>{value}</p>
@@ -88,6 +88,7 @@ export function ExpenseSplits({ expense, splits, members, isPrivileged, currentM
             aria-valuemax={100}
             aria-label="Allocation progress"
           >
+            {/* width and bg are runtime values — kept as dynamic style */}
             <div
               className="h-full rounded-full"
               style={{
@@ -116,8 +117,7 @@ export function ExpenseSplits({ expense, splits, members, isPrivileged, currentM
               return (
                 <div
                   key={split.splitId}
-                  className="bg-paper py-6 px-8 flex items-center justify-between border-ink"
-                  style={{ opacity: isRemoving ? 0.5 : 1, transition: "opacity 150ms" }}
+                  className={`bg-paper py-6 px-8 flex items-center justify-between border-ink transition-opacity duration-150${isRemoving ? " opacity-50" : ""}`}
                 >
                   <div className="flex items-center gap-5">
                     <span className="w-16 h-16 bg-red-soft text-red flex items-center justify-center text-sm font-bold font-serif">{initials}</span>

@@ -4,9 +4,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useCreateChore } from "@/hooks/use-chores";
-import { useHouseholdMembers } from "@/hooks/use-household";
+import { useHousehold, useHouseholdMembers } from "@/hooks/use-household";
 import type { RecurrenceFrequency } from "@/lib/api/chores";
-import { Btn, Input, Textarea, SelectField } from "@/components/editorial";
+import { Btn, Input, Textarea, SelectField, Icon, SectionHeader } from "@/components/editorial";
 
 const FREQ_OPTIONS: { value: RecurrenceFrequency | ""; label: string }[] = [
   { value: "", label: "None (one-off)" },
@@ -26,6 +26,7 @@ export default function NewChorePage({ params }: { params: { id: string } }) {
   const [freq, setFreq] = useState<RecurrenceFrequency | "">("");
   const [error, setError] = useState<string | null>(null);
 
+  const { data: household } = useHousehold(householdId);
   const createChore = useCreateChore(householdId);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -49,22 +50,14 @@ export default function NewChorePage({ params }: { params: { id: string } }) {
   }
 
   return (
-    <div className="page-enter max-w-[560]" >
-      {/* Back */}
-      <Link
-        href={`/household/${householdId}/chores`}
-        className="font-mono text-sm tracking-[0.08em] uppercase text-ink-3 no-underline"
-      >
-        ← Chores
+    <div className="page-enter max-w-[640px] flex flex-col gap-8">
+      <Link href={`/household/${householdId}/chores`} className="ed-label-muted no-underline hover:text-red">
+        ← {household?.name ? `${household.name} · Chores` : "Chores"}
       </Link>
 
-      <h1
-        className="font-serif text-4xl leading-none mt-4 mb-[28] pb-8" style={{ borderBottom: "2px solid var(--ink)" }}
-      >
-        New Chore
-      </h1>
+      <SectionHeader kicker="New chore" title="New <em>chore</em>" />
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-10">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-6">
         <Input
           label="Title"
           value={title}
@@ -75,13 +68,13 @@ export default function NewChorePage({ params }: { params: { id: string } }) {
 
         <Textarea
           label="Description"
-          className="min-h-[80]"
+          className="min-h-[80px]"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Optional notes…"
         />
 
-        <div className="grid gap-8" style={{ gridTemplateColumns: "1fr 1fr" }}>
+        <div className="grid gap-8 grid-cols-2">
           <Input
             label="Due Date"
             type="date"
@@ -103,25 +96,22 @@ export default function NewChorePage({ params }: { params: { id: string } }) {
         </div>
 
         {error && (
-          <p className="text-base text-red font-mono">
+          <p role="alert" className="text-base text-red font-mono">
             {error}
           </p>
         )}
 
-        <div className="flex gap-6 pt-4">
+        <div className="flex gap-3">
           <Btn
             type="submit"
             variant="primary"
+            size="lg"
             disabled={createChore.isPending}
+            iconRight={<Icon name="arrowRight" size={16} />}
           >
-            {createChore.isPending ? "Saving…" : "Create Chore"}
+            {createChore.isPending ? "Saving…" : "Create chore"}
           </Btn>
-          <Link
-            href={`/household/${householdId}/chores`}
-            className="py-6 px-12 font-mono text-base tracking-[0.05em] uppercase no-underline text-ink" style={{ border: "1px solid var(--ink)" }}
-          >
-            Cancel
-          </Link>
+          <Btn href={`/household/${householdId}/chores`} variant="secondary" size="lg">Cancel</Btn>
         </div>
       </form>
     </div>

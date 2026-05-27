@@ -34,14 +34,14 @@ export function DeductionChip({ d, onRemove, removeDisabled }: {
           <span className="text-base font-semibold text-ink-2">
             {d.method === "PercentOfGross" ? `${d.value}%` : `$${d.value.toFixed(2)}`}
           </span>
-          <span style={{ transform: expanded ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 200ms", display: "inline-flex", color: "var(--text-3)" }}>
+          <span className={`inline-flex text-ink-3 transition-transform duration-200${expanded ? " rotate-180" : ""}`}>
             <Icon name="chevDown" size={12} strokeWidth={2.5} />
           </span>
         </div>
       </div>
 
       {expanded && (
-        <div className="p-[0_14px_12px] flex flex-col gap-5" style={{ borderTop: "1.5px solid var(--ink)" }}>
+        <div className="p-[0_14px_12px] flex flex-col gap-5 border-t border-ink">
           <div className="flex flex-wrap gap-3 pt-5">
             <DetailPill label="Type" value={cfg?.label ?? d.type} />
             <DetailPill label="Amount" value={d.method === "PercentOfGross" ? `${d.value}% of gross` : `$${d.value.toFixed(2)} fixed`} />
@@ -51,7 +51,7 @@ export function DeductionChip({ d, onRemove, removeDisabled }: {
           <button
             onClick={() => onRemove(d.type, d.label)}
             disabled={removeDisabled}
-            className="flex items-center gap-3 py-[7px] px-[12px] bg-red-soft text-red text-base font-semibold self-start" style={{ border: "1px solid var(--danger-border)", cursor: removeDisabled ? "not-allowed" : "pointer", opacity: removeDisabled ? 0.5 : 1 }}
+            className="flex items-center gap-3 py-[7px] px-[12px] bg-red-soft text-red text-base font-semibold self-start border border-[var(--danger-border)] cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
           >
             <Icon name="trash" size={13} strokeWidth={2} />
             Remove Deduction

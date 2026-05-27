@@ -75,7 +75,7 @@ export function ExpenseEditForm({ expense, householdId, expenseId, onClose }: Ex
           </Alert>
         )}
         <div className="form-grid-2">
-          <div style={{ gridColumn: "1 / -1" }}>
+          <div className="col-span-full">
             <Input label="Title" {...register("title")} error={errors.title?.message} />
           </div>
           <Input label="Amount" type="number" step="0.01" {...register("amount")} error={errors.amount?.message} />
@@ -88,7 +88,7 @@ export function ExpenseEditForm({ expense, householdId, expenseId, onClose }: Ex
             <option value="">None</option>
             {FREQUENCIES.map((f) => <option key={f} value={f}>{f}</option>)}
           </SelectField>
-          <div style={{ gridColumn: "1 / -1" }}>
+          <div className="col-span-full">
             <Textarea label="Description" {...register("description")} rows={2} />
           </div>
         </div>

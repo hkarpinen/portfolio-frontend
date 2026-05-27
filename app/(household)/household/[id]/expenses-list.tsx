@@ -1,132 +1,205 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
-import { useHouseholdExpenses, useDeleteHouseholdExpense } from "@/hooks/use-expenses";
-import { MarkPaidButton } from "./mark-paid-button";
-import styles from "./expenses-list.module.css";
-import { cn } from "@/lib/utils";
-import type { HouseholdExpenseListResponse } from "@/types/finance";
+import { useHouseholdExpenses, useDeleteHouseholdExpense, usePayHouseholdExpense, useUnpayHouseholdExpense } from "@/hooks/use-expenses";
+import { EmptyState } from "@/components/editorial/empty-state";
+import { Icon } from "@/components/editorial/icon";
+import type { HouseholdExpense, HouseholdExpenseListResponse } from "@/types/finance";
 
-interface ExpensesListProps {
-  householdId: string;
-  initialData: HouseholdExpenseListResponse;
-  canDelete: boolean;
+function StatusCell({ expense, householdId }: { expense: HouseholdExpense; householdId: string }) {
+  const payMutation = usePayHouseholdExpense(householdId, expense.expenseId);
+  const unpayMutation = useUnpayHouseholdExpense(householdId, expense.expenseId);
+  const isPending = payMutation.isPending || unpayMutation.isPending;
+  const isPaid = !!expense.callerIsPaid;
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const occ = expense.currentOccurrenceDate ?? new Date().toISOString();
+    isPaid ? unpayMutation.mutate(occ) : payMutation.mutate(occ);
+  };
+
+  if (isPaid) {
+    return (
+      <button
+        onClick={handleClick}
+        disabled={isPending}
+        aria-label={`${expense.title}: marked as paid. Click to undo.`}
+        aria-pressed={true}
+        className="inline-flex items-center gap-[5px] font-mono text-xs tracking-[0.08em] text-ink-3 cursor-pointer border-none bg-transparent p-0 disabled:opacity-50"
+      >
+        <Icon name="check" size={11} strokeWidth={2.5} aria-hidden />
+        <span>PAID</span>
+      </button>
+    );
+  }
+
+  return (
+    <button
+      onClick={handleClick}
+      disabled={isPending}
+      aria-label={`${expense.title}: open, not yet paid. Click to mark as paid.`}
+      aria-pressed={false}
+      className="inline-flex items-center font-mono text-xs tracking-[0.08em] text-red cursor-pointer bg-transparent disabled:opacity-50"
+      style={{ border: "1px solid var(--red)", padding: "3px 8px" }}
+    >
+      <span>OPEN</span>
+    </button>
+  );
 }
 
-export function ExpensesList({ householdId, initialData, canDelete }: ExpensesListProps) {
+/** Confirm-before-delete row — no inaccessible browser confirm() dialog.
+ *  `canManage` (Owner/Admin) gates both Edit and Delete affordances; non-
+ *  privileged members see neither and can only navigate to the detail page
+ *  via the bill title link. */
+function ExpenseRow({
+  expense,
+  householdId,
+  canManage,
+  onDelete,
+  isDeleting,
+}: {
+  expense: HouseholdExpense;
+  householdId: string;
+  canManage: boolean;
+  onDelete: (id: string) => void;
+  isDeleting: boolean;
+}) {
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const date = new Date(expense.dueDate);
+  const formattedDate = date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  const detailHref = `/household/${householdId}/expenses/${expense.expenseId}`;
+
+  return (
+    <tr className="border-b border-[var(--rule-soft)] group">
+      <td className="py-[14px] pr-6">
+        <Link
+          href={detailHref}
+          className="font-serif italic text-ink text-[1.0625rem] no-underline hover:text-red focus:text-red"
+        >
+          {expense.title}
+        </Link>
+      </td>
+      <td className="py-[14px] pr-6 font-mono text-xs tracking-[0.08em] uppercase text-ink-3 whitespace-nowrap">
+        {expense.category ? expense.category : (
+          <span aria-label="No category">—</span>
+        )}
+      </td>
+      <td className="py-[14px] pr-6 font-mono text-xs tracking-[0.04em] text-ink-3 whitespace-nowrap">
+        {formattedDate}
+      </td>
+      {/* TODO(handoff8): wire to payer — HouseholdExpense has no payerId yet; show "—" until API returns it */}
+      <td className="py-[14px] pr-6 font-mono text-xs tracking-[0.04em] text-ink-3 whitespace-nowrap">
+        <span aria-label="Payer not yet available">—</span>
+      </td>
+      <td className="py-[14px] pr-6 text-right font-serif font-bold text-ink text-[1.0625rem] whitespace-nowrap">
+        {expense.currency} {Number(expense.amount).toFixed(2)}
+      </td>
+      <td className="py-[14px] whitespace-nowrap">
+        <div className="flex items-center gap-3">
+          <StatusCell expense={expense} householdId={householdId} />
+          {canManage && !confirmDelete && (
+            <>
+              <Link
+                href={`${detailHref}?edit=1`}
+                className="inline-flex items-center justify-center w-7 h-7 text-ink-3 hover:text-red focus:text-red no-underline"
+                aria-label={`Edit expense: ${expense.title}`}
+                title="Edit"
+              >
+                <Icon name="edit" size={14} strokeWidth={2} aria-hidden />
+              </Link>
+              <button
+                onClick={() => setConfirmDelete(true)}
+                disabled={isDeleting}
+                className="inline-flex items-center justify-center w-7 h-7 text-ink-3 hover:text-red focus:text-red cursor-pointer border-none bg-transparent p-0 disabled:opacity-50"
+                aria-label={`Delete expense: ${expense.title}`}
+                title="Delete"
+              >
+                <Icon name="trash" size={14} strokeWidth={2} aria-hidden />
+              </button>
+            </>
+          )}
+          {canManage && confirmDelete && (
+            <span className="flex items-center gap-2">
+              <button
+                onClick={() => { onDelete(expense.expenseId); setConfirmDelete(false); }}
+                disabled={isDeleting}
+                className="font-mono text-xs tracking-[0.08em] text-red cursor-pointer border-none bg-transparent p-0 disabled:opacity-50"
+                aria-label={`Confirm delete expense: ${expense.title}`}
+              >
+                {isDeleting ? "…" : "Confirm"}
+              </button>
+              <button
+                onClick={() => setConfirmDelete(false)}
+                className="font-mono text-xs tracking-[0.08em] text-ink-3 cursor-pointer border-none bg-transparent p-0"
+                aria-label="Cancel delete"
+              >
+                Cancel
+              </button>
+            </span>
+          )}
+        </div>
+      </td>
+    </tr>
+  );
+}
+
+export function ExpensesList({
+  householdId,
+  initialData,
+  canManage,
+}: {
+  householdId: string;
+  initialData: HouseholdExpenseListResponse;
+  /** Owner/Admin: gates row-level Edit and Delete affordances. */
+  canManage: boolean;
+}) {
   const { data } = useHouseholdExpenses(householdId, initialData);
   const expenses = data?.items ?? initialData.items;
   const deleteMutation = useDeleteHouseholdExpense(householdId);
 
-  const onDelete = (e: React.MouseEvent, householdExpenseId: string) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (!confirm("Delete this expense? This cannot be undone.")) return;
+  const onDelete = (householdExpenseId: string) => {
     deleteMutation.mutate(householdExpenseId);
   };
 
   if (expenses.length === 0) {
     return (
-      <div className="bg-paper py-20 px-12 text-center border-ink">
-        <div className="w-24 h-24 bg-red-soft flex items-center justify-center" style={{ margin: "0 auto 12px" }}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" strokeWidth={1.75}>
-            <path d="M17 9V7a5 5 0 0 0-10 0v2M5 9h14l1 12H4L5 9z" />
-          </svg>
-        </div>
-        <p className="text-md font-semibold font-serif text-ink mb-2">
-          No expenses yet
-        </p>
-        <p className="text-base text-ink-3 mb-8">
-          Add your first expense to start tracking.
-        </p>
-        <Link
-          href={`/household/${householdId}/expenses/new`}
-          className="inline-flex items-center py-[7px] px-[16px] bg-red text-white text-base font-semibold no-underline" style={{ transition: "background 110ms" }}
-        >
-          Add first expense
-        </Link>
-      </div>
+      <EmptyState
+        glyph={<Icon name="expenses" size={24} strokeWidth={1.5} />}
+        title="No expenses yet"
+        body="Add your first shared expense to start tracking."
+        cta={{ label: "+ Add expense", href: `/household/${householdId}/expenses/new` }}
+      />
     );
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      {expenses.map((expense) => {
-        const dueDate = new Date(expense.dueDate);
-        const daysUntilDue = Math.ceil((dueDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
-        const isOverdue = daysUntilDue < 0;
-        const isDueSoon = daysUntilDue >= 0 && daysUntilDue <= 7;
-
-        return (
-          <div key={expense.expenseId}  className="expenses-list-item relative">
-            <div className="flex items-center gap-5 bg-paper overflow-hidden border-ink">
-              {/* Status colour dot */}
-              <div className="w-2 self-stretch shrink-0" style={{ background: isOverdue ? "var(--danger)" : isDueSoon ? "var(--warning)" : "var(--red)" }} />
-
-              <Link
-              href={`/household/${householdId}/expenses/${expense.expenseId}`}
-              className={cn(styles.link, "flex items-center justify-between gap-8 p-[14px_12px_14px_8px] flex-1 no-underline")}
-            >
-              {/* Left: icon + info */}
-              <div className="flex items-center gap-6 flex-1 min-w-0">
-                <div className="w-[36px] h-[36px] flex items-center justify-center shrink-0" style={{ background: isOverdue ? "var(--danger-s)" : isDueSoon ? "var(--warning-s)" : "rgba(178,42,26,0.08)" }}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                    stroke={isOverdue ? "var(--danger)" : isDueSoon ? "var(--warning)" : "var(--red)"}
-                    strokeWidth={1.75}>
-                    <path d="M17 9V7a5 5 0 0 0-10 0v2M5 9h14l1 12H4L5 9z" />
-                  </svg>
-                </div>
-                <div className="min-w-0">
-                  <div className="flex items-center gap-3 flex-wrap">
-                    <span className="text-md font-semibold text-ink">{expense.title}</span>
-                    {expense.recurrenceFrequency && (
-                      <span className="py-[1px] px-[7px] bg-red-soft text-red text-sm font-medium">{expense.recurrenceFrequency}</span>
-                    )}
-                    {expense.category && (
-                      <span className="py-[1px] px-[7px] bg-paper-3 text-ink-2 text-sm font-mono border-ink">{String(expense.category)}</span>
-                    )}
-                  </div>
-                  <p className="text-base text-ink-3 mt-1">
-                    Due {dueDate.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}
-                    {isOverdue && (
-                      <span className="text-red font-medium"> · Overdue</span>
-                    )}
-                    {isDueSoon && !isOverdue && (
-                      <span className="text-red font-medium"> · Due soon</span>
-                    )}
-                  </p>
-                </div>
-              </div>
-
-              {/* Right: amount + delete */}
-              <div className="flex items-center gap-6 shrink-0">
-                <span className="font-serif font-bold text-md" style={{ color: isOverdue ? "var(--danger)" : "var(--text)" }}>
-                  {expense.currency} {Number(expense.amount).toFixed(2)}
-                </span>
-                {canDelete && (
-                  <button
-                    onClick={(e) => onDelete(e, expense.expenseId)}
-                    disabled={deleteMutation.isPending && deleteMutation.variables === expense.expenseId}
-                    className="py-2 px-5 bg-red-soft text-red text-sm font-medium cursor-pointer" style={{ border: "1px solid oklch(62% 0.21 22 / 0.25)", opacity: deleteMutation.isPending && deleteMutation.variables === expense.expenseId ? 0.5 : 1, transition: "opacity 110ms" }}
-                  >
-                    {deleteMutation.isPending && deleteMutation.variables === expense.expenseId ? "…" : "Delete"}
-                  </button>
-                )}
-              </div>
-            </Link>
-            {/* Mark paid — outside Link so click doesn't navigate */}
-            <div className="pr-6 shrink-0" onClick={(e) => e.stopPropagation()}>
-              <MarkPaidButton
-                householdId={householdId}
-                householdExpenseId={expense.expenseId}
-                isPaid={expense.callerIsPaid}
-                occurrenceDate={expense.currentOccurrenceDate}
-              />
-            </div>
-          </div>
-          </div>
-        );
-      })}
+    <div className="overflow-x-auto">
+      <table className="w-full border-collapse" aria-label="Shared expenses">
+        <thead>
+          <tr className="border-b border-[var(--ink)]">
+            <th scope="col" className="text-left ed-kicker pb-[10px] pr-6 font-normal">Expense</th>
+            <th scope="col" className="text-left ed-kicker pb-[10px] pr-6 font-normal">Category</th>
+            <th scope="col" className="text-left ed-kicker pb-[10px] pr-6 font-normal">Date</th>
+            <th scope="col" className="text-left ed-kicker pb-[10px] pr-6 font-normal">Payer</th>
+            <th scope="col" className="text-right ed-kicker pb-[10px] pr-6 font-normal">Amount</th>
+            <th scope="col" className="text-left ed-kicker pb-[10px] font-normal">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {expenses.map((expense) => (
+            <ExpenseRow
+              key={expense.expenseId}
+              expense={expense}
+              householdId={householdId}
+              canManage={canManage}
+              onDelete={onDelete}
+              isDeleting={deleteMutation.isPending}
+            />
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }

@@ -31,17 +31,8 @@ export function InviteSection({ householdId }: { householdId: string }) {
     });
   };
 
-  const cardStyle: React.CSSProperties = {
-    background: "var(--paper-2)",
-    padding: "24px",
-    boxShadow: "var(--shadow-sm)",
-    display: "flex",
-    flexDirection: "column",
-    gap: "16px",
-  };
-
   return (
-    <section className="border-ink" style={cardStyle}>
+    <section className="border-ink bg-paper-2 p-[24px] shadow-sm flex flex-col gap-[16px]">
       <p className="text-sm font-bold text-ink-3 uppercase tracking-[0.1em]">
         Invite Someone
       </p>
@@ -61,8 +52,7 @@ export function InviteSection({ householdId }: { householdId: string }) {
           value={recipientEmail}
           onChange={(e) => setRecipientEmail(e.target.value)}
           placeholder="recipient@example.com"
-          className="bg-paper py-[10px] px-[12px] text-base text-ink font-body border-ink w-full"
-          style={{ outline: "none" }}
+          className="bg-paper py-[10px] px-[12px] text-base text-ink font-body border-ink w-full outline-none"
         />
       </div>
       {inviteError && <Alert variant="danger">{inviteError}</Alert>}
@@ -74,14 +64,14 @@ export function InviteSection({ householdId }: { householdId: string }) {
             </code>
             <button
               onClick={onCopy}
-              className="bg-paper-2 py-4 px-8 text-base font-medium cursor-pointer whitespace-nowrap font-body border-ink" style={{color: copied ? "var(--success)" : "var(--text-2)" }}
+              className={`bg-paper-2 py-4 px-8 text-base font-medium cursor-pointer whitespace-nowrap font-body border-ink ${copied ? "text-green" : "text-ink-2"}`}
             >
               {copied ? "Copied!" : "Copy"}
             </button>
           </div>
           <button
             onClick={() => { setInviteResult(null); setRecipientEmail(""); }}
-            className="text-base text-ink-3 bg-transparent cursor-pointer p-0 text-left font-body" style={{ border: "none" }}
+            className="text-base text-ink-3 bg-transparent cursor-pointer p-0 text-left font-body border-none"
           >
             Generate another
           </button>

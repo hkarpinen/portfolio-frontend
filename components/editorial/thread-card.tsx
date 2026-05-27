@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { timeAgo } from "@/lib/utils";
 import { Icon } from "./icon";
-import { ThreadActions } from "@/app/(forum)/forum/[slug]/threads/[threadId]/thread-actions";
+import { ThreadActions } from "@/app/(forum)/forum/g/[slug]/threads/[threadId]/thread-actions";
 import type { ThreadSummaryResponse } from "@/types/forum";
 
 interface ThreadCardProps {
@@ -41,7 +41,7 @@ export function ThreadCard({
           <div className="flex-1 min-w-0">
             {/* Clickable meta + title */}
             <Link
-              href={`/forum/${displaySlug}/threads/${thread.threadId}`}
+              href={`/forum/g/${displaySlug}/threads/${thread.threadId}`}
               className="no-underline block"
             >
               {/* Meta row */}
@@ -86,7 +86,7 @@ export function ThreadCard({
             {/* Action buttons */}
             <div className="flex items-center gap-2">
               <Link
-                href={`/forum/${displaySlug}/threads/${thread.threadId}`}
+                href={`/forum/g/${displaySlug}/threads/${thread.threadId}`}
                 
                 className="row-hover flex items-center gap-2 py-2 px-5 text-sm text-ink-3 no-underline font-medium"
               >
@@ -95,7 +95,7 @@ export function ThreadCard({
               </Link>
               <ThreadActions
                 threadId={thread.threadId}
-                threadUrl={`/forum/${displaySlug}/threads/${thread.threadId}`}
+                threadUrl={`/forum/g/${displaySlug}/threads/${thread.threadId}`}
               />
             </div>
           </div>

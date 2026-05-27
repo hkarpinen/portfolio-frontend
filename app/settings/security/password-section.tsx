@@ -6,7 +6,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { api, ApiError } from "@/lib/api-client";
 import { Btn, Input, Alert, Collapsible } from "@/components/editorial";
-import { labelStyle } from "../settings-ui";
 
 const passwordSchema = z
   .object({
@@ -60,21 +59,21 @@ export function PasswordSection() {
         {passwordError && <Alert variant="danger">{passwordError}</Alert>}
         {passwordSaved && <Alert variant="success">Password updated successfully!</Alert>}
         <div>
-          <label style={labelStyle}>Current Password</label>
+          <label className="ed-label block mb-[6px]">Current Password</label>
           <Input type="password" {...register("currentPassword")} placeholder="••••••••" />
           {errors.currentPassword && (
             <p className="text-red text-base mt-2">{errors.currentPassword.message}</p>
           )}
         </div>
         <div>
-          <label style={labelStyle}>New Password</label>
+          <label className="ed-label block mb-[6px]">New Password</label>
           <Input type="password" {...register("newPassword")} placeholder="••••••••" />
           {errors.newPassword && (
             <p className="text-red text-base mt-2">{errors.newPassword.message}</p>
           )}
         </div>
         <div>
-          <label style={labelStyle}>Confirm New Password</label>
+          <label className="ed-label block mb-[6px]">Confirm New Password</label>
           <Input type="password" {...register("confirmPassword")} placeholder="••••••••" />
           {errors.confirmPassword && (
             <p className="text-red text-base mt-2">{errors.confirmPassword.message}</p>

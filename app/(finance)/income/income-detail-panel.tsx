@@ -28,7 +28,7 @@ export function IncomeDetailPanel({ incomeId, period, onPeriodChange }: IncomeDe
   if (isLoading) {
     return (
       <div className="p-[16px_0_4px] flex items-center gap-4">
-        <div className="w-8 h-8" style={{ border: "2px solid var(--ink-4)", borderTopColor: "var(--ink)", animation: "spin 0.7s linear infinite" }} />
+        <div className="w-8 h-8 border-2 border-[var(--ink-4)] border-t-ink animate-spin" />
         <span className="text-base text-ink-3">Loading breakdown…</span>
       </div>
     );
@@ -42,7 +42,7 @@ export function IncomeDetailPanel({ incomeId, period, onPeriodChange }: IncomeDe
 
   return (
     <div className="pt-[14px]">
-      <div className="h-[1px] mb-6" style={{ background: "var(--ink-3)" }} />
+      <div className="h-[1px] mb-6 bg-[var(--ink-3)]" />
 
       {/* ── Period picker ── */}
       <div className="flex gap-2 mb-[14px]">
@@ -50,7 +50,9 @@ export function IncomeDetailPanel({ incomeId, period, onPeriodChange }: IncomeDe
           <button
             key={p.value}
             onClick={() => onPeriodChange(p.value)}
-            className="flex-1 p-[5px_0] text-sm font-semibold cursor-pointer" style={{ border: "1px solid", borderColor: period === p.value ? "var(--red)" : "var(--ink-3)", background: period === p.value ? "rgba(178,42,26,0.08)" : "transparent", color: period === p.value ? "var(--red)" : "var(--text-3)", transition: "all 120ms" }}
+            className="flex-1 p-[5px_0] text-sm font-semibold cursor-pointer transition-all duration-[120ms]"
+            /* border/background/color all toggle on period === p.value — dynamic, kept as inline style */
+            style={{ border: "1px solid", borderColor: period === p.value ? "var(--red)" : "var(--ink-3)", background: period === p.value ? "rgba(178,42,26,0.08)" : "transparent", color: period === p.value ? "var(--red)" : "var(--text-3)" }}
           >
             {p.label}
           </button>
@@ -68,13 +70,13 @@ export function IncomeDetailPanel({ incomeId, period, onPeriodChange }: IncomeDe
       {/* ── Deductions block ── */}
       {deductions.length > 0 ? (
         <div className="overflow-hidden mb-5 border-ink">
-          <div className="py-3 px-6 bg-paper-2" style={{ borderBottom: "1.5px solid var(--ink)" }}>
+          <div className="py-3 px-6 bg-paper-2 border-b border-ink">
             <span className="text-sm font-bold text-ink-3 uppercase tracking-[0.08em]">
               Deductions
             </span>
           </div>
           {deductions.map((d, i) => (
-            <div key={i} className="flex justify-between items-center py-4 px-6" style={{ borderBottom: i < deductions.length - 1 ? "1.5px solid var(--ink)" : undefined }}>
+            <div key={i} className={`flex justify-between items-center py-4 px-6${i < deductions.length - 1 ? " border-ink-b" : ""}`}>
               <div className="flex items-center gap-3 min-w-0 flex-1 mr-5">
                 <span className="text-base text-ink-2 overflow-hidden text-ellipsis whitespace-nowrap">
                   {d.label}
@@ -90,7 +92,7 @@ export function IncomeDetailPanel({ incomeId, period, onPeriodChange }: IncomeDe
               </span>
             </div>
           ))}
-          <div className="flex justify-between items-center py-3 px-6 bg-paper-2" style={{ borderTop: "1.5px solid var(--ink)" }}>
+          <div className="flex justify-between items-center py-3 px-6 bg-paper-2 border-t border-ink">
             <span className="text-sm font-bold text-ink-3 uppercase tracking-[0.08em]">Total</span>
             <span className="font-serif font-bold text-base text-red">
               -{money(totalDeductions * factor)}
@@ -102,7 +104,7 @@ export function IncomeDetailPanel({ incomeId, period, onPeriodChange }: IncomeDe
       )}
 
       {/* ── Net Take-Home ── */}
-      <div className="flex justify-between items-center py-[10px] px-[14px] bg-red-soft" style={{ border: "1px solid var(--accent-border)" }}>
+      <div className="flex justify-between items-center py-[10px] px-[14px] bg-red-soft border border-[var(--accent-border)]">
         <span className="text-sm font-bold text-red uppercase tracking-[0.08em]">
           Net Take-Home
         </span>

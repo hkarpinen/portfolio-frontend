@@ -1,7 +1,17 @@
 import type { Config } from 'tailwindcss'
 
+/**
+ * Editorial Design System — Tailwind config (redesign)
+ *
+ * Drop-in replacement for /tailwind.config.ts. Every existing class name
+ * continues to resolve; small-text sizes are lifted to the 0.72rem floor
+ * so labels are actually readable. The broadsheet `bs-*` scale stays for
+ * the landing-page sub-components in /components/landing/ until step 7
+ * of the migration deletes them; after that, you can prune everything
+ * tagged "BROADSHEET" below.
+ */
 const config: Config = {
-  // No dark mode toggle — editorial is single-mode paper-on-ink
+  // No dark mode — editorial is single-mode paper-on-ink
   content: [
     './pages/**/*.{ts,tsx}',
     './components/**/*.{ts,tsx}',
@@ -10,7 +20,7 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        /* ── Editorial palette ─────────────────────────────────────────── */
+        // ── Editorial palette ────────────────────────────────────────────
         paper:    'var(--paper)',
         'paper-2':'var(--paper-2)',
         'paper-3':'var(--paper-3)',
@@ -25,7 +35,7 @@ const config: Config = {
         'green-soft':'var(--green-soft)',
         green:    'var(--green)',
 
-        /* ── Semantic aliases (so bg-accent etc. keep working) ─────────── */
+        // ── Semantic aliases ─────────────────────────────────────────────
         bg: {
           DEFAULT: 'var(--bg)',
           2:       'var(--bg-2)',
@@ -75,37 +85,20 @@ const config: Config = {
       },
 
       fontSize: {
-        /* ── Broadsheet scale (rem — ride the fluid html root) ─── */
-        'eyebrow':   '0.525rem',
-        'meta':      '0.55rem',
-        'micro':     '0.6rem',
-        'arrow':     '0.65rem',
-        'small-p':   '0.675rem',
-        'body-bs':   '0.75rem',
-        'col':       '0.8rem',
-        'note':      '0.9rem',
-        'lede':      '1.1rem',
-        'card-h':    '1.4rem',
-        'dispatch':  '1.7rem',
-        'specimen':  '2.2rem',
-        'sec-h':     '2.8rem',
-        'wanted':    'clamp(2rem, 4vw, 3.9rem)',
-        'lede-num':  '3.2rem',
-        'dropcap':   '4.3rem',
-        'wanted-st': '3.9rem',
-        'nameplate': 'clamp(2.2rem, 5.76vw, 5.8rem)',
-        'headline':  'clamp(3.2rem, 9.2vw, 9.8rem)',
-        /* ── App scale (rem — ride the fluid root) ─────────── */
-        xs:    '0.5rem',
-        sm:    '0.6rem',
-        base:  '0.65rem',
-        md:    '0.72rem',
-        lg:    '0.875rem',
-        xl:    '1.1rem',
-        '2xl': '1.35rem',
-        '3xl': '1.5rem',
-        '4xl': '2.6rem',
-        '5xl': '2.7rem',
+        // ── APP SCALE — readability-first ────────────────────────────────
+        // Floor is 0.72rem. Never go below it.
+        // The old text-xs (0.5rem) and text-sm (0.6rem) were the biggest
+        // readability failures in the prior design.
+        xs:    '0.72rem',   // was 0.5  → 12px floor for mono labels
+        sm:    '0.78rem',   // was 0.6  → button + tab labels
+        base:  '0.875rem',  // was 0.65 → small body
+        md:    '1rem',      // was 0.72 → default body
+        lg:    '1.125rem',  // was 0.875 → lede
+        xl:    '1.375rem',  // was 1.1   → card h4
+        '2xl': '1.625rem',  // was 1.35  → h3
+        '3xl': '2.125rem',  // was 1.5   → h2
+        '4xl': 'clamp(2.25rem, 1.5rem + 2.5vw, 3rem)',   // h1
+        '5xl': 'clamp(2.75rem, 2rem + 5vw, 5rem)',       // landing display
       },
 
       letterSpacing: {
@@ -113,13 +106,13 @@ const config: Config = {
         tight:   '-0.03em',
         snug:    '-0.02em',
         normal:  '0',
-        mono:    '0.14em',
-        wide:    '0.20em',
-        wider:   '0.28em',
-        widest:  '0.40em',
+        mono:    '0.12em',  // was 0.14em — slightly tighter for the larger floor
+        wide:    '0.16em',  // was 0.20em
+        wider:   '0.20em',  // was 0.28em
+        widest:  '0.28em',  // was 0.40em
       },
 
-      /* Everything is square — no border radius */
+      // Everything is square — editorial vocabulary
       borderRadius: {
         DEFAULT: '0',
         none:    '0',
@@ -135,7 +128,7 @@ const config: Config = {
         card:  '4px 4px 0 var(--ink)',
         stamp: '6px 6px 0 var(--ink)',
         modal: '8px 8px 0 var(--ink)',
-        /* Legacy names */
+        // Legacy aliases
         sm:    '4px 4px 0 var(--ink)',
         md:    '6px 6px 0 var(--ink)',
         lg:    '8px 8px 0 var(--ink)',
@@ -166,15 +159,21 @@ const config: Config = {
         'in-out': 'cubic-bezier(0.4, 0, 0.2, 1)',
       },
       transitionDuration: {
-        fast: '110ms',
+        fast: '120ms',
         mid:  '220ms',
         slow: '380ms',
         page: '500ms',
       },
 
       screens: {
+        // `xs` (360px) is reserved for if/when we add phone-only responsive
+        // tweaks — currently unused for layout classes. Everything `sm:` and
+        // up matches Tailwind defaults so the CSS `@media` queries in
+        // globals.css (which use 600/640/768/900) stay aligned with the
+        // utility classes. Reducing `sm` below 640 caused 2/3/4-column grids
+        // to fire on phone viewports and scrunch text (see /about cards).
         xs:    '360px',
-        sm:    '390px',
+        sm:    '640px',
         md:    '768px',
         lg:    '1024px',
         xl:    '1280px',
@@ -190,6 +189,11 @@ const config: Config = {
         marquee:     'marquee 38s linear infinite',
         spin:        'spin 0.8s linear infinite',
         shimmer:     'shimmer 1.6s ease-in-out infinite',
+      },
+
+      minHeight: {
+        // Touch target floor — every interactive control uses this
+        hit: '44px',
       },
     },
   },

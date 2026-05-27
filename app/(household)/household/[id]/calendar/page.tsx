@@ -1,10 +1,14 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import Link from "next/link";
 import { useCalendarEvents, useDeleteCalendarEvent } from "@/hooks/use-calendar";
 import { Icon } from "@/components/editorial/icon";
+import { Btn } from "@/components/editorial/button";
+import { EditorialPageHead } from "@/components/editorial/editorial-page-head";
+import { DepartmentHead } from "@/components/editorial/department-head";
+import { EmptyDispatch } from "@/components/editorial/empty-dispatch";
 import { CalendarGrid } from "./calendar-grid";
+import { calendarHeadline } from "@/lib/household/editorial-copy";
 
 const MONTHS = [
   "January", "February", "March", "April", "May", "June",
@@ -38,64 +42,31 @@ export default function CalendarPage({ params }: { params: { id: string } }) {
     if (month === 11) { setYear(y => y + 1); setMonth(0); }
     else setMonth(m => m + 1);
   }
+  function goToday() {
+    setYear(today.getFullYear());
+    setMonth(today.getMonth());
+  }
+
+  const monthName = MONTHS[month];
+  const headline = calendarHeadline({ count: events.length, monthName });
 
   return (
-    <div className="page-enter flex flex-col gap-12" >
-      {/* Header */}
-      <div
-        className="flex items-start justify-between flex-wrap gap-6 pb-8" style={{ borderBottom: "2px solid var(--ink)" }}
-      >
-        <div>
-          <Link
-            href={`/household/${householdId}`}
-            className="font-mono text-sm tracking-[0.08em] uppercase text-ink-3 no-underline"
-          >
-            ← Household
-          </Link>
-          <h1
-            className="font-serif text-4xl leading-none mt-2"
-          >
-            Calendar
-          </h1>
-        </div>
-        <Link
-          href={`/household/${householdId}/calendar/new`}
-          className="bg-ink text-paper py-5 px-10 font-mono text-base tracking-[0.05em] uppercase no-underline inline-block"
-        >
-          + New Event
-        </Link>
-      </div>
+    <div className="page-enter flex flex-col gap-6">
+      <EditorialPageHead
+        kicker={`${monthName} ${year}`}
+        title={headline}
+        deck="Birthdays, bills, deadlines, gatherings — anything the household needs to put on a date."
+      />
 
-      {/* Month navigator */}
-      <div
-        className="flex items-center justify-between"
-      >
-        <button
-          onClick={prevMonth}
-          aria-label="Previous month"
-          className="bg-transparent w-[36] h-[36] cursor-pointer font-mono text-md text-ink" style={{ border: "1px solid var(--ink)" }}
-        >
-          ‹
-        </button>
-        <h2 className="font-serif text-2xl tracking-[-0.01em]">
-          {MONTHS[month]} {year}
-        </h2>
-        <button
-          onClick={nextMonth}
-          aria-label="Next month"
-          className="bg-transparent w-[36] h-[36] cursor-pointer font-mono text-md text-ink" style={{ border: "1px solid var(--ink)" }}
-        >
-          ›
-        </button>
+      <div className="flex items-center justify-end gap-2 -mt-2">
+        <Btn variant="secondary" size="sm" onClick={prevMonth} aria-label="Previous month">←</Btn>
+        <Btn variant="secondary" size="sm" onClick={goToday}>Today</Btn>
+        <Btn variant="secondary" size="sm" onClick={nextMonth} aria-label="Next month">→</Btn>
       </div>
 
       {/* Calendar grid */}
       {eventsQuery.isLoading ? (
-        <p
-          className="text-center p-[48px_0] font-mono text-base text-ink-3"
-        >
-          Loading…
-        </p>
+        <p className="text-center py-12 ed-label-muted">Loading…</p>
       ) : (
         <CalendarGrid
           year={year}
@@ -107,53 +78,53 @@ export default function CalendarPage({ params }: { params: { id: string } }) {
       )}
 
       {/* Events list */}
-      {events.length > 0 && (
-        <div className="pt-8" style={{ borderTop: "1px solid var(--ink-4)" }}>
-          <p
-            className="font-mono text-sm tracking-[0.08em] uppercase text-ink-3 mb-6"
-          >
-            {events.length} event{events.length !== 1 ? "s" : ""} this month
-          </p>
-          {events
-            .slice()
-            .sort((a, b) => new Date(a.startsAt).getTime() - new Date(b.startsAt).getTime())
-            .map((ev) => (
-              <div
-                key={ev.id}
-                className="flex justify-between items-center p-[10px_0] gap-6" style={{ borderBottom: "1px solid var(--ink-4)" }}
-              >
-                <div>
-                  <p className="font-serif text-md">
-                    {ev.title}
-                  </p>
-                  <p
-                    className="font-mono text-sm text-ink-3 mt-1"
-                  >
-                    {new Date(ev.startsAt).toLocaleDateString("en-US", {
-                      weekday: "short",
-                      month: "short",
-                      day: "numeric",
-                    })}
-                    {!ev.allDay &&
-                      " · " +
-                        new Date(ev.startsAt).toLocaleTimeString("en-US", {
-                          hour: "numeric",
-                          minute: "2-digit",
-                        })}
-                  </p>
-                </div>
-                <button
-                  onClick={() => deleteEvent.mutate(ev.id)}
-                  disabled={deleteEvent.isPending}
-                  aria-label="Delete event"
-                  className="bg-transparent cursor-pointer text-ink-3 font-mono text-sm" style={{ border: "none" }}
+      <section className="flex flex-col gap-4">
+        <DepartmentHead
+          kicker={`${monthName} · Events`}
+          count={`${events.length} event${events.length === 1 ? "" : "s"}`}
+          title="Posted <em>this month</em>"
+        />
+        {events.length === 0 ? (
+          <EmptyDispatch>No events <em>filed</em> for {monthName}</EmptyDispatch>
+        ) : (
+          <ol className="flex flex-col">
+            {events
+              .slice()
+              .sort((a, b) => new Date(a.startsAt).getTime() - new Date(b.startsAt).getTime())
+              .map((ev) => (
+                <li
+                  key={ev.id}
+                  className="flex justify-between items-center py-3 gap-6 border-b border-[var(--rule-soft)] last:border-b-0"
                 >
-                  <Icon name="x" size={12} strokeWidth={2.5} />
-                </button>
-              </div>
-            ))}
-        </div>
-      )}
+                  <div>
+                    <p className="font-serif text-md">{ev.title}</p>
+                    <p className="font-mono text-sm text-ink-3 mt-1">
+                      {new Date(ev.startsAt).toLocaleDateString("en-US", {
+                        weekday: "short",
+                        month: "short",
+                        day: "numeric",
+                      })}
+                      {!ev.allDay &&
+                        " · " +
+                          new Date(ev.startsAt).toLocaleTimeString("en-US", {
+                            hour: "numeric",
+                            minute: "2-digit",
+                          })}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => deleteEvent.mutate(ev.id)}
+                    disabled={deleteEvent.isPending}
+                    aria-label={`Delete event: ${ev.title}`}
+                    className="bg-transparent cursor-pointer text-ink-3 hover:text-red font-mono text-sm border-none transition-colors"
+                  >
+                    <Icon name="x" size={12} strokeWidth={2.5} aria-hidden />
+                  </button>
+                </li>
+              ))}
+          </ol>
+        )}
+      </section>
     </div>
   );
 }

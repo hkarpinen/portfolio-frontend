@@ -49,3 +49,51 @@ export function formatDate(dateStr: string): string {
     day: "numeric",
   });
 }
+
+/**
+ * Escape HTML special characters so user content can't inject markup.
+ */
+export function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+/**
+ * Editorial title accent: render `*word*` segments as `<em>word</em>`.
+ * Everything else is HTML-escaped. Author opt-in — titles without asterisks
+ * render as plain text.
+ */
+export function renderTitleAccent(title: string): string {
+  // Split on `*…*` segments, preserving order. Non-greedy match, no nesting.
+  const parts = title.split(/(\*[^*]+\*)/g);
+  return parts
+    .map((p) =>
+      p.startsWith("*") && p.endsWith("*") && p.length > 2
+        ? `<em>${escapeHtml(p.slice(1, -1))}</em>`
+        : escapeHtml(p),
+    )
+    .join("");
+}
+
+/**
+ * Editorial author-handle: render a display name as `@handle` for use in the
+ * meta line on threads and comments. The mockup pairs this with uppercase
+ * mono CSS, so we keep the raw casing here and let the typography do the
+ * uppercase transform.
+ *
+ * Whitespace inside a name collapses to a single `_` so multi-word display
+ * names read as a single handle. Everything else (unicode letters, dots,
+ * apostrophes, etc.) is preserved — over-aggressive stripping used to wipe
+ * out valid names like "O'Brien" and surface a misleading `@anonymous`.
+ *
+ * Returns `@anonymous` only when the input is empty or whitespace-only.
+ */
+export function authorHandle(name: string | null | undefined): string {
+  const trimmed = (name ?? "").trim();
+  if (!trimmed) return "@anonymous";
+  return `@${trimmed.replace(/\s+/g, "_")}`;
+}

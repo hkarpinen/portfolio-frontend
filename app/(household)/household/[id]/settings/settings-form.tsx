@@ -52,17 +52,8 @@ export function SettingsForm({ household }: { household: Household }) {
     }
   };
 
-  const cardStyle: React.CSSProperties = {
-    background: "var(--paper-2)",
-    padding: "24px",
-    boxShadow: "var(--shadow-sm)",
-    display: "flex",
-    flexDirection: "column",
-    gap: "16px",
-  };
-
   return (
-    <section className="border-ink" style={cardStyle}>
+    <section className="border-ink bg-paper-2 p-[24px] shadow-sm flex flex-col gap-[16px]">
       <p className="text-sm font-bold text-ink-3 uppercase tracking-[0.1em]">
         Household Details
       </p>

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useCreateCalendarEvent } from "@/hooks/use-calendar";
-import { Btn, Input, Textarea } from "@/components/editorial";
+import { Btn, Input, Textarea, Icon, SectionHeader } from "@/components/editorial";
 
 export default function NewCalendarEventPage({ params }: { params: { id: string } }) {
   const router = useRouter();
@@ -13,8 +13,9 @@ export default function NewCalendarEventPage({ params }: { params: { id: string 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [allDay, setAllDay] = useState(true);
-  const [startsAt, setStartsAt] = useState("");
-  const [endsAt, setEndsAt] = useState("");
+  const [date, setDate] = useState("");
+  const [startTime, setStartTime] = useState("09:00");
+  const [endTime, setEndTime] = useState("10:00");
   const [error, setError] = useState<string | null>(null);
 
   const createEvent = useCreateCalendarEvent(householdId);
@@ -23,16 +24,19 @@ export default function NewCalendarEventPage({ params }: { params: { id: string 
     e.preventDefault();
     setError(null);
     if (!title.trim()) { setError("Title is required."); return; }
-    if (!startsAt) { setError("Start date is required."); return; }
+    if (!date) { setError("Date is required."); return; }
 
-    const startsAtIso = allDay
-      ? new Date(startsAt + "T00:00:00Z").toISOString()
-      : new Date(startsAt).toISOString();
-    const endsAtIso = endsAt
-      ? allDay
-        ? new Date(endsAt + "T23:59:59Z").toISOString()
-        : new Date(endsAt).toISOString()
-      : undefined;
+    let startsAtIso: string;
+    let endsAtIso: string | undefined;
+
+    if (allDay) {
+      startsAtIso = new Date(date + "T00:00:00Z").toISOString();
+      // No end for all-day single events
+    } else {
+      // Combine date + time inputs → ISO string
+      startsAtIso = new Date(`${date}T${startTime}:00`).toISOString();
+      endsAtIso = endTime ? new Date(`${date}T${endTime}:00`).toISOString() : undefined;
+    }
 
     try {
       await createEvent.mutateAsync({
@@ -49,21 +53,12 @@ export default function NewCalendarEventPage({ params }: { params: { id: string 
   }
 
   return (
-    <div className="page-enter max-w-[560]" >
-      <Link
-        href={`/household/${householdId}/calendar`}
-        className="font-mono text-sm tracking-[0.08em] uppercase text-ink-3 no-underline"
-      >
-        ← Calendar
-      </Link>
+    <div className="page-enter max-w-[640px] flex flex-col gap-8">
+      <Link href={`/household/${householdId}/calendar`} className="ed-label-muted no-underline hover:text-red">← Calendar</Link>
 
-      <h1
-        className="font-serif text-4xl leading-none mt-4 mb-[28] pb-8" style={{ borderBottom: "2px solid var(--ink)" }}
-      >
-        New Event
-      </h1>
+      <SectionHeader kicker="New event" title="New <em>event</em>" />
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-10">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-6">
         <Input
           label="Title"
           value={title}
@@ -74,66 +69,70 @@ export default function NewCalendarEventPage({ params }: { params: { id: string 
 
         <Textarea
           label="Description"
-          className="min-h-[80]"
+          className="min-h-[80px]"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Optional notes…"
         />
 
-        {/* All-day toggle */}
-        <div className="flex items-center gap-5">
-          <input
-            id="allday"
-            type="checkbox"
-            checked={allDay}
-            onChange={(e) => setAllDay(e.target.checked)}
-            className="w-[16] h-[16] cursor-pointer" style={{ accentColor: "var(--ink)" }}
+        {/* Date + All-day row */}
+        <div className="grid grid-cols-2 gap-6 items-end">
+          <Input
+            label="Date"
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
           />
-          <label
-            htmlFor="allday"
-            className="font-mono text-base tracking-[0.05em] cursor-pointer"
-          >
-            All-day event
-          </label>
+          <div className="flex items-center gap-3 pb-[9px]">
+            <input
+              id="allday"
+              type="checkbox"
+              checked={allDay}
+              onChange={(e) => setAllDay(e.target.checked)}
+              className="w-4 h-4 cursor-pointer accent-neutral-900"
+            />
+            <label
+              htmlFor="allday"
+              className="font-mono text-[0.72rem] tracking-[0.1em] uppercase cursor-pointer text-ink-2"
+            >
+              All day
+            </label>
+          </div>
         </div>
 
-        <div className="grid gap-8" style={{ gridTemplateColumns: "1fr 1fr" }}>
-          <Input
-            label={allDay ? "Date" : "Starts At"}
-            type={allDay ? "date" : "datetime-local"}
-            value={startsAt}
-            onChange={(e) => setStartsAt(e.target.value)}
-          />
-          <Input
-            label={allDay ? "End Date" : "Ends At"}
-            type={allDay ? "date" : "datetime-local"}
-            value={endsAt}
-            onChange={(e) => setEndsAt(e.target.value)}
-          />
-        </div>
-
-        {error && (
-          <p
-            className="text-base text-red font-mono"
-          >
-            {error}
-          </p>
+        {/* Time inputs — only shown when not all-day */}
+        {!allDay && (
+          <div className="grid grid-cols-2 gap-6">
+            <Input
+              label="Start time"
+              type="time"
+              value={startTime}
+              onChange={(e) => setStartTime(e.target.value)}
+            />
+            <Input
+              label="End time"
+              type="time"
+              value={endTime}
+              onChange={(e) => setEndTime(e.target.value)}
+            />
+          </div>
         )}
 
-        <div className="flex gap-6 pt-4">
+        {error && (
+          <p role="alert" className="text-base text-red font-mono">{error}</p>
+        )}
+
+        <div className="flex gap-3">
           <Btn
             type="submit"
             variant="primary"
+            size="lg"
             disabled={createEvent.isPending}
+            iconRight={<Icon name="arrowRight" size={16} />}
           >
-            {createEvent.isPending ? "Saving…" : "Create Event"}
+            {createEvent.isPending ? "Saving…" : "Create event"}
           </Btn>
-          <Link
-            href={`/household/${householdId}/calendar`}
-            className="py-6 px-12 font-mono text-base tracking-[0.05em] uppercase no-underline text-ink" style={{ border: "1px solid var(--ink)" }}
-          >
-            Cancel
-          </Link>
+          <Btn href={`/household/${householdId}/calendar`} variant="secondary" size="lg">Cancel</Btn>
         </div>
       </form>
     </div>

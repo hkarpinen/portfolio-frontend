@@ -3,89 +3,78 @@
 import type { WeatherUnit } from "@/types/geography";
 
 interface LocationSearchProps {
-  cityInput: string;
-  stateInput: string;
+  searchInput: string;
   unit: WeatherUnit;
-  onCityChange: (v: string) => void;
-  onStateChange: (v: string) => void;
+  onSearchChange: (v: string) => void;
   onUnitChange: (u: WeatherUnit) => void;
   onSearch: () => void;
 }
 
-const rule = "1.5px solid var(--ink)";
-
 export function LocationSearch({
-  cityInput, stateInput, unit, onCityChange, onStateChange, onUnitChange, onSearch,
+  searchInput, unit, onSearchChange, onUnitChange, onSearch,
 }: LocationSearchProps) {
   const handleKey = (e: React.KeyboardEvent) => { if (e.key === "Enter") onSearch(); };
 
   return (
-    <div className="flex items-stretch gap-3">
-      {/* Search inputs + button */}
-      <div className="flex items-stretch" style={{ border: rule }}>
-        {/* City input */}
-        <div className="flex flex-col" style={{ flex: 2, borderRight: rule }}>
-          <label className="font-mono uppercase" style={{ fontSize: "0.525rem", letterSpacing: "0.22em", color: "var(--ink-3)", padding: "5px 14px 0" }}>
+    <div className="flex flex-col gap-3 min-[900px]:flex-row min-[900px]:items-stretch">
+      {/* Combined search input + button */}
+      <div className="flex flex-col min-[900px]:flex-row min-[900px]:items-stretch border-[1.5px] border-[var(--ink)] flex-1">
+        <div className="flex flex-col flex-1 min-w-0">
+          <label
+            htmlFor="city-search"
+            className="ed-label-muted uppercase p-[6px_14px_0] tracking-[0.22em]"
+          >
             City
           </label>
           <input
-            className="bg-paper text-ink font-body"
-            style={{ border: "none", outline: "none", padding: "2px 14px 8px", fontSize: "0.938rem" }}
-            placeholder="Boise"
-            value={cityInput}
-            onChange={(e) => onCityChange(e.target.value)}
+            id="city-search"
+            type="search"
+            className="bg-paper text-ink font-body border-0 outline-none p-[2px_14px_10px] text-[0.938rem] min-w-0 w-full"
+            placeholder="e.g. Berlin, Tokyo, São Paulo, New York"
+            value={searchInput}
+            onChange={(e) => onSearchChange(e.target.value)}
             onKeyDown={handleKey}
-          />
-        </div>
-
-        {/* State input */}
-        <div className="flex flex-col" style={{ flex: 1, borderRight: rule }}>
-          <label className="font-mono uppercase" style={{ fontSize: "0.525rem", letterSpacing: "0.22em", color: "var(--ink-3)", padding: "5px 14px 0" }}>
-            State / Region
-          </label>
-          <input
-            className="bg-paper text-ink font-body"
-            style={{ border: "none", outline: "none", padding: "2px 14px 8px", fontSize: "0.938rem" }}
-            placeholder="Idaho"
-            value={stateInput}
-            onChange={(e) => onStateChange(e.target.value)}
-            onKeyDown={handleKey}
+            autoComplete="off"
+            spellCheck={false}
           />
         </div>
 
         {/* Search button */}
         <button
+          type="button"
           onClick={onSearch}
-          className="font-mono uppercase transition-colors"
-          style={{
-            fontSize: "0.688rem", letterSpacing: "0.18em", padding: "0 20px",
-            background: "var(--ink)", color: "var(--paper)",
-            cursor: "pointer", border: "none",
-          }}
+          aria-label="Search for city weather"
+          className="ed-label-muted font-mono uppercase transition-colors tracking-[0.18em] py-3 px-5 bg-ink text-paper cursor-pointer border-none shrink-0 border-t-[1.5px] border-[var(--ink)] min-[900px]:border-t-0 min-[900px]:border-l-[1.5px]"
         >
           Search
         </button>
       </div>
 
-      {/* Unit toggle */}
-      <div className="flex items-stretch" style={{ border: rule }}>
-        {(["imperial", "metric"] as WeatherUnit[]).map((u, i) => (
-          <button
-            key={u}
-            onClick={() => onUnitChange(u)}
-            className="font-mono uppercase transition-colors"
-            style={{
-              fontSize: "0.688rem", letterSpacing: "0.18em", padding: "0 14px",
-              background: unit === u ? "var(--ink)" : "transparent",
-              color: unit === u ? "var(--paper)" : "var(--ink-2)",
-              cursor: "pointer", border: "none",
-              borderLeft: i > 0 ? rule : "none",
-            }}
-          >
-            {u === "imperial" ? "°F" : "°C"}
-          </button>
-        ))}
-      </div>
+      {/* Unit toggle — labelled group */}
+      <fieldset
+        className="flex items-stretch border-[1.5px] border-[var(--ink)] self-start min-[900px]:self-auto"
+        style={{ padding: 0, margin: 0, border: "none" }}
+      >
+        <legend className="sr-only">Temperature unit</legend>
+        <div className="flex items-stretch border-[1.5px] border-[var(--ink)]">
+          {(["imperial", "metric"] as WeatherUnit[]).map((u, i) => {
+            const label = u === "imperial" ? "°F" : "°C";
+            const isActive = unit === u;
+            return (
+              <button
+                key={u}
+                type="button"
+                onClick={() => onUnitChange(u)}
+                aria-pressed={isActive}
+                aria-label={`Show temperatures in ${u === "imperial" ? "Fahrenheit" : "Celsius"}`}
+                className={`ed-label-muted font-mono uppercase transition-colors tracking-[0.18em] py-3 px-5 cursor-pointer border-none min-h-[44px]${isActive ? " bg-ink text-paper" : " bg-transparent text-ink-2"}${i > 0 ? " border-l-[1.5px] border-[var(--ink)]" : ""}`}
+              >
+                {label}
+              </button>
+            );
+          })}
+        </div>
+      </fieldset>
     </div>
   );
 }

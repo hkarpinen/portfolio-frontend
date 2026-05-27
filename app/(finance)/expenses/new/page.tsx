@@ -3,14 +3,14 @@ import { AddExpenseForm } from "../add-expense-form";
 
 export default function AddExpensePage() {
   return (
-    <div className="page-enter flex flex-col gap-12 max-w-[640px]" >
+    <div className="page-enter flex flex-col gap-12 max-w-[640px]">
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-4">
-        <Link href="/expenses" className="text-base text-ink-3 no-underline">
+      <nav aria-label="Breadcrumb" className="ed-breadcrumb">
+        <Link href="/expenses" className="ed-breadcrumb-link">
           Expenses
         </Link>
-        <span className="text-ink-3 text-base">/</span>
-        <span className="text-base text-ink-2">Add expense</span>
+        <span className="ed-breadcrumb-sep" aria-hidden="true">/</span>
+        <span className="ed-breadcrumb-current" aria-current="page">Add expense</span>
       </nav>
 
       {/* Header */}
@@ -19,7 +19,7 @@ export default function AddExpensePage() {
           Add Expense
         </h1>
         <p className="text-ink-3 mt-2 text-base">
-          Add a recurring or one-time personal expense — phone, gym, streaming, insurance.
+          Track a recurring or one-time personal expense — phone, gym, streaming, insurance. Recurring expenses appear in your monthly summary automatically.
         </p>
       </div>
 

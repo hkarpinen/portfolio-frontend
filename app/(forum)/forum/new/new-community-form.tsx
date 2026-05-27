@@ -51,7 +51,7 @@ export function NewCommunityForm() {
       { name, description: description.trim() || undefined, privacy, imageUrl: imageUrl || undefined },
       {
         onSuccess: (created) => {
-          router.push(`/forum/${created.slug}`);
+          router.push(`/forum/g/${created.slug}`);
         },
       }
     );
@@ -71,7 +71,7 @@ export function NewCommunityForm() {
       <div className="bg-paper p-12 shadow-stamp border-ink">
         <form onSubmit={handleSubmit} className="flex flex-col gap-8">
           {createCommunity.isError && (
-            <div className="text-base text-red bg-red-soft py-[10px] px-[14px]" style={{ border: "1px solid var(--danger)" }}>
+            <div className="text-base text-red bg-red-soft py-[10px] px-[14px] [border:1px_solid_var(--danger)]">
               {createCommunity.error instanceof ApiError ? createCommunity.error.message : "An unexpected error occurred."}
             </div>
           )}
@@ -89,7 +89,7 @@ export function NewCommunityForm() {
               type="button"
               onClick={() => fileInputRef.current?.click()}
               disabled={uploadImage.isPending}
-              className="w-[72px] h-[72px] bg-paper-2 shrink-0 overflow-hidden flex items-center justify-center p-0" style={{ border: imageUrl ? "3px solid var(--red)" : "2px dashed var(--ink-3)", cursor: uploadImage.isPending ? "not-allowed" : "pointer", transition: "border-color 0.15s" }}
+              className={`w-[72px] h-[72px] bg-paper-2 shrink-0 overflow-hidden flex items-center justify-center p-0 cursor-pointer disabled:cursor-not-allowed transition-[border-color] duration-150${imageUrl ? " [border:3px_solid_var(--red)]" : " [border:2px_dashed_var(--ink-3)]"}`}
             >
               {imageUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
@@ -163,7 +163,7 @@ export function NewCommunityForm() {
               type="submit"
               variant="primary"
               disabled={createCommunity.isPending}
-              style={{ flex: 2 }}
+              className="flex-[2]"
             >
               {createCommunity.isPending ? "Creating…" : "Create Community"}
             </Btn>

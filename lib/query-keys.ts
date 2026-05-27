@@ -13,6 +13,7 @@ export const financeKeys = {
   householdExpense: (householdId: string, householdExpenseId: string) => [...financeKeys.householdExpenses(householdId), householdExpenseId] as const,
   householdExpenseDetail: (householdId: string, householdExpenseId: string) => [...financeKeys.householdExpense(householdId, householdExpenseId), "detail"] as const,
   householdExpenseSplits: (householdId: string, householdExpenseId: string) => [...financeKeys.householdExpense(householdId, householdExpenseId), "splits"] as const,
+  householdBalances: (householdId: string) => [...financeKeys.household(householdId), "balances"] as const,
 
   // Income
   income: () => [...financeKeys.all, "income"] as const,

@@ -41,7 +41,7 @@ export function JoinButton({ communityId }: JoinButtonProps) {
         });
       }}
       disabled={joinMutation.isPending}
-      className="py-[5px] px-[12px] text-base font-semibold text-red bg-red-soft shrink-0" style={{ border: "1.5px solid var(--red)", cursor: joinMutation.isPending ? "not-allowed" : "pointer", opacity: joinMutation.isPending ? 0.6 : 1 }}
+      className="py-[5px] px-[12px] text-base font-semibold text-red bg-red-soft shrink-0 [border:1.5px_solid_var(--red)] cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
     >
       {joinMutation.isPending ? "…" : "Join"}
     </button>

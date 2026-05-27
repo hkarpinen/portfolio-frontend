@@ -9,9 +9,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { api, ApiError } from "@/lib/api-client";
 import { forumKeys } from "@/lib/query-keys";
 import { Btn, Alert } from "@/components/editorial";
-import { SettingsTabs } from "../../settings-tabs";
 import { ProfileTabs } from "../profile-tabs";
-import { labelStyle, sectionLabelStyle, cardStyle, FocusTextarea } from "../../settings-ui";
+import { cardClassName, FocusTextarea } from "../../settings-ui";
 
 const forumSchema = z.object({
   bio: z.string().max(500).optional(),
@@ -52,38 +51,56 @@ export default function ForumProfileSettingsPage() {
   };
 
   return (
-    <div className="page-enter max-w-[860px] mx-auto py-16 px-12">
-      <div className="mb-[28px]">
-        <h1 className="font-serif text-4xl leading-none tracking-snug font-bold text-ink">Settings</h1>
-        <p className="text-base text-ink-3 mt-2">Manage your account, security, and preferences</p>
-      </div>
-
-      <SettingsTabs active="Profile" />
+    <div className="page-enter">
       <ProfileTabs active="Forum Profile" />
 
       {loading ? (
-        <div className="text-center py-24 px-10 border-ink" style={{ ...cardStyle }}>
+        <div className={`text-center py-24 px-10 border-ink ${cardClassName}`}>
           <p className="text-ink-3 text-md">Loading...</p>
         </div>
       ) : (
-        <div className="border-ink" style={cardStyle}>
-          <p className="mb-2" style={{ ...sectionLabelStyle }}>Forum Profile</p>
-          <p className="text-base text-ink-3 mb-8">Visible on your forum posts and profile.</p>
+        <div className={`border-ink ${cardClassName}`}>
+          <h2 className="ed-label-muted mb-2">Forum Profile</h2>
+          <p className="text-base text-ink-3 mb-8">
+            Visible on your forum posts and profile page. Separate from your account details.
+          </p>
           <form onSubmit={forumForm.handleSubmit(onForumSubmit)} className="flex flex-col gap-8">
-            {forumError && <Alert variant="danger">{forumError}</Alert>}
-            {forumSaved && <Alert variant="success">Forum profile updated.</Alert>}
+            <div aria-live="polite" aria-atomic="true">
+              {forumError && <Alert variant="danger">{forumError}</Alert>}
+              {forumSaved && <Alert variant="success">Forum profile updated.</Alert>}
+            </div>
             <div>
-              <label style={labelStyle}>Bio <span className="text-ink-3 font-normal">(optional)</span></label>
-              <FocusTextarea {...forumForm.register("bio")} placeholder="Tell the forum a bit about yourself" rows={4} />
+              <label htmlFor="forum-bio" className="ed-label block mb-[6px]">
+                Bio <span className="text-ink-3 font-normal">(optional)</span>
+              </label>
+              <FocusTextarea
+                id="forum-bio"
+                {...forumForm.register("bio")}
+                placeholder="Tell the forum a bit about yourself"
+                rows={4}
+                aria-describedby={forumForm.formState.errors.bio ? "forum-bio-error" : undefined}
+              />
               {forumForm.formState.errors.bio && (
-                <p className="text-red text-base mt-2">{forumForm.formState.errors.bio.message}</p>
+                <p id="forum-bio-error" className="text-red text-base mt-2" role="alert">
+                  {forumForm.formState.errors.bio.message}
+                </p>
               )}
             </div>
             <div>
-              <label style={labelStyle}>Signature <span className="text-ink-3 font-normal">(optional)</span></label>
-              <FocusTextarea {...forumForm.register("signature")} placeholder="Appears beneath your forum posts" rows={2} />
+              <label htmlFor="forum-signature" className="ed-label block mb-[6px]">
+                Signature <span className="text-ink-3 font-normal">(optional)</span>
+              </label>
+              <FocusTextarea
+                id="forum-signature"
+                {...forumForm.register("signature")}
+                placeholder="Appears beneath your forum posts"
+                rows={2}
+                aria-describedby={forumForm.formState.errors.signature ? "forum-signature-error" : undefined}
+              />
               {forumForm.formState.errors.signature && (
-                <p className="text-red text-base mt-2">{forumForm.formState.errors.signature.message}</p>
+                <p id="forum-signature-error" className="text-red text-base mt-2" role="alert">
+                  {forumForm.formState.errors.signature.message}
+                </p>
               )}
             </div>
             <Btn variant="primary" fullWidth type="submit" disabled={forumForm.formState.isSubmitting}>

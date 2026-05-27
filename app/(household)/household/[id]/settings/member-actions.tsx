@@ -25,17 +25,8 @@ export function MemberActions({ householdId, members, myUserId, isOwner, isPrivi
     removeMemberMutation.mutate(membershipId, { onSettled: () => setRemovingId(null) });
   };
 
-  const cardStyle: React.CSSProperties = {
-    background: "var(--paper-2)",
-    padding: "24px",
-    boxShadow: "var(--shadow-sm)",
-    display: "flex",
-    flexDirection: "column",
-    gap: "16px",
-  };
-
   return (
-    <section className="border-ink" style={cardStyle}>
+    <section className="border-ink bg-paper-2 p-[24px] shadow-sm flex flex-col gap-[16px]">
       <p className="text-sm font-bold text-ink-3 uppercase tracking-[0.1em]">
         Members
       </p>
@@ -78,11 +69,11 @@ export function MemberActions({ householdId, members, myUserId, isOwner, isPrivi
                           <button
                             onClick={() => transferOwnership.mutate(m.userId, { onSuccess: () => setTransferTargetId(null) })}
                             disabled={transferOwnership.isPending}
-                            className="bg-red text-white py-2 px-5 text-base font-semibold font-body" style={{ border: "none", cursor: transferOwnership.isPending ? "not-allowed" : "pointer" }}
+                            className={`bg-red text-white py-2 px-5 text-base font-semibold font-body border-none ${transferOwnership.isPending ? "cursor-not-allowed" : "cursor-pointer"}`}
                           >
                             {transferOwnership.isPending ? "Transferring…" : "Confirm"}
                           </button>
-                          <button onClick={() => setTransferTargetId(null)} className="bg-transparent text-base text-ink-3 cursor-pointer font-body" style={{ border: "none" }}>
+                          <button onClick={() => setTransferTargetId(null)} className="bg-transparent text-base text-ink-3 cursor-pointer font-body border-none">
                             Cancel
                           </button>
                         </div>
@@ -94,10 +85,12 @@ export function MemberActions({ householdId, members, myUserId, isOwner, isPrivi
                           Transfer Ownership
                         </button>
                       )}
+                      {/* border uses --danger token — kept as dynamic style */}
                       <button
                         onClick={() => onRemoveMember(m.membershipId)}
                         disabled={removingId === m.membershipId}
-                        className="bg-red-soft text-red py-2 px-6 text-base font-medium font-body" style={{ border: "1px solid var(--danger)", cursor: removingId === m.membershipId ? "not-allowed" : "pointer", opacity: removingId === m.membershipId ? 0.5 : 1 }}
+                        className={`bg-red-soft text-red py-2 px-6 text-base font-medium font-body ${removingId === m.membershipId ? "cursor-not-allowed opacity-50" : "cursor-pointer"}`}
+                        style={{ border: "1px solid var(--danger)" }}
                       >
                         {removingId === m.membershipId ? "Removing…" : "Remove"}
                       </button>
@@ -116,7 +109,7 @@ export function MemberActions({ householdId, members, myUserId, isOwner, isPrivi
           </p>
           <div className="flex flex-col gap-3">
             {members.filter((m) => !m.isActive && m.invitationCode).map((m) => (
-              <div key={m.membershipId} className="flex items-center justify-between bg-paper-2 py-[10px] px-[14px]" style={{ border: "1.5px dashed var(--ink-3)" }}>
+              <div key={m.membershipId} className="flex items-center justify-between bg-paper-2 py-[10px] px-[14px] border-ink-dashed">
                 <div>
                   <p className="font-mono text-base text-ink-2">{m.invitationCode}</p>
                   <p className="text-sm text-ink-3 mt-1">Awaiting acceptance</p>

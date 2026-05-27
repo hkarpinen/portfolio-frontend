@@ -32,20 +32,21 @@ function ConfirmEmailContent() {
   }, [token, userId]);
 
   return (
-    <div className="bg-paper-2 shadow-stamp py-20 px-16 text-center border-ink">
+    <div className="ed-auth-card text-center">
       {status === "loading" && (
         <>
-          <div className="w-[56px] h-[56px]" style={{ border: "2px solid var(--ink-4)", borderTopColor: "var(--ink)", animation: "spin 0.8s linear infinite", margin: "0 auto 20px" }} />
-          <p className="font-mono text-sm text-ink-3 uppercase tracking-wide">Confirming your email…</p>
+          {/* Spinner: composite border + animation combo has no single Tailwind equivalent — kept inline */}
+          <div role="status" aria-label="Confirming your email, please wait" className="w-[56px] h-[56px] mx-auto mb-10" style={{ border: "2px solid var(--ink-4)", borderTopColor: "var(--ink)", animation: "spin 0.8s linear infinite" }} />
+          <p className="ed-label-muted" aria-live="polite">Confirming your email…</p>
         </>
       )}
 
       {status === "success" && (
         <>
-          <div className="w-[56px] h-[56px] bg-green-soft flex items-center justify-center" style={{ margin: "0 auto 20px", border: "1.5px solid var(--green)" }}>
-            <span style={{ color: "var(--green)" }}><Icon name="check" size={24} strokeWidth={2} /></span>
+          <div className="w-[56px] h-[56px] bg-green-soft flex items-center justify-center mx-auto mb-10 border border-green">
+            <span className="text-green"><Icon name="check" size={24} strokeWidth={2} /></span>
           </div>
-          <h1 className="font-serif italic font-normal text-3xl tracking-[-0.025em] text-ink mb-4">Email confirmed<span className="text-red">.</span></h1>
+          <h1 className="ed-h1 mb-4">Email confirmed<span className="text-red">.</span></h1>
           <p className="text-base text-ink-3 leading-[1.6] mb-[28px]">{message}</p>
           <Btn href="/login" variant="primary">Sign in</Btn>
         </>
@@ -53,14 +54,18 @@ function ConfirmEmailContent() {
 
       {status === "error" && (
         <>
-          <div className="w-[56px] h-[56px] bg-red-soft flex items-center justify-center" style={{ margin: "0 auto 20px", border: "1.5px solid var(--red)" }}>
-            <span style={{ color: "var(--red)" }}><Icon name="x" size={24} strokeWidth={2} /></span>
+          <div className="w-[56px] h-[56px] bg-red-soft flex items-center justify-center mx-auto mb-10 border border-red">
+            <span className="text-red"><Icon name="x" size={24} strokeWidth={2} /></span>
           </div>
-          <h1 className="font-serif italic font-normal text-3xl tracking-[-0.025em] text-ink mb-4">Confirmation failed<span className="text-red">.</span></h1>
-          <p className="text-base text-ink-3 leading-[1.6] mb-[28px]">{message}</p>
-          <div className="flex gap-6 justify-center flex-wrap">
-            <Btn href="/register" variant="primary">Try again</Btn>
-            <Btn href="/login" variant="secondary">Back to sign in</Btn>
+          <p className="ed-kicker mb-2 text-red">Confirmation failed</p>
+          <h1 className="ed-h1 mb-4">Link expired <em>or</em> invalid.</h1>
+          <p className="text-base text-ink-3 leading-[1.6] mb-4">{message}</p>
+          <p className="ed-label-muted mb-8 leading-relaxed">
+            Confirmation links expire after 24 hours. Sign in to request a new one, or register again if you haven&apos;t yet.
+          </p>
+          <div className="flex gap-4 justify-center flex-wrap">
+            <Btn href="/login" variant="primary">Sign in to resend</Btn>
+            <Btn href="/register" variant="secondary">Register again</Btn>
           </div>
         </>
       )}
@@ -72,7 +77,8 @@ export default function ConfirmEmailPage() {
   return (
     <Suspense
       fallback={
-        <div className="bg-paper-2 py-20 px-16 shadow-stamp text-center border-ink">
+        <div className="ed-auth-card text-center">
+          {/* Spinner: composite border + animation combo has no single Tailwind equivalent — kept inline */}
           <div className="w-[48px] h-[48px] mx-auto" style={{ border: "2px solid var(--ink-4)", borderTopColor: "var(--ink)", animation: "spin 0.8s linear infinite" }} />
         </div>
       }

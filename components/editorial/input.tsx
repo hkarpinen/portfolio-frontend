@@ -2,6 +2,19 @@
 import React from "react";
 import { Icon } from "./icon";
 
+/**
+ * <Input>, <Textarea>, <SelectField> — editorial inputs (redesign)
+ *
+ * All visual rules in /app/globals.css under `.ed-input` / `.ed-label` /
+ * `.ed-hint` / `.ed-error` classes.
+ */
+
+function fieldId(label: string | undefined, id: string | undefined) {
+  if (id) return id;
+  if (label) return `field-${label.replace(/\s+/g, "-").toLowerCase()}`;
+  return undefined;
+}
+
 /* ── Input ──────────────────────────────────────────────────────────────────*/
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -11,59 +24,33 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 }
 
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  function Input({ label, hint, error, iconLeft, className = "", onBlur, onFocus, ...props }, ref) {
-  return (
-    <div className="flex flex-col gap-[6px]">
-      {label && (
-        <label
-          className="font-mono uppercase font-medium"
-          style={{ fontSize: "0.6rem", letterSpacing: "0.2em", color: "var(--ink-2)" }}
-        >
-          {label}
-        </label>
-      )}
-      <div className="relative flex items-center">
-        {iconLeft && (
-          <span className="absolute left-0 text-ink-3" style={{ pointerEvents: "none" }}>
-            {iconLeft}
-          </span>
-        )}
-        <input
-          {...props}
-          ref={ref}
-          className={`w-full bg-transparent font-body text-ink ${iconLeft ? "pl-6" : ""} ${className}`}
-          style={{
-            border: "none",
-            borderBottom: error ? "1.5px solid var(--red)" : "1.5px solid var(--ink-3)",
-            fontSize: "0.938rem",
-            padding: "8px 0 6px 0",
-            outline: "none",
-            borderRadius: 0,
-            ...props.style,
-          }}
-          onFocus={e => {
-            e.currentTarget.style.borderBottomColor = "var(--ink)";
-            onFocus?.(e);
-          }}
-          onBlur={e => {
-            e.currentTarget.style.borderBottomColor = error ? "var(--red)" : "var(--ink-3)";
-            onBlur?.(e);
-          }}
-        />
+  function Input({ label, hint, error, iconLeft, className = "", id, ...props }, ref) {
+    const inputId = fieldId(label, id);
+    const describedBy = error ? `${inputId}-error` : hint ? `${inputId}-hint` : undefined;
+    return (
+      <div className="flex flex-col gap-2">
+        {label && <label htmlFor={inputId} className="ed-label">{label}</label>}
+        <div className="relative flex items-center">
+          {iconLeft && (
+            <span aria-hidden="true" className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-3 pointer-events-none">
+              {iconLeft}
+            </span>
+          )}
+          <input
+            {...props}
+            id={inputId}
+            ref={ref}
+            aria-invalid={error ? "true" : undefined}
+            aria-describedby={describedBy}
+            className={`ed-input ${iconLeft ? "pl-11" : ""} ${className}`}
+          />
+        </div>
+        {error && <p id={`${inputId}-error`} className="ed-error">↳ {error}</p>}
+        {hint && !error && <p id={`${inputId}-hint`} className="ed-hint">{hint}</p>}
       </div>
-      {error && (
-        <p className="font-mono" style={{ fontSize: "0.6rem", color: "var(--red)", letterSpacing: "0.06em" }}>
-          ↳ {error}
-        </p>
-      )}
-      {hint && !error && (
-        <p className="font-mono" style={{ fontSize: "0.6rem", color: "var(--ink-3)", letterSpacing: "0.06em" }}>
-          {hint}
-        </p>
-      )}
-    </div>
-  );
-});
+    );
+  }
+);
 
 /* ── Textarea ───────────────────────────────────────────────────────────────*/
 interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
@@ -73,52 +60,26 @@ interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement
 }
 
 export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-  function Textarea({ label, hint, error, className = "", onFocus, onBlur, ...props }, ref) {
-  return (
-    <div className="flex flex-col gap-[6px]">
-      {label && (
-        <label
-          className="font-mono uppercase font-medium"
-          style={{ fontSize: "0.6rem", letterSpacing: "0.2em", color: "var(--ink-2)" }}
-        >
-          {label}
-        </label>
-      )}
-      <textarea
-        {...props}
-        ref={ref}
-        className={`w-full bg-paper font-body text-ink ${className}`}
-        style={{
-          border: error ? "1.5px solid var(--red)" : "1.5px solid var(--ink-3)",
-          fontSize: "0.938rem",
-          padding: "12px 14px",
-          outline: "none",
-          borderRadius: 0,
-          resize: "vertical",
-          ...props.style,
-        }}
-        onFocus={e => {
-          e.currentTarget.style.borderColor = "var(--ink)";
-          onFocus?.(e);
-        }}
-        onBlur={e => {
-          e.currentTarget.style.borderColor = error ? "var(--red)" : "var(--ink-3)";
-          onBlur?.(e);
-        }}
-      />
-      {error && (
-        <p className="font-mono" style={{ fontSize: "0.6rem", color: "var(--red)", letterSpacing: "0.06em" }}>
-          ↳ {error}
-        </p>
-      )}
-      {hint && !error && (
-        <p className="font-mono" style={{ fontSize: "0.6rem", color: "var(--ink-3)", letterSpacing: "0.06em" }}>
-          {hint}
-        </p>
-      )}
-    </div>
-  );
-});
+  function Textarea({ label, hint, error, className = "", id, ...props }, ref) {
+    const inputId = fieldId(label, id);
+    const describedBy = error ? `${inputId}-error` : hint ? `${inputId}-hint` : undefined;
+    return (
+      <div className="flex flex-col gap-2">
+        {label && <label htmlFor={inputId} className="ed-label">{label}</label>}
+        <textarea
+          {...props}
+          id={inputId}
+          ref={ref}
+          aria-invalid={error ? "true" : undefined}
+          aria-describedby={describedBy}
+          className={`ed-input ed-textarea ${className}`}
+        />
+        {error && <p id={`${inputId}-error`} className="ed-error">↳ {error}</p>}
+        {hint && !error && <p id={`${inputId}-hint`} className="ed-hint">{hint}</p>}
+      </div>
+    );
+  }
+);
 
 /* ── Select ─────────────────────────────────────────────────────────────────*/
 interface SelectFieldProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
@@ -128,49 +89,30 @@ interface SelectFieldProps extends React.SelectHTMLAttributes<HTMLSelectElement>
 }
 
 export const SelectField = React.forwardRef<HTMLSelectElement, SelectFieldProps>(
-  function SelectField({ label, hint, error, children, className = "", ...props }, ref) {
-  return (
-    <div className="flex flex-col gap-[6px]">
-      {label && (
-        <label
-          className="font-mono uppercase font-medium"
-          style={{ fontSize: "0.6rem", letterSpacing: "0.2em", color: "var(--ink-2)" }}
-        >
-          {label}
-        </label>
-      )}
-      <div className="relative">
-        <select
-          {...props}
-          ref={ref}
-          className={`w-full bg-transparent font-body text-ink appearance-none pr-8 ${className}`}
-          style={{
-            border: "none",
-            borderBottom: error ? "1.5px solid var(--red)" : "1.5px solid var(--ink-3)",
-            fontSize: "0.938rem",
-            padding: "8px 28px 6px 0",
-            outline: "none",
-            borderRadius: 0,
-            cursor: "pointer",
-            ...props.style,
-          }}
-        >
-          {children}
-        </select>
-        <span className="absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-ink-3">
-          <Icon name="chevDown" size={13} strokeWidth={2} />
-        </span>
+  function SelectField({ label, hint, error, children, className = "", id, ...props }, ref) {
+    const inputId = fieldId(label, id);
+    const describedBy = error ? `${inputId}-error` : hint ? `${inputId}-hint` : undefined;
+    return (
+      <div className="flex flex-col gap-2">
+        {label && <label htmlFor={inputId} className="ed-label">{label}</label>}
+        <div className="relative">
+          <select
+            {...props}
+            id={inputId}
+            ref={ref}
+            aria-invalid={error ? "true" : undefined}
+            aria-describedby={describedBy}
+            className={`ed-input ed-select ${className}`}
+          >
+            {children}
+          </select>
+          <span aria-hidden="true" className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-3 pointer-events-none">
+            <Icon name="chevDown" size={14} strokeWidth={2} />
+          </span>
+        </div>
+        {error && <p id={`${inputId}-error`} className="ed-error">↳ {error}</p>}
+        {hint && !error && <p id={`${inputId}-hint`} className="ed-hint">{hint}</p>}
       </div>
-      {error && (
-        <p className="font-mono" style={{ fontSize: "0.6rem", color: "var(--red)", letterSpacing: "0.06em" }}>
-          ↳ {error}
-        </p>
-      )}
-      {hint && !error && (
-        <p className="font-mono" style={{ fontSize: "0.6rem", color: "var(--ink-3)", letterSpacing: "0.06em" }}>
-          {hint}
-        </p>
-      )}
-    </div>
-  );
-});
+    );
+  }
+);

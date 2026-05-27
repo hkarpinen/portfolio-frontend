@@ -10,7 +10,7 @@ import {
   TYPE_CONFIGS, US_STATES, FILING_STATUS_OPTIONS,
 } from "./deduction-config";
 import { DeductionChip } from "./deduction-chip";
-import { AddDeductionForm, FieldGroup, fieldStyle, onFocus, onBlur } from "./add-deduction-form";
+import { AddDeductionForm, FieldGroup, fieldCls, onFocus, onBlur } from "./add-deduction-form";
 import { Icon } from "@/components/editorial/icon";
 
 interface ManageDeductionsModalProps {
@@ -96,7 +96,7 @@ export function ManageDeductionsModal({ source, onClose }: ManageDeductionsModal
       <div className="modal-sheet">
 
         <div className="flex justify-center p-[10px_0_0]">
-          <div className="w-[36px] h-2" style={{ background: "var(--border-2)" }} />
+          <div className="w-[36px] h-2 bg-[var(--border-2)]" />
         </div>
 
         <div className="flex items-center justify-between p-[10px_20px_14px]">
@@ -106,14 +106,14 @@ export function ManageDeductionsModal({ source, onClose }: ManageDeductionsModal
           </div>
           <button
             onClick={onClose}
-            className="bg-transparent cursor-pointer text-ink-3 p-3 leading-[0]" style={{ border: "none" }}
+            className="bg-transparent cursor-pointer text-ink-3 p-3 leading-[0] border-none"
             aria-label="Close"
           >
             <Icon name="x" size={18} strokeWidth={2.5} />
           </button>
         </div>
 
-        <div className="p-[0_20px_16px]" style={{ borderBottom: "1.5px solid var(--ink)" }}>
+        <div className="p-[0_20px_16px] border-b border-ink">
           <div className="seg-control">
             <button className={`seg-btn ${activeTab === "tax" ? "seg-btn-active" : "seg-btn-inactive"}`} onClick={() => setActiveTab("tax")}>
               Tax Withholding
@@ -142,15 +142,16 @@ export function ManageDeductionsModal({ source, onClose }: ManageDeductionsModal
                     className="absolute inset-0 opacity-[0] cursor-pointer w-full h-full z-[1] m-0"
                     aria-label="Enable tax withholding"
                   />
-                  <div className="absolute inset-0" style={{ background: taxEnabled ? "var(--ink)" : "var(--paper-3)", transition: "background 150ms" }} />
-                  <div className="absolute top-[3px] w-8 h-8 rounded-full bg-white" style={{ left: taxEnabled ? "21px" : "3px", transition: "left 150ms var(--ease-spring)", boxShadow: "0 1px 3px rgba(0,0,0,0.25)" }} />
+                  <div className={`absolute inset-0 transition-[background] duration-150${taxEnabled ? " bg-ink" : " bg-paper-3"}`} />
+                  {/* left position is dynamic; --ease-spring has no Tailwind equivalent */}
+                  <div className={`absolute top-[3px] w-8 h-8 rounded-full bg-white shadow-[0_1px_3px_rgba(0,0,0,0.25)]${taxEnabled ? " left-[21px]" : " left-[3px]"}`} style={{ transition: "left 150ms var(--ease-spring)" }} />
                 </div>
               </label>
 
               {taxEnabled && (
                 <div className="form-grid-2">
                   <FieldGroup label="Filing Status">
-                    <select value={filingStatus} onChange={(e) => setFilingStatus(e.target.value as FilingStatus)} className="cursor-pointer border-ink" style={{ ...fieldStyle }} onFocus={onFocus} onBlur={onBlur}>
+                    <select value={filingStatus} onChange={(e) => setFilingStatus(e.target.value as FilingStatus)} className={`cursor-pointer border-ink ${fieldCls}`} onFocus={onFocus} onBlur={onBlur}>
                       {FILING_STATUS_OPTIONS.map((o) => (
                         <option key={o.value} value={o.value}>{o.label}</option>
                       ))}
@@ -158,7 +159,7 @@ export function ManageDeductionsModal({ source, onClose }: ManageDeductionsModal
                   </FieldGroup>
 
                   <FieldGroup label="State">
-                    <select value={stateCode} onChange={(e) => setStateCode(e.target.value)} className="cursor-pointer border-ink" style={{ ...fieldStyle }} onFocus={onFocus} onBlur={onBlur}>
+                    <select value={stateCode} onChange={(e) => setStateCode(e.target.value)} className={`cursor-pointer border-ink ${fieldCls}`} onFocus={onFocus} onBlur={onBlur}>
                       <option value="">— None / no state income tax —</option>
                       {US_STATES.map((s) => (
                         <option key={s.code} value={s.code}>{s.code} – {s.name}</option>
@@ -171,7 +172,7 @@ export function ManageDeductionsModal({ source, onClose }: ManageDeductionsModal
               <button
                 onClick={handleSaveTaxProfile}
                 disabled={setTaxProfileMutation.isPending}
-                className="p-[11px] text-base font-semibold" style={{ border: "none", background: taxEnabled ? "var(--ink)" : "var(--paper-3)", color: taxEnabled ? "#fff" : "var(--text-3)", cursor: setTaxProfileMutation.isPending ? "not-allowed" : "pointer", opacity: setTaxProfileMutation.isPending ? 0.7 : 1, transition: "background 150ms, color 150ms" }}
+                className={`p-[11px] text-base font-semibold border-none transition-[background,color] duration-150 cursor-pointer disabled:cursor-not-allowed disabled:opacity-70${taxEnabled ? " bg-ink text-white" : " bg-paper-3 text-ink-3"}`}
               >
                 {setTaxProfileMutation.isPending ? "Saving…" : taxEnabled ? "Save Tax Profile" : "Clear Tax Profile"}
               </button>
@@ -187,7 +188,7 @@ export function ManageDeductionsModal({ source, onClose }: ManageDeductionsModal
           {activeTab === "deductions" && (
             <div className="flex flex-col gap-5">
               {existingDeductions.length === 0 && !addOpen ? (
-                <div className="py-[28px] px-[20px] text-center" style={{ border: "1.5px dashed var(--ink-3)" }}>
+                <div className="py-[28px] px-[20px] text-center border-[1.5px] border-dashed border-[var(--ink-3)]">
                   <p className="text-base text-ink-3 italic">No deductions added yet.</p>
                   <p className="text-sm text-ink-3 mt-2">401(k), health insurance, HSA, and more.</p>
                 </div>
@@ -202,7 +203,7 @@ export function ManageDeductionsModal({ source, onClose }: ManageDeductionsModal
               {!addOpen ? (
                 <button
                   onClick={() => setAddOpen(true)}
-                  className="flex items-center justify-center gap-3 p-[11px] bg-red-soft text-red text-base font-semibold cursor-pointer" style={{ border: "1px dashed var(--accent-border)" }}
+                  className="flex items-center justify-center gap-3 p-[11px] bg-red-soft text-red text-base font-semibold cursor-pointer border border-dashed border-[var(--accent-border)]"
                 >
                   <Icon name="plus" size={14} strokeWidth={2.5} />
                   Add Deduction

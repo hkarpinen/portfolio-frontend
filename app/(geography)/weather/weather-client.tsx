@@ -22,15 +22,12 @@ function formatVisibility(meters: number) {
   return meters >= 1000 ? `${(meters / 1000).toFixed(1)} km` : `${meters} m`;
 }
 
-const rule = "1.5px solid var(--ink)";
-
 export function WeatherClient() {
-  const [cityInput,  setCityInput]  = useState("");
-  const [stateInput, setStateInput] = useState("");
-  const [city,       setCity]       = useState<string | null>(null);
-  const [unit,       setUnit]       = useState<WeatherUnit>("imperial");
-  const [coords,     setCoords]     = useState<GeoCoordinates | null>(null);
-  const [geoError,   setGeoError]   = useState<string | null>(null);
+  const [searchInput, setSearchInput] = useState("");
+  const [city,        setCity]        = useState<string | null>(null);
+  const [unit,        setUnit]        = useState<WeatherUnit>("imperial");
+  const [coords,      setCoords]      = useState<GeoCoordinates | null>(null);
+  const [geoError,    setGeoError]    = useState<string | null>(null);
 
   const { data: weather, isLoading, isError } = useWeather(city);
 
@@ -50,7 +47,9 @@ export function WeatherClient() {
   }, []);
 
   const search = () => {
-    const trimmed = [cityInput.trim(), stateInput.trim()].filter(Boolean).join(", ");
+    const trimmed = searchInput.trim();
+    // Pass the full combined input as the city query; the hook passes it as-is to the API.
+    // TODO(handoff8): if the backend ever needs separate city/region params, split on "," here.
     if (trimmed) setCity(trimmed);
   };
 
@@ -63,50 +62,46 @@ export function WeatherClient() {
       />
 
       <LocationSearch
-        cityInput={cityInput}
-        stateInput={stateInput}
+        searchInput={searchInput}
         unit={unit}
-        onCityChange={setCityInput}
-        onStateChange={setStateInput}
+        onSearchChange={setSearchInput}
         onUnitChange={setUnit}
         onSearch={search}
       />
 
-      {isLoading && (
-        <p className="font-mono uppercase text-ink-3" style={{ fontSize: "0.688rem", letterSpacing: "0.18em" }}>
-          Fetching conditions…
-        </p>
-      )}
-      {isError && (
-        <p className="font-mono uppercase" style={{ fontSize: "0.688rem", letterSpacing: "0.18em", color: "var(--red)" }}>
-          City not found — try a different search.
-        </p>
-      )}
+      {/* Live region for loading / error announcements */}
+      <div role="status" aria-live="polite" aria-atomic="true">
+        {isLoading && (
+          <p className="ed-label-muted tracking-[0.18em]">Fetching conditions…</p>
+        )}
+        {isError && (
+          <p className="ed-kicker tracking-[0.18em]">
+            City not found — try a different search.
+          </p>
+        )}
+      </div>
 
       {weather && (
-        <div className="bg-paper shadow-stamp" style={{ border: rule }}>
-          <div className="flex items-start justify-between gap-6 flex-wrap" style={{ padding: "20px 24px", borderBottom: rule }}>
+        <div className="bg-paper shadow-stamp border-ink">
+          <div className="flex items-start justify-between gap-6 flex-wrap p-5 px-6 border-ink-b">
             <div className="flex flex-col gap-1">
-              <p className="font-mono uppercase text-red" style={{ fontSize: "0.594rem", letterSpacing: "0.26em" }}>
-                Current conditions
+              <p className="ed-kicker">Currently in</p>
+              <h2 className="ed-h2">{weather.city}<span className="text-ink-3">, {weather.country}</span></h2>
+              <p className="ed-meta mt-1">
+                {Math.abs(weather.latitude).toFixed(2)}°{weather.latitude >= 0 ? "N" : "S"} · {Math.abs(weather.longitude).toFixed(2)}°{weather.longitude >= 0 ? "E" : "W"}
               </p>
-              <h2 className="font-serif text-ink leading-[0.95]" style={{ fontSize: "2rem", letterSpacing: "-0.02em" }}>
-                {weather.city}<span className="text-ink-3">, {weather.country}</span>
-              </h2>
-              <p className="font-body text-ink-3 capitalize" style={{ fontSize: "0.875rem", marginTop: 4 }}>
-                {weather.description}
-              </p>
+              <p className="ed-hint mt-1 capitalize">{weather.description}</p>
             </div>
             <div className="flex items-center gap-2">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={`https://openweathermap.org/img/wn/${weather.iconCode}@2x.png`} alt={weather.description} width={56} height={56} />
-              <p className="font-serif text-ink" style={{ fontSize: "3rem", letterSpacing: "-0.03em", lineHeight: 1 }}>
+              <p className="font-serif text-ink text-5xl tracking-[-0.03em] leading-none">
                 {formatTemp(weather.temperatureCelsius, unit)}
               </p>
             </div>
           </div>
 
-          <div className="grid" style={{ gridTemplateColumns: "repeat(5, 1fr)" }}>
+          <div className="grid grid-cols-3 min-[900px]:grid-cols-5">
             {[
               { label: "Feels like", value: formatTemp(weather.feelsLikeCelsius, unit) },
               { label: "Humidity",   value: `${weather.humidity}%`,                     italic: true },
@@ -114,7 +109,7 @@ export function WeatherClient() {
               { label: "Pressure",   value: `${weather.pressure} hPa`,                  italic: true },
               { label: "Visibility", value: formatVisibility(weather.visibilityMeters) },
             ].map((s, i, arr) => (
-              <div key={s.label} style={{ borderRight: i < arr.length - 1 ? rule : undefined }}>
+              <div key={s.label} className={i < arr.length - 1 ? "border-ink-r" : ""}>
                 <StatCard label={s.label} value={s.value} italic={s.italic} />
               </div>
             ))}
@@ -123,9 +118,17 @@ export function WeatherClient() {
       )}
 
       {geoError && !coords && (
-        <p className="font-mono uppercase text-ink-3" style={{ fontSize: "0.688rem", letterSpacing: "0.18em" }}>
-          {geoError}
-        </p>
+        <p className="ed-label-muted" role="note">{geoError}</p>
+      )}
+      {!coords && !geoError && (
+        /* Map placeholder shown while geolocation is pending */
+        <div
+          className="bg-paper-2 border-ink-dashed flex items-center justify-center"
+          style={{ minHeight: 280 }}
+          aria-hidden="true"
+        >
+          <span className="ed-label-muted">Map will appear here</span>
+        </div>
       )}
       {coords && <WeatherMap coords={coords} />}
     </div>

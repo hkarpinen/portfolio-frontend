@@ -20,6 +20,7 @@ export function AddExpenseForm() {
     register,
     handleSubmit,
     reset,
+    watch,
     formState: { errors },
   } = useForm<ExpenseFormData>({
     resolver: zodResolver(expenseSchema),
@@ -30,6 +31,8 @@ export function AddExpenseForm() {
       recurrenceFrequency: "",
     },
   });
+
+  const currency = watch("currency");
 
   const onSubmit = (data: ExpenseFormData) => {
     create.mutate(
@@ -47,45 +50,67 @@ export function AddExpenseForm() {
     );
   };
 
+  // Map currency to its symbol for aria descriptions
+  const currencySymbols: Record<string, string> = { USD: "$", EUR: "€", GBP: "£", CAD: "CA$" };
+  const currencySymbol = currencySymbols[currency] ?? currency;
+
   return (
     <div className="bg-paper p-10 shadow-stamp border-ink">
-      <h2 className="font-serif font-bold text-md text-ink mb-8">
-        Add Personal Expense
-      </h2>
-
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-[14px]">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col gap-[14px]"
+        aria-label="Add expense"
+        noValidate
+      >
         {create.isError && (
-          <Alert variant="danger">
+          <Alert variant="danger" role="alert">
             {create.error instanceof ApiError ? create.error.message : "Something went wrong. Please try again."}
           </Alert>
         )}
         {create.isSuccess && (
-          <Alert variant="success">Expense added!</Alert>
+          <Alert variant="success" role="status">Expense saved — redirecting…</Alert>
         )}
 
         <Input
           type="text"
           label="Title"
-          placeholder="Netflix, Rent, Gym, etc."
+          placeholder="Netflix, Rent, Gym…"
           error={errors.title?.message}
+          autoFocus
+          autoComplete="off"
           {...register("title")}
         />
 
         <div className="form-grid-2">
-          <Input
-            type="number"
-            step="0.01"
-            label="Amount"
-            placeholder="0.00"
-            error={errors.amount?.message}
-            {...register("amount")}
-          />
-          <SelectField label="Currency" {...register("currency")}>
-            <option value="USD">USD</option>
-            <option value="EUR">EUR</option>
-            <option value="GBP">GBP</option>
-            <option value="CAD">CAD</option>
+          <div>
+            <Input
+              type="number"
+              inputMode="decimal"
+              step="0.01"
+              min="0.01"
+              label={`Amount (${currencySymbol})`}
+              placeholder="0.00"
+              error={errors.amount?.message}
+              aria-describedby="amount-currency-hint"
+              {...register("amount")}
+            />
+            <p id="amount-currency-hint" className="sr-only">
+              Enter the amount in {currency}. Use decimals for cents, e.g. 12.99.
+            </p>
+          </div>
+          <SelectField
+            label="Currency"
+            aria-describedby="currency-hint"
+            {...register("currency")}
+          >
+            <option value="USD">USD — US Dollar</option>
+            <option value="EUR">EUR — Euro</option>
+            <option value="GBP">GBP — British Pound</option>
+            <option value="CAD">CAD — Canadian Dollar</option>
           </SelectField>
+          <p id="currency-hint" className="sr-only">
+            All amounts are stored and displayed in the selected currency.
+          </p>
         </div>
 
         <div className="form-grid-2">
@@ -96,30 +121,52 @@ export function AddExpenseForm() {
           </SelectField>
           <Input
             type="date"
-            label="Due Date"
+            label="Due date"
             error={errors.dueDate?.message}
+            aria-describedby="due-date-hint"
             {...register("dueDate")}
           />
+          <p id="due-date-hint" className="sr-only">
+            For recurring expenses this is the day-of-month it recurs. For one-time expenses it is the payment date.
+          </p>
         </div>
 
-        <SelectField label="Recurrence (optional)" {...register("recurrenceFrequency")}>
-          <option value="">One-time</option>
+        <SelectField
+          label="Recurrence"
+          aria-describedby="recurrence-hint"
+          {...register("recurrenceFrequency")}
+        >
+          <option value="">One-time (no recurrence)</option>
           {FREQUENCIES.map((f) => (
             <option key={f} value={f}>{f.charAt(0) + f.slice(1).toLowerCase()}</option>
           ))}
         </SelectField>
+        <p id="recurrence-hint" className="sr-only">
+          Choose a frequency to make this a recurring expense. Leave as one-time if it only happens once.
+        </p>
 
         <Textarea
-          label="Description (optional)"
-          placeholder="Optional notes..."
+          label="Notes"
+          aria-label="Notes (optional)"
+          placeholder="Optional — provider, account number, reminders…"
           rows={2}
           error={errors.description?.message}
           {...register("description")}
         />
 
-        <Btn type="submit" disabled={create.isPending} variant="primary" fullWidth>
-          {create.isPending ? "Adding…" : "Add Expense"}
-        </Btn>
+        <div className="flex gap-4 mt-2">
+          <Btn
+            type="button"
+            variant="secondary"
+            onClick={() => router.push("/expenses")}
+            className="flex-1"
+          >
+            Cancel
+          </Btn>
+          <Btn type="submit" disabled={create.isPending} variant="primary" className="flex-1">
+            {create.isPending ? "Saving…" : "Add Expense"}
+          </Btn>
+        </div>
       </form>
     </div>
   );

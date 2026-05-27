@@ -9,6 +9,14 @@ import { ApiError } from "@/lib/api-client";
 import { resetPassword } from "@/lib/api/identity";
 import { Btn, Input, Alert, Icon } from "@/components/editorial";
 
+const EYE = (show: boolean) => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75}>
+    {show
+      ? <><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></>
+      : <><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></>}
+  </svg>
+);
+
 const schema = z
   .object({
     newPassword: z.string().min(8, "Password must be at least 8 characters"),
@@ -28,6 +36,8 @@ function ResetPasswordContent() {
 
   const [done, setDone] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+  const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -35,12 +45,13 @@ function ResetPasswordContent() {
 
   if (!userId || !token) {
     return (
-      <div className="bg-paper-2 shadow-stamp py-20 px-16 text-center border-ink">
-        <div className="w-[56px] h-[56px] bg-red-soft flex items-center justify-center" style={{ margin: "0 auto 20px", border: "1.5px solid var(--red)" }}>
-          <span style={{ color: "var(--red)" }}><Icon name="x" size={24} strokeWidth={2} /></span>
+      <div className="ed-auth-card text-center">
+        <div className="w-[56px] h-[56px] bg-red-soft flex items-center justify-center mx-auto mb-8 border border-red">
+          <span className="text-red"><Icon name="x" size={24} strokeWidth={2} /></span>
         </div>
-        <h1 className="font-serif italic font-normal text-3xl tracking-[-0.025em] text-ink mb-4">Invalid link<span className="text-red">.</span></h1>
-        <p className="text-base text-ink-3 leading-[1.6] mb-[28px]">This reset link is missing required information.</p>
+        <p className="ed-kicker mb-4">Invalid link</p>
+        <h1 className="ed-h1 mb-6">Something went <em>wrong.</em></h1>
+        <p className="ed-deck mb-10">This reset link is missing required information.</p>
         <Btn href="/forgot-password" variant="primary">Request a new link</Btn>
       </div>
     );
@@ -48,12 +59,13 @@ function ResetPasswordContent() {
 
   if (done) {
     return (
-      <div className="bg-paper-2 shadow-stamp py-20 px-16 text-center border-ink">
-        <div className="w-[56px] h-[56px] bg-green-soft flex items-center justify-center" style={{ margin: "0 auto 20px", border: "1.5px solid var(--green)" }}>
-          <span style={{ color: "var(--green)" }}><Icon name="check" size={24} strokeWidth={2} /></span>
+      <div className="ed-auth-card text-center">
+        <div className="w-[56px] h-[56px] bg-green-soft flex items-center justify-center mx-auto mb-8 border border-green">
+          <span className="text-green"><Icon name="check" size={24} strokeWidth={2} /></span>
         </div>
-        <h1 className="font-serif italic font-normal text-3xl tracking-[-0.025em] text-ink mb-4">Password updated<span className="text-red">.</span></h1>
-        <p className="text-base text-ink-3 leading-[1.6] mb-[28px]">Your password has been reset. You can now sign in with your new password.</p>
+        <p className="ed-kicker mb-4">Password updated</p>
+        <h1 className="ed-h1 mb-6">You&apos;re all <em>set.</em></h1>
+        <p className="ed-deck mb-10">Your password has been reset. You can now sign in with your new password.</p>
         <Btn href="/login" variant="primary">Sign in</Btn>
       </div>
     );
@@ -75,19 +87,16 @@ function ResetPasswordContent() {
   }
 
   return (
-    <div className="bg-paper-2 shadow-stamp p-16 border-ink">
-      <div className="mb-[28px]">
-        <h1 className="font-serif italic font-normal text-3xl tracking-[-0.025em] text-ink mb-3">
-          Reset password<span className="text-red">.</span>
-        </h1>
-        <p className="font-mono text-sm text-ink-3 uppercase tracking-wide">
-          Choose a new password
-        </p>
-      </div>
+    <div className="ed-auth-card">
+      <h1 className="ed-h1">New <em>password</em></h1>
+      <p className="ed-hint mt-2 mb-2">Choose a strong password for your account.</p>
+      <p className="ed-label-muted mb-8 leading-relaxed">
+        Min 8 characters · use a mix of letters, numbers, and symbols for best security.
+      </p>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-8">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
         {serverError && (
-          <Alert variant="danger">
+          <Alert variant="danger" role="alert">
             {serverError}{" "}
             {serverError.includes("expired") && (
               <a href="/forgot-password" className="underline font-semibold text-ink">Request a new link</a>
@@ -95,24 +104,36 @@ function ResetPasswordContent() {
           </Alert>
         )}
 
-        <Input
-          type="password"
-          label="New password"
-          placeholder="Min. 8 characters"
-          error={errors.newPassword?.message}
-          {...register("newPassword")}
-        />
+        <div className="relative">
+          <Input
+            type={showNew ? "text" : "password"}
+            label="New password"
+            placeholder="At least 8 characters"
+            autoComplete="new-password"
+            error={errors.newPassword?.message}
+            {...register("newPassword")}
+          />
+          <button type="button" onClick={() => setShowNew(s => !s)} aria-label={showNew ? "Hide password" : "Show password"} aria-pressed={showNew} className="absolute right-0 bottom-[7px] bg-transparent cursor-pointer text-ink-3 p-0 border-none leading-none">
+            {EYE(showNew)}
+          </button>
+        </div>
 
-        <Input
-          type="password"
-          label="Confirm new password"
-          placeholder="Repeat password"
-          error={errors.confirmPassword?.message}
-          {...register("confirmPassword")}
-        />
+        <div className="relative">
+          <Input
+            type={showConfirm ? "text" : "password"}
+            label="Confirm new password"
+            placeholder="Type it again"
+            autoComplete="new-password"
+            error={errors.confirmPassword?.message}
+            {...register("confirmPassword")}
+          />
+          <button type="button" onClick={() => setShowConfirm(s => !s)} aria-label={showConfirm ? "Hide confirm password" : "Show confirm password"} aria-pressed={showConfirm} className="absolute right-0 bottom-[7px] bg-transparent cursor-pointer text-ink-3 p-0 border-none leading-none">
+            {EYE(showConfirm)}
+          </button>
+        </div>
 
-        <Btn type="submit" disabled={isSubmitting} loading={isSubmitting} variant="primary" fullWidth className="mt-2">
-          {isSubmitting ? "Updating…" : "Update password"}
+        <Btn type="submit" disabled={isSubmitting} loading={isSubmitting} variant="primary" size="lg" fullWidth iconRight={<Icon name="arrowRight" size={16} />}>
+          {isSubmitting ? "Updating…" : "Set new password"}
         </Btn>
       </form>
     </div>
@@ -123,8 +144,9 @@ export default function ResetPasswordPage() {
   return (
     <Suspense
       fallback={
-        <div className="bg-paper-2 py-20 px-16 shadow-stamp text-center border-ink">
-          <div className="w-[48px] h-[48px] mx-auto" style={{ border: "2px solid var(--ink-4)", borderTopColor: "var(--ink)", animation: "spin 0.8s linear infinite" }} />
+        <div className="ed-auth-card flex items-center justify-center py-16">
+          {/* Spinner: composite border + animation has no single Tailwind equivalent — kept inline */}
+          <div className="w-[48px] h-[48px]" style={{ border: "2px solid var(--ink-4)", borderTopColor: "var(--ink)", animation: "spin 0.8s linear infinite" }} />
         </div>
       }
     >

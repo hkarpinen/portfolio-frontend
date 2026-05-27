@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   fetchHouseholdExpenses,
   fetchHouseholdExpenseDetail,
+  fetchHouseholdBalances,
   deleteHouseholdExpense,
   payHouseholdExpense,
   unpayHouseholdExpense,
@@ -48,6 +49,18 @@ export function useHouseholdContributions(id: string) {
   });
 }
 
+/**
+ * Per-other-member balances for one household, from the caller's POV.
+ * Used by the YOU'RE OWED / YOU OWE badge on the household list and detail.
+ */
+export function useHouseholdBalances(householdId: string) {
+  return useQuery({
+    queryKey: financeKeys.householdBalances(householdId),
+    queryFn: () => fetchHouseholdBalances(householdId),
+    enabled: !!householdId,
+  });
+}
+
 export function useCreateHouseholdExpense(householdId: string) {
   const queryClient = useQueryClient();
   return useMutation({
@@ -56,6 +69,7 @@ export function useCreateHouseholdExpense(householdId: string) {
       queryClient.invalidateQueries({ queryKey: financeKeys.householdExpenses(householdId) });
       queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions(householdId) });
       queryClient.invalidateQueries({ queryKey: financeKeys.householdDashboard(householdId) });
+      queryClient.invalidateQueries({ queryKey: financeKeys.householdBalances(householdId) });
     },
   });
 }
@@ -69,6 +83,7 @@ export function useUpdateHouseholdExpense(householdId: string, householdExpenseI
       queryClient.invalidateQueries({ queryKey: financeKeys.householdExpenseDetail(householdId, householdExpenseId) });
       queryClient.invalidateQueries({ queryKey: financeKeys.householdExpenses(householdId) });
       queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions(householdId) });
+      queryClient.invalidateQueries({ queryKey: financeKeys.householdBalances(householdId) });
     },
   });
 }
@@ -81,6 +96,7 @@ export function useDeleteHouseholdExpense(householdId: string) {
       queryClient.invalidateQueries({ queryKey: financeKeys.householdExpenses(householdId) });
       queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions(householdId) });
       queryClient.invalidateQueries({ queryKey: financeKeys.householdDashboard(householdId) });
+      queryClient.invalidateQueries({ queryKey: financeKeys.householdBalances(householdId) });
     },
   });
 }
@@ -107,6 +123,7 @@ export function usePayHouseholdExpense(householdId: string, householdExpenseId: 
       queryClient.invalidateQueries({ queryKey: financeKeys.householdExpenseDetail(householdId, householdExpenseId) });
       queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions(householdId) });
       queryClient.invalidateQueries({ queryKey: financeKeys.householdDashboard(householdId) });
+      queryClient.invalidateQueries({ queryKey: financeKeys.householdBalances(householdId) });
     },
   });
 }
@@ -131,6 +148,7 @@ export function useUnpayHouseholdExpense(householdId: string, householdExpenseId
       queryClient.invalidateQueries({ queryKey: financeKeys.householdExpenseDetail(householdId, householdExpenseId) });
       queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions(householdId) });
       queryClient.invalidateQueries({ queryKey: financeKeys.householdDashboard(householdId) });
+      queryClient.invalidateQueries({ queryKey: financeKeys.householdBalances(householdId) });
     },
   });
 }
@@ -146,6 +164,7 @@ export function useAddExpenseSplit(householdId: string, householdExpenseId: stri
         (old: HouseholdExpenseDetailResponse | undefined) =>
           old ? { ...old, splits: [...old.splits, newSplit] } : old
       );
+      queryClient.invalidateQueries({ queryKey: financeKeys.householdBalances(householdId) });
     },
   });
 }
@@ -160,6 +179,7 @@ export function useRemoveExpenseSplit(householdId: string, householdExpenseId: s
         (old: HouseholdExpenseDetailResponse | undefined) =>
           old ? { ...old, splits: old.splits.filter((s) => s.splitId !== splitId) } : old
       );
+      queryClient.invalidateQueries({ queryKey: financeKeys.householdBalances(householdId) });
     },
   });
 }
@@ -177,6 +197,7 @@ export function usePayContributionSplit() {
       queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions(householdId) });
       queryClient.invalidateQueries({ queryKey: financeKeys.householdExpenses(householdId) });
       queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions() });
+      queryClient.invalidateQueries({ queryKey: financeKeys.householdBalances(householdId) });
     },
   });
 }
@@ -190,6 +211,7 @@ export function useUnpayContributionSplit() {
       queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions(householdId) });
       queryClient.invalidateQueries({ queryKey: financeKeys.householdExpenses(householdId) });
       queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions() });
+      queryClient.invalidateQueries({ queryKey: financeKeys.householdBalances(householdId) });
     },
   });
 }

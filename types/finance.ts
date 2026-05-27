@@ -65,6 +65,21 @@ export interface NetPayBreakdown {
   netPay: number;
 }
 
+/** Aggregate of every active income source for the caller in the given
+ *  month. Served by /api/finance/income/net-pay/summary; replaces the
+ *  client-side N+1 fan-out the income stats strip used to do. */
+export interface NetPaySummary {
+  year: number;
+  month: number;
+  currency: string;
+  monthlyGross: number;
+  monthlyNet: number;
+  totalTaxWithheld: number;
+  totalDeductions: number;
+  annualGross: number;
+  sourceCount: number;
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 
 export interface HouseholdSummary extends Household {
@@ -134,6 +149,34 @@ export interface HouseholdDetailResponse {
 /** @deprecated Use HouseholdDetailResponse */
 export type HouseholdPageResponse = HouseholdDetailResponse;
 
+/**
+ * Per-other-member balance the caller has inside one household. Mirrors
+ * MemberBalanceDto in finance/src/Application/Dtos/DashboardDtos.cs.
+ *
+ * NetSettlement convention from the backend: `totalOwed - totalOwedToYou`, where
+ *   - `totalOwed` is what *this member* owes the caller (positive when caller
+ *     paid an expense and the other member's split is unpaid)
+ *   - `totalOwedToYou` is what the *caller* owes this member
+ *
+ * So sum(netSettlement) across all returned members:
+ *   - positive → caller is net-positive ("YOU'RE OWED")
+ *   - negative → caller is net-negative ("YOU OWE")
+ *   - zero/empty → fully settled / no shared expenses
+ */
+export interface MemberBalance {
+  userId: string;
+  displayName: string;
+  totalOwed: number;
+  totalOwedToYou: number;
+  netSettlement: number;
+  currency: string;
+}
+
+export interface MemberBalanceListResponse {
+  items: MemberBalance[];
+  totalCount: number;
+}
+
 export interface HouseholdDashboard {
   totalBills: number;
   totalGrossIncome: number;
@@ -184,6 +227,7 @@ export interface ExpenseItem {
   currency: string;
   dueDate: string;
   isPaid?: boolean;
+  recurrenceFrequency?: string;
 }
 
 export interface ContributionPeriod {

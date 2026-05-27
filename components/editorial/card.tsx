@@ -1,43 +1,45 @@
 import React from "react";
 
+/**
+ * <Card> — editorial card (redesign)
+ *
+ * All visual rules in /app/globals.css under `.ed-card*` classes.
+ */
+
 interface CardProps {
   accent?: boolean;
   hover?: boolean;
+  muted?: boolean;
   onClick?: () => void;
   children: React.ReactNode;
   className?: string;
-  style?: React.CSSProperties;
-  padding?: number | string;
 }
 
 export function Card({
   accent,
   hover,
+  muted,
   onClick,
   children,
   className = "",
-  style,
-  padding = 22,
 }: CardProps) {
-  const borderStyle = accent
-    ? { borderTop: "6px solid var(--red)", borderRight: "1.5px solid var(--ink)", borderBottom: "1.5px solid var(--ink)", borderLeft: "1.5px solid var(--ink)" }
-    : {};
+  const cls = [
+    "ed-card",
+    accent ? "ed-card-accent" : "",
+    muted ? "ed-card-muted" : "",
+    hover ? "card-hover" : "",
+    onClick ? "cursor-pointer w-full text-left" : "",
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
 
-  const Tag = onClick ? "button" : "div";
-
-  return (
-    <Tag
-      onClick={onClick}
-      className={`bg-paper ${hover ? "card-hover" : ""} ${onClick ? "cursor-pointer w-full text-left" : ""} ${accent ? "" : "border-ink"} ${className}`}
-      style={{
-        padding,
-        background: "var(--paper)",
-        ...borderStyle,
-        borderRadius: 0,
-        ...style,
-      }}
-    >
-      {children}
-    </Tag>
-  );
+  if (onClick) {
+    return (
+      <button type="button" onClick={onClick} className={cls}>
+        {children}
+      </button>
+    );
+  }
+  return <div className={cls}>{children}</div>;
 }

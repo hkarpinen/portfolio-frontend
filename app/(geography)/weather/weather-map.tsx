@@ -15,8 +15,6 @@ const LAYERS: { key: LayerKey; label: string; attribution: string }[] = [
   { key: "cycling",       label: "Cycling",      attribution: "CyclOSM" },
 ];
 
-const rule = "1.5px solid var(--ink)";
-
 export function WeatherMap({ coords }: { coords: GeoCoordinates }) {
   const mapRef      = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<any>(null);
@@ -73,39 +71,44 @@ export function WeatherMap({ coords }: { coords: GeoCoordinates }) {
   const toggle = (key: LayerKey) => setActiveLayer((prev) => (prev === key ? null : key));
 
   return (
-    <div style={{ border: rule }}>
+    <section aria-label="Interactive weather map">
       {/* Layer toolbar */}
-      <div
-        className="flex flex-wrap items-center"
-        style={{ borderBottom: rule, padding: "10px 14px", background: "var(--paper-2)", gap: "10px" }}
-      >
-        <span className="font-mono uppercase shrink-0" style={{ fontSize: "0.594rem", letterSpacing: "0.22em", color: "var(--ink-3)" }}>
-          Overlay
-        </span>
-        <div className="flex flex-wrap gap-[6px]">
-          {LAYERS.map((l) => {
-            const on = activeLayer === l.key;
-            return (
-              <button
-                key={l.key}
-                onClick={() => toggle(l.key)}
-                className="font-mono uppercase transition-colors"
-                style={{
-                  fontSize: "0.594rem", letterSpacing: "0.18em", padding: "3px 9px",
-                  border: rule,
-                  background: on ? "var(--ink)" : "transparent",
-                  color: on ? "var(--paper)" : "var(--ink-2)",
-                  cursor: "pointer",
-                }}
-              >
-                {on && <span style={{ color: "var(--red)", marginRight: 4 }}>▸</span>}
-                {l.label}
-              </button>
-            );
-          })}
+      <div className="border-ink">
+        <div
+          role="group"
+          aria-label="Map overlay layers"
+          className="flex flex-wrap items-center border-ink-b p-[10px_14px] bg-paper-2 gap-[10px]"
+        >
+          <span className="ed-label-muted uppercase shrink-0 tracking-[0.22em]" aria-hidden="true">
+            Overlay
+          </span>
+          <div className="flex flex-wrap gap-[6px]">
+            {LAYERS.map((l) => {
+              const on = activeLayer === l.key;
+              return (
+                <button
+                  key={l.key}
+                  type="button"
+                  onClick={() => toggle(l.key)}
+                  aria-pressed={on}
+                  aria-label={`${on ? "Hide" : "Show"} ${l.label} overlay`}
+                  className={`ed-label-muted font-mono uppercase transition-colors tracking-[0.18em] p-[3px_9px] border-ink cursor-pointer min-h-[36px]${on ? " bg-ink text-paper" : " bg-transparent text-ink-2"}`}
+                >
+                  {on && <span aria-hidden="true" className="text-red mr-1">▸</span>}
+                  {l.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
+        {/* Map container — Leaflet manages its own keyboard navigation */}
+        <div
+          ref={mapRef}
+          className="h-[560px]"
+          role="application"
+          aria-label="Map centered on current location"
+        />
       </div>
-      <div ref={mapRef} style={{ height: 560 }} />
-    </div>
+    </section>
   );
 }

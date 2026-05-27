@@ -33,7 +33,7 @@ export function JoinHouseholdModal({ open, onOpenChange }: JoinHouseholdModalPro
         variant="primary"
         onClick={handleJoin}
         disabled={joinMutation.isPending}
-        style={{ opacity: joinMutation.isPending ? 0.6 : 1 }}
+        className={joinMutation.isPending ? "opacity-60" : undefined}
       >
         {joinMutation.isPending ? "Joining…" : "Join Household"}
       </Btn>
@@ -67,14 +67,7 @@ export function JoinHouseholdModal({ open, onOpenChange }: JoinHouseholdModalPro
             onKeyDown={(e) => { if (e.key === "Enter") handleJoin(); }}
             placeholder="Enter invite code…"
             autoFocus
-            className="h-[38px] w-full bg-paper-2 p-[0_12px] text-md text-ink outline-none font-mono border-ink"
-            style={{ transition: "border-color 110ms, box-shadow 110ms" }}
-            onFocus={(e) => {
-              e.currentTarget.style.boxShadow = "0 0 0 3px rgba(178,42,26,0.08)";
-            }}
-            onBlur={(e) => {
-              e.currentTarget.style.boxShadow = "none";
-            }}
+            className="h-[38px] w-full bg-paper-2 p-[0_12px] text-md text-ink outline-none font-mono border-ink transition-[border-color,box-shadow] duration-[110ms] focus:shadow-[0_0_0_3px_rgba(178,42,26,0.08)]"
           />
         </div>
       </div>

@@ -35,12 +35,12 @@ function ActivityAvatar({ avatarUrl, name }: { avatarUrl?: string; name?: string
   if (avatarUrl) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
-      <img src={avatarUrl} alt="" className="w-[18] h-[18] object-cover shrink-0" />
+      <img src={avatarUrl} alt="" className="w-[18px] h-[18px] object-cover shrink-0" />
     );
   }
   const initial = getInitials(name);
   return (
-    <div className="w-[18] h-[18] bg-red-soft flex items-center justify-center text-sm font-bold text-red shrink-0">{initial}</div>
+    <div className="w-[18px] h-[18px] bg-red-soft flex items-center justify-center text-sm font-bold text-red shrink-0">{initial}</div>
   );
 }
 
@@ -73,7 +73,7 @@ export function CommunityCard({ communityId, slug, name, description, imageUrl, 
       className="bg-paper p-10 shadow-card transition-[box-shadow,transform] duration-[180ms] ease-out hover:shadow-stamp border-ink"
     >
       <div className="flex items-start justify-between gap-8">
-        <Link href={`/forum/${slug}`} className="flex-1 min-w-0 flex items-center gap-6 no-underline">
+        <Link href={`/forum/g/${slug}`} className="flex-1 min-w-0 flex items-center gap-6 no-underline">
           {imageUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -89,7 +89,7 @@ export function CommunityCard({ communityId, slug, name, description, imageUrl, 
           <div className="min-w-0">
             <h2 className="font-serif font-semibold text-xl text-ink m-0">{name}</h2>
             {description && (
-              <p className="text-base text-ink-2 mt-1 overflow-hidden" style={{ display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>{description}</p>
+              <p className="text-base text-ink-2 mt-1 line-clamp-2">{description}</p>
             )}
             <div className="flex gap-8 mt-2">
               {memberCount !== undefined && memberCount > 0 && (
@@ -116,7 +116,7 @@ export function CommunityCard({ communityId, slug, name, description, imageUrl, 
             <button
               onClick={handleJoin}
               disabled={joining}
-              className="text-base font-medium bg-red text-white py-[4px] px-[14px]" style={{ border: "none", cursor: joining ? "not-allowed" : "pointer", opacity: joining ? 0.5 : 1 }}
+              className="text-base font-medium bg-red text-white py-[4px] px-[14px] border-0 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
             >
               {joining ? "…" : "Join"}
             </button>
@@ -126,10 +126,10 @@ export function CommunityCard({ communityId, slug, name, description, imageUrl, 
 
       {latestActivity && (
         <Link
-          href={`/forum/${slug}/threads/${latestActivity.threadId}`}
+          href={`/forum/g/${slug}/threads/${latestActivity.threadId}`}
           className="no-underline"
         >
-          <div className="mt-6 pt-5 flex items-center gap-4 min-w-0" style={{ borderTop: "1.5px solid var(--ink)" }}>
+          <div className="mt-6 pt-5 flex items-center gap-4 min-w-0 border-ink-t">
             <ActivityAvatar
               avatarUrl={hasReply ? latestActivity.latestReplyAuthorAvatarUrl : latestActivity.authorAvatarUrl}
               name={hasReply ? latestActivity.latestReplyAuthorDisplayName : latestActivity.authorDisplayName}

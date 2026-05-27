@@ -2,44 +2,58 @@
 
 import { useState } from "react";
 import { useDeleteExpense, useExpenses } from "@/hooks/use-expenses";
+import { EmptyState } from "@/components/editorial/empty-state";
+import { Icon } from "@/components/editorial/icon";
 import type { ExpensePage } from "@/types/finance";
 import type { Expense } from "@/types/finance";
 import { ExpenseRow } from "./expense-row";
-import { Icon } from "@/components/editorial/icon";
 
 export { CATEGORY_COLORS, CATEGORY_ICONS } from "./expense-row";
 
 export function ExpenseList({ initialData }: { initialData: ExpensePage }) {
   const { data } = useExpenses(initialData);
-  const expenses: Expense[] = data?.items ?? [];
+  // This list backs the "Personal recurring" section — drop one-time entries
+  // so they don't double up with the One time this month table below.
+  const expenses: Expense[] = (data?.items ?? []).filter(
+    (e) => !!e.recurrenceFrequency,
+  );
   const deleteExpense = useDeleteExpense();
   const [editingId, setEditingId] = useState<string | null>(null);
 
   if (expenses.length === 0) {
     return (
-      <div className="bg-paper py-24 px-12 text-center flex flex-col items-center gap-5 mb-12 shadow-stamp border-ink">
-        <div className="w-[56px] h-[56px] bg-red-soft flex items-center justify-center">
-          <Icon name="dollar" size={24} strokeWidth={2} />
-        </div>
-        <p className="font-serif font-bold text-md text-ink">No personal expenses yet</p>
-        <p className="text-base text-ink-3">Add your recurring expenses below.</p>
-      </div>
+      <EmptyState
+        glyph={<Icon name="dollar" size={24} strokeWidth={2} />}
+        title="No recurring expenses yet"
+        body="Add a phone bill, gym membership, or subscription to start tracking your monthly outgoings."
+        cta={{ label: "+ Add expense", href: "/expenses/new" }}
+      />
     );
   }
 
   return (
-    <div className="flex flex-col gap-4 mb-12">
-      {expenses.map((expense) => (
-        <ExpenseRow
-          key={expense.expenseId}
-          expense={expense}
-          isEditing={editingId === expense.expenseId}
-          onEditToggle={() => setEditingId(editingId === expense.expenseId ? null : expense.expenseId)}
-          onEditDone={() => setEditingId(null)}
-          onDelete={() => deleteExpense.mutate(expense.expenseId)}
-          isDeleting={deleteExpense.isPending}
-        />
-      ))}
-    </div>
+    <>
+      <div
+        aria-live="polite"
+        aria-atomic="false"
+        className="sr-only"
+        role="status"
+      >
+        {deleteExpense.isPending ? "Removing expense…" : ""}
+      </div>
+      <div className="ed-modules-grid">
+        {expenses.map((expense) => (
+          <ExpenseRow
+            key={expense.expenseId}
+            expense={expense}
+            isEditing={editingId === expense.expenseId}
+            onEditToggle={() => setEditingId(editingId === expense.expenseId ? null : expense.expenseId)}
+            onEditDone={() => setEditingId(null)}
+            onDelete={() => deleteExpense.mutate(expense.expenseId)}
+            isDeleting={deleteExpense.isPending}
+          />
+        ))}
+      </div>
+    </>
   );
 }

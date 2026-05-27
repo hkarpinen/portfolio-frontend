@@ -1,74 +1,87 @@
 import { getCookieHeader } from "@/lib/server-cookies";
 import { IncomeList } from "./income-list";
-import { fetchIncomeServer } from "@/lib/api/income";
-import { toMonthlyAmount } from "@/lib/utils";
-import type { IncomeSource } from "@/types/finance";
-import Link from "next/link";
-import { Icon } from "@/components/editorial/icon";
+import { fetchIncomeServer, fetchNetPaySummaryServer } from "@/lib/api/income";
+import type { IncomeSource, NetPaySummary } from "@/types/finance";
+import { EditorialPageHead } from "@/components/editorial/editorial-page-head";
+import { LedeStat } from "@/components/editorial/lede-stat";
+import { Ticker } from "@/components/editorial/ticker";
+// LedgerStrip removed — its figures duplicated the LedeStat aside.
+import { DepartmentHead } from "@/components/editorial/department-head";
+import {
+  currentMonthName,
+  incomeHeadline,
+  incomeDeck,
+  buildIncomeTicker,
+} from "@/lib/finance/editorial-copy";
 
 export const dynamic = 'force-dynamic';
 
+const fmt0 = (n: number) => `$${Math.abs(Math.round(n)).toLocaleString("en-US")}`;
+const fmt2 = (n: number) =>
+  `$${n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
 export default async function IncomePage() {
-  const incomePage = await fetchIncomeServer(await getCookieHeader()) ?? { items: [] as IncomeSource[] };
+  const cookieHeader = await getCookieHeader();
+
+  // One round-trip each: the list (for the per-row table) and the aggregate
+  // summary (for the stats strip). The summary used to be derived client-
+  // side by fanning out a /net-pay call per source — moved server-side so
+  // the page renders in two parallel calls regardless of how many sources
+  // the user has.
+  const [incomePage, summary] = await Promise.all([
+    fetchIncomeServer(cookieHeader).then(p => p ?? { items: [] as IncomeSource[] }),
+    fetchNetPaySummaryServer(cookieHeader).catch(() => null as NetPaySummary | null),
+  ]);
   const sources: IncomeSource[] = incomePage.items ?? [];
 
-  const toMonthly = (s: IncomeSource) => toMonthlyAmount(s.amount, s.quotedAs);
+  const monthlyGross = summary?.monthlyGross ?? 0;
+  const monthlyNet = summary?.monthlyNet ?? 0;
+  const totalTaxWithheld = summary?.totalTaxWithheld ?? 0;
+  const annualGross = summary?.annualGross ?? monthlyGross * 12;
 
-  const isRecurring = (s: IncomeSource) => {
-    const freq = s.paidEvery?.toUpperCase();
-    return freq && freq !== "ONCE" && freq !== "ONE_TIME" && freq !== "ONETIME";
-  };
+  const now = new Date();
+  const monthName = currentMonthName(now);
 
-  const monthlyGross = sources.reduce((sum, s) => sum + toMonthly(s), 0);
-  const recurringTotal = sources.filter(isRecurring).reduce((sum, s) => sum + toMonthly(s), 0);
+  const ticker = buildIncomeTicker({
+    monthlyGross, monthlyNet, totalTaxWithheld, annualGross,
+    sourcesCount: sources.length,
+  });
 
   return (
-    <div className="page-enter flex flex-col gap-[28px]" >
-      {/* Header */}
-      <div className="flex items-start justify-between gap-8">
-        <div>
-          <h1 className="font-serif font-extrabold text-4xl leading-none tracking-snug tracking-[-0.025em] text-ink">
-            Income
-          </h1>
-          <p className="text-ink-3 mt-2 text-base">
-            Manage your personal income sources
-          </p>
-        </div>
-        <Link
-          href="/income/new"
-          className="inline-flex items-center gap-3 py-[9px] px-[18px] bg-red text-white text-base font-semibold no-underline shrink-0 mt-2"
-        >
-          <Icon name="plus" size={13} strokeWidth={2.5} />
-          Add income source
-        </Link>
-      </div>
+    <div className="page-enter flex flex-col gap-6">
+      <EditorialPageHead
+        kicker={`${monthName} edition`}
+        title={incomeHeadline({ sourcesCount: sources.length, monthlyNet })}
+        deck={incomeDeck({ sourcesCount: sources.length, monthlyGross, monthlyNet, totalTaxWithheld })}
+      />
 
-      {/* Stats grid */}
-      <div className="grid gap-[14px]" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))" }}>
-        {[
-          { label: "Gross Monthly", value: `$${monthlyGross.toFixed(2)}`, icon: <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>, accent: "var(--red)", bg: "rgba(178,42,26,0.08)" },
-          { label: "Recurring", value: `$${recurringTotal.toFixed(2)}`, icon: <path d="M1 4v6h6M23 20v-6h-6M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4-4.64 4.36A9 9 0 0 1 3.51 15"/>, accent: "var(--success)", bg: "var(--success-s)" },
-          { label: "Sources", value: String(sources.length), icon: <><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></>, accent: "var(--warning)", bg: "var(--warning-s)" },
-        ].map(({ label, value, icon, accent, bg }) => (
-          <div key={label} className="bg-paper py-[18px] px-[20px] shadow-card flex flex-col gap-5 border-ink">
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-bold text-ink-3 uppercase tracking-[0.1em]">{label}</span>
-              <div className="w-[30px] h-[30px] flex items-center justify-center" style={{ background: bg }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">{icon}</svg>
-              </div>
-            </div>
-            <p className="font-serif font-extrabold text-2xl tracking-[-0.025em] text-ink leading-none">{value}</p>
-          </div>
-        ))}
-      </div>
+      <Ticker items={ticker} ariaLabel="Income figures" />
 
-      {/* Income sources list */}
-      <div>
-        <p className="text-sm font-bold text-ink-3 uppercase tracking-[0.1em] mb-8">
-          Income Sources
-        </p>
+      <LedeStat
+        label="Net · monthly take-home"
+        value={fmt2(monthlyNet)}
+        deck={
+          totalTaxWithheld > 0
+            ? `After ${fmt0(totalTaxWithheld)} withheld in federal, state, and FICA.`
+            : "No payroll deductions on file — gross equals net."
+        }
+        aside={[
+          { label: "Gross monthly", value: fmt0(monthlyGross), sub: "before deductions" },
+          { label: "Tax withheld",  value: fmt0(totalTaxWithheld), sub: totalTaxWithheld > 0 ? "fed + state + FICA" : undefined },
+          { label: "Annual gross",  value: fmt0(annualGross), sub: "monthly × 12" },
+          { label: "Sources",       value: String(sources.length) },
+        ]}
+      />
+
+      <section className="flex flex-col gap-5">
+        <DepartmentHead
+          kicker="Sources · On file"
+          count={`${sources.length} stream${sources.length === 1 ? "" : "s"}`}
+          title="Income <em>sources</em>"
+          deck="Each source models its own pay cadence, deductions, and tax profile."
+        />
         <IncomeList initialData={incomePage} />
-      </div>
+      </section>
     </div>
   );
 }

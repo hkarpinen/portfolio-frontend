@@ -48,9 +48,17 @@ interface ExpenseRowProps {
   isDeleting: boolean;
 }
 
+function ordinal(n: number): string {
+  if (n >= 11 && n <= 13) return "th";
+  switch (n % 10) {
+    case 1: return "st";
+    case 2: return "nd";
+    case 3: return "rd";
+    default: return "th";
+  }
+}
+
 export function ExpenseRow({ expense, isEditing, onEditToggle, onEditDone, onDelete, isDeleting }: ExpenseRowProps) {
-  const iconPath = CATEGORY_ICONS[expense.category ?? "Other"] ?? CATEGORY_ICONS.Other;
-  const catColor = CATEGORY_COLORS[expense.category ?? "Other"] ?? "var(--text-3)";
   const due = new Date(expense.dueDate);
   const isOverdue = due < new Date() && !expense.isPaid;
   const updateBill = useUpdateExpense();
@@ -98,67 +106,72 @@ export function ExpenseRow({ expense, isEditing, onEditToggle, onEditDone, onDel
     );
   };
 
+  const freqLabel = expense.recurrenceFrequency
+    ? expense.recurrenceFrequency.toUpperCase()
+    : "ONE-TIME";
+  const dayLabel = due.getDate();
+
+  const amountLabel = `${expense.currency ?? "USD"} ${expense.amount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
   return (
-    <div className="bg-paper overflow-hidden shadow-stamp border-ink">
-      <div className="py-[14px] px-[18px] flex items-center gap-[14px]">
-        {/* Category icon */}
-        <div
-          className="w-20 h-20 flex items-center justify-center shrink-0"
-          style={{ background: `color-mix(in oklch, ${catColor} 12%, transparent)`, border: `1px solid color-mix(in oklch, ${catColor} 22%, transparent)` }}
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={catColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d={iconPath} />
-          </svg>
-        </div>
-
-        {/* Details */}
+    <div className="ed-module-card" aria-label={`${expense.title}, ${amountLabel}${expense.isPaid ? ", paid" : isOverdue ? ", overdue" : ""}`}>
+      {/* Top row: title + amount */}
+      <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-3 flex-wrap">
-            <span className="font-serif font-semibold text-md text-ink">{expense.title}</span>
-            <span className="text-sm font-semibold py-[1px] px-[6px] bg-paper-3 text-ink-3 border-ink">{expense.category}</span>
-            {isOverdue && (
-              <span className="text-sm font-semibold py-[1px] px-[6px] bg-red-soft text-red flex items-center gap-2" style={{ border: "1px solid color-mix(in oklch, var(--danger) 25%, transparent)" }}>
-                <span className="w-[5] h-[5] rounded-full bg-red inline-block" />
-                Overdue
-              </span>
+          <p className="font-serif font-bold text-lg text-ink leading-tight">
+            {expense.title}
+            {expense.isPaid && (
+              <span className="sr-only"> (paid)</span>
             )}
-          </div>
-          <p className="text-sm text-ink-3 mt-[3px]">
-            Due {due.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-            {expense.recurrenceFrequency ? ` · ${expense.recurrenceFrequency.toLowerCase()}` : " · one-time"}
           </p>
+          {expense.description && (
+            <p className="ed-hint mt-1">{expense.description}</p>
+          )}
         </div>
+        <div className="text-right shrink-0">
+          <p
+            className={`font-serif font-bold text-lg italic tabular-nums ${isOverdue ? "text-red" : expense.isPaid ? "text-ink-3" : "text-ink"}`}
+            aria-label={amountLabel}
+          >
+            ${expense.amount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </p>
+          {isOverdue && (
+            <p className="ed-label-muted text-red" role="status">
+              ⚠ Overdue
+            </p>
+          )}
+          {expense.isPaid && !isOverdue && (
+            <p className="ed-label-muted" style={{ color: "var(--green)" }}>
+              ✓ Paid
+            </p>
+          )}
+        </div>
+      </div>
 
-        {/* Amount + status + actions */}
-        <div className="flex items-center gap-6 shrink-0">
-          <div className="text-right">
-            <div className="font-serif font-bold text-md" style={{ color: isOverdue ? "var(--danger)" : "var(--text)" }}>
-              <span className="text-sm font-mono text-ink-3 mr-[5px]">{expense.currency}</span>{expense.amount.toFixed(2)}
-            </div>
-            <button
-              onClick={handleTogglePaid}
-              disabled={isPayPending}
-              title={expense.isPaid ? "Click to mark unpaid" : "Click to mark paid"}
-              className="text-sm font-semibold py-[1px] px-[8px] inline-flex items-center gap-[5px]"
-              style={{
-                cursor: isPayPending ? "not-allowed" : "pointer",
-                border: `1px solid color-mix(in oklch, ${expense.isPaid ? "var(--success)" : isOverdue ? "var(--danger)" : "var(--warning)"} 25%, transparent)`,
-                background: expense.isPaid
-                  ? "color-mix(in oklch, var(--success) 12%, transparent)"
-                  : isOverdue ? "var(--danger-s)" : "color-mix(in oklch, var(--warning) 12%, transparent)",
-                color: expense.isPaid ? "var(--success)" : isOverdue ? "var(--danger)" : "var(--warning)",
-                transition: "background 110ms",
-                opacity: isPayPending ? 0.6 : 1,
-              }}
-            >
-              {isPayPending ? "…" : expense.isPaid ? <><Icon name="check" size={11} strokeWidth={2} /> Paid</> : isOverdue ? "Overdue" : "Unpaid"}
-            </button>
-          </div>
+      {/* Bottom row: frequency + category + actions */}
+      <div className="ed-module-card-foot">
+        <div className="flex items-center gap-4">
+          <p className="ed-label-muted">{freqLabel} · {dayLabel}{ordinal(dayLabel)}</p>
+          {expense.category && (
+            <span className="ed-label-muted">{expense.category.toUpperCase()}</span>
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleTogglePaid}
+            disabled={isPayPending}
+            title={expense.isPaid ? "Mark as unpaid" : "Mark as paid"}
+            className={`ed-icon-btn ${expense.isPaid ? "text-green" : "text-ink-3"}`}
+            aria-label={expense.isPaid ? `Mark ${expense.title} as unpaid` : `Mark ${expense.title} as paid`}
+            aria-pressed={expense.isPaid}
+          >
+            <Icon name="check" size={13} strokeWidth={expense.isPaid ? 2.5 : 1.5} />
+          </button>
           <button
             onClick={onEditToggle}
-            className="w-[30px] h-[30px] flex items-center justify-center cursor-pointer border-ink"
-            style={{background: isEditing ? "rgba(178,42,26,0.08)" : "transparent", color: isEditing ? "var(--red)" : "var(--text-3)", transition: "background 110ms, color 110ms" }}
-            aria-label="Edit"
+            className={`ed-icon-btn ${isEditing ? "text-red" : "text-ink-3"}`}
+            aria-label={`Edit ${expense.title}`}
+            aria-expanded={isEditing}
           >
             <Icon name="edit" size={13} strokeWidth={2} />
           </button>
@@ -168,35 +181,48 @@ export function ExpenseRow({ expense, isEditing, onEditToggle, onEditDone, onDel
 
       {/* Inline edit form */}
       {isEditing && (
-        <div className="py-[16px] px-[18px] bg-paper-2" style={{ borderTop: "1.5px solid var(--ink)" }}>
-          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
+        <div className="py-[16px] px-[18px] bg-paper-2 border-t border-ink" role="region" aria-label={`Edit ${expense.title}`}>
+          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5" noValidate>
             {updateBill.isError && (
-              <Alert variant="danger">
+              <Alert variant="danger" role="alert">
                 {updateBill.error instanceof ApiError ? updateBill.error.message : "Something went wrong."}
               </Alert>
             )}
             <div className="form-grid-2 gap-4">
-              <div style={{ gridColumn: "1 / -1" }}>
+              <div className="col-span-full">
                 <Input label="Title" error={errors.title?.message} {...register("title")} />
               </div>
-              <Input type="number" step="0.01" label="Amount" error={errors.amount?.message} {...register("amount")} />
-              <Input label="Currency" {...register("currency")} />
+              <Input
+                type="number"
+                inputMode="decimal"
+                step="0.01"
+                min="0.01"
+                label="Amount"
+                error={errors.amount?.message}
+                {...register("amount")}
+              />
+              <SelectField label="Currency" {...register("currency")}>
+                <option value="USD">USD — US Dollar</option>
+                <option value="EUR">EUR — Euro</option>
+                <option value="GBP">GBP — British Pound</option>
+                <option value="CAD">CAD — Canadian Dollar</option>
+              </SelectField>
               <SelectField label="Category" {...register("category")}>
                 {BILL_CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
               </SelectField>
-              <Input type="date" label="Due Date" {...register("dueDate")} />
+              <Input type="date" label="Due date" {...register("dueDate")} />
               <SelectField label="Recurrence" {...register("recurrenceFrequency")}>
-                <option value="">None</option>
+                <option value="">One-time</option>
                 {FREQUENCIES.map((f) => <option key={f} value={f}>{f}</option>)}
               </SelectField>
-              <div style={{ gridColumn: "1 / -1" }}>
-                <Textarea label="Description" rows={2} {...register("description")} />
+              <div className="col-span-full">
+                <Textarea label="Notes" rows={2} {...register("description")} />
               </div>
             </div>
             <div className="flex gap-4 justify-end">
               <Btn type="button" variant="secondary" size="xs" onClick={onEditToggle}>Cancel</Btn>
               <Btn type="submit" variant="primary" size="xs" disabled={updateBill.isPending}>
-                {updateBill.isPending ? "Saving…" : "Save"}
+                {updateBill.isPending ? "Saving…" : "Save changes"}
               </Btn>
             </div>
           </form>

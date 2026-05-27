@@ -5,6 +5,7 @@ import type {
   HouseholdExpenseListResponse,
   HouseholdExpenseDetailResponse,
   ExpenseSplit,
+  MemberBalanceListResponse,
 } from "@/types/finance";
 
 export const fetchHouseholdExpenses = (householdId: string) =>
@@ -48,6 +49,10 @@ export const addExpenseSplit = (
 
 export const removeSplit = (householdId: string, householdExpenseId: string, splitId: string) =>
   api.delete(`/api/finance/groups/${householdId}/expenses/${householdExpenseId}/splits/${splitId}`);
+
+/** Per-other-member balances within a household, from the caller's POV. */
+export const fetchHouseholdBalances = (householdId: string) =>
+  api.get<MemberBalanceListResponse>(`/api/finance/groups/${householdId}/balances`);
 
 export const createHouseholdExpense = (
   householdId: string,

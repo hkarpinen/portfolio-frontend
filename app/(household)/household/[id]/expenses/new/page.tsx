@@ -4,10 +4,12 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useCreateHouseholdExpense } from "@/hooks/use-expenses";
+import { useHouseholdMembers } from "@/hooks/use-household";
 import { ApiError } from "@/lib/api-client";
-import { Btn, Alert, Input, Textarea, SelectField } from "@/components/editorial";
+import { Btn, Alert, Input, Textarea, SelectField, Icon, SectionHeader } from "@/components/editorial";
 
 const CATEGORIES = [
   "Rent", "Utilities", "Groceries", "Transportation", "Entertainment",
@@ -25,13 +27,24 @@ const schema = z.object({
   description: z.string().max(500).optional(),
   isRecurring: z.boolean(),
   recurrenceFrequency: z.enum(FREQUENCIES).optional(),
+  payerMembershipId: z.string().optional(),
 });
 
 type FormData = z.infer<typeof schema>;
 
+interface SplitEntry {
+  membershipId: string;
+  displayName: string;
+  checked: boolean;
+  percent: string;
+}
+
 export default function NewExpensePage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const createExpense = useCreateHouseholdExpense(params.id);
+  const { data: membersRaw } = useHouseholdMembers(params.id);
+  const members = membersRaw ?? [];
+
   const {
     register, handleSubmit, watch,
     formState: { errors },
@@ -42,7 +55,39 @@ export default function NewExpensePage({ params }: { params: { id: string } }) {
 
   const isRecurring = watch("isRecurring");
 
+  // Split state: initialised once members load
+  const [splits, setSplits] = useState<SplitEntry[]>([]);
+
+  useEffect(() => {
+    if (members.length > 0 && splits.length === 0) {
+      const evenPct = members.length > 0 ? (100 / members.length).toFixed(2) : "0.00";
+      setSplits(
+        members.map((m: any) => ({
+          membershipId: m.membershipId as string,
+          displayName: (m.displayName ?? m.username ?? m.userId.slice(0, 8)) as string,
+          checked: true,
+          percent: evenPct,
+        }))
+      );
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [members.length]);
+
+  const checkedSplits = splits.filter((s) => s.checked);
+  const totalPct = checkedSplits.reduce((sum, s) => sum + (parseFloat(s.percent) || 0), 0);
+  const pctValid = Math.abs(totalPct - 100) < 0.01 || checkedSplits.length === 0;
+
+  function toggleSplit(idx: number) {
+    setSplits((prev) => prev.map((s, i) => i === idx ? { ...s, checked: !s.checked } : s));
+  }
+
+  function updatePercent(idx: number, val: string) {
+    setSplits((prev) => prev.map((s, i) => i === idx ? { ...s, percent: val } : s));
+  }
+
   const onSubmit = (data: FormData) => {
+    // TODO(handoff8): wire splits to API — createHouseholdExpense does not yet accept splits[]
+    // or payerMembershipId. Send the basic expense now; splits are UI-only until the API is extended.
     createExpense.mutate(
       {
         title: data.title,
@@ -60,92 +105,122 @@ export default function NewExpensePage({ params }: { params: { id: string } }) {
   };
 
   return (
-    <div className="page-enter max-w-[560px] mx-auto flex flex-col gap-12" >
-      <div>
-        <Link href={`/household/${params.id}`} className="text-ink-3 text-base no-underline">
-          ← Back to Household
-        </Link>
-        <h1 className="font-serif font-extrabold text-2xl tracking-[-0.025em] text-ink mt-3">
-          Add Expense
-        </h1>
-        <p className="text-ink-3 text-base mt-2">
-          Add a new expense to this household
-        </p>
-      </div>
+    <div className="page-enter max-w-[640px] flex flex-col gap-8">
+      <Link href={`/household/${params.id}`} className="ed-label-muted no-underline hover:text-red">← Back to household</Link>
 
-      <div className="bg-paper p-12 shadow-stamp border-ink">
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-8">
-          {createExpense.isError && (
-            <Alert variant="danger">
-              {createExpense.error instanceof ApiError ? createExpense.error.message : "Something went wrong. Please try again."}
-            </Alert>
-          )}
+      <SectionHeader kicker="New expense" title="Add an <em>expense</em>" />
 
-          <Input
-            label="Name"
-            type="text"
-            {...register("title")}
-            placeholder="Rent, Electricity, etc."
-            error={errors.title?.message}
-          />
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
+        {createExpense.isError && (
+          <Alert variant="danger">
+            {createExpense.error instanceof ApiError ? createExpense.error.message : "Something went wrong. Please try again."}
+          </Alert>
+        )}
 
-          <div className="form-grid-2">
-            <Input
-              label="Amount"
-              type="number"
-              step="0.01"
-              {...register("amount")}
-              placeholder="0.00"
-              error={errors.amount?.message}
-            />
-            <SelectField label="Currency" {...register("currency")}>
-              <option value="USD">USD</option>
-              <option value="EUR">EUR</option>
-              <option value="GBP">GBP</option>
-              <option value="CAD">CAD</option>
-            </SelectField>
-          </div>
+        <Input
+          label="Name"
+          type="text"
+          placeholder="e.g. Groceries · Berkeley Bowl"
+          error={errors.title?.message}
+          {...register("title")}
+        />
 
-          <SelectField label="Category" {...register("category")} error={errors.category?.message}>
-            <option value="">Select category</option>
-            {CATEGORIES.map((c) => <option key={c} value={c}>{c.charAt(0) + c.slice(1).toLowerCase()}</option>)}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <Input label="Amount" type="number" step="0.01" placeholder="0.00" error={errors.amount?.message} {...register("amount")} />
+          <SelectField label="Currency" {...register("currency")}>
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+            <option value="GBP">GBP</option>
+            <option value="CAD">CAD</option>
           </SelectField>
+        </div>
 
-          <Input
-            label="Due Date"
-            type="date"
-            {...register("dueDate")}
-            error={errors.dueDate?.message}
-          />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <Input label="Date" type="date" error={errors.dueDate?.message} {...register("dueDate")} />
+          <SelectField label="Category" error={errors.category?.message} {...register("category")}>
+            <option value="">Select category</option>
+            {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+          </SelectField>
+        </div>
 
-          <Textarea
-            label="Description (optional)"
-            {...register("description")}
-            rows={2}
-            placeholder="Any additional notes"
-          />
+        {/* Payer dropdown */}
+        <SelectField label="Payer" {...register("payerMembershipId")}>
+          <option value="">Select payer</option>
+          {members.map((m: any) => (
+            <option key={m.membershipId} value={m.membershipId}>
+              {m.displayName ?? m.username ?? m.userId.slice(0, 8)}
+            </option>
+          ))}
+        </SelectField>
 
-          <label className="flex items-center gap-5 cursor-pointer">
-            <input id="isRecurring" type="checkbox" {...register("isRecurring")} className="w-8 h-8" style={{ accentColor: "var(--red)" }} />
-            <span className="text-base font-medium text-ink-2">Recurring expense</span>
+        <Textarea label="Notes" rows={3} placeholder="Any additional notes" {...register("description")} />
+
+        {/* Split between section */}
+        {splits.length > 0 && (
+          <fieldset className="flex flex-col gap-4 border-none p-0 m-0">
+            <legend className="ed-kicker mb-1">Split between</legend>
+            <div className="flex flex-col gap-3">
+              {splits.map((s, idx) => (
+                <div key={s.membershipId} className="flex items-center gap-4">
+                  <input
+                    type="checkbox"
+                    id={`split-${idx}`}
+                    checked={s.checked}
+                    onChange={() => toggleSplit(idx)}
+                    className="w-5 h-5 accent-[var(--red)] shrink-0 cursor-pointer"
+                  />
+                  <label htmlFor={`split-${idx}`} className="flex-1 font-serif italic text-ink text-base cursor-pointer">
+                    {s.displayName}
+                  </label>
+                  <div className="flex items-center gap-1 shrink-0">
+                    <input
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      max="100"
+                      disabled={!s.checked}
+                      value={s.percent}
+                      onChange={(e) => updatePercent(idx, e.target.value)}
+                      className="w-[72px] h-9 px-2 text-right font-mono text-sm border border-[var(--ink)] bg-paper text-ink disabled:opacity-40 disabled:cursor-not-allowed"
+                      aria-label={`${s.displayName} share percentage`}
+                    />
+                    <span className="font-mono text-sm text-ink-3" aria-hidden>%</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div
+              className={`flex justify-end font-mono text-sm tracking-[0.06em] ${pctValid ? "text-ink-3" : "text-red"}`}
+              role={pctValid ? undefined : "alert"}
+              aria-live="polite"
+            >
+              Total: {totalPct.toFixed(2)}%{!pctValid && " — must equal 100%"}
+            </div>
+          </fieldset>
+        )}
+
+        {/* Recurring expense */}
+        <div className="flex flex-col gap-3 pt-2 border-t border-[var(--rule-soft)]">
+          <label className="flex items-center gap-3 cursor-pointer">
+            <input id="isRecurring" type="checkbox" {...register("isRecurring")} className="w-4 h-4 accent-[var(--red)]" />
+            <span className="font-mono text-[0.72rem] tracking-[0.08em] uppercase text-ink-3">Recurring expense</span>
           </label>
-
           {isRecurring && (
             <SelectField label="Frequency" {...register("recurrenceFrequency")}>
-              {FREQUENCIES.map((f) => <option key={f} value={f}>{f.charAt(0) + f.slice(1).toLowerCase()}</option>)}
+              {FREQUENCIES.map((f) => <option key={f} value={f}>{f}</option>)}
             </SelectField>
           )}
+        </div>
 
-          <Btn
-            type="submit"
-            disabled={createExpense.isPending}
-            variant="primary"
-            fullWidth
-          >
-            {createExpense.isPending ? "Adding..." : "Add Expense"}
+        <div className="flex gap-3">
+          <Btn type="submit" disabled={createExpense.isPending} variant="primary" size="lg" iconRight={<Icon name="arrowRight" size={16} />}>
+            {createExpense.isPending ? "Saving…" : "Save expense"}
           </Btn>
-        </form>
-      </div>
+          <Btn type="button" variant="secondary" size="lg" onClick={() => router.push(`/household/${params.id}`)}>
+            Cancel
+          </Btn>
+        </div>
+      </form>
     </div>
   );
 }

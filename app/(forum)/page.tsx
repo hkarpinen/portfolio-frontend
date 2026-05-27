@@ -2,7 +2,7 @@ import Link from "next/link";
 import { VoteButtons } from "./forum/[slug]/threads/[threadId]/vote-buttons";
 import { ThreadActions } from "./forum/[slug]/threads/[threadId]/thread-actions";
 import { fetchThreadsServer } from "@/lib/api/forum";
-import { fetchCommunitiesServer, fetchMyMembershipsServer } from "@/lib/api/communities";
+import { fetchCommunitiesServer } from "@/lib/api/communities";
 import { getCookieHeader } from "@/lib/server-cookies";
 import { timeAgo, getInitials } from "@/lib/utils";
 import { Icon } from "@/components/editorial/icon";
@@ -32,17 +32,18 @@ export default async function ForumFeedPage({
   };
 
   const cookieHeader = await getCookieHeader();
-  const [threadsPage, communitiesPage, membershipsData] = await Promise.all([
+  // Two community calls: the discovery list (all) and the "your communities"
+  // sidebar (filtered server-side by membership). Previously this needed a
+  // third call to /memberships + a client-side intersect.
+  const [threadsPage, communitiesPage, myCommunitiesPage] = await Promise.all([
     tab !== "communities" ? fetchThreadsServer({ sort: sortMap[tab] ?? "new", pageSize: 30 }) : Promise.resolve(null),
-    fetchCommunitiesServer(undefined, 1, 10),
-    fetchMyMembershipsServer(cookieHeader),
+    fetchCommunitiesServer(cookieHeader, 1, 10),
+    fetchCommunitiesServer(cookieHeader, 1, 20, /* mine */ true),
   ]);
 
   const threads: ThreadSummaryResponse[] = threadsPage?.items ?? [];
   const communities: CommunitySummaryResponse[] = communitiesPage?.items ?? [];
-  const myMembershipIds = (membershipsData?.items ?? []).map((m) => m.communityId ?? "").filter(Boolean);
-
-  const myCommunities = communities.filter((c) => myMembershipIds.includes(c.communityId));
+  const myCommunities: CommunitySummaryResponse[] = myCommunitiesPage?.items ?? [];
 
   const tabs = [
     { key: "feed", label: "Feed" },
@@ -71,17 +72,18 @@ export default async function ForumFeedPage({
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-0" style={{ borderBottom: "1.5px solid var(--ink)" }}>
+      <nav aria-label="Feed sort" className="flex gap-0 border-ink-b">
         {tabs.map((t) => (
           <Link
             key={t.key}
             href={`/forum?tab=${t.key}`}
-            className="py-5 px-8 text-base mb-[-1px] no-underline" style={{ fontWeight: tab === t.key ? 600 : 400, color: tab === t.key ? "var(--text)" : "var(--text-3)", borderBottom: tab === t.key ? "3px solid var(--red)" : "2px solid transparent", transition: "color 110ms" }}
+            aria-current={tab === t.key ? "page" : undefined}
+            className={`py-5 px-8 text-base mb-[-1px] no-underline transition-colors ${tab === t.key ? "font-semibold text-ink border-b-[3px] border-red" : "font-normal text-ink-3 border-b-2 border-transparent"}`}
           >
             {t.label}
           </Link>
         ))}
-      </div>
+      </nav>
 
       {/* Two-column layout */}
       <div className="sidebar-grid gap-12" >
@@ -91,7 +93,7 @@ export default async function ForumFeedPage({
             <>
               {communities.length === 0 ? (
                 <div className="bg-paper py-24 px-12 text-center flex flex-col items-center gap-6 border-ink">
-                  <div className="w-[56px] h-[56px] bg-red-soft flex items-center justify-center">
+                  <div aria-hidden="true" className="w-[56px] h-[56px] bg-red-soft flex items-center justify-center">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
                     </svg>
@@ -103,11 +105,12 @@ export default async function ForumFeedPage({
                   </Link>
                 </div>
               ) : (
+                /* gridTemplateColumns is responsive — repeat(auto-fill) has no static Tailwind equivalent */
                 <div className="grid gap-6" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))" }}>
                   {communities.map((c) => (
                     <Link
                       key={c.communityId}
-                      href={`/forum/${c.slug ?? c.name}`}
+                      href={`/forum/g/${c.slug ?? c.name}`}
                       className="no-underline"
                     >
                       <div className="card-hover bg-paper p-8 shadow-card cursor-pointer border-ink">
@@ -125,7 +128,7 @@ export default async function ForumFeedPage({
                           </div>
                         </div>
                         {c.description && (
-                          <p className="text-base text-ink-2 overflow-hidden" style={{ display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>
+                          <p className="text-base text-ink-2 line-clamp-2">
                             {c.description}
                           </p>
                         )}
@@ -138,78 +141,93 @@ export default async function ForumFeedPage({
           ) : threads.length === 0 ? (
             <div className="bg-paper py-24 px-12 text-center flex flex-col items-center gap-6 border-ink">
               <div className="w-[56px] h-[56px] bg-red-soft flex items-center justify-center">
-                <span style={{ color: "var(--ink)" }}><Icon name="forum" size={24} strokeWidth={2} /></span>
+                <span className="text-ink"><Icon name="forum" size={24} strokeWidth={2} /></span>
               </div>
               <p className="font-serif font-bold text-md text-ink">No threads yet</p>
               <p className="text-base text-ink-3">Join a community and start a discussion</p>
             </div>
           ) : (
-            threads.map((thread) => (
-              <div
-                key={thread.threadId}
-                className="bg-paper py-[14px] px-[16px] shadow-card flex gap-6 items-start border-ink"
-              >
-                {/* Vote column */}
-                <VoteButtons
-                  threadId={thread.threadId}
-                  targetType={0}
-                  targetId={thread.threadId}
-                  initialScore={thread.voteScore ?? 0}
-                />
-
-                {/* Thread content */}
-                <div className="flex-1 min-w-0">
-                  {/* Meta row */}
-                  <div className="flex items-center gap-3 flex-wrap mb-2">
-                    <span className="text-sm text-ink-3">
-                      {thread.authorDisplayName ?? "Anonymous"}
-                    </span>
-                    <span className="text-sm text-ink-3">·</span>
-                    <span className="text-sm text-ink-3">
-                      {timeAgo(thread.createdAt)}
-                    </span>
-                  </div>
-
-                  {/* Title */}
-                  <Link
-                    href={`/forum/${thread.communityId}/threads/${thread.threadId}`}
-                    className="no-underline"
-                  >
-                    <p 
-                      className="row-hover font-serif font-bold text-md text-ink leading-[1.4] mb-4"
+            <ol className="list-none m-0 p-0 flex flex-col gap-4" aria-label="Forum threads">
+              {threads.map((thread) => {
+                const communityHref = `/forum/g/${thread.communitySlug ?? thread.communityId}`;
+                const threadHref = `${communityHref}/threads/${thread.threadId}`;
+                return (
+                  <li key={thread.threadId}>
+                    <article
+                      className="bg-paper py-[14px] px-[16px] shadow-card flex gap-6 items-start border-ink"
+                      aria-label={thread.title}
                     >
-                      {thread.title}
-                    </p>
-                  </Link>
+                      {/* Vote column */}
+                      <VoteButtons
+                        threadId={thread.threadId}
+                        targetType={0}
+                        targetId={thread.threadId}
+                        initialScore={thread.voteScore ?? 0}
+                      />
 
-                  {/* Actions row */}
-                  <div className="flex gap-2 items-center">
-                    <Link
-                      href={`/forum/${thread.communityId}/threads/${thread.threadId}`}
-                      
-                      className="row-hover flex items-center gap-2 py-2 px-5 text-base text-ink-3 no-underline font-medium"
-                    >
-                      <Icon name="forum" size={13} strokeWidth={2} />
-                      {thread.commentCount ?? 0} comments
-                    </Link>
-                    <ThreadActions
-                      threadId={thread.threadId}
-                      threadUrl={`${process.env.NEXT_PUBLIC_BASE_URL ?? ""}/communities/${thread.communitySlug ?? thread.communityId}/threads/${thread.threadId}`}
-                    />
-                  </div>
-                </div>
-              </div>
-            ))
+                      {/* Thread content */}
+                      <div className="flex-1 min-w-0">
+                        {/* Meta row */}
+                        <div className="flex items-center gap-3 flex-wrap mb-2">
+                          {thread.communityName && (
+                            <>
+                              <Link href={communityHref} className="text-sm text-red font-medium no-underline hover:underline">
+                                g/{thread.communityName}
+                              </Link>
+                              <span aria-hidden="true" className="text-sm text-ink-3">·</span>
+                            </>
+                          )}
+                          <span className="text-sm text-ink-3">
+                            {thread.authorDisplayName ?? "Anonymous"}
+                          </span>
+                          <span aria-hidden="true" className="text-sm text-ink-3">·</span>
+                          <time dateTime={thread.createdAt} className="text-sm text-ink-3">
+                            {timeAgo(thread.createdAt)}
+                          </time>
+                        </div>
+
+                        {/* Title */}
+                        <h3 className="font-serif font-bold text-md text-ink leading-[1.4] mb-4 m-0">
+                          <Link
+                            href={threadHref}
+                            className="row-hover no-underline text-ink"
+                          >
+                            {thread.title}
+                          </Link>
+                        </h3>
+
+                        {/* Actions row */}
+                        <div className="flex gap-2 items-center">
+                          <Link
+                            href={threadHref}
+                            aria-label={`${thread.commentCount ?? 0} comments on "${thread.title}"`}
+                            className="row-hover flex items-center gap-2 py-2 px-5 text-base text-ink-3 no-underline font-medium"
+                          >
+                            <Icon name="forum" size={13} strokeWidth={2} aria-hidden />
+                            <span aria-hidden="true">{thread.commentCount ?? 0} comments</span>
+                          </Link>
+                          <ThreadActions
+                            threadId={thread.threadId}
+                            threadUrl={`${process.env.NEXT_PUBLIC_BASE_URL ?? ""}${threadHref}`}
+                            showReply={false}
+                          />
+                        </div>
+                      </div>
+                    </article>
+                  </li>
+                );
+              })}
+            </ol>
           )}
         </div>
 
         {/* Sidebar */}
-        <div className="flex flex-col gap-8">
+        <aside className="flex flex-col gap-8" aria-label="Forum sidebar">
           {/* Your communities */}
-          <div className="bg-paper p-8 shadow-stamp border-ink">
-            <p className="text-sm font-bold text-ink-3 uppercase tracking-[0.1em] mb-6">
+          <nav aria-label="Your communities" className="bg-paper p-8 shadow-stamp border-ink">
+            <h2 className="text-sm font-bold text-ink-3 uppercase tracking-[0.1em] mb-6">
               Your Communities
-            </p>
+            </h2>
             {myCommunities.length === 0 ? (
               <p className="text-base text-ink-3">
                 Join communities to see them here.
@@ -219,11 +237,10 @@ export default async function ForumFeedPage({
                 {myCommunities.map((c) => (
                   <Link
                     key={c.communityId}
-                    href={`/forum/${c.slug ?? c.name}`}
-                    
+                    href={`/forum/g/${c.slug ?? c.name}`}
                     className="row-hover flex items-center gap-4 no-underline py-3 px-4"
                   >
-                    <div className="w-12 h-12 bg-red-soft flex items-center justify-center text-sm font-bold text-red shrink-0">
+                    <div aria-hidden="true" className="w-12 h-12 bg-red-soft flex items-center justify-center text-sm font-bold text-red shrink-0">
                       {getInitials(c.name)}
                     </div>
                     <span className="text-base text-ink-2 font-medium">
@@ -239,13 +256,13 @@ export default async function ForumFeedPage({
             >
               Browse all communities →
             </Link>
-          </div>
+          </nav>
 
           {/* Forum rules */}
           <div className="bg-paper p-8 shadow-stamp border-ink">
-            <p className="text-sm font-bold text-ink-3 uppercase tracking-[0.1em] mb-6">
+            <h2 className="text-sm font-bold text-ink-3 uppercase tracking-[0.1em] mb-6">
               Forum Rules
-            </p>
+            </h2>
             <ol className="p-[0_0_0_16px] m-0 flex flex-col gap-3">
               {FORUM_RULES.map((rule) => (
                 <li key={rule} className="text-base text-ink-2 leading-[1.5]">
@@ -258,12 +275,12 @@ export default async function ForumFeedPage({
           {/* Create community CTA */}
           <Link
             href="/forum/new"
-            className="flex items-center justify-center gap-3 bg-red-soft py-5 px-8 text-base font-semibold text-red no-underline" style={{ border: "1.5px solid var(--red)", transition: "background 110ms" }}
+            className="flex items-center justify-center gap-3 bg-red-soft py-5 px-8 text-base font-semibold text-red no-underline [border:1.5px_solid_var(--red)] transition-[background] duration-[110ms]"
           >
-            <Icon name="plus" size={13} strokeWidth={2.5} />
+            <Icon name="plus" size={13} strokeWidth={2.5} aria-hidden />
             Create a Community
           </Link>
-        </div>
+        </aside>
       </div>
     </div>
   );

@@ -10,6 +10,7 @@ import { loginSchema, type LoginInput } from "@/schemas/auth";
 import { api, ApiError } from "@/lib/api-client";
 import { resendConfirmationEmail } from "@/lib/api/identity";
 import { Btn, Input, Alert } from "@/components/editorial";
+import { Icon } from "@/components/editorial/icon";
 import { identityKeys } from "@/lib/query-keys";
 
 interface LoginFormProps {
@@ -23,6 +24,7 @@ export function LoginForm({ from }: LoginFormProps) {
   const [unconfirmedEmail, setUnconfirmedEmail] = useState<string | null>(null);
   const [resendState, setResendState] = useState<"idle" | "sending" | "sent">("idle");
   const [showPw, setShowPw] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
   const {
     register,
@@ -60,18 +62,18 @@ export function LoginForm({ from }: LoginFormProps) {
   }
 
   return (
-    <div className="bg-paper-2 shadow-stamp p-16 border-ink">
-      <div className="mb-[28px]">
-        <h1 className="font-serif italic font-normal text-3xl tracking-[-0.025em] text-ink mb-3">
-          Welcome back<span className="text-red">.</span>
-        </h1>
-        <p className="font-mono text-sm text-ink-3 uppercase tracking-wide">
-          Sign in to your account
-        </p>
-      </div>
+    <div className="ed-auth-card">
+      <h1 className="ed-h1">Sign <em>in</em></h1>
+      <p className="ed-hint mt-2 mb-6">
+        New here?{" "}
+        <Link href="/register" className="text-red font-semibold">Create an account →</Link>
+      </p>
+      <p className="ed-label-muted mb-8 leading-relaxed">
+        Access your household dashboard, forum, and finance tools — all in one place.
+      </p>
 
       {/* OAuth buttons */}
-      <div className="flex flex-col gap-5 mb-10">
+      <div className="grid grid-cols-2 gap-3 mb-8">
         <Btn
           variant="secondary"
           fullWidth
@@ -82,7 +84,7 @@ export function LoginForm({ from }: LoginFormProps) {
             </svg>
           }
         >
-          Continue with GitHub
+          GitHub
         </Btn>
         <Btn
           variant="secondary"
@@ -97,17 +99,17 @@ export function LoginForm({ from }: LoginFormProps) {
             </svg>
           }
         >
-          Continue with Google
+          Google
         </Btn>
       </div>
 
-      <div className="flex items-center gap-6 mb-2">
-        <div className="flex-1" style={{ height: "1.5px", background: "var(--ink-4)" }} />
-        <span className="font-mono text-sm text-ink-3 uppercase tracking-[0.2em]">or</span>
-        <div className="flex-1" style={{ height: "1.5px", background: "var(--ink-4)" }} />
+      <div className="flex items-center gap-6 mb-8">
+        <div className="flex-1 h-px bg-ink-4" />
+        <span className="font-mono text-xs text-ink-3 uppercase tracking-[0.2em]">or with email</span>
+        <div className="flex-1 h-px bg-ink-4" />
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-8 mt-8">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
         {serverError && <Alert variant="danger">{serverError}</Alert>}
         {unconfirmedEmail && (
           <Alert variant="warning" title="Email not confirmed">
@@ -121,7 +123,6 @@ export function LoginForm({ from }: LoginFormProps) {
                   onClick={handleResend}
                   disabled={resendState === "sending"}
                   className="underline font-semibold text-ink cursor-pointer bg-transparent border-none p-0"
-                  style={{ fontSize: "inherit" }}
                 >
                   {resendState === "sending" ? "Sending…" : "Resend confirmation email"}
                 </button>
@@ -134,6 +135,7 @@ export function LoginForm({ from }: LoginFormProps) {
           type="email"
           label="Email address"
           placeholder="you@example.com"
+          autoComplete="email"
           error={errors.email?.message}
           {...register("email")}
         />
@@ -144,22 +146,15 @@ export function LoginForm({ from }: LoginFormProps) {
               type={showPw ? "text" : "password"}
               label="Password"
               placeholder="••••••••"
+              autoComplete="current-password"
               error={errors.password?.message}
               {...register("password")}
             />
-            <Link
-              href="/forgot-password"
-              className="absolute right-0 top-0 font-mono text-ink-3 underline"
-              style={{ fontSize: "0.7rem", letterSpacing: "0.06em" }}
-            >
-              Forgot password?
-            </Link>
             <button
               type="button"
               onClick={() => setShowPw((s) => !s)}
               aria-label={showPw ? "Hide password" : "Show password"}
-              className="absolute right-0 bottom-[7px] bg-transparent cursor-pointer text-ink-3 p-0"
-              style={{ border: "none", lineHeight: 1 }}
+              className="absolute right-0 bottom-[7px] bg-transparent cursor-pointer text-ink-3 p-0 border-none leading-none"
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75}>
                 {showPw
@@ -169,6 +164,19 @@ export function LoginForm({ from }: LoginFormProps) {
               </svg>
             </button>
           </div>
+          <div className="flex items-center justify-between gap-4 mt-1">
+            <label htmlFor="remember-me" className="flex items-center gap-2 cursor-pointer select-none">
+              <input
+                id="remember-me"
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                className="w-4 h-4 accent-[color:var(--ink)] cursor-pointer"
+              />
+              <span className="ed-label-muted">Remember me</span>
+            </label>
+            <Link href="/forgot-password" className="ed-label-muted hover:text-red">Forgot password?</Link>
+          </div>
         </div>
 
         <Btn
@@ -176,19 +184,22 @@ export function LoginForm({ from }: LoginFormProps) {
           disabled={isSubmitting}
           loading={isSubmitting}
           variant="primary"
+          size="lg"
           fullWidth
           className="mt-2"
+          iconRight={<Icon name="arrowRight" size={16} />}
         >
           {isSubmitting ? "Signing in…" : "Sign in"}
         </Btn>
       </form>
 
-      <p className="text-center text-base text-ink-3 mt-12">
-        Don&apos;t have an account?{" "}
-        <Link href="/register" className="text-ink font-semibold underline">
-          Create one
-        </Link>
-      </p>
+      <div className="mt-8 p-4 border-[1.5px] border-[color:var(--rule-soft)]">
+        <p className="ed-hint">
+          Skip signup?{" "}
+          <Link href="/demo" className="text-red font-semibold">Try the demo →</Link>{" "}
+          — no account required, three seconds in.
+        </p>
+      </div>
     </div>
   );
 }

@@ -20,6 +20,7 @@ export function DangerZone({ householdId, members }: DangerZoneProps) {
 
   return (
     <section className="bg-paper p-12 shadow-card flex flex-col gap-6" style={{ border: "1px solid var(--danger)" }}>
+      {/* border uses --danger token, not a static Tailwind color — kept as dynamic style */}
       <p className="text-sm font-bold text-red uppercase tracking-[0.1em]">
         Danger Zone
       </p>
@@ -28,17 +29,18 @@ export function DangerZone({ householdId, members }: DangerZoneProps) {
           To delete this household, first remove all other members or transfer ownership to someone else.
         </p>
       ) : showDeleteConfirm ? (
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-5" role="alert">
           <p className="text-base text-red font-semibold">
-            Are you sure? This cannot be undone.
+            Are you sure? Deleting this household is permanent and cannot be undone.
           </p>
           <div className="flex gap-5">
             <button
               onClick={() => deleteHousehold.mutate(householdId, { onSuccess: () => router.push("/household") })}
               disabled={deleteHousehold.isPending}
-              className="bg-red text-white py-4 px-10 text-base font-semibold font-body" style={{ border: "none", cursor: deleteHousehold.isPending ? "not-allowed" : "pointer", opacity: deleteHousehold.isPending ? 0.6 : 1 }}
+              aria-label="Confirm: permanently delete this household"
+              className={`bg-red text-white py-4 px-10 text-base font-semibold font-body border-none ${deleteHousehold.isPending ? "cursor-not-allowed opacity-60" : "cursor-pointer"}`}
             >
-              {deleteHousehold.isPending ? "Deleting…" : "Yes, Delete Household"}
+              {deleteHousehold.isPending ? "Deleting…" : "Yes, delete household"}
             </button>
             <button
               onClick={() => setShowDeleteConfirm(false)}
@@ -48,7 +50,7 @@ export function DangerZone({ householdId, members }: DangerZoneProps) {
             </button>
           </div>
           {deleteHousehold.isError && (
-            <p className="text-base text-red">
+            <p role="alert" className="text-base text-red">
               {deleteHousehold.error instanceof Error ? deleteHousehold.error.message : "Failed to delete household."}
             </p>
           )}
@@ -58,6 +60,7 @@ export function DangerZone({ householdId, members }: DangerZoneProps) {
           <p className="text-base text-ink-2">
             You are the only member. Deleting this household is permanent and cannot be undone.
           </p>
+          {/* border uses --danger token — kept as dynamic style */}
           <button
             onClick={() => setShowDeleteConfirm(true)}
             className="bg-red-soft text-red py-4 px-10 text-base font-medium cursor-pointer self-start font-body" style={{ border: "1px solid var(--danger)" }}

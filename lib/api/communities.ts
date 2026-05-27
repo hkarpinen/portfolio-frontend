@@ -52,11 +52,13 @@ export const fetchCommunitiesServer = (
   cookieHeader?: string,
   page = 1,
   pageSize = 20,
-) =>
-  serverFetch<CommunityPage>(
-    `/api/forum/communities?page=${page}&pageSize=${pageSize}`,
-    cookieHeader,
-  );
+  /** When true, returns only communities the authenticated caller has
+   *  joined. Anonymous callers always get an empty list with mine=true. */
+  mine = false,
+) => {
+  const qs = `page=${page}&pageSize=${pageSize}${mine ? "&membership=mine" : ""}`;
+  return serverFetch<CommunityPage>(`/api/forum/communities?${qs}`, cookieHeader);
+};
 
 export const fetchCommunityBySlugServer = (
   slug: string,

@@ -1,12 +1,20 @@
 import React from "react";
-import { Icon, type IconName } from "./icon";
+
+/**
+ * <SectionHeader> — editorial page header (redesign)
+ *
+ * All visual rules in /app/globals.css under `.ed-section-head*` /
+ * `.ed-kicker` / `.ed-h1` / `.ed-deck` / `.ed-breadcrumb*` classes.
+ */
 
 interface SectionHeaderProps {
   kicker?: string;
   breadcrumb?: { label: string; href?: string; onClick?: () => void }[];
+  /** Supports inline `<em>` for the "Your <em>households</em>" pattern. */
   title: string;
   subtitle?: string;
   action?: React.ReactNode;
+  id?: string;
 }
 
 export function SectionHeader({
@@ -15,90 +23,48 @@ export function SectionHeader({
   title,
   subtitle,
   action,
+  id = "page-title",
 }: SectionHeaderProps) {
   return (
-    <div
-      className="flex flex-col gap-2 mb-[26px] pb-[16px]"
-      style={{ borderBottom: "1.5px solid var(--ink)" }}
-    >
-      {/* Kicker */}
-      {kicker && (
-        <p
-          className="font-mono uppercase text-red"
-          style={{ fontSize: "0.6rem", letterSpacing: "0.26em" }}
-        >
-          {kicker}
-        </p>
-      )}
+    <header className="ed-section-head">
+      {kicker && <p className="ed-kicker">{kicker}</p>}
 
-      {/* Breadcrumb */}
       {breadcrumb && breadcrumb.length > 0 && (
-        <div
-          className="flex items-center gap-2 font-mono uppercase"
-          style={{ fontSize: "0.656rem", letterSpacing: "0.2em" }}
-        >
-          {breadcrumb.map((item, i) => (
-            <React.Fragment key={i}>
-              {i > 0 && (
-                <span style={{ color: "var(--ink-3)" }}>/</span>
-              )}
-              {item.href || item.onClick ? (
-                <button
-                  onClick={item.onClick}
-                  className="bg-transparent border-none cursor-pointer p-0"
-                  style={{
-                    color: i === breadcrumb.length - 1 ? "var(--ink)" : "var(--ink-3)",
-                    fontWeight: i === breadcrumb.length - 1 ? 700 : 400,
-                    borderBottom: "1px solid transparent",
-                    fontFamily: "var(--ff-mono)",
-                    fontSize: "0.656rem",
-                    letterSpacing: "0.2em",
-                    textTransform: "uppercase",
-                  }}
-                >
-                  {item.label}
-                </button>
-              ) : (
-                <span
-                  style={{
-                    color: i === breadcrumb.length - 1 ? "var(--ink)" : "var(--ink-3)",
-                    fontWeight: i === breadcrumb.length - 1 ? 700 : 400,
-                  }}
-                >
-                  {item.label}
-                </span>
-              )}
-            </React.Fragment>
-          ))}
-        </div>
+        <nav aria-label="Breadcrumb" className="ed-breadcrumb">
+          {breadcrumb.map((item, i) => {
+            const last = i === breadcrumb.length - 1;
+            return (
+              <React.Fragment key={i}>
+                {i > 0 && <span className="ed-breadcrumb-sep">/</span>}
+                {(item.href || item.onClick) && !last ? (
+                  <a
+                    href={item.href}
+                    onClick={item.onClick ? (e => { e.preventDefault(); item.onClick!(); }) : undefined}
+                    className="ed-breadcrumb-link"
+                  >
+                    {item.label}
+                  </a>
+                ) : (
+                  <span aria-current={last ? "page" : undefined} className="ed-breadcrumb-current">
+                    {item.label}
+                  </span>
+                )}
+              </React.Fragment>
+            );
+          })}
+        </nav>
       )}
 
-      {/* Title row */}
-      <div className="flex items-start justify-between gap-6 flex-wrap">
-        <div>
+      <div className="ed-section-head-row">
+        <div className="flex-1 min-w-0">
           <h1
-            className="font-serif italic font-normal text-ink"
-            style={{
-              fontSize: "clamp(2.125rem, 4.6vw, 3.375rem)",
-              lineHeight: 0.95,
-              letterSpacing: "-0.02em",
-            }}
-          >
-            {title}
-          </h1>
-          {subtitle && (
-            <p
-              className="font-body mt-[10px]"
-              style={{
-                fontSize: "0.938rem",
-                color: "var(--ink-2)",
-                lineHeight: 1.5,
-                maxWidth: 640,
-              }}
-            >
-              {subtitle}
-            </p>
-          )}
+            id={id}
+            className="ed-h1"
+            // `title` may contain inline <em> for the editorial accent pattern.
+            // Source: page-code only; never user-input.
+            dangerouslySetInnerHTML={{ __html: title }}
+          />
+          {subtitle && <p className="ed-deck max-w-[60ch] mt-3">{subtitle}</p>}
         </div>
         {action && (
           <div className="flex items-center gap-3 shrink-0 flex-wrap">
@@ -106,6 +72,6 @@ export function SectionHeader({
           </div>
         )}
       </div>
-    </div>
+    </header>
   );
 }

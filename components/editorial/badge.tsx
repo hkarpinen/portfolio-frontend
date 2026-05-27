@@ -1,5 +1,11 @@
 import React from "react";
 
+/**
+ * <Badge> — editorial badge / pill (redesign)
+ *
+ * All visual rules in /app/globals.css under `.ed-badge*` classes.
+ */
+
 type BadgeVariant = "default" | "primary" | "success" | "warning" | "danger" | "violet";
 type BadgeSize = "sm" | "md";
 
@@ -11,18 +17,18 @@ interface BadgeProps {
   className?: string;
 }
 
-const VARIANT_STYLES: Record<BadgeVariant, React.CSSProperties> = {
-  default:  { background: "transparent", color: "var(--ink-2)", border: "1px solid var(--ink-3)" },
-  primary:  { background: "var(--ink)",  color: "var(--paper)", border: "1px solid var(--ink)" },
-  success:  { background: "var(--green)", color: "var(--paper)", border: "1px solid var(--green)" },
-  warning:  { background: "transparent", color: "var(--red)",    border: "1px solid var(--red)" },
-  danger:   { background: "var(--red)",  color: "var(--paper)", border: "1px solid var(--red)" },
-  violet:   { background: "transparent", color: "var(--ink)",    border: "1px solid var(--ink)" },
+const VARIANT_CLASS: Record<BadgeVariant, string> = {
+  default: "ed-badge-default",
+  primary: "ed-badge-primary",
+  success: "ed-badge-success",
+  warning: "ed-badge-warning",
+  danger:  "ed-badge-danger",
+  violet:  "ed-badge-violet",
 };
 
-const SIZE_STYLES: Record<BadgeSize, React.CSSProperties> = {
-  sm: { padding: "1px 6px",  fontSize: "0.525rem" },
-  md: { padding: "2px 8px",  fontSize: "0.594rem" },
+const SIZE_CLASS: Record<BadgeSize, string> = {
+  sm: "ed-badge-sm",
+  md: "ed-badge-md",
 };
 
 export function Badge({
@@ -32,29 +38,12 @@ export function Badge({
   children,
   className = "",
 }: BadgeProps) {
+  const cls = ["ed-badge", SIZE_CLASS[size], VARIANT_CLASS[variant], className]
+    .filter(Boolean)
+    .join(" ");
   return (
-    <span
-      className={`font-mono uppercase inline-flex items-center gap-[4px] shrink-0 ${className}`}
-      style={{
-        fontWeight: 500,
-        letterSpacing: "0.14em",
-        lineHeight: 1,
-        whiteSpace: "nowrap",
-        ...VARIANT_STYLES[variant],
-        ...SIZE_STYLES[size],
-      }}
-    >
-      {dot && (
-        <span
-          style={{
-            width: 5,
-            height: 5,
-            background: "currentColor",
-            display: "inline-block",
-            flexShrink: 0,
-          }}
-        />
-      )}
+    <span className={cls}>
+      {dot && <span aria-hidden="true" className="ed-badge-dot" />}
       {children}
     </span>
   );

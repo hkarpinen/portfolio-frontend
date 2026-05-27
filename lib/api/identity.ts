@@ -23,6 +23,26 @@ export const resetPassword = (userId: string, token: string, newPassword: string
 export const startDemo = (captchaToken: string) =>
   api.post<{ demoExpiresAt: string }>("/api/identity/demo/start", { captchaToken });
 
+// ─── Sessions ─────────────────────────────────────────────────────────────────
+
+export interface SessionItem {
+  sessionId: string;
+  userAgent: string | null;
+  ipAddress: string | null;
+  location: string | null;
+  lastActiveAt: string;
+  isCurrent: boolean;
+}
+
+export const fetchSessions = () =>
+  api.get<{ sessions: SessionItem[] }>("/api/identity/sessions");
+
+export const signOutSession = (sessionId: string) =>
+  api.post<void>(`/api/identity/sessions/${sessionId}/revoke`, {});
+
+export const signOutAllOtherSessions = () =>
+  api.post<void>("/api/identity/sessions/revoke-others", {});
+
 // ─── Admin ────────────────────────────────────────────────────────────────────
 
 

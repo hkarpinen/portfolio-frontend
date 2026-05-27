@@ -34,21 +34,30 @@ export default function SearchPage() {
 
       {/* Search input */}
       <div className="relative">
-        <span className="absolute left-[14px] top-[50%] pointer-events-none shrink-0" style={{ transform: "translateY(-50%)", color: "var(--text-3)", display: "inline-flex" }}>
+        <label htmlFor="forum-search" className="sr-only">Search threads and communities</label>
+        <span aria-hidden="true" className="absolute left-[14px] top-[50%] -translate-y-1/2 pointer-events-none shrink-0 text-ink-3 inline-flex">
           <Icon name="search" size={16} strokeWidth={2} />
         </span>
         <input
-          type="text"
+          id="forum-search"
+          type="search"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           autoFocus
+          aria-busy={loading}
           placeholder="Search threads and communities…"
-          className="w-full py-6 px-8 pl-20 bg-paper text-ink text-md outline-none shadow-card border-ink"
-          style={{ paddingRight: loading ? "44px" : "16px", boxSizing: "border-box" }}
+          className={`w-full py-6 px-8 pl-20 bg-paper text-ink text-md outline-none shadow-card border-ink box-border ${loading ? "pr-11" : "pr-4"}`}
         />
         {loading && (
-          <div className="absolute right-[14px] top-[50%] w-8 h-8 rounded-full" style={{ transform: "translateY(-50%)", border: "2px solid var(--ink-4)", borderTopColor: "var(--red)", animation: "spin 0.7s linear infinite" }} />
+          <div aria-hidden="true" className="absolute right-[14px] top-[50%] w-8 h-8 rounded-full -translate-y-1/2 border-2 border-ink-4 border-t-red animate-spin" />
         )}
+      </div>
+
+      {/* Live region announces result count to screen readers */}
+      <div aria-live="polite" aria-atomic="true" className="sr-only">
+        {loading && "Searching…"}
+        {!loading && query && results.length > 0 && `${results.length} result${results.length !== 1 ? "s" : ""} for ${query}`}
+        {!loading && query && results.length === 0 && `No results for ${query}`}
       </div>
 
       {!input.trim() && (
@@ -56,14 +65,14 @@ export default function SearchPage() {
       )}
 
       {query && !loading && results.length > 0 && (
-        <p className="text-base text-ink-3">
+        <p className="text-base text-ink-3" aria-hidden="true">
           {results.length} result{results.length !== 1 ? "s" : ""} for &ldquo;{query}&rdquo;
         </p>
       )}
 
       {query && !loading && results.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-24 px-12 bg-paper shadow-card gap-4 border-ink">
-          <div className="w-[56px] h-[56px] bg-red-soft flex items-center justify-center">
+        <div className="flex flex-col items-center justify-center py-24 px-12 bg-paper shadow-card gap-4 border-ink" role="status">
+          <div aria-hidden="true" className="w-[56px] h-[56px] bg-red-soft flex items-center justify-center">
             <Icon name="search" size={24} strokeWidth={1.75} />
           </div>
           <p className="font-serif font-bold text-md text-ink">No results</p>
@@ -76,8 +85,8 @@ export default function SearchPage() {
           {results.map((result, i) => {
             const href =
               result.itemType === "community"
-                ? `/forum/${result.slug}`
-                : `/forum/${result.communitySlug}/threads/${result.itemId}`;
+                ? `/forum/g/${result.slug}`
+                : `/forum/g/${result.communitySlug}/threads/${result.itemId}`;
             return (
               <SearchResultRow key={result.itemId} result={result} href={href} isLast={i === results.length - 1} />
             );
@@ -94,16 +103,10 @@ function SearchResultRow({ result, href, isLast }: { result: SearchResult; href:
   return (
     <Link
       href={href}
-      className="flex items-start gap-6 py-[14px] px-[18px] no-underline hover:bg-paper-2 transition-colors"
-      style={{ borderBottom: isLast ? "none" : "1.5px solid var(--ink)" }}
+      className={`flex items-start gap-6 py-[14px] px-[18px] no-underline hover:bg-paper-2 transition-colors${isLast ? "" : " border-ink-b"}`}
     >
       <span
-        className="shrink-0 mt-1 text-sm font-mono py-1 px-4 tracking-[0.04em]"
-        style={{
-          background: isCommunity ? "rgba(178,42,26,0.08)" : "var(--paper-3)",
-          color: isCommunity ? "var(--red)" : "var(--text-2)",
-          textTransform: "uppercase" as const,
-        }}
+        className={`shrink-0 mt-1 text-sm font-mono py-1 px-4 tracking-[0.04em] uppercase ${isCommunity ? "bg-red-soft text-red" : "bg-paper-3 text-ink-2"}`}
       >
         {result.itemType}
       </span>
@@ -112,10 +115,7 @@ function SearchResultRow({ result, href, isLast }: { result: SearchResult; href:
           {result.title}
         </p>
         {result.snippet && (
-          <p
-            className="text-base text-ink-3 mt-[6px] overflow-hidden"
-            style={{ display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}
-          >
+          <p className="text-base text-ink-3 mt-[6px] line-clamp-2">
             {result.snippet}
           </p>
         )}

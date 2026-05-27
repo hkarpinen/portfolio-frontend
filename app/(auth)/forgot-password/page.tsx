@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import Link from "next/link";
 import { forgotPassword } from "@/lib/api/identity";
 import { Btn, Input, Alert, Icon } from "@/components/editorial";
 
@@ -34,51 +33,45 @@ export default function ForgotPasswordPage() {
 
   if (submitted) {
     return (
-      <div className="bg-paper-2 shadow-stamp py-20 px-16 text-center border-ink">
-        <div className="w-[56px] h-[56px] bg-green-soft flex items-center justify-center" style={{ margin: "0 auto 20px", border: "1.5px solid var(--green)" }}>
-          <span style={{ color: "var(--green)" }}><Icon name="check" size={24} strokeWidth={2} /></span>
-        </div>
-        <h1 className="font-serif italic font-normal text-3xl tracking-[-0.025em] text-ink mb-4">Check your inbox<span className="text-red">.</span></h1>
-        <p className="text-base text-ink-3 leading-[1.6] mb-12">
+      <div className="ed-auth-card">
+        <h1 className="ed-h1">Check your <em>inbox</em></h1>
+        <p className="ed-deck mt-3 mb-8">
           If that email is registered, we&apos;ve sent a password reset link. Check your inbox and follow the instructions.
         </p>
-        <Btn href="/login" variant="secondary">Back to sign in</Btn>
+        <Btn href="/login" variant="secondary" size="lg">Back to sign in</Btn>
       </div>
     );
   }
 
   return (
-    <div className="bg-paper-2 shadow-stamp p-16 border-ink">
-      <div className="mb-[28px]">
-        <h1 className="font-serif italic font-normal text-3xl tracking-[-0.025em] text-ink mb-3">
-          Forgot password<span className="text-red">?</span>
-        </h1>
-        <p className="font-mono text-sm text-ink-3 uppercase tracking-wide">
-          We&apos;ll send you a reset link
-        </p>
-      </div>
+    <div className="ed-auth-card">
+      <h1 className="ed-h1">Forgot <em>password?</em></h1>
+      <p className="ed-hint mt-2 mb-2">Enter your email and we&apos;ll send a reset link.</p>
+      <p className="ed-label-muted mb-8 leading-relaxed">
+        For your privacy, we won&apos;t confirm whether the address is registered.
+        Check your inbox — the link is valid for 24 hours.
+      </p>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-8">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
         {serverError && <Alert variant="danger">{serverError}</Alert>}
 
         <Input
           type="email"
           label="Email address"
-          placeholder="you@example.com"
+          placeholder="you@email.com"
+          autoComplete="email"
+          aria-describedby="forgot-pw-hint"
           error={errors.email?.message}
           {...register("email")}
         />
 
-        <Btn type="submit" disabled={isSubmitting} loading={isSubmitting} variant="primary" fullWidth className="mt-2">
-          {isSubmitting ? "Sending…" : "Send reset link"}
-        </Btn>
+        <div className="flex flex-wrap gap-3">
+          <Btn type="submit" disabled={isSubmitting} loading={isSubmitting} variant="primary" size="lg" iconRight={<Icon name="arrowRight" size={16} />}>
+            {isSubmitting ? "Sending…" : "Send reset link"}
+          </Btn>
+          <Btn href="/login" variant="secondary" size="lg">Back to sign in</Btn>
+        </div>
       </form>
-
-      <p className="text-center text-base text-ink-3 mt-12">
-        <Link href="/login" className="text-ink font-semibold underline">
-          Back to sign in
-        </Link>
-      </p>
     </div>
   );
 }

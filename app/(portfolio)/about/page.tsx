@@ -1,199 +1,152 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Icon } from "@/components/editorial/icon";
-import type { IconName } from "@/components/editorial/icon";
+import { Icon, type IconName } from "@/components/editorial/icon";
+import { Btn, Card, Badge, EditorialPageHead } from "@/components/editorial";
 
+/**
+ * <AboutPage> — portfolio bio + selected work + skills (redesign)
+ *
+ * Matches reference/Portfolio_Redesign.html `#/about`: a page-head with one
+ * primary action, a two-column split (selected work grid + aside), and a
+ * dark "Currently" availability card. Real portfolio content; no inline styles.
+ */
 
 export const metadata: Metadata = {
-  title: "About",
+  title: "About — Hank Karpinen",
+  description: "Full-stack engineer with 4+ years experience. AWS certified. Seven microservices, thirty screens, hand-rolled auth. Open to senior & staff roles.",
 };
 
-const PROJECTS: { icon: IconName; title: string; description: string; tech: string[]; href: string }[] = [
+const PROJECTS: { icon: IconName; title: string; description: string; tech: string[]; href: string; cta: string }[] = [
   {
-    icon: "home",
+    icon: "household",
     title: "Household",
-    description: "Household management service. Create shared households, assign chores, manage a shared calendar, and track who's contributing what. Built on the Household microservice (ASP.NET Core, EF Core).",
-    tech: ["ASP.NET Core", "C#", "EF Core", "PostgreSQL", "MassTransit", "React Query", "Docker"],
+    description: "Household management service. Create shared households, assign chores, manage a shared calendar, and track who's contributing what.",
+    tech: ["ASP.NET Core", "EF Core", "Postgres", "MassTransit"],
     href: "/household",
+    cta: "Open Household",
   },
   {
     icon: "dollar",
     title: "Finance",
-    description: "Personal finance engine backed by its own microservice. Log expenses, split costs across household members, track income sources, and connect bank accounts via the Finance API.",
-    tech: ["ASP.NET Core", "C#", "EF Core", "PostgreSQL", "RabbitMQ", "MassTransit", "React Query", "Docker"],
+    description: "Personal finance engine in its own microservice. Log expenses, split costs across a household, track income sources.",
+    tech: ["ASP.NET Core", "RabbitMQ", "Postgres", "React Query"],
     href: "/expenses",
+    cta: "Open Finance",
   },
   {
     icon: "forum",
     title: "Community Forum",
-    description: "A Reddit-inspired forum platform with communities, threaded comments, voting, and moderation tools.",
-    tech: ["ASP.NET Core", "C#", "EF Core", "PostgreSQL", "SSE", "JWT", "MassTransit", "React Query"],
+    description: "Threaded forum platform with communities, voting, and moderation tools.",
+    tech: ["ASP.NET Core", "SSE", "JWT", "MassTransit"],
     href: "/forum",
+    cta: "Open Forum",
   },
   {
     icon: "weather",
     title: "Geography & Weather",
-    description: "Live weather data for any city via OpenWeatherMap, served through a dedicated Geography microservice. Search by city, switch between °F and °C, and overlay cloud, precipitation, wind, pressure, and temperature layers on an interactive Leaflet map.",
-    tech: ["ASP.NET Core", "C#", "OpenWeatherMap API", "Leaflet", "React Query", "Docker"],
+    description: "Live weather via OpenWeather. City search, °F/°C toggle, interactive Leaflet map overlays.",
+    tech: ["ASP.NET Core", "OpenWeather", "Leaflet"],
     href: "/weather",
+    cta: "Open Weather",
   },
   {
     icon: "math",
-    title: "Math & Unit Conversion",
-    description: "Unit conversion across length, weight, temperature, volume, speed, area, and data. A pure domain engine in the Math microservice handles all computation — no rounding surprises, no external dependencies.",
-    tech: ["ASP.NET Core", "C#", "Domain-Driven Design", "React Query"],
+    title: "Unit Conversion",
+    description: "Pure domain engine for length, mass, temperature, volume, speed, area, and data.",
+    tech: ["ASP.NET Core", "DDD", "React Query"],
     href: "/convert",
+    cta: "Open Convert",
   },
   {
     icon: "palette",
-    title: "Portfolio Platform",
-    description: "This very application — a unified frontend combining portfolio showcase, community forum, household management, and personal finance across seven independent microservices.",
-    tech: ["Next.js 14", "TypeScript", "Tailwind CSS", "Nginx", "Docker Compose"],
-    href: "/about",
+    title: "Stack & Gazette (this app)",
+    description: "A unified frontend over seven independent microservices behind a single Nginx gateway. The UI you're reading now.",
+    tech: ["Next.js 14", "TypeScript", "Tailwind", "Docker"],
+    href: "/demo",
+    cta: "Try the demo",
   },
 ];
 
-const SKILLS = [
-  { label: "Frontend", items: ["Next.js", "React", "TypeScript", "Tailwind CSS", "HTML/CSS"] },
-  { label: "Backend", items: [".NET / C#", "Python", "Node.js", "REST APIs", "Microservices"] },
-  { label: "Cloud & DevOps", items: ["AWS", "Azure", "Docker", "CI/CD", "Git"] },
+const SKILLS: { label: string; items: string[] }[] = [
+  { label: "Backend", items: [".NET / C#", "ASP.NET Core", "EF Core", "Postgres", "RabbitMQ", "MassTransit"] },
+  { label: "Frontend", items: ["Next.js", "TypeScript", "React Query", "Tailwind", "Radix", "React Hook Form"] },
+  { label: "Cloud & DevOps", items: ["AWS", "Azure", "Docker", "Nginx", "GitHub Actions", "CI/CD"] },
   { label: "Data", items: ["PostgreSQL", "SQL", "Oracle", "MongoDB", "Entity Framework"] },
-];
-
-const FACTS = [
-  { value: "07", label: "Modules shipped" },
-  { value: "30+", label: "Screens designed" },
-  { value: "07", label: "Services standing" },
+  { label: "Also", items: ["Python", "Node.js", "REST APIs", "Microservices"] },
 ];
 
 export default function AboutPage() {
   return (
-    <div className="flex flex-col gap-12">
-      {/* Hero banner */}
-      <div className="py-20 px-16 bg-paper-2 shadow-card border-ink">
-        <div className="flex items-center gap-12 flex-wrap">
-          {/* Avatar — square stamp */}
-          <div className="w-40 h-40 shrink-0 overflow-hidden" style={{ border: "2px solid var(--ink)" }}>
-            <img src="/hank_headshot.jpeg" alt="Hank Karpinen" className="w-full h-full object-cover" />
-          </div>
+    <div className="ed-about">
+      <EditorialPageHead
+        kicker="Portfolio · About"
+        title={`Hi, I'm <em>Hank.</em>`}
+        deck="Full-stack engineer based in Pullman, WA. I write the migrations, the auth flows, and the frontend — across seven microservices. AWS certified, 4+ years experience. Open to senior & staff roles."
+      />
 
-          {/* Info */}
-          <div className="flex-1">
-            <h1 className="font-serif italic font-normal text-3xl tracking-[-0.025em] text-ink mb-2">
-              Hank Karpinen<span className="text-red">.</span>
-            </h1>
-            <p className="font-mono text-sm text-ink-3 uppercase tracking-wide mb-8">
-              Full-Stack Engineer · AWS Certified · 4+ Years
-            </p>
+      <div className="flex justify-end -mt-2">
+        <Btn href="/contact" variant="primary" size="md" iconRight={<Icon name="arrowRight" size={16} />}>
+          Get in touch
+        </Btn>
+      </div>
 
-            {/* Action buttons */}
-            <div className="flex gap-4 flex-wrap">
-              <Link href="/contact" className="inline-flex items-center gap-3 py-[9px] px-[16px] bg-ink text-paper text-sm font-mono uppercase tracking-wider no-underline" style={{ letterSpacing: "0.18em" }}>
-                Contact me
-              </Link>
-              {[
-                { label: "CV", href: "/cv.pdf" },
-                { label: "GitHub", href: "https://github.com/hkarpinen" },
-                { label: "LinkedIn", href: "https://www.linkedin.com/in/hank-karpinen/" },
-              ].map(btn => (
-                <a key={btn.label} href={btn.href} target="_blank" rel="noopener noreferrer"
-                  className="inline-flex items-center py-[9px] px-[16px] bg-transparent text-ink text-sm font-mono uppercase tracking-wider no-underline border-ink" style={{letterSpacing: "0.18em" }}
-                >
-                  {btn.label}
-                </a>
-              ))}
-            </div>
-          </div>
+      <div className="ed-about-grid">
+        {/* Selected work */}
+        <section aria-labelledby="selected-work-heading" className="flex flex-col gap-5">
+          <h2 id="selected-work-heading" className="ed-h3">Selected <em>work</em></h2>
 
-          {/* Stats */}
-          <div className="flex gap-12 flex-wrap">
-            {FACTS.map(f => (
-              <div key={f.label} className="text-center">
-                <div className="font-serif font-extrabold text-2xl tracking-[-0.025em] text-ink leading-none">{f.value}</div>
-                <div className="text-sm text-ink-3 mt-2">{f.label}</div>
-              </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {PROJECTS.map(project => (
+              <Card key={project.title} muted className="flex flex-col gap-3">
+                <div className="flex items-center gap-3 min-w-0">
+                  <span className="ed-project-card-icon shrink-0" aria-hidden="true">
+                    <Icon name={project.icon} size={20} strokeWidth={1.5} />
+                  </span>
+                  <h3 className="ed-h4 min-w-0 break-words">{project.title}</h3>
+                </div>
+                <p className="ed-project-card-body">{project.description}</p>
+                <div className="flex flex-wrap gap-2" aria-label={`Technologies: ${project.tech.join(", ")}`}>
+                  {project.tech.map(t => (
+                    <Badge key={t} variant="default" size="sm">{t}</Badge>
+                  ))}
+                </div>
+                <Link href={project.href} className="ed-about-card-link">
+                  {project.cta} <Icon name="arrowRight" size={14} aria-hidden />
+                </Link>
+              </Card>
             ))}
           </div>
-        </div>
-      </div>
+        </section>
 
-      {/* Two-column content grid */}
-      <div className="grid gap-12 grid-cols-[1fr_280px] max-md:grid-cols-1">
-        {/* Projects */}
-        <div className="flex flex-col gap-8">
-          <h2 className="font-serif font-bold text-lg text-ink tracking-[-0.015em]">
-            Projects
-          </h2>
-
-          {PROJECTS.map(project => (
-            <Link
-              key={project.title}
-              href={project.href}
-              className="block bg-paper-2 p-10 no-underline border-ink"
-            >
-              <div className="flex items-start gap-[14px]">
-                <span className="shrink-0 flex items-center justify-center w-[28px]">
-                  <Icon name={project.icon} size={22} strokeWidth={1.5} />
-                </span>
-                <div>
-                  <h3 className="font-serif font-bold text-md text-ink mb-3">{project.title}</h3>
-                  <p className="text-base text-ink-2 leading-[1.6] mb-6">
-                    {project.description}
-                  </p>
-                  <div className="flex gap-3 flex-wrap">
-                    {project.tech.map(t => (
-                      <span key={t} className="inline-block py-[2px] px-[8px] bg-red-soft text-red font-mono" style={{ fontSize: "0.594rem", letterSpacing: "0.12em", border: "1px solid rgba(178,42,26,0.3)" }}>{t}</span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
-
-        {/* Sidebar: skills + facts */}
-        <div className="flex flex-col gap-8">
-          {/* Skills card */}
-          <div className="bg-paper p-10 shadow-card border-ink">
-            <h2 className="font-serif font-bold text-md text-ink mb-8">
-              Skills
-            </h2>
-            <div className="flex flex-col gap-8">
+        {/* Aside */}
+        <aside aria-label="Skills and availability" className="flex flex-col gap-6">
+          <Card>
+            <h3 className="ed-h4 mb-5">Skills</h3>
+            <dl className="flex flex-col gap-4">
               {SKILLS.map(group => (
                 <div key={group.label}>
-                  <p className="text-sm font-bold text-ink-3 uppercase tracking-[0.1em] mb-4">{group.label}</p>
-                  <div className="flex flex-wrap gap-3">
-                    {group.items.map(skill => (
-                      <span key={skill} className="py-[2px] px-[8px] bg-paper-3 text-ink-2 font-mono" style={{ fontSize: "0.594rem", letterSpacing: "0.12em", border: "1px solid var(--ink-4)" }}>{skill}</span>
-                    ))}
-                  </div>
+                  <dt className="ed-kicker mb-1">{group.label}</dt>
+                  <dd className="ed-about-skill-text">{group.items.join(" · ")}</dd>
                 </div>
               ))}
-            </div>
-          </div>
+            </dl>
+          </Card>
 
-          {/* Quick facts */}
-          <div className="bg-paper p-10 shadow-card border-ink">
-            <h2 className="font-serif font-bold text-md text-ink mb-6">
-              Quick Facts
-            </h2>
-            <div className="flex flex-col gap-5">
-              {[
-                { label: "Location", value: "Pullman, WA" },
-                { label: "Available", value: "Open to opportunities" },
-                { label: "Focus", value: "Full-stack · Cloud" },
-                { label: "Certs", value: "AWS SAA · AWS CCP · CSM" },
-              ].map(fact => (
-                <div key={fact.label} className="flex justify-between items-center py-4 px-5 bg-paper-2">
-                  <span className="text-base text-ink-3">{fact.label}</span>
-                  <span className="text-base font-medium text-ink">{fact.value}</span>
-                </div>
-              ))}
-            </div>
+          <div className="ed-card-dark" role="complementary" aria-label="Availability">
+            <p className="ed-kicker">
+              <span className="pulse-dot mr-2" aria-hidden="true" />
+              Currently open
+            </p>
+            <p className="ed-h4 ed-card-dark-lead">
+              Open to <em>senior &amp; staff</em> full-stack — remote, hybrid, or onsite.
+            </p>
+            <p className="ed-card-dark-sub">Based in Pullman, WA · Response within 24h.</p>
+            <Btn href="/contact" variant="secondary" size="md" fullWidth className="ed-btn-on-dark">
+              Get in touch →
+            </Btn>
           </div>
-        </div>
+        </aside>
       </div>
-
     </div>
   );
 }

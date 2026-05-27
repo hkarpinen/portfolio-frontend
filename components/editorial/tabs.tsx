@@ -2,6 +2,12 @@
 import React from "react";
 import * as RadixTabs from "@radix-ui/react-tabs";
 
+/**
+ * <EditorialTabs> — section tabs (redesign)
+ *
+ * All visual rules in /app/globals.css under `.ed-tabs-list` / `.ed-tab`.
+ */
+
 interface Tab {
   id: string;
   label: string;
@@ -14,56 +20,19 @@ interface EditorialTabsProps {
   active: string;
   onChange: (id: string) => void;
   children?: React.ReactNode;
+  ariaLabel?: string;
 }
 
-export function EditorialTabs({ tabs, active, onChange, children }: EditorialTabsProps) {
+export function EditorialTabs({ tabs, active, onChange, children, ariaLabel }: EditorialTabsProps) {
   return (
     <RadixTabs.Root value={active} onValueChange={onChange}>
-      <RadixTabs.List
-        className="flex overflow-x-auto"
-        style={{
-          borderBottom: "1.5px solid var(--ink)",
-          scrollbarWidth: "none",
-          WebkitOverflowScrolling: "touch",
-        }}
-      >
+      <RadixTabs.List aria-label={ariaLabel || "Section navigation"} className="ed-tabs-list">
         {tabs.map(tab => (
-          <RadixTabs.Trigger
-            key={tab.id}
-            value={tab.id}
-            className="font-mono uppercase shrink-0 cursor-pointer bg-transparent"
-            style={{
-              padding: "10px 16px 11px",
-              fontSize: "0.688rem",
-              letterSpacing: "0.16em",
-              border: "none",
-              whiteSpace: "nowrap",
-              outline: "none",
-              transition: "color 110ms",
-            }}
-            data-state={active === tab.id ? "active" : "inactive"}
-          >
-            <span
-              style={{
-                color: active === tab.id ? "var(--red)" : "var(--ink-2)",
-                borderBottom: active === tab.id ? "3px solid var(--red)" : "3px solid transparent",
-                marginBottom: -1.5,
-                display: "inline-block",
-                paddingBottom: 2,
-              }}
-            >
+          <RadixTabs.Trigger key={tab.id} value={tab.id} className="ed-tab">
+            <span className="inline-flex items-center gap-2">
+              {tab.icon}
               {tab.label}
-              {tab.count !== undefined && (
-                <span
-                  style={{
-                    marginLeft: 6,
-                    fontSize: "0.525rem",
-                    color: active === tab.id ? "var(--red)" : "var(--ink-3)",
-                  }}
-                >
-                  ({tab.count})
-                </span>
-              )}
+              {tab.count !== undefined && <span className="ed-tab-count">({tab.count})</span>}
             </span>
           </RadixTabs.Trigger>
         ))}

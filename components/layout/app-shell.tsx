@@ -7,42 +7,18 @@ import { useNotificationsContext, NotificationsProvider } from "@/components/lay
 import { NotificationsToaster } from "@/components/layout/notifications-toaster";
 import { Sidebar } from "./sidebar-nav";
 import { TopBarStack } from "./top-bar";
+import { MobileNav } from "./mobile-nav";
+import { PageBreadcrumbs } from "./page-breadcrumbs";
 import { logout } from "@/lib/api/identity";
 
-/* ── Storage ─────────────────────────────────────────────────────────────────*/
-const STORE_KEY = "pf_state_editorial";
+
+/**
+ * <AppShell> — main app chrome (redesign)
+ *
+ * All visual rules in /app/globals.css.
+ */
+
 const DEMO_EXPIRES_AT_KEY = "demo_expires_at";
-
-function loadStore(): { tweaks: { sidebarCollapsed: boolean } } {
-  try {
-    const raw = localStorage.getItem(STORE_KEY);
-    if (raw) return JSON.parse(raw);
-  } catch {}
-  return { tweaks: { sidebarCollapsed: false } };
-}
-
-function saveStore(collapsed: boolean) {
-  try {
-    localStorage.setItem(STORE_KEY, JSON.stringify({ tweaks: { sidebarCollapsed: collapsed } }));
-  } catch {}
-}
-
-/* ── Section resolver ────────────────────────────────────────────────────────*/
-function resolveSection(pathname: string): { kicker: string; title: string; subtitle?: string } {
-  if (pathname === "/") return { kicker: "Section", title: "Front Page", subtitle: "Overview" };
-  if (pathname.startsWith("/about")) return { kicker: "Portfolio", title: "About the Author", subtitle: "Profile & Projects" };
-  if (pathname.startsWith("/contact")) return { kicker: "Portfolio", title: "Contact", subtitle: "Write a Letter" };
-  if (pathname.startsWith("/household")) return { kicker: "Ledger · Page B-1", title: "The Ledger", subtitle: "Household & Chores" };
-  if (pathname.startsWith("/dashboard")) return { kicker: "Ledger", title: "Dashboard", subtitle: "Overview" };
-  if (pathname.startsWith("/expenses")) return { kicker: "Finance · Expenses", title: "Finance", subtitle: "Expenses & Payments" };
-  if (pathname.startsWith("/income")) return { kicker: "Finance · Income", title: "Finance", subtitle: "Income" };
-  if (pathname.startsWith("/forum")) return { kicker: "Letters · Community", title: "Letters", subtitle: "Threaded Discussions" };
-  if (pathname.startsWith("/convert")) return { kicker: "Math · Utilities", title: "Convert.", subtitle: "Unit Conversion" };
-  if (pathname.startsWith("/weather")) return { kicker: "Geography · Live conditions", title: "Weather.", subtitle: "Current Conditions" };
-  if (pathname.startsWith("/settings")) return { kicker: "Account", title: "Subscription", subtitle: "Settings" };
-  if (pathname.startsWith("/admin")) return { kicker: "Admin", title: "Moderation", subtitle: "Mod Queue" };
-  return { kicker: "Section", title: "The Stack." };
-}
 
 /* ── Demo banner ─────────────────────────────────────────────────────────────*/
 function useDemoCountdown() {
@@ -88,59 +64,13 @@ function formatCountdown(seconds: number) {
 function DemoBanner() {
   const secondsLeft = useDemoCountdown();
   if (secondsLeft === null) return null;
-
-  const urgent = secondsLeft <= 300;
-
   return (
-    <div
-      className="flex items-center justify-between gap-4 px-4 py-2 font-mono text-xs uppercase tracking-widest"
-      style={{
-        background: urgent ? "var(--ink)" : "var(--ink)/10",
-        color: urgent ? "var(--paper)" : "var(--ink)",
-        borderBottom: "1px solid var(--ink)",
-      }}
-    >
+    <div role="status" className="ed-demo-banner">
       <span>
-        Demo session — expires in{" "}
-        <strong>{secondsLeft > 0 ? formatCountdown(secondsLeft) : "0s"}</strong>
+        Demo session · expires in <b>{secondsLeft > 0 ? formatCountdown(secondsLeft) : "0s"}</b>
       </span>
-      <Link
-        href="/register"
-        className="underline shrink-0"
-        style={{ color: "inherit" }}
-      >
-        Create a free account →
-      </Link>
+      <Link href="/register">Create a free account →</Link>
     </div>
-  );
-}
-
-/* ── Mobile bottom strip ─────────────────────────────────────────────────────*/
-function BottomStrip({ pathname }: { pathname: string }) {
-  const cells = [
-    { label: "Home",    href: "/" },
-    { label: "Household", href: "/household" },
-    { label: "Finance", href: "/expenses" },
-    { label: "Letters", href: "/forum" },
-    { label: "Account", href: "/settings/profile" },
-  ];
-  return (
-    <nav aria-label="Mobile navigation" className="mobile-only fixed bottom-0 left-0 right-0 z-[80] bg-paper pb-[env(safe-area-inset-bottom, 4px)]" style={{ borderTop: "2px solid var(--ink)" }}>
-      {cells.map((cell, i) => {
-        const active = cell.href === "/" ? pathname === "/" : pathname.startsWith(cell.href);
-        return (
-          <Link
-            key={cell.href}
-            href={cell.href}
-            aria-current={active ? "page" : undefined}
-            className="flex-1 flex items-center justify-center min-h-[44] py-5 px-2 no-underline font-mono text-sm uppercase tracking-[0.18em] cursor-pointer"
-            style={{ background: active ? "var(--ink)" : "transparent", color: active ? "var(--paper)" : "var(--ink)", borderRight: i < cells.length - 1 ? "1.5px solid var(--ink)" : undefined, fontWeight: active ? 700 : 500, transition: "background var(--dur-fast), color var(--dur-fast)" }}
-          >
-            {cell.label}
-          </Link>
-        );
-      })}
-    </nav>
   );
 }
 
@@ -151,6 +81,9 @@ export type AppShellProps = {
   avatarUrl: string | null;
   role?: string | null;
   subnav?: React.ReactNode;
+  /** Full-width band rendered between the breadcrumb and the page content,
+   *  e.g. an editorial <MastheadRow>. See AppShellServer. */
+  topBand?: React.ReactNode;
 };
 
 export function AppShell(props: AppShellProps) {
@@ -161,27 +94,19 @@ export function AppShell(props: AppShellProps) {
   );
 }
 
-function AppShellInner({ children, displayName, avatarUrl, role, subnav }: AppShellProps) {
+function AppShellInner({ children, displayName, avatarUrl, role, subnav, topBand }: AppShellProps) {
   const pathname = usePathname();
-  const [collapsed, setCollapsed] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { notifications, removeNotification, markRead, markAllRead } = useNotificationsContext();
 
-  useEffect(() => {
-    const store = loadStore();
-    setCollapsed(store.tweaks.sidebarCollapsed);
-  }, []);
-
-  function toggleCollapsed() {
-    const next = !collapsed;
-    setCollapsed(next);
-    saveStore(next);
-  }
-
-  const section = resolveSection(pathname);
+  const section = { kicker: "", title: "" };
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden">
+    <div className="ed-app-shell">
+      <a href="#main" className="skip-link">Skip to content</a>
+
       <DemoBanner />
+
       <TopBarStack
         displayName={displayName}
         avatarUrl={avatarUrl}
@@ -190,14 +115,12 @@ function AppShellInner({ children, displayName, avatarUrl, role, subnav }: AppSh
         markRead={markRead}
         markAllRead={markAllRead}
         section={section}
+        onOpenMobileMenu={() => setMobileMenuOpen(true)}
       />
-      {subnav}
 
-      <div className="flex-1 flex overflow-hidden">
-        <div className="hidden md:block h-full">
+      <div className="ed-app-body">
+        <div className="hidden min-[900px]:block h-full">
           <Sidebar
-            collapsed={collapsed}
-            onToggle={toggleCollapsed}
             displayName={displayName}
             avatarUrl={avatarUrl}
             pathname={pathname}
@@ -205,14 +128,45 @@ function AppShellInner({ children, displayName, avatarUrl, role, subnav }: AppSh
           />
         </div>
 
-        <main className="app-main flex-1 overflow-y-auto overflow-x-clip bg-paper p-[clamp(20px,_2vw,_48px)_clamp(24px,_4vw,_80px)]">
-          <div className="page-enter page-container max-w-[clamp(900px, 92%, 1600px)] mx-auto relative">
-            {children}
+        <main id="main" tabIndex={-1} className="ed-app-main">
+          <div className="ed-app-scroll">
+            {/* Breadcrumb is a full-width band: its rule spans the entire
+                scroll area, while the breadcrumb text inside it is
+                content-width centered. Sits above any section sub-nav. */}
+            <PageBreadcrumbs />
+            {/* Optional editorial masthead band — rendered at the same
+                full-width-band level as the breadcrumb so its rules span
+                the scroll area, not just the content column. Pages opt in
+                by passing `topBand` to <AppShellServer />. */}
+            {topBand}
+            <div className="app-main">
+              <div className="ed-app-inner page-enter">
+                {subnav}
+                {children}
+              </div>
+            </div>
           </div>
         </main>
       </div>
 
-      <BottomStrip pathname={pathname} />
+      <MobileNav pathname={pathname} />
+      {mobileMenuOpen && (
+        <>
+          <div
+            className="fixed inset-0 z-[150] min-[900px]:hidden"
+            style={{ background: "rgba(20,17,10,0.55)" }}
+            onClick={() => setMobileMenuOpen(false)}
+          />
+          <div className="fixed inset-y-0 left-0 z-[160] min-[900px]:hidden">
+            <Sidebar
+              displayName={displayName}
+              avatarUrl={avatarUrl}
+              pathname={pathname}
+              role={role}
+            />
+          </div>
+        </>
+      )}
       <NotificationsToaster />
     </div>
   );

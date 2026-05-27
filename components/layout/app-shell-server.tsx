@@ -16,7 +16,21 @@ import { AppShell } from "./app-shell";
  * `requireUser()` followed by this shell calling `getSession()` results in
  * exactly one upstream `/me` call per request.
  */
-export async function AppShellServer({ children, subnav }: { children: React.ReactNode; subnav?: React.ReactNode }) {
+export async function AppShellServer({
+  children,
+  subnav,
+  topBand,
+}: {
+  children: React.ReactNode;
+  subnav?: React.ReactNode;
+  /**
+   * Optional full-width page band rendered between the breadcrumb and the
+   * page content — same horizontal-rule treatment as <PageBreadcrumbs>. Used
+   * by editorial pages to render their <MastheadRow> as a band whose rules
+   * span the scroll area, not just the content column.
+   */
+  topBand?: React.ReactNode;
+}) {
   const session = await getSession();
 
   return (
@@ -25,6 +39,7 @@ export async function AppShellServer({ children, subnav }: { children: React.Rea
       avatarUrl={session?.avatarUrl ?? null}
       role={session?.role ?? null}
       subnav={subnav}
+      topBand={topBand}
     >
       {children}
     </AppShell>

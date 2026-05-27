@@ -1,6 +1,6 @@
 import { api } from "@/lib/api-client";
 import { serverFetch } from "@/lib/server-api-client";
-import type { IncomeSource, IncomeListResponse, NetPayBreakdown, TaxWithholdingProfile, PayrollDeduction } from "@/types/finance";
+import type { IncomeSource, IncomeListResponse, NetPayBreakdown, NetPaySummary, TaxWithholdingProfile, PayrollDeduction } from "@/types/finance";
 
 export const fetchIncome = () =>
   api.get<IncomeListResponse>("/api/finance/income");
@@ -81,6 +81,40 @@ export const fetchNetPayBreakdown = (incomeId: string, year?: number, month?: nu
 
 export const fetchIncomeServer = (cookieHeader: string) =>
   serverFetch<IncomeListResponse>("/api/finance/income", cookieHeader);
+
+/** Server-side variant of {@link fetchNetPayBreakdown} — used by the
+ *  per-row detail panel so the displayed Net/Tax figures reflect
+ *  tax-profile-based withholdings (not just manually-added deductions). */
+export const fetchNetPayBreakdownServer = (
+  incomeId: string,
+  cookieHeader: string,
+  year?: number,
+  month?: number,
+) => {
+  const now = new Date();
+  const y = year ?? now.getFullYear();
+  const m = month ?? now.getMonth() + 1;
+  return serverFetch<NetPayBreakdown>(
+    `/api/finance/income/${incomeId}/net-pay?year=${y}&month=${m}`,
+    cookieHeader,
+  );
+};
+
+/** Aggregate net-pay across every active income source for the caller in
+ *  the given month. One round-trip; replaces N+1 per-source fan-out. */
+export const fetchNetPaySummaryServer = (
+  cookieHeader: string,
+  year?: number,
+  month?: number,
+) => {
+  const now = new Date();
+  const y = year ?? now.getFullYear();
+  const m = month ?? now.getMonth() + 1;
+  return serverFetch<NetPaySummary>(
+    `/api/finance/income/net-pay/summary?year=${y}&month=${m}`,
+    cookieHeader,
+  );
+};
 
 export const fetchHouseholdIncomeServer = (householdId: string, cookieHeader: string) =>
   serverFetch<IncomeListResponse>(`/api/finance/income?householdId=${householdId}`, cookieHeader);

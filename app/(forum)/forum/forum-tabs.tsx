@@ -7,7 +7,7 @@ import { CommunityAvatar } from "@/components/editorial/community-avatar";
 import { JoinButton } from "./join-button";
 import { Icon } from "@/components/editorial/icon";
 import type { CommunitySummaryResponse, ThreadSummaryResponse } from "@/types/forum";
-import { tabTriggerMono } from "@/lib/tab-styles";
+
 
 interface ForumTabsProps {
   communities: CommunitySummaryResponse[];
@@ -26,16 +26,16 @@ export function ForumTabs({
   return (
     <RadixTabs.Root defaultValue="Feed" className="flex flex-col gap-8">
       {/* Tab bar */}
-      <RadixTabs.List className="flex gap-0" style={{ borderBottom: "1.5px solid var(--ink)" }}>
+      <RadixTabs.List className="ed-tabs-list">
         {(["Feed", "Hot", "Communities"] as const).map((label) => (
           <RadixTabs.Trigger
             key={label}
             value={label}
-            style={tabTriggerMono}
+            className="ed-tab"
           >
             {label}
             {label === "Communities" && (
-              <span className="text-sm bg-paper-2 py-[1px] px-[6px] text-ink-3">
+              <span className="ed-tab-count">
                 {communities.length}
               </span>
             )}
@@ -59,7 +59,7 @@ export function ForumTabs({
             communities.map((community) => (
               <Link
                 key={community.communityId}
-                href={`/forum/${community.slug}`}
+                href={`/forum/g/${community.slug}`}
                 className="no-underline"
               >
                 <div
@@ -72,7 +72,7 @@ export function ForumTabs({
                       {community.name}
                     </p>
                     {community.description && (
-                      <p className="text-base text-ink-2 mt-1 leading-[1.4] overflow-hidden" style={{ display: "-webkit-box", WebkitLineClamp: 1, WebkitBoxOrient: "vertical" }}>
+                      <p className="text-base text-ink-2 mt-1 leading-[1.4] line-clamp-1">
                         {community.description}
                       </p>
                     )}
@@ -137,20 +137,6 @@ export function ForumTabs({
         </div>
       </RadixTabs.Content>
 
-      <style>{`
-        .community-card:hover {
-          transform: translateY(-2px);
-          box-shadow: var(--shadow-md);
-        }
-        [role="tab"][data-state="active"] {
-          color: var(--text) !important;
-          font-weight: 600 !important;
-          border-bottom: 3px solid var(--red) !important;
-        }
-        [role="tab"]:hover {
-          color: var(--text) !important;
-        }
-      `}</style>
     </RadixTabs.Root>
   );
 }

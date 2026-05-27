@@ -2,16 +2,14 @@
 
 import { useState } from "react";
 import { JoinHouseholdModal } from "./join-modal";
-import styles from "./join-button.module.css";
+import { Btn } from "@/components/editorial/button";
 
-export function JoinHouseholdButton() {
+export function JoinHouseholdButton({ size = "sm" }: { size?: "xs" | "sm" | "md" | "lg" | "xl" } = {}) {
   const [open, setOpen] = useState(false);
 
   return (
     <>
-      <button onClick={() => setOpen(true)} className={styles.btn}>
-        Join
-      </button>
+      <Btn variant="secondary" size={size} onClick={() => setOpen(true)}>Join with code</Btn>
       <JoinHouseholdModal open={open} onOpenChange={setOpen} />
     </>
   );

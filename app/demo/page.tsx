@@ -2,18 +2,51 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { startDemo } from "@/lib/api/identity";
 import { checkDemoReady } from "@/lib/api/households";
 import { RecaptchaScript, useRecaptcha } from "@/components/recaptcha";
+import { Btn, Icon } from "@/components/editorial";
 
 const DEMO_EXPIRES_AT_KEY = "demo_expires_at";
 const POLL_INTERVAL_MS = 1500;
 const TIMEOUT_MS = 15_000;
 
+type Status = "starting" | "seeding" | "error";
+type StepState = "done" | "active" | "pending";
+
+function StepRow({ state, label }: { state: StepState; label: string }) {
+  const stateLabel = state === "done" ? "Complete" : state === "active" ? "In progress" : "Pending";
+  return (
+    <li className="flex items-center gap-3">
+      <span
+        aria-hidden="true"
+        className={
+          "w-5 h-5 flex items-center justify-center border-[1.5px] shrink-0 " +
+          (state === "done"
+            ? "bg-green-soft border-green text-green"
+            : state === "active"
+            ? "border-red text-red"
+            : "border-ink-4 text-transparent")
+        }
+      >
+        {state === "done" && <Icon name="check" size={13} strokeWidth={2.5} />}
+        {state === "active" && (
+          <span className="w-2 h-2 bg-red animate-pulse" aria-hidden="true" />
+        )}
+      </span>
+      <span className={"ed-label-muted " + (state === "pending" ? "opacity-60" : "")}>
+        {label}
+        <span className="sr-only"> — {stateLabel}</span>
+      </span>
+    </li>
+  );
+}
+
 export default function DemoPage() {
   const router = useRouter();
   const executeRecaptcha = useRecaptcha();
-  const [status, setStatus] = useState<"starting" | "seeding" | "error">("starting");
+  const [status, setStatus] = useState<Status>("starting");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const didStart = useRef(false);
 
@@ -39,7 +72,6 @@ export default function DemoPage() {
           }
         }
 
-        // Timeout — redirect anyway; data may arrive shortly after.
         router.replace("/household");
       } catch (err: unknown) {
         const message = err instanceof Error ? err.message : "Something went wrong.";
@@ -51,45 +83,59 @@ export default function DemoPage() {
     run();
   }, [router]);
 
-  if (status === "error") {
-    return (
-      <>
-        <main className="flex min-h-screen items-center justify-center bg-paper px-6">
-          <div className="text-center max-w-sm">
-            <p className="font-mono text-sm uppercase tracking-widest text-ink/60 mb-2">Demo</p>
-            <p className="font-body text-base text-ink mb-6">{errorMessage}</p>
-            <a href="/" className="font-mono text-sm uppercase tracking-widest underline">
-              Back to home
-            </a>
-          </div>
-        </main>
-        <RecaptchaScript strategy="afterInteractive" />
-      </>
-    );
-  }
+  const seeding = status === "seeding";
 
   return (
     <>
       <main className="flex min-h-screen items-center justify-center bg-paper px-6">
-        <div className="text-center max-w-sm">
-          <p className="font-mono text-sm uppercase tracking-widest text-ink/60 mb-2">Demo</p>
-          <p className="font-serif text-2xl italic mb-6">
-            {status === "starting" ? "Starting your demo…" : "Setting things up…"}
-          </p>
-          <Spinner />
+        <div className="ed-card w-full max-w-[520px] text-center">
+          {status === "error" ? (
+            <div role="alert">
+              <p className="ed-kicker mb-3">Demo</p>
+              <h1 className="ed-h1 mb-4">Couldn&apos;t start the <em>demo.</em></h1>
+              <p className="ed-deck mb-8">{errorMessage}</p>
+              <Btn href="/" variant="secondary" size="lg">Back to home</Btn>
+            </div>
+          ) : (
+            <>
+              <p className="ed-kicker mb-3">Spinning up your demo</p>
+              <h1 className="ed-h1 mb-3">You&apos;re <em>in.</em></h1>
+              <p className="ed-deck mb-8">
+                Provisioning a sandboxed household with seeded data. About three seconds.
+              </p>
+
+              {/* Progress steps — live region announces current step to screen readers */}
+              <div
+                role="status"
+                aria-live="polite"
+                aria-atomic="true"
+                aria-label="Demo setup progress"
+                className="flex flex-col gap-3 text-left max-w-[320px] mx-auto mb-8"
+              >
+                <ul className="flex flex-col gap-3 list-none" aria-label="Setup steps">
+                  <StepRow state={seeding ? "done" : "active"} label="reCAPTCHA cleared" />
+                  <StepRow state={seeding ? "done" : "pending"} label="Sandbox account created" />
+                  <StepRow state={seeding ? "active" : "pending"} label="Demo household seeded · 3 roommates" />
+                  <StepRow state="pending" label="Redirecting to dashboard" />
+                </ul>
+              </div>
+
+              <p className="ed-meta mb-6">
+                This is a sandboxed environment — data resets nightly and is not suitable for real data.
+              </p>
+
+              <Btn href="/household" variant="primary" size="lg" fullWidth>Skip to dashboard</Btn>
+
+              <p className="ed-hint mt-6">
+                Like what you see?{" "}
+                <Link href="/register" className="text-red font-semibold">Create a free account →</Link>
+              </p>
+            </>
+          )}
         </div>
       </main>
       <RecaptchaScript strategy="afterInteractive" />
     </>
-  );
-}
-
-function Spinner() {
-  return (
-    <div
-      className="inline-block h-5 w-5 border-2 border-ink/30 border-t-ink rounded-full animate-spin"
-      aria-label="Loading"
-    />
   );
 }
 

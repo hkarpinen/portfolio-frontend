@@ -1,6 +1,15 @@
 import React from "react";
 
-/* ── StatCard ───────────────────────────────────────────────────────────────*/
+/**
+ * <StatCard> + <LedgerStrip> — editorial stats (redesign)
+ *
+ * All visual rules in /app/globals.css under `.ed-stat*` / `.ed-ledger*` /
+ * `.ed-numeral` / `.ed-label-muted` classes. Zero inline styles.
+ *
+ * LedgerStrip supports 2 / 3 / 4 cells, optionally with a leading label
+ * column. Other counts will need a new class added to globals.css.
+ */
+
 interface StatCardProps {
   label: string;
   value: string | number;
@@ -11,38 +20,24 @@ interface StatCardProps {
 }
 
 export function StatCard({ label, value, sub, trend, trendDir, italic }: StatCardProps) {
+  const subClass =
+    trendDir === "up"
+      ? "ed-stat-sub-up"
+      : trendDir === "down"
+      ? "ed-stat-sub-down"
+      : "ed-stat-sub-flat";
   return (
-    <div
-      className="flex flex-col justify-end"
-      style={{ padding: "16px 20px" }}
-    >
-      <p
-        className="font-mono uppercase"
-        style={{ fontSize: "0.594rem", color: "var(--ink-3)", letterSpacing: "0.22em", marginBottom: 8 }}
-      >
-        {label}
-      </p>
-      <p
-        className="font-serif leading-[0.9]"
-        style={{
-          fontSize: "2.375rem",
-          letterSpacing: "-0.02em",
-          color: italic ? "var(--red)" : "var(--ink)",
-          fontStyle: italic ? "italic" : "normal",
-        }}
-      >
-        {value}
-      </p>
+    <div className="ed-stat">
+      <p className="ed-label-muted ed-stat-label">{label}</p>
+      <p className={`ed-numeral ${italic ? "italic" : ""}`}>{value}</p>
       {(sub || trend) && (
-        <p
-          className="font-mono mt-2"
-          style={{
-            fontSize: "0.6rem",
-            color: trendDir === "up" ? "var(--green)" : trendDir === "down" ? "var(--red)" : "var(--ink-3)",
-            letterSpacing: "0.08em",
-          }}
-        >
-          {trend && <span>{trendDir === "up" ? "▲" : trendDir === "down" ? "▼" : ""} {trend} · </span>}
+        <p className={`ed-stat-sub ${subClass}`}>
+          {trend && (
+            <span>
+              {trendDir === "up" ? "▲" : trendDir === "down" ? "▼" : ""} {trend}
+              {sub ? " · " : ""}
+            </span>
+          )}
           {sub}
         </p>
       )}
@@ -54,44 +49,25 @@ export function StatCard({ label, value, sub, trend, trendDir, italic }: StatCar
 interface LedgerStripProps {
   label?: string;
   cells: StatCardProps[];
-  columns?: number;
+  /**
+   * Force a specific column count if `cells.length` doesn't match the layout
+   * you want. Supported: 2, 3, 4. Defaults to cells.length.
+   */
+  columns?: 2 | 3 | 4;
 }
 
 export function LedgerStrip({ label, cells, columns }: LedgerStripProps) {
-  const cols = columns ?? cells.length;
-
+  const cols = columns ?? (cells.length as 2 | 3 | 4);
+  const colClass =
+    cols === 2 ? "ed-ledger-2" : cols === 3 ? "ed-ledger-3" : "ed-ledger-4";
+  const cls = ["ed-ledger", colClass, label ? "ed-ledger-with-label" : ""]
+    .filter(Boolean)
+    .join(" ");
   return (
-    <div
-      className="grid border-ink"
-      style={{
-        gridTemplateColumns: label
-          ? `auto repeat(${cols}, 1fr)`
-          : `repeat(${cols}, 1fr)`,
-        borderRight: "none",
-      }}
-    >
-      {label && (
-        <div
-          className="font-mono uppercase self-end"
-          style={{
-            fontSize: "0.594rem",
-            color: "var(--ink-3)",
-            letterSpacing: "0.22em",
-            padding: "16px 26px 16px 0",
-            borderRight: "1.5px solid var(--ink)",
-            maxWidth: 200,
-          }}
-        >
-          {label}
-        </div>
-      )}
+    <div className={cls}>
+      {label && <div className="ed-ledger-label">{label}</div>}
       {cells.map((cell, i) => (
-        <div
-          key={i}
-          style={{ borderRight: "1.5px solid var(--ink)" }}
-        >
-          <StatCard {...cell} />
-        </div>
+        <StatCard key={i} {...cell} />
       ))}
     </div>
   );

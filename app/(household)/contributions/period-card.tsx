@@ -136,14 +136,13 @@ export function PeriodCard({ p, cardRef, granularity }: {
   return (
     <div
       ref={cardRef as React.RefObject<HTMLDivElement> | undefined}
-      className="bg-paper overflow-hidden"
-      style={{ border: `1px solid ${p.isCurrent ? "var(--red)" : "var(--ink-3)"}`, boxShadow: p.isCurrent ? "var(--shadow-md)" : "var(--shadow-sm)" }}
+      className={`bg-paper overflow-hidden${p.isCurrent ? " [border:1px_solid_var(--red)]" : " border border-ink-3"}`}
+      style={{ boxShadow: p.isCurrent ? "var(--shadow-md)" : "var(--shadow-sm)" }} /* boxShadow uses CSS token — no Tailwind equivalent */
     >
       <div
         role="button"
         onClick={() => hasItems && setExpanded((v) => !v)}
-        className="flex flex-col gap-3 p-[13px_16px_13px_20px]"
-        style={{ cursor: hasItems ? "pointer" : "default", background: p.isCurrent ? "rgba(178,42,26,0.04)" : "transparent" }}
+        className={`flex flex-col gap-3 p-[13px_16px_13px_20px]${p.isCurrent ? " bg-[rgba(178,42,26,0.04)]" : ""}${hasItems ? " cursor-pointer" : " cursor-default"}`}
       >
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-4 min-w-0">
@@ -153,7 +152,7 @@ export function PeriodCard({ p, cardRef, granularity }: {
             )}
           </div>
           {hasItems && (
-            <span className="shrink-0" style={{ transform: expanded ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 200ms", display: "inline-flex", color: "var(--text-3)" }}>
+            <span className={`shrink-0 inline-flex text-ink-3 transition-transform duration-200${expanded ? " rotate-180" : ""}`}>
               <Icon name="chevDown" size={14} strokeWidth={2.5} />
             </span>
           )}
@@ -161,14 +160,14 @@ export function PeriodCard({ p, cardRef, granularity }: {
         <div className="flex items-center flex-wrap gap-x-5 gap-y-[6px] text-base text-ink-3">
           <span>Due <strong className="text-ink">${obligations.toFixed(2)}</strong></span>
           <span>Net income <strong className="text-ink">${p.projectedNetIncome.toFixed(2)}</strong></span>
-          <span className="font-serif font-bold text-base whitespace-nowrap" style={{ color: netOver ? "var(--danger)" : "var(--success)" }}>
+          <span className={`font-serif font-bold text-base whitespace-nowrap ${netOver ? "text-red" : "text-green"}`}>
             {netOver ? "−" : "+"}${Math.abs(p.net).toFixed(2)}
           </span>
           {p.disposableIncome != null && (
             <span className="inline-flex items-center gap-2">
               {p.disposableIncomeSource === "balance" ? "Available now" : "Disposable"}
               {" "}
-              <strong className="font-serif font-bold" style={{ color: p.disposableIncome < 0 ? "var(--danger)" : "var(--ink)" }}>
+              <strong className={`font-serif font-bold ${p.disposableIncome < 0 ? "text-red" : "text-ink"}`}>
                 {p.disposableIncome < 0 ? "−" : "+"}${Math.abs(p.disposableIncome).toFixed(0)}
               </strong>
             </span>
@@ -177,7 +176,7 @@ export function PeriodCard({ p, cardRef, granularity }: {
       </div>
 
       {expanded && hasItems && (
-        <div style={{ borderTop: "1.5px solid var(--ink)" }}>
+        <div className="border-ink-t">
           {isMobile ? (
             <div>
               {items.map((item, i) => (
@@ -185,17 +184,17 @@ export function PeriodCard({ p, cardRef, granularity }: {
               ))}
             </div>
           ) : (
-            <table className="w-full" style={{ borderCollapse: "collapse" }}>
+            <table className="w-full border-collapse">
               <thead>
                 <tr className="bg-paper-2">
-                  <th className="pl-10 pr-4 font-bold text-sm uppercase tracking-[0.08em] text-ink-3 w-[44px] text-right" style={{ ...tdMeta, borderBottom: "1.5px solid var(--ink)" }}>
+                  <th className="pl-10 pr-4 font-bold text-sm uppercase tracking-[0.08em] text-ink-3 w-[44px] text-right border-ink-b" style={{ ...tdMeta }}>
                     {isMonthly ? "Day" : ""}
                   </th>
-                  <th className="font-bold text-sm uppercase tracking-[0.08em] text-ink-3" style={{ ...tdMeta, borderBottom: "1.5px solid var(--ink)" }}>Name</th>
-                  <th className="font-bold text-sm uppercase tracking-[0.08em] text-ink-3" style={{ ...tdMeta, borderBottom: "1.5px solid var(--ink)" }}>Type</th>
-                  <th className="font-bold text-sm uppercase tracking-[0.08em] text-ink-3 text-right pr-6" style={{ ...tdMeta, borderBottom: "1.5px solid var(--ink)" }}>Amount</th>
+                  <th className="font-bold text-sm uppercase tracking-[0.08em] text-ink-3 border-ink-b" style={{ ...tdMeta }}>Name</th>
+                  <th className="font-bold text-sm uppercase tracking-[0.08em] text-ink-3 border-ink-b" style={{ ...tdMeta }}>Type</th>
+                  <th className="font-bold text-sm uppercase tracking-[0.08em] text-ink-3 text-right pr-6 border-ink-b" style={{ ...tdMeta }}>Amount</th>
                   {isMonthly && (
-                    <th className="font-bold text-sm uppercase tracking-[0.08em] text-ink-3 text-right pr-8 w-[110px]" style={{ ...tdMeta, borderBottom: "1.5px solid var(--ink)" }}>Paid</th>
+                    <th className="font-bold text-sm uppercase tracking-[0.08em] text-ink-3 text-right pr-8 w-[110px] border-ink-b" style={{ ...tdMeta }}>Paid</th>
                   )}
                 </tr>
               </thead>
@@ -216,8 +215,7 @@ export function GranularityButton({ label, active, onClick }: { label: string; a
   return (
     <button
       onClick={onClick}
-      className="py-[6px] px-[14px] text-base cursor-pointer"
-      style={{ fontWeight: active ? 700 : 500, transition: "all 110ms", border: active ? "1.5px solid var(--red)" : "1.5px solid var(--ink)", background: active ? "rgba(178,42,26,0.08)" : "var(--paper-2)", color: active ? "var(--red)" : "var(--text-3)" }}
+      className={`py-[6px] px-[14px] text-base cursor-pointer transition-all duration-[110ms] ${active ? "font-bold text-red bg-red-soft [border:1.5px_solid_var(--red)]" : "font-medium text-ink-3 bg-paper-2 border-ink"}`}
     >
       {label}
     </button>

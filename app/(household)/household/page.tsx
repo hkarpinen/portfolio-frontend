@@ -3,212 +3,116 @@ import { getCookieHeader } from "@/lib/server-cookies";
 import { JoinHouseholdButton } from "./join-button";
 import { listHouseholdsServer } from "@/lib/api/households";
 import type { HouseholdSummaryDto } from "@/lib/api/households";
-import { SectionHeader } from "@/components/editorial/section-header";
+import { EditorialPageHead } from "@/components/editorial/editorial-page-head";
+import { DepartmentHead } from "@/components/editorial/department-head";
+import { EmptyDispatch } from "@/components/editorial/empty-dispatch";
 import { Btn } from "@/components/editorial/button";
 import { Icon } from "@/components/editorial/icon";
-import { getInitials } from "@/lib/utils";
+import { HouseholdBalanceBadge } from "@/components/finance/household-balance-badge";
+import { householdsHeadline, householdsDeck } from "@/lib/household/editorial-copy";
 import s from "./page.module.css";
 
 export const dynamic = 'force-dynamic';
 
-const LEDGER_STRIP_LABELS = [
-  { label: "Total owed",  sub: "across all houses" },
-  { label: "Households", sub: "active" },
-  { label: "Bills due",  sub: "this month" },
-  { label: "Your share", sub: new Date().toLocaleString("default", { month: "long", year: "numeric" }) },
+const ORIENT = [
+  { title: "About the project", desc: "What this is and why", href: "/about" },
+  { title: "Try the forum", desc: "Threaded discussions", href: "/forum" },
+  { title: "Round out your profile", desc: "Avatar, bio, prefs", href: "/settings/profile" },
 ];
 
 export default async function HouseholdsPage() {
   const households: HouseholdSummaryDto[] = await listHouseholdsServer(await getCookieHeader()) ?? [];
-
-  // Compute ledger strip values (approximate from household data)
-  const totalOwed = households.reduce((s, h) => s + (h.memberCount ?? 1) * 80, 0);
-  const billsDue  = households.reduce((s, h) => s + (h.memberCount ?? 1), 0);
-  const yourShare = Math.round(totalOwed / Math.max(households.reduce((s, h) => s + (h.memberCount ?? 1), 0), 1) * 10) / 10;
-
-  const ledgerValues = [
-    `$${totalOwed.toLocaleString()}`,
-    String(households.length),
-    String(billsDue),
-    `$${yourShare.toLocaleString()}`,
-  ];
+  const count = households.length;
 
   return (
-    <div className="page-enter flex flex-col gap-[32px]">
-
-      {/* ── Section header ─────────────────────────────────────────────────── */}
-      <SectionHeader
-        kicker="The Ledger · Page B-1"
-        title="Households."
-        subtitle="Shared living, written down. Each household keeps its own books."
-        action={
-          <>
-            <JoinHouseholdButton />
-            <Btn href="/household/new" variant="primary" size="sm">+ New household</Btn>
-          </>
-        }
+    <div className="page-enter flex flex-col gap-8">
+      <EditorialPageHead
+        kicker="Ledger desk"
+        title={householdsHeadline({ count })}
+        deck={householdsDeck({ count })}
       />
 
-      {/* ── Ledger strip ───────────────────────────────────────────────────── */}
-      <div className={`${s.strip} grid border-ink`} style={{gridTemplateColumns: "repeat(4, 1fr)" }}>
-        {LEDGER_STRIP_LABELS.map((cell, i) => (
-          <div
-            key={cell.label}
-            style={{
-              padding: "18px 20px",
-              borderLeft: i > 0 ? "1.5px solid var(--ink)" : undefined,
-            }}
-          >
-            <p className="font-mono uppercase text-ink-3 m-0" style={{ fontSize: "0.594rem", letterSpacing: "0.22em", marginBottom: 10 }}>
-              {cell.label}
-            </p>
-            <p className="font-serif text-ink m-0" style={{ fontSize: "2.375rem", lineHeight: 0.9, letterSpacing: "-0.02em" }}>
-              {ledgerValues[i]}
-            </p>
-            <p className="font-mono text-ink-3 m-0" style={{ fontSize: "0.625rem", letterSpacing: "0.08em", marginTop: 8 }}>
-              {cell.sub}
-            </p>
+      {count === 0 ? (
+        <div className="flex flex-col items-center text-center gap-6 py-10 px-6">
+          <span className="w-14 h-14 flex items-center justify-center border-[1.5px] border-ink">
+            <Icon name="household" size={24} strokeWidth={1.5} />
+          </span>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <Btn href="/household/new" variant="primary" size="lg">+ New household</Btn>
+            <JoinHouseholdButton size="lg" />
           </div>
-        ))}
-      </div>
 
-      {/* ── Two callouts ───────────────────────────────────────────────────── */}
-      <div className={`${s.callouts} grid border-ink`} style={{gridTemplateColumns: "1fr 1fr" }}>
-        {[
-          { num: "01", title: "Chores & Calendar",  sub: "Shared tasks, rotas, and household events.", href: `/household/${households[0]?.id ?? ""}` + (households[0] ? "/chores" : "") || "/household" },
-          { num: "02", title: "Expenses & Splits",   sub: "Track payments and split costs. Powered by Finance.", href: "/expenses" },
-        ].map((cell, i) => (
-          <Link
-            key={cell.num}
-            href={cell.href}
-            className={`${s.calloutCell} no-underline flex items-center justify-between gap-8`}
-            style={{
-              padding: "18px 22px",
-              borderLeft: i > 0 ? "1.5px solid var(--ink)" : undefined,
-            }}
-          >
-            <div className="flex items-start gap-[14px]">
-              <span className="font-serif italic text-red shrink-0" style={{ fontSize: "2.25rem", lineHeight: 1 }}>{cell.num}</span>
-              <div>
-                <p className="font-serif italic text-ink m-0" style={{ fontSize: "1.375rem", lineHeight: 1 }}>{cell.title}</p>
-                <p className="font-body text-ink-2 m-0 mt-[6px]" style={{ fontSize: "0.8125rem", lineHeight: 1.45 }}>{cell.sub}</p>
-              </div>
-            </div>
-            <span className="shrink-0" style={{ color: "var(--ink)" }}><Icon name="arrowRight" size={16} strokeWidth={2} /></span>
-          </Link>
-        ))}
-      </div>
-
-      {/* ── Active households ──────────────────────────────────────────────── */}
-      <div>
-        <p className="font-mono uppercase text-red m-0 mb-[16px]" style={{ fontSize: "0.594rem", letterSpacing: "0.26em" }}>
-          — Active households —
-        </p>
-
-        {households.length === 0 ? (
-          <div
-            className="text-center flex flex-col items-center"
-            style={{ padding: "48px 24px", border: "1.5px dashed var(--ink-3)" }}
-          >
-            <p className="font-mono m-0" style={{ fontSize: "0.625rem", letterSpacing: "0.30em", color: "var(--ink-3)", marginBottom: 12, textTransform: "uppercase" }}>
-              — NIL —
-            </p>
-            <p className="font-serif italic m-0" style={{ fontSize: "1.75rem", lineHeight: 1, marginBottom: 8, color: "var(--ink)" }}>
-              No households yet.
-            </p>
-            <p className="font-body m-0" style={{ fontSize: "0.875rem", color: "var(--ink-2)", maxWidth: 320, lineHeight: 1.55 }}>
-              Create your first household to start tracking shared expenses.
-            </p>
-            <div className="mt-6">
-              <Btn href="/household/new" variant="primary" size="sm">+ New household</Btn>
-            </div>
-          </div>
-        ) : (
-          <div className={`${s.grid} grid gap-[16px]`} style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}>
-            {households.map((h) => {
-              const initials = getInitials(h.name);
-              const balance  = (h.memberCount ?? 1) * 80;
-              const share    = Math.round(balance / Math.max(h.memberCount ?? 1, 1));
-              const pct      = Math.round((balance / 2400) * 100);
-              const barW     = Math.min(100, pct);
-              return (
-                <Link
-                  key={h.id}
-                  href={`/household/${h.id}`}
-                  className="no-underline block bg-paper border-ink"
-                  style={{padding: 22 }}
-                >
-                  {/* Top row */}
-                  <div className="flex items-start justify-between gap-[12px]">
-                    <div className="flex items-start gap-[12px]">
-                      {/* Initials square */}
-                      <div
-                        className="flex items-center justify-center shrink-0 font-mono font-bold text-ink border-ink"
-                        style={{ width: 48, height: 48, background: "var(--paper-2)", fontSize: "0.8125rem", letterSpacing: "0.04em" }}
-                      >
-                        {initials}
-                      </div>
-                      <div>
-                        <p className="font-serif italic text-ink m-0" style={{ fontSize: "1.625rem", lineHeight: 1 }}>{h.name}</p>
-                        <p className="font-mono uppercase text-ink-3 m-0" style={{ fontSize: "0.625rem", letterSpacing: "0.14em", marginTop: 6 }}>
-                          {h.memberCount ?? 1} members · {h.memberCount ?? 1} bills
-                        </p>
-                      </div>
-                    </div>
-                    {/* Balance badge */}
-                    <span
-                      className="font-mono shrink-0 border-ink"
-                      style={{
-                        fontSize: "0.625rem", letterSpacing: "0.1em", textTransform: "uppercase",
-                        padding: "3px 8px",
-                        background: balance > 500 ? "var(--ink)" : "var(--paper-2)",
-                        color: balance > 500 ? "var(--paper)" : "var(--ink)",
-                      }}
-                    >
-                      ${balance}
-                    </span>
-                  </div>
-
-                  {/* Progress bar */}
-                  <div
-                    className="mt-[18px] mb-[12px]"
-                    style={{ background: "var(--paper-2)", height: 6, border: "1px solid var(--ink-3)" }}
-                    role="progressbar"
-                    aria-valuenow={barW}
-                    aria-valuemin={0}
-                    aria-valuemax={100}
-                    aria-label={`${h.name} budget usage`}
-                  >
-                    <div style={{ width: `${barW}%`, height: "100%", background: "var(--ink)", transition: "width 400ms" }} />
-                  </div>
-
-                  {/* Footer */}
-                  <div className="flex items-center justify-between font-mono" style={{ fontSize: "0.625rem", letterSpacing: "0.08em", color: "var(--ink-3)" }}>
-                    <span>Your share: <b className="text-ink">${share}</b></span>
-                    <span style={{ color: "var(--red)", fontWeight: 700 }}>{pct}% of cap</span>
-                  </div>
+          <div className="w-full max-w-[760px] mt-8 text-left">
+            <DepartmentHead
+              kicker="Get oriented"
+              title="Or <em>poke around</em> first"
+              deck="Three small surfaces to read while you decide whether to spin one up."
+            />
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-5">
+              {ORIENT.map(o => (
+                <Link key={o.href} href={o.href} className="ed-card ed-card-muted flex flex-col gap-2 no-underline">
+                  <h3 className="ed-h4">{o.title}</h3>
+                  <p className="ed-hint">{o.desc}</p>
+                  <span className="ed-about-card-link">Open <Icon name="arrowRight" size={14} /></span>
                 </Link>
-              );
-            })}
-
-            {/* + Create tile */}
-            <Link
-              href="/household/new"
-              className={`${s.createTile} no-underline flex flex-col items-center justify-center gap-[10px] font-mono uppercase`}
-              style={{
-                padding: 22,
-                minHeight: 160,
-                fontSize: "0.6875rem",
-                letterSpacing: "0.18em",
-              }}
-            >
-              <span style={{ fontSize: "1.375rem", lineHeight: 1 }}>+</span>
-              Create household
-            </Link>
+              ))}
+            </div>
           </div>
-        )}
-      </div>
+        </div>
+      ) : (
+        <>
+          <div className="flex justify-end gap-3 -mt-2">
+            <Btn href="/household/new" variant="primary" size="sm">+ New household</Btn>
+            <JoinHouseholdButton size="sm" />
+          </div>
 
+          <section className="flex flex-col gap-5">
+            <DepartmentHead
+              kicker="On file"
+              count={`${count} household${count === 1 ? "" : "s"}`}
+              title="Your <em>ledger</em>"
+              deck="Each tile opens the household's expenses, contributions, calendar, and chores."
+            />
+            <div className={`${s.grid} grid gap-4`} style={{ gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))" }}>
+              {households.map((h) => {
+                const memberCount = h.memberCount ?? 1;
+                const memberLabel = `${memberCount} member${memberCount !== 1 ? "s" : ""}`;
+                return (
+                  <Link
+                    key={h.id}
+                    href={`/household/${h.id}`}
+                    className="ed-module"
+                    aria-label={`Open ${h.name} — ${memberLabel}, ${h.currencyCode}`}
+                  >
+                    <span className="ed-module-kicker" aria-hidden>Household</span>
+                    <h3 className="ed-module-title">{h.name}</h3>
+                    {h.description && (
+                      <p className="ed-module-desc">{h.description}</p>
+                    )}
+                    <p className="ed-module-meta">
+                      {memberLabel} · {h.currencyCode}
+                    </p>
+                    <div className="ed-module-foot">
+                      <HouseholdBalanceBadge householdId={h.id} variant="card" />
+                      <span className="ed-module-arrow" aria-hidden>Open →</span>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </section>
+
+          {/* TODO(handoff8): wire to activity API — fetch /api/households/activity */}
+          <section className="flex flex-col gap-5">
+            <DepartmentHead
+              kicker="Activity"
+              title="Recent <em>activity</em>"
+              deck="Posts, splits, settlements, and chore completions across your households."
+            />
+            <EmptyDispatch>No recent activity <em>filed</em> yet</EmptyDispatch>
+          </section>
+        </>
+      )}
     </div>
   );
 }

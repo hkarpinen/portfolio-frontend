@@ -7,7 +7,7 @@ import { z } from "zod";
 import Link from "next/link";
 import { useJoinHousehold } from "@/hooks/use-household";
 import { ApiError } from "@/lib/api-client";
-import { Btn, Alert } from "@/components/editorial";
+import { Btn, Alert, Input, Icon, SectionHeader } from "@/components/editorial";
 
 const joinSchema = z.object({
   invitationCode: z.string().min(1, "Invitation code is required").trim(),
@@ -32,60 +32,47 @@ export default function JoinHouseholdPage() {
   };
 
   return (
-    <div className="page-enter max-w-[440px] mx-auto flex flex-col gap-10" >
-      <div>
-        <Link href="/household" className="text-ink-3 text-base no-underline">
-          ← Households
-        </Link>
-        <h1 className="font-serif font-extrabold text-2xl tracking-[-0.025em] text-ink mt-3">
-          Join a Household
-        </h1>
-        <p className="text-ink-3 text-base mt-2">
-          Enter the invite code you received from a household owner or admin.
-        </p>
-      </div>
+    <div className="page-enter max-w-[560px] flex flex-col gap-8">
+      <Link href="/household" className="ed-label-muted no-underline hover:text-red">← All households</Link>
 
-      <div className="bg-paper p-12 shadow-stamp border-ink">
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-8">
-          {joinHousehold.isError && (
-            <Alert variant="danger">
-              {joinHousehold.error instanceof ApiError ? joinHousehold.error.message : "Invalid invitation code. Make sure you typed it correctly."}
-            </Alert>
-          )}
+      <SectionHeader
+        kicker="Household · Join"
+        title="Join with an <em>invite code</em>"
+        subtitle="Ask a current member to share the household's invite link."
+      />
 
-          <div className="flex flex-col gap-3">
-            <label className="text-base font-medium text-ink-2 tracking-[0.02em]">
-              Invitation Code
-            </label>
-            <input
-              {...register("invitationCode")}
-              placeholder="e.g. ABCdef1234"
-              autoComplete="off"
-              className="h-[38px] p-[0_12px] bg-paper-2 text-ink text-md font-mono outline-none w-full border-ink"
-              onFocus={(e) => {
-                e.currentTarget.style.borderColor = "var(--ink)";
-                e.currentTarget.style.boxShadow = "0 0 0 3px rgba(178,42,26,0.08)";
-              }}
-              onBlur={(e) => {
-                e.currentTarget.style.borderColor = "var(--ink-3)";
-                e.currentTarget.style.boxShadow = "none";
-              }}
-            />
-            {errors.invitationCode && (
-              <p className="text-red text-base">{errors.invitationCode.message}</p>
-            )}
-          </div>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
+        {joinHousehold.isError && (
+          <Alert variant="danger">
+            {joinHousehold.error instanceof ApiError ? joinHousehold.error.message : "Invalid invitation code. Make sure you typed it correctly."}
+          </Alert>
+        )}
 
+        <Input
+          label="Invite code"
+          placeholder="6-character code, e.g. CEDAR-12"
+          autoComplete="off"
+          hint="Codes are case-insensitive and expire after 7 days."
+          error={errors.invitationCode?.message}
+          className="font-mono"
+          {...register("invitationCode")}
+        />
+
+        <div className="flex gap-3">
           <Btn
             type="submit"
             disabled={joinHousehold.isPending}
             variant="primary"
-            fullWidth
+            size="lg"
+            iconRight={<Icon name="arrowRight" size={16} />}
           >
-            {joinHousehold.isPending ? "Joining…" : "Join Household"}
+            {joinHousehold.isPending ? "Joining…" : "Join"}
           </Btn>
-        </form>
-      </div>
+          <Btn type="button" variant="secondary" size="lg" onClick={() => router.back()}>
+            Cancel
+          </Btn>
+        </div>
+      </form>
     </div>
   );
 }

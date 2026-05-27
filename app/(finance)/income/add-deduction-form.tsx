@@ -4,15 +4,7 @@ import type { DeductionCalculationMethod, DeductionType } from "@/types/finance"
 import { TYPE_CONFIGS, VOLUNTARY_TYPES, DEDUCTION_FREQUENCIES } from "./deduction-config";
 
 // ── Shared field styles & helpers ─────────────────────────────────────────────
-export const fieldStyle: React.CSSProperties = {
-  height: "40px", width: "100%",
-  background: "var(--paper-2)",
-  padding: "0 12px",
-  fontSize: "var(--ts-body-sm)",
-  color: "var(--text)",
-  outline: "none",
-  fontFamily: "var(--ff-body)",
-};
+export const fieldCls = "h-[40px] w-full bg-paper-2 p-[0_12px] text-[var(--ts-body-sm)] text-ink outline-none font-body";
 
 export function onFocus(e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) {
   e.currentTarget.style.borderColor = "var(--ink)";
@@ -38,7 +30,7 @@ export function CheckRow({ label, hint, checked, onChange }: {
   return (
     <label className="flex items-start gap-5 cursor-pointer">
       <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)}
-        className="mt-1 cursor-pointer w-[15px] h-[15px] shrink-0" style={{ accentColor: "var(--red)" }}
+        className="mt-1 cursor-pointer w-[15px] h-[15px] shrink-0 accent-[var(--red)]"
       />
       <div>
         <span className="text-base font-semibold text-ink-2 block">{label}</span>
@@ -74,11 +66,11 @@ export function AddDeductionForm({
   const canAdd = dValue && !isNaN(val) && val > 0;
 
   return (
-    <div className="bg-paper-2 p-8 flex flex-col gap-[14px]" style={{ border: "1px solid var(--accent-border)" }}>
+    <div className="bg-paper-2 p-8 flex flex-col gap-[14px] border border-[var(--accent-border)]">
 
       {/* Type */}
       <FieldGroup label="Type">
-        <select value={dType} onChange={(e) => setDType(e.target.value as DeductionType)} className="cursor-pointer border-ink" style={{ ...fieldStyle }} onFocus={onFocus} onBlur={onBlur}>
+        <select value={dType} onChange={(e) => setDType(e.target.value as DeductionType)} className={`cursor-pointer border-ink ${fieldCls}`} onFocus={onFocus} onBlur={onBlur}>
           {VOLUNTARY_TYPES.map((t) => (
             <option key={t} value={t}>{TYPE_CONFIGS[t as string]?.label ?? t}</option>
           ))}
@@ -90,25 +82,25 @@ export function AddDeductionForm({
       <FieldGroup label="Label (optional)">
         <input type="text" value={dLabel} onChange={(e) => setDLabel(e.target.value)}
           placeholder={`e.g. ${cfg?.label ?? "Custom deduction"}`}
-          className="border-ink" style={fieldStyle} onFocus={onFocus} onBlur={onBlur}
+          className={`border-ink ${fieldCls}`} onFocus={onFocus} onBlur={onBlur}
         />
       </FieldGroup>
 
       {/* Amount / Frequency / Method */}
-      <div className="grid gap-5" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))" }}>
+      <div className="grid gap-5 [grid-template-columns:repeat(auto-fit,minmax(120px,1fr))]">
         <FieldGroup label={dMethod === "PercentOfGross" ? "Percentage" : "Amount ($)"}>
           <input type="number" min={0} step="0.01" value={dValue} onChange={(e) => setDValue(e.target.value)}
             placeholder={dMethod === "PercentOfGross" ? "e.g. 6" : "e.g. 214.00"}
-            className="border-ink" style={fieldStyle} onFocus={onFocus} onBlur={onBlur}
+            className={`border-ink ${fieldCls}`} onFocus={onFocus} onBlur={onBlur}
           />
         </FieldGroup>
         <FieldGroup label="Frequency">
-          <select value={dFreq} onChange={(e) => setDFreq(e.target.value)} className="cursor-pointer border-ink" style={{ ...fieldStyle }} onFocus={onFocus} onBlur={onBlur}>
+          <select value={dFreq} onChange={(e) => setDFreq(e.target.value)} className={`cursor-pointer border-ink ${fieldCls}`} onFocus={onFocus} onBlur={onBlur}>
             {DEDUCTION_FREQUENCIES.map((f) => <option key={f.value} value={f.value}>{f.label}</option>)}
           </select>
         </FieldGroup>
         <FieldGroup label="Method">
-          <select value={dMethod} onChange={(e) => setDMethod(e.target.value as DeductionCalculationMethod)} className="cursor-pointer border-ink" style={{ ...fieldStyle }} onFocus={onFocus} onBlur={onBlur}>
+          <select value={dMethod} onChange={(e) => setDMethod(e.target.value as DeductionCalculationMethod)} className={`cursor-pointer border-ink ${fieldCls}`} onFocus={onFocus} onBlur={onBlur}>
             <option value="FixedAmount">Fixed ($)</option>
             <option value="PercentOfGross">% of Gross</option>
           </select>
@@ -118,16 +110,16 @@ export function AddDeductionForm({
       {/* Advanced */}
       <div className="overflow-hidden border-ink">
         <button type="button" onClick={() => setAdvancedOpen(!advancedOpen)}
-          className="w-full flex items-center justify-between py-[9px] px-[12px] bg-transparent cursor-pointer" style={{ border: "none" }}
+          className="w-full flex items-center justify-between py-[9px] px-[12px] bg-transparent cursor-pointer border-none"
         >
           <span className="text-base font-semibold text-ink-3">Advanced</span>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
-            style={{ transform: advancedOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 180ms" }}>
+            className={`transition-transform duration-[180ms]${advancedOpen ? " rotate-180" : ""}`}>
             <polyline points="6 9 12 15 18 9"/>
           </svg>
         </button>
         {advancedOpen && (
-          <div className="p-[0_12px_12px] flex flex-col gap-5" style={{ borderTop: "1.5px solid var(--ink)" }}>
+          <div className="p-[0_12px_12px] flex flex-col gap-5 border-t border-ink">
             <p className="text-sm text-ink-3 pt-5 leading-[1.5]">
               Auto-set from type. Override only if your plan is non-standard.
             </p>
@@ -145,7 +137,7 @@ export function AddDeductionForm({
           Cancel
         </button>
         <button type="button" onClick={onAdd} disabled={isPending || !canAdd}
-          className="p-[11px] text-base font-semibold" style={{ flex: 2, border: "none", background: canAdd && !isPending ? "var(--ink)" : "var(--paper-3)", color: canAdd && !isPending ? "#fff" : "var(--text-3)", cursor: isPending || !canAdd ? "not-allowed" : "pointer", transition: "background 150ms, color 150ms" }}
+          className={`flex-[2] p-[11px] text-base font-semibold transition-[background,color] duration-150 border-none cursor-pointer disabled:cursor-not-allowed${canAdd && !isPending ? " bg-ink text-white" : " bg-paper-3 text-ink-3"}`}
         >
           {isPending ? "Adding…" : "Add Deduction"}
         </button>

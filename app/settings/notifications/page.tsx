@@ -1,203 +1,199 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Toggle, Alert } from "@/components/editorial";
+import { Btn, Alert } from "@/components/editorial";
 
-const PREFS_KEY = "notification_prefs";
+// TODO(handoff8): wire to backend persistence via /api/notifications/preferences
+// (GET to load, PUT to save). Currently persists to localStorage only.
+const PREFS_KEY = "notification_prefs_v2";
+
+type Channel = "email" | "push" | "inApp";
+
+interface EventPrefs {
+  email: boolean;
+  push: boolean;
+  inApp: boolean;
+}
 
 interface Prefs {
-  emailNotifications: boolean;
-  browserNotifications: boolean;
-  billsDueReminders: boolean;
-  newMemberAlerts: boolean;
+  newExpense: EventPrefs;
+  settleUp: EventPrefs;
+  choreDue: EventPrefs;
+  replyToThread: EventPrefs;
+  mentionInComment: EventPrefs;
+  weeklyDigest: EventPrefs;
 }
 
 const DEFAULT_PREFS: Prefs = {
-  emailNotifications: true,
-  browserNotifications: false,
-  billsDueReminders: true,
-  newMemberAlerts: true,
+  newExpense:       { email: true,  push: true,  inApp: true  },
+  settleUp:         { email: true,  push: true,  inApp: true  },
+  choreDue:         { email: false, push: true,  inApp: true  },
+  replyToThread:    { email: false, push: true,  inApp: true  },
+  mentionInComment: { email: true,  push: true,  inApp: true  },
+  weeklyDigest:     { email: true,  push: false, inApp: false },
 };
 
-const TABS = ["Profile", "Security", "Notifications", "Connections"] as const;
-type Tab = (typeof TABS)[number];
-
-const TAB_HREFS: Record<Tab, string> = {
-  Profile: "/settings/profile",
-  Security: "/settings/security",
-  Notifications: "/settings/notifications",
-  Connections: "/settings/connections",
-};
-
-/* ── Notification row ─────────────────────────────────────────────────────── */
-
-function NotifRow({
-  label,
-  description,
-  checked,
-  onChange,
-  last,
-}: {
+interface EventLabel {
+  key: keyof Prefs;
   label: string;
-  description: string;
-  checked: boolean;
-  onChange: (v: boolean) => void;
-  last?: boolean;
-}) {
-  return (
-    <div
-      className="flex items-center justify-between p-[12px_0]" style={{ borderBottom: last ? "none" : "1.5px solid var(--ink)" }}
-    >
-      <div>
-        <p className="text-md font-medium text-ink">{label}</p>
-        <p className="text-base text-ink-3 mt-1">{description}</p>
-      </div>
-      <Toggle checked={checked} onCheckedChange={onChange} />
-    </div>
-  );
+  hint?: string;
 }
 
-/* ── Category card ────────────────────────────────────────────────────────── */
+interface EventGroup {
+  group: string;
+  events: EventLabel[];
+}
 
-const cardStyle: React.CSSProperties = {
-  background: "var(--paper-2)",
-  padding: "20px",
-};
+const EVENT_GROUPS: EventGroup[] = [
+  {
+    group: "Household & finances",
+    events: [
+      { key: "newExpense", label: "New expense",     hint: "When a roommate logs a shared expense" },
+      { key: "settleUp",   label: "Settle-up",       hint: "When a balance settlement is suggested" },
+      { key: "choreDue",   label: "Chore due today", hint: "Morning reminder on your assigned chores" },
+    ],
+  },
+  {
+    group: "Community",
+    events: [
+      { key: "replyToThread",    label: "Reply to your thread",  hint: "When someone replies to a thread you started" },
+      { key: "mentionInComment", label: "Mention in a comment",  hint: "When you're @mentioned anywhere" },
+    ],
+  },
+  {
+    group: "Digest",
+    events: [
+      { key: "weeklyDigest", label: "Weekly digest", hint: "Summary of household activity every Monday" },
+    ],
+  },
+];
 
-const sectionLabelStyle: React.CSSProperties = {
-  fontSize: "var(--ts-meta)",
-  fontWeight: 700,
-  color: "var(--text-3)",
-  textTransform: "uppercase",
-  letterSpacing: "0.1em",
-};
-
-/* ── Page ─────────────────────────────────────────────────────────────────── */
+const CHANNELS: { key: Channel; label: string }[] = [
+  { key: "email", label: "Email" },
+  { key: "push",  label: "Push"  },
+  { key: "inApp", label: "In-App" },
+];
 
 export default function NotificationsSettingsPage() {
   const [prefs, setPrefs] = useState<Prefs>(DEFAULT_PREFS);
   const [saved, setSaved] = useState(false);
+  const [dirty, setDirty] = useState(false);
 
   useEffect(() => {
     try {
       const stored = localStorage.getItem(PREFS_KEY);
-      if (stored) setPrefs(JSON.parse(stored));
+      if (stored) setPrefs(JSON.parse(stored) as Prefs);
     } catch {
       // ignore
     }
   }, []);
 
-  const updatePref = (key: keyof Prefs, value: boolean) => {
-    const next = { ...prefs, [key]: value };
-    setPrefs(next);
+  const toggle = (eventKey: keyof Prefs, channel: Channel) => {
+    setPrefs((prev) => ({
+      ...prev,
+      [eventKey]: { ...prev[eventKey], [channel]: !prev[eventKey][channel] },
+    }));
+    setDirty(true);
+    setSaved(false);
+  };
+
+  const handleSave = () => {
     try {
-      localStorage.setItem(PREFS_KEY, JSON.stringify(next));
+      localStorage.setItem(PREFS_KEY, JSON.stringify(prefs));
       setSaved(true);
-      setTimeout(() => setSaved(false), 2000);
+      setDirty(false);
     } catch {
       // ignore
     }
   };
 
-  const groups: {
-    category: string;
-    items: { key: keyof Prefs; label: string; description: string }[];
-  }[] = [
-    {
-      category: "Expenses",
-      items: [
-        {
-          key: "billsDueReminders",
-          label: "Expense Due Reminders",
-          description: "Get reminded when expenses are coming due",
-        },
-      ],
-    },
-    {
-      category: "Forum",
-      items: [
-        {
-          key: "newMemberAlerts",
-          label: "New Member Alerts",
-          description: "Notify when someone joins your household",
-        },
-      ],
-    },
-    {
-      category: "Account",
-      items: [
-        {
-          key: "browserNotifications",
-          label: "Browser Notifications",
-          description: "Show desktop push notifications",
-        },
-      ],
-    },
-    {
-      category: "Email",
-      items: [
-        {
-          key: "emailNotifications",
-          label: "Email Notifications",
-          description: "Receive important updates via email",
-        },
-      ],
-    },
-  ];
-
   return (
-    <div className="page-enter max-w-[620px] mx-auto py-16 px-12" >
-      {/* Header */}
-      <div className="mb-[28px] flex items-start justify-between">
-        <div>
-          <h1 className="font-serif text-4xl leading-none tracking-snug font-bold text-ink">
-            Settings
-          </h1>
-          <p className="text-base text-ink-3 mt-2">
-            Manage your account, security, and preferences
-          </p>
-        </div>
-        {saved && <Alert variant="success">Saved</Alert>}
+    <div className="page-enter flex flex-col gap-8">
+
+      {/* aria-live region for save confirmation */}
+      <div aria-live="polite" aria-atomic="true" className={saved ? "" : "sr-only"}>
+        {saved && <Alert variant="success">Preferences saved.</Alert>}
       </div>
 
-      {/* Tabs */}
-      <div className="mb-[28px] flex gap-2" style={{ borderBottom: "1.5px solid var(--ink)" }}>
-        {TABS.map((tab) => {
-          const active = tab === "Notifications";
-          return (
-            <a
-              key={tab}
-              href={TAB_HREFS[tab]}
-              className="py-5 px-8 text-md mb-[-1px] no-underline" style={{ fontWeight: active ? 600 : 400, color: active ? "var(--red)" : "var(--ink-3)", borderBottom: active ? "3px solid var(--red)" : "2px solid transparent", transition: "color 150ms" }}
+      <div>
+        <p className="text-base text-ink-2">
+          Choose how you want to be notified. Push notifications require the app installed on your device.
+        </p>
+      </div>
+
+      {/* Per-group tables */}
+      {EVENT_GROUPS.map((group) => (
+        <section key={group.group} aria-labelledby={`notif-group-${group.group.replace(/\W+/g, "-").toLowerCase()}`}>
+          <h2
+            id={`notif-group-${group.group.replace(/\W+/g, "-").toLowerCase()}`}
+            className="ed-label-muted mb-3"
+          >
+            {group.group}
+          </h2>
+
+          <div className="border-ink bg-paper-2" role="table" aria-label={`${group.group} notification preferences`}>
+            {/* Table header */}
+            <div
+              className="grid border-b border-ink"
+              style={{ gridTemplateColumns: "1fr 72px 72px 80px" }}
+              role="row"
             >
-              {tab}
-            </a>
-          );
-        })}
-      </div>
+              <div className="py-4 px-5" role="columnheader">
+                <span className="ed-label-muted">Event</span>
+              </div>
+              {CHANNELS.map(({ key, label }) => (
+                <div key={key} className="py-4 px-2 text-center" role="columnheader">
+                  <span className="ed-label-muted">{label}</span>
+                </div>
+              ))}
+            </div>
 
-      {/* Notification groups */}
-      <div className="flex flex-col gap-8">
-        {groups.map(({ category, items }) => (
-          <div key={category} className="border-ink" style={cardStyle}>
-            <p className="mb-2" style={{ ...sectionLabelStyle }}>{category}</p>
-            {items.map((item, idx) => (
-              <NotifRow
-                key={item.key}
-                label={item.label}
-                description={item.description}
-                checked={prefs[item.key]}
-                onChange={(v) => updatePref(item.key, v)}
-                last={idx === items.length - 1}
-              />
+            {/* Table rows */}
+            {group.events.map(({ key, label, hint }, idx) => (
+              <div
+                key={key}
+                className={`grid items-center${idx < group.events.length - 1 ? " border-b border-[var(--rule-soft)]" : ""}`}
+                style={{ gridTemplateColumns: "1fr 72px 72px 80px" }}
+                role="row"
+              >
+                <div className="py-5 px-5" role="cell">
+                  <span className="text-base text-ink leading-snug">{label}</span>
+                  {hint && <p className="text-sm text-ink-3 mt-[2px] leading-snug">{hint}</p>}
+                </div>
+                {CHANNELS.map(({ key: ch, label: chLabel }) => (
+                  <div key={ch} className="py-5 px-2 flex items-center justify-center" role="cell">
+                    <label
+                      className="flex items-center justify-center w-11 h-11 cursor-pointer"
+                      aria-label={`${label} — ${chLabel}`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={prefs[key][ch as Channel]}
+                        onChange={() => toggle(key, ch as Channel)}
+                        className="w-4 h-4 accent-[var(--ink)] cursor-pointer"
+                      />
+                    </label>
+                  </div>
+                ))}
+              </div>
             ))}
           </div>
-        ))}
-      </div>
+        </section>
+      ))}
 
-      <p className="text-sm text-ink-3 mt-8">
-        Preferences are saved locally in your browser.
-      </p>
+      <div className="flex items-center gap-4">
+        <Btn
+          variant="primary"
+          type="button"
+          onClick={handleSave}
+          disabled={!dirty}
+        >
+          Save preferences
+        </Btn>
+        {!dirty && !saved && (
+          <p className="text-sm text-ink-3">No unsaved changes.</p>
+        )}
+      </div>
     </div>
   );
 }

@@ -25,6 +25,7 @@ async function toApiError(res: Response): Promise<ApiError> {
   const message =
     (payload as { error?: string }).error ??
     (payload as { message?: string }).message ??
+    (payload as { detail?: string }).detail ??   // ASP.NET Core ProblemDetails
     `Request failed (${res.status})`;
   return new ApiError(res.status, message);
 }

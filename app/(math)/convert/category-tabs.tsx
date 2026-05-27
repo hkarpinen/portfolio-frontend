@@ -2,7 +2,14 @@
 
 import type { UnitCategoryDto } from "@/types/math";
 
-const rule = "1.5px solid var(--ink)";
+/** Display-name overrides: backend category slug → user-facing label */
+const CATEGORY_LABELS: Record<string, string> = {
+  weight: "Mass",
+};
+
+function categoryLabel(category: string): string {
+  return CATEGORY_LABELS[category] ?? category;
+}
 
 interface CategoryTabsProps {
   sorted: UnitCategoryDto[];
@@ -12,38 +19,18 @@ interface CategoryTabsProps {
 
 export function CategoryTabs({ sorted, activeCategory, onSelect }: CategoryTabsProps) {
   return (
-    <div
-      className="flex flex-wrap items-center gap-2"
-      style={{ padding: "10px 14px", borderBottom: rule, background: "var(--paper-2)" }}
-    >
-      <span
-        className="font-mono uppercase shrink-0 text-ink-3"
-        style={{ fontSize: "0.525rem", letterSpacing: "0.22em" }}
-      >
-        Category
-      </span>
-      {sorted.map((cat) => {
-        const on = activeCategory === cat.category;
-        return (
-          <button
-            key={cat.category}
-            onClick={() => onSelect(cat.category)}
-            className="font-mono uppercase transition-colors"
-            style={{
-              fontSize: "0.525rem",
-              letterSpacing: "0.18em",
-              padding: "3px 9px",
-              border: rule,
-              background: on ? "var(--ink)" : "transparent",
-              color: on ? "var(--paper)" : "var(--ink-2)",
-              cursor: "pointer",
-            }}
-          >
-            {on && <span style={{ color: "var(--red)", marginRight: 4 }}>▸</span>}
-            {cat.category}
-          </button>
-        );
-      })}
+    <div role="tablist" aria-label="Conversion category" className="ed-utility-tabs">
+      {sorted.map((cat) => (
+        <button
+          key={cat.category}
+          role="tab"
+          aria-selected={activeCategory === cat.category}
+          onClick={() => onSelect(cat.category)}
+          className="ed-utility-tab"
+        >
+          {categoryLabel(cat.category)}
+        </button>
+      ))}
     </div>
   );
 }
