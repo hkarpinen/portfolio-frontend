@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { Icon, type IconName } from "@/components/editorial/icon";
 import { Btn, Card, Badge, EditorialPageHead } from "@/components/editorial";
@@ -84,6 +85,31 @@ export default function AboutPage() {
         deck="Full-stack engineer based in Pullman, WA. I write the migrations, the auth flows, and the frontend — across seven microservices. AWS certified, 4+ years experience. Open to senior & staff roles."
       />
 
+      <div className="ed-about-hero">
+        <div className="ed-about-hero-row">
+          <div className="ed-about-headshot">
+            <Image
+              src="/hank_headshot.jpeg"
+              alt="Hank Karpinen"
+              width={160}
+              height={160}
+              priority
+            />
+          </div>
+          <div className="ed-about-bio">
+            <p className="ed-deck">Full-stack engineer based in Pullman, WA. I write the migrations, the auth flows, and the frontend — across seven microservices. AWS certified, 4+ years experience.</p>
+            <div className="ed-about-cta-row">
+              <Btn href="/contact" variant="primary" size="md" iconRight={<Icon name="arrowRight" size={16} />}>
+                Get in touch
+              </Btn>
+              <Btn asChild variant="secondary" size="md">
+                <a href="/cv.pdf" download="Hank-Karpinen-CV.pdf">Download CV</a>
+              </Btn>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="flex justify-end -mt-2">
         <Btn href="/contact" variant="primary" size="md" iconRight={<Icon name="arrowRight" size={16} />}>
           Get in touch
@@ -146,6 +172,17 @@ export default function AboutPage() {
             </Btn>
           </div>
         </aside>
+      </div>
+
+      <div className="mt-12 border-t border-rule py-6">
+        <p className="font-mono uppercase text-xs tracking-[0.22em] text-ink-2">
+          Open to full-stack roles ·{" "}
+          <Link href="/contact" className="text-red underline">Get in touch</Link>
+          {" "}·{" "}
+          <a href="mailto:hank@stackgazette.dev" className="text-red underline">hank@stackgazette.dev</a>
+          {" "}·{" "}
+          <a href="/cv.pdf" download className="text-red underline">Download CV</a>
+        </p>
       </div>
     </div>
   );
