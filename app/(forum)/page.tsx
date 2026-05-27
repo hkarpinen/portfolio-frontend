@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { VoteButtons } from "./forum/g/[slug]/threads/[threadId]/vote-buttons";
+import { VoteControl } from "@/components/editorial/vote-control";
 import { ThreadActions } from "./forum/g/[slug]/threads/[threadId]/thread-actions";
 import { fetchThreadsServer } from "@/lib/api/forum";
 import { fetchCommunitiesServer } from "@/lib/api/communities";
@@ -157,7 +157,7 @@ export default async function ForumFeedPage({
                       aria-label={thread.title}
                     >
                       {/* Vote column */}
-                      <VoteButtons
+                      <VoteControl
                         threadId={thread.threadId}
                         targetType={0}
                         targetId={thread.threadId}

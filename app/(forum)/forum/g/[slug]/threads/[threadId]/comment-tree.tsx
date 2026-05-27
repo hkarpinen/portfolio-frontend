@@ -6,7 +6,7 @@ import { useState } from "react";
 import { timeAgo, getInitials, authorHandle } from "@/lib/utils";
 import type { Comment } from "@/types/forum";
 import styles from "./comment-tree.module.css";
-import { CommentVote } from "./comment-vote";
+import { VoteControl } from "@/components/editorial/vote-control";
 import { InlineReplyForm } from "./inline-reply-form";
 import { ReportButton } from "./report-button";
 import { useIsDemo } from "@/hooks/use-demo";
@@ -92,10 +92,13 @@ function CommentNode({
 
         {/* Action footer: vote · reply · report */}
         <div className="flex items-center gap-5">
-          <CommentVote
+          <VoteControl
             threadId={threadId}
-            commentId={comment.commentId}
+            targetType={1}
+            targetId={comment.commentId}
             initialScore={comment.voteScore ?? 0}
+            orientation="row"
+            size={10}
           />
           {depth < 3 && (
             isDemo ? (

@@ -3,7 +3,7 @@ import { parseMarkdown } from "@/lib/markdown";
 import { CommentTree } from "./comment-tree";
 import { timeAgo, authorHandle, renderTitleAccent } from "@/lib/utils";
 import { CommentForm } from "./comment-form";
-import { VoteButtons } from "./vote-buttons";
+import { VoteControl } from "@/components/editorial/vote-control";
 import { ThreadActions } from "./thread-actions";
 import { fetchThreadServer, fetchCommentsServer } from "@/lib/api/forum";
 import { getSession } from "@/lib/auth/session";
@@ -65,7 +65,7 @@ export default async function ThreadPage({
 
       {/* Action bar: horizontal vote · Reply CTA · spacer · overflow menu */}
       <div className="ed-thread-action-bar" aria-label="Thread actions">
-        <VoteButtons
+        <VoteControl
           threadId={thread.threadId}
           targetType={0}
           targetId={thread.threadId}
