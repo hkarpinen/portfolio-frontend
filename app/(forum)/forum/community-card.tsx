@@ -6,6 +6,7 @@ import { useCommunityMembership, useJoinCommunity } from "@/hooks/use-community"
 import type { CommunityActivitySnapshot } from "@/types/forum";
 import { formatShortDate } from "@/lib/formatting";
 import { UserInitials } from "@/components/editorial/user-initials";
+import { Btn } from "@/components/editorial";
 
 
 interface CommunityCardProps {
@@ -94,13 +95,15 @@ export function CommunityCard({ communityId, slug, name, description, imageUrl, 
               Joined
             </span>
           ) : (
-            <button
+            <Btn
+              variant="primary"
+              size="sm"
               onClick={handleJoin}
               disabled={joining}
-              className="text-base font-medium bg-red text-white py-[4px] px-[14px] border-0 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+              loading={joining}
             >
               {joining ? "…" : "Join"}
-            </button>
+            </Btn>
           )}
         </div>
       </div>

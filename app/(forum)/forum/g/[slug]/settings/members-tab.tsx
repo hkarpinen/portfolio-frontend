@@ -3,6 +3,7 @@
 import { useCommunityMembers, useAppointModerator, useRemoveModerator } from "@/hooks/use-community";
 import { ApiError } from "@/lib/api-client";
 import { UserInitials } from "@/components/editorial/user-initials";
+import { Btn } from "@/components/editorial";
 
 interface Props {
   communityId: string;
@@ -74,23 +75,25 @@ export function CommunityMembersTab({ communityId, currentUserId }: Props) {
               {roleBadge(m.role)}
               {!isOwner && (
                 isModerator ? (
-                  <button
+                  <Btn
+                    variant="danger"
+                    size="sm"
                     disabled={isPending}
                     onClick={() => removeModerator.mutate(m.membershipId)}
                     aria-label={`Remove moderator role from ${m.displayName ?? "this member"}`}
-                    className="py-2 px-5 bg-red-soft text-red text-sm font-medium border border-[oklch(62%_0.21_22_/_0.25)] cursor-pointer disabled:cursor-not-allowed"
                   >
                     Remove Mod
-                  </button>
+                  </Btn>
                 ) : (
-                  <button
+                  <Btn
+                    variant="outline"
+                    size="sm"
                     disabled={isPending}
                     onClick={() => appointModerator.mutate(m.membershipId)}
                     aria-label={`Make ${m.displayName ?? "this member"} a moderator`}
-                    className="py-2 px-5 bg-red-soft text-red text-sm font-medium border-[1.5px] border-red cursor-pointer disabled:cursor-not-allowed"
                   >
                     Make Mod
-                  </button>
+                  </Btn>
                 )
               )}
             </div>

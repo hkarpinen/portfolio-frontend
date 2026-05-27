@@ -6,7 +6,6 @@ import { useUpdateCommunity, useUploadCommunityImage, useDeleteCommunity } from 
 import { useMe } from "@/hooks/use-identity";
 import { ApiError } from "@/lib/api-client";
 import { ERROR } from "@/lib/error-messages";
-import styles from "./settings-form.module.css";
 import { Btn, Alert, Input, Textarea, SelectField, UserInitials, ConfirmDeleteDialog } from "@/components/editorial";
 interface Props {
   communityId: string;
@@ -91,22 +90,25 @@ export function CommunitySettingsForm({
             onChange={handleImageChange}
           />
           <div className="flex gap-4 items-center">
-            <button
+            <Btn
               type="button"
+              variant="secondary"
+              size="sm"
               onClick={() => fileInputRef.current?.click()}
               disabled={uploadImage.isPending}
-              className="py-[7px] px-[14px] bg-paper-3 text-ink-2 text-base font-medium border-ink cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 transition-[background] duration-[110ms]"
+              loading={uploadImage.isPending}
             >
               {uploadImage.isPending ? "Uploading…" : "Choose image"}
-            </button>
+            </Btn>
             {imageUrl && (
-              <button
+              <Btn
                 type="button"
+                variant="ghost"
+                size="sm"
                 onClick={() => setImageUrl("")}
-                className="py-[7px] px-[10px] bg-transparent text-ink-3 text-base cursor-pointer border-ink transition-colors duration-[110ms]"
               >
                 Remove
-              </button>
+              </Btn>
             )}
           </div>
           {uploadImage.isError && (
@@ -164,13 +166,14 @@ export function CommunitySettingsForm({
               Permanently delete this community and all its threads. This cannot be undone.
             </p>
           </div>
-          <button
+          <Btn
             type="button"
+            variant="danger"
+            size="sm"
             onClick={() => setConfirmDelete(true)}
-            className={styles.deleteBtn}
           >
             Delete community
-          </button>
+          </Btn>
           {deleteCommunity.isError && (
             <span className="text-base text-red">
               {deleteCommunity.error instanceof ApiError ? deleteCommunity.error.message : ERROR.DEFAULT}

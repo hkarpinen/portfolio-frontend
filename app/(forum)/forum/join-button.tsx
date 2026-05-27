@@ -2,6 +2,7 @@
 
 import { useCommunityMembership, useJoinCommunity } from "@/hooks/use-community";
 import { ApiError } from "@/lib/api-client";
+import { Btn } from "@/components/editorial";
 
 interface JoinButtonProps {
   communityId: string;
@@ -28,7 +29,9 @@ export function JoinButton({ communityId }: JoinButtonProps) {
   }
 
   return (
-    <button
+    <Btn
+      variant="outline"
+      size="sm"
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -41,9 +44,9 @@ export function JoinButton({ communityId }: JoinButtonProps) {
         });
       }}
       disabled={joinMutation.isPending}
-      className="py-[5px] px-[12px] text-base font-semibold text-red bg-red-soft shrink-0 [border:1.5px_solid_var(--red)] cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
+      loading={joinMutation.isPending}
     >
       {joinMutation.isPending ? "…" : "Join"}
-    </button>
+    </Btn>
   );
 }

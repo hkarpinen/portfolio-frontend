@@ -105,9 +105,9 @@ export function NewCommunityForm() {
             <div className="flex flex-col gap-2">
               <span className="text-base font-medium text-ink-2">Community image</span>
               {imageUrl ? (
-                <button type="button" onClick={() => setImageUrl("")} className="self-start py-2 px-5 bg-transparent text-ink-3 text-base cursor-pointer border-ink">
+                <Btn type="button" variant="ghost" size="sm" onClick={() => setImageUrl("")}>
                   Remove
-                </button>
+                </Btn>
               ) : null}
               {uploadImage.isError && (
                 <span className="text-sm text-red">
