@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Icon } from "@/components/editorial/icon";
-import { EmptyState } from "@/components/editorial/empty-state";
+import { ListWithLoadingAndEmpty } from "@/components/editorial/list-with-loading-and-empty";
 import { ThreadRow } from "./thread-row";
 import { fetchThreads } from "@/lib/api/forum";
 import { forumKeys } from "@/lib/query-keys";
@@ -63,22 +63,22 @@ export function ForumFeed({
         </nav>
       </div>
 
-      {isLoading && threads.length === 0 ? (
-        <p className="ed-hint py-6 text-center">Loading…</p>
-      ) : threads.length === 0 ? (
-        <EmptyState
-          glyph={<Icon name="forum" size={24} strokeWidth={1.5} />}
-          title="No threads yet"
-          body="Join a community and start the first thread."
-          cta={{ label: "+ New thread", href: "/forum/new" }}
-        />
-      ) : (
-        <div className="flex flex-col">
-          {threads.map((t) => (
-            <ThreadRow key={t.threadId} thread={t} slug={slugMap[t.communityId] ?? t.communitySlug ?? ""} />
-          ))}
-        </div>
-      )}
+      <ListWithLoadingAndEmpty
+        items={threads}
+        isLoading={isLoading}
+        loadingHint="Loading…"
+        empty={{
+          glyph: <Icon name="forum" size={24} strokeWidth={1.5} />,
+          title: "No threads yet",
+          body: "Join a community and start the first thread.",
+          cta: { label: "+ New thread", href: "/forum/new" },
+        }}
+        className="flex flex-col"
+      >
+        {(t) => (
+          <ThreadRow key={t.threadId} thread={t} slug={slugMap[t.communityId] ?? t.communitySlug ?? ""} />
+        )}
+      </ListWithLoadingAndEmpty>
     </section>
   );
 }

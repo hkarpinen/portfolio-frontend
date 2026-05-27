@@ -8,7 +8,7 @@ import { Btn } from "./button";
  * `.ed-h2` / `.ed-deck` classes.
  */
 
-interface EmptyStateProps {
+export interface EmptyStateProps {
   title: string;
   body?: string;
   kicker?: string;
