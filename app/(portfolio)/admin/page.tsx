@@ -152,7 +152,7 @@ export default function AdminPage() {
                             {isBanning ? "…" : user.isBanned ? "Unban" : "Ban"}
                           </Btn>
                         ) : (
-                          <span className="text-[0.72rem] text-ink-4 font-mono uppercase tracking-wide">—</span>
+                          <span className="text-xs text-ink-4 font-mono uppercase tracking-wide">—</span>
                         )}
                       </td>
                     </tr>

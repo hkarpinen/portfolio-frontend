@@ -94,7 +94,7 @@ export default function HouseholdContributionsPage() {
             <select
               value={activePeriod}
               onChange={(e) => setSelectedPeriod(e.target.value)}
-              className="h-9 px-3 font-mono text-[0.72rem] tracking-[0.08em] uppercase bg-paper text-ink border border-ink cursor-pointer"
+              className="h-9 px-3 font-mono text-xs tracking-[0.08em] uppercase bg-paper text-ink border border-ink cursor-pointer"
               aria-label="Select month"
             >
               {periodOptions.map((o) => (
@@ -184,7 +184,7 @@ export default function HouseholdContributionsPage() {
               {/* TODO(handoff8): SETTLE UP CTA — wire to a settle-up endpoint when available */}
               <div>
                 <button
-                  className="font-mono text-[0.78rem] tracking-[0.1em] uppercase text-ink bg-paper border border-ink px-5 h-11 cursor-pointer hover:bg-ink hover:text-paper transition-colors"
+                  className="font-mono text-sm tracking-[0.1em] uppercase text-ink bg-paper border border-ink px-5 h-11 cursor-pointer hover:bg-ink hover:text-paper transition-colors"
                   disabled
                   title="Settle-up endpoint not yet available"
                 >

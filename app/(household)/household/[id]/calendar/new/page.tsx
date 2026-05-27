@@ -93,7 +93,7 @@ export default function NewCalendarEventPage({ params }: { params: { id: string 
             />
             <label
               htmlFor="allday"
-              className="font-mono text-[0.72rem] tracking-[0.1em] uppercase cursor-pointer text-ink-2"
+              className="font-mono text-xs tracking-[0.1em] uppercase cursor-pointer text-ink-2"
             >
               All day
             </label>

@@ -284,7 +284,7 @@ export function ConverterClient() {
                   type="button"
                   onClick={() => applyQuickValue(chip)}
                   aria-label={`Apply conversion: ${chip.label}`}
-                  className="font-mono text-[0.72rem] tracking-[0.1em] uppercase px-3 py-2 min-h-[36px] border-[1.5px] border-[color:var(--ink-3)] text-ink-2 bg-transparent cursor-pointer hover:border-[color:var(--ink)] hover:text-ink transition-colors"
+                  className="font-mono text-xs tracking-[0.1em] uppercase px-3 py-2 min-h-[36px] border-[1.5px] border-[color:var(--ink-3)] text-ink-2 bg-transparent cursor-pointer hover:border-[color:var(--ink)] hover:text-ink transition-colors"
                 >
                   {chip.label}
                 </button>

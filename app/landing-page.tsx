@@ -193,7 +193,7 @@ function LandingPageInner({ displayName, avatarUrl }: { displayName: string | nu
               {["Next.js 14", ".NET 8", "Postgres", "RabbitMQ", "MassTransit", "Docker", "Nginx", "JWT", "AWS"].map(t => (
                 <span
                   key={t}
-                  className="font-mono text-[0.72rem] font-600 uppercase tracking-[0.12em] px-2 py-1 border border-ink-3 text-[var(--ink-2)]"
+                  className="font-mono text-xs font-600 uppercase tracking-[0.12em] px-2 py-1 border border-ink-3 text-[var(--ink-2)]"
                 >{t}</span>
               ))}
             </div>
@@ -239,7 +239,7 @@ function LandingPageInner({ displayName, avatarUrl }: { displayName: string | nu
             <p className="ed-h3 ed-banner-dark-title">
               Let&apos;s <em>work</em> together.
             </p>
-            <p className="text-[var(--paper)] opacity-80 font-mono text-[0.78rem] uppercase tracking-[0.12em] mt-2">Senior &amp; staff full-stack · Remote, hybrid, or onsite · Pullman, WA</p>
+            <p className="text-[var(--paper)] opacity-80 font-mono text-sm uppercase tracking-[0.12em] mt-2">Senior &amp; staff full-stack · Remote, hybrid, or onsite · Pullman, WA</p>
           </div>
           <div className="flex items-stretch gap-0 w-full sm:w-auto sm:shrink-0 border-[1.5px] border-paper/30">
             <label htmlFor="contact-email" className="sr-only">Your email address</label>
@@ -249,7 +249,7 @@ function LandingPageInner({ displayName, avatarUrl }: { displayName: string | nu
               value={contactEmail}
               onChange={(e) => setContactEmail(e.target.value)}
               placeholder="your@email.com"
-              className="flex-1 min-w-0 bg-transparent text-paper font-mono text-[0.78rem] tracking-[0.1em] placeholder:text-paper/40 border-none outline-none px-4 py-3 sm:min-w-[200px]"
+              className="flex-1 min-w-0 bg-transparent text-paper font-mono text-sm tracking-[0.1em] placeholder:text-paper/40 border-none outline-none px-4 py-3 sm:min-w-[200px]"
               autoComplete="email"
             />
             <Btn

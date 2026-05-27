@@ -265,7 +265,7 @@ export default function ExpensePage() {
                           <td className="py-[14px] pr-6 whitespace-nowrap">
                             {split.isClaimed ? (
                               <span
-                                className="inline-flex items-center gap-[5px] font-mono text-[0.72rem] tracking-[0.08em] uppercase text-ink-3"
+                                className="inline-flex items-center gap-[5px] font-mono text-xs tracking-[0.08em] uppercase text-ink-3"
                                 aria-label="Split claimed"
                               >
                                 {/* Check mark provides shape-based indicator in addition to text */}
@@ -274,7 +274,7 @@ export default function ExpensePage() {
                               </span>
                             ) : (
                               <span
-                                className="font-mono text-[0.72rem] tracking-[0.08em] uppercase text-red"
+                                className="font-mono text-xs tracking-[0.08em] uppercase text-red"
                                 style={{ border: "1px solid var(--red)", padding: "2px 8px" }}
                                 aria-label="Split open — not yet claimed"
                               >

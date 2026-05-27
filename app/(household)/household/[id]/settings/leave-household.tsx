@@ -24,7 +24,7 @@ export function LeaveHousehold({ householdId, membershipId }: LeaveHouseholdProp
 
   return (
     <section className="flex flex-col gap-5 bg-paper p-6" style={{ border: "1px solid var(--danger)" }}>
-      <p className="font-mono text-[0.72rem] tracking-[0.1em] uppercase text-red font-bold">Leave household</p>
+      <p className="font-mono text-xs tracking-[0.1em] uppercase text-red font-bold">Leave household</p>
       <p className="ed-body text-ink-2">
         Leaving will remove you from this household. Your past expense history will remain.
       </p>

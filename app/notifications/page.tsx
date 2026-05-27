@@ -41,7 +41,7 @@ function Row({ n, onRead }: { n: NotificationItem; onRead: (id: string) => void 
     <>
       {unreadDot}
       <div className="flex-1 min-w-0">
-        <p className={`font-body text-[1rem] leading-snug ${n.isRead ? "text-ink-2" : "text-ink font-medium"}`}>
+        <p className={`font-body text-md leading-snug ${n.isRead ? "text-ink-2" : "text-ink font-medium"}`}>
           {n.title}
           {n.message ? <span className="text-ink-3"> {n.message}</span> : null}
         </p>

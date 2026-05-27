@@ -204,7 +204,7 @@ export default function NewExpensePage({ params }: { params: { id: string } }) {
         <div className="flex flex-col gap-3 pt-2 border-t border-rule-soft">
           <label className="flex items-center gap-3 cursor-pointer">
             <input id="isRecurring" type="checkbox" {...register("isRecurring")} className="w-4 h-4 accent-[var(--red)]" />
-            <span className="font-mono text-[0.72rem] tracking-[0.08em] uppercase text-ink-3">Recurring expense</span>
+            <span className="font-mono text-xs tracking-[0.08em] uppercase text-ink-3">Recurring expense</span>
           </label>
           {isRecurring && (
             <SelectField label="Frequency" {...register("recurrenceFrequency")}>

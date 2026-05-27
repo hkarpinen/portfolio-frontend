@@ -65,7 +65,7 @@ export default async function HouseholdSettingsPage({ params }: Props) {
             <a
               key={s.id}
               href={`#settings-${s.id}`}
-              className="font-mono text-[0.72rem] tracking-[0.1em] uppercase text-ink-3 hover:text-red no-underline py-2 pr-3 pl-3 border-l-2 border-transparent hover:border-red transition-colors"
+              className="font-mono text-xs tracking-[0.1em] uppercase text-ink-3 hover:text-red no-underline py-2 pr-3 pl-3 border-l-2 border-transparent hover:border-red transition-colors"
             >
               {s.label}
             </a>
