@@ -28,3 +28,4 @@ export { PullQuote } from "./pull-quote";
 export { SourceNote } from "./source-note";
 export { EmptyDispatch } from "./empty-dispatch";
 export { UserInitials } from "./user-initials";
+export { ConfirmDeleteDialog } from "./confirm-delete-dialog";

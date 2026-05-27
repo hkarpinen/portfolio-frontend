@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useHouseholdExpenses, useDeleteHouseholdExpense, usePayHouseholdExpense, useUnpayHouseholdExpense } from "@/hooks/use-expenses";
 import { EmptyState } from "@/components/editorial/empty-state";
 import { Icon } from "@/components/editorial/icon";
+import { ConfirmDeleteDialog } from "@/components/editorial/confirm-delete-dialog";
 import type { HouseholdExpense, HouseholdExpenseListResponse } from "@/types/finance";
 import { formatCurrency, formatShortDate } from "@/lib/formatting";
 
@@ -58,16 +59,15 @@ function ExpenseRow({
   expense,
   householdId,
   canManage,
-  onDelete,
+  onDeleteClick,
   isDeleting,
 }: {
   expense: HouseholdExpense;
   householdId: string;
   canManage: boolean;
-  onDelete: (id: string) => void;
+  onDeleteClick: (id: string) => void;
   isDeleting: boolean;
 }) {
-  const [confirmDelete, setConfirmDelete] = useState(false);
   const formattedDate = formatShortDate(expense.dueDate);
   const detailHref = `/household/${householdId}/expenses/${expense.expenseId}`;
 
@@ -99,7 +99,7 @@ function ExpenseRow({
       <td className="py-[14px] whitespace-nowrap">
         <div className="flex items-center gap-3">
           <StatusCell expense={expense} householdId={householdId} />
-          {canManage && !confirmDelete && (
+          {canManage && (
             <>
               <Link
                 href={`${detailHref}?edit=1`}
@@ -110,7 +110,7 @@ function ExpenseRow({
                 <Icon name="edit" size={14} strokeWidth={2} aria-hidden />
               </Link>
               <button
-                onClick={() => setConfirmDelete(true)}
+                onClick={() => onDeleteClick(expense.expenseId)}
                 disabled={isDeleting}
                 className="inline-flex items-center justify-center w-7 h-7 text-ink-3 hover:text-red focus:text-red cursor-pointer border-none bg-transparent p-0 disabled:opacity-50"
                 aria-label={`Delete expense: ${expense.title}`}
@@ -119,25 +119,6 @@ function ExpenseRow({
                 <Icon name="trash" size={14} strokeWidth={2} aria-hidden />
               </button>
             </>
-          )}
-          {canManage && confirmDelete && (
-            <span className="flex items-center gap-2">
-              <button
-                onClick={() => { onDelete(expense.expenseId); setConfirmDelete(false); }}
-                disabled={isDeleting}
-                className="font-mono text-xs tracking-[0.08em] text-red cursor-pointer border-none bg-transparent p-0 disabled:opacity-50"
-                aria-label={`Confirm delete expense: ${expense.title}`}
-              >
-                {isDeleting ? "…" : "Confirm"}
-              </button>
-              <button
-                onClick={() => setConfirmDelete(false)}
-                className="font-mono text-xs tracking-[0.08em] text-ink-3 cursor-pointer border-none bg-transparent p-0"
-                aria-label="Cancel delete"
-              >
-                Cancel
-              </button>
-            </span>
           )}
         </div>
       </td>
@@ -158,10 +139,16 @@ export function ExpensesList({
   const { data } = useHouseholdExpenses(householdId, initialData);
   const expenses = data?.items ?? initialData.items;
   const deleteMutation = useDeleteHouseholdExpense(householdId);
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
-  const onDelete = (householdExpenseId: string) => {
-    deleteMutation.mutate(householdExpenseId);
-  };
+  const targetExpense = expenses.find((e) => e.expenseId === deleteTargetId);
+
+  function handleDeleteConfirm() {
+    if (!deleteTargetId) return;
+    deleteMutation.mutate(deleteTargetId, {
+      onSuccess: () => setDeleteTargetId(null),
+    });
+  }
 
   if (expenses.length === 0) {
     return (
@@ -175,31 +162,42 @@ export function ExpensesList({
   }
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full border-collapse" aria-label="Shared expenses">
-        <thead>
-          <tr className="border-b border-[var(--ink)]">
-            <th scope="col" className="text-left ed-kicker pb-[10px] pr-6 font-normal">Expense</th>
-            <th scope="col" className="text-left ed-kicker pb-[10px] pr-6 font-normal">Category</th>
-            <th scope="col" className="text-left ed-kicker pb-[10px] pr-6 font-normal">Date</th>
-            <th scope="col" className="text-left ed-kicker pb-[10px] pr-6 font-normal">Payer</th>
-            <th scope="col" className="text-right ed-kicker pb-[10px] pr-6 font-normal">Amount</th>
-            <th scope="col" className="text-left ed-kicker pb-[10px] font-normal">Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {expenses.map((expense) => (
-            <ExpenseRow
-              key={expense.expenseId}
-              expense={expense}
-              householdId={householdId}
-              canManage={canManage}
-              onDelete={onDelete}
-              isDeleting={deleteMutation.isPending}
-            />
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <>
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse" aria-label="Shared expenses">
+          <thead>
+            <tr className="border-b border-[var(--ink)]">
+              <th scope="col" className="text-left ed-kicker pb-[10px] pr-6 font-normal">Expense</th>
+              <th scope="col" className="text-left ed-kicker pb-[10px] pr-6 font-normal">Category</th>
+              <th scope="col" className="text-left ed-kicker pb-[10px] pr-6 font-normal">Date</th>
+              <th scope="col" className="text-left ed-kicker pb-[10px] pr-6 font-normal">Payer</th>
+              <th scope="col" className="text-right ed-kicker pb-[10px] pr-6 font-normal">Amount</th>
+              <th scope="col" className="text-left ed-kicker pb-[10px] font-normal">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {expenses.map((expense) => (
+              <ExpenseRow
+                key={expense.expenseId}
+                expense={expense}
+                householdId={householdId}
+                canManage={canManage}
+                onDeleteClick={(id) => setDeleteTargetId(id)}
+                isDeleting={deleteMutation.isPending && deleteMutation.variables === expense.expenseId}
+              />
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <ConfirmDeleteDialog
+        open={deleteTargetId !== null}
+        onOpenChange={(isOpen) => { if (!isOpen) setDeleteTargetId(null); }}
+        title={`Delete "${targetExpense?.title ?? "expense"}"?`}
+        body="This expense will be permanently removed from the household."
+        isPending={deleteMutation.isPending}
+        onConfirm={handleDeleteConfirm}
+      />
+    </>
   );
 }

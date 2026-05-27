@@ -7,8 +7,7 @@ import { useMe } from "@/hooks/use-identity";
 import { ApiError } from "@/lib/api-client";
 import { ERROR } from "@/lib/error-messages";
 import styles from "./settings-form.module.css";
-import { Btn, Alert, Input, Textarea, SelectField, UserInitials } from "@/components/editorial";
-import { DeleteConfirm } from "./delete-confirm";
+import { Btn, Alert, Input, Textarea, SelectField, UserInitials, ConfirmDeleteDialog } from "@/components/editorial";
 interface Props {
   communityId: string;
   ownerId: string;
@@ -165,36 +164,32 @@ export function CommunitySettingsForm({
               Permanently delete this community and all its threads. This cannot be undone.
             </p>
           </div>
-          {!confirmDelete ? (
-            <button
-              type="button"
-              onClick={() => setConfirmDelete(true)}
-              className={styles.deleteBtn}
-            >
-              Delete community
-            </button>
-          ) : (
-            <div className="flex flex-col gap-5">
-              <p className="text-base text-ink-2 m-0">
-                Are you sure? Type <strong>{name}</strong> to confirm.
-              </p>
-              <DeleteConfirm
-                communityName={name}
-                isPending={deleteCommunity.isPending}
-                onCancel={() => setConfirmDelete(false)}
-                onConfirm={() =>
-                  deleteCommunity.mutate(communityId, {
-                    onSuccess: () => router.push("/forum"),
-                  })
-                }
-              />
-              {deleteCommunity.isError && (
-                <span className="text-base text-red">
-                  {deleteCommunity.error instanceof ApiError ? deleteCommunity.error.message : ERROR.DEFAULT}
-                </span>
-              )}
-            </div>
+          <button
+            type="button"
+            onClick={() => setConfirmDelete(true)}
+            className={styles.deleteBtn}
+          >
+            Delete community
+          </button>
+          {deleteCommunity.isError && (
+            <span className="text-base text-red">
+              {deleteCommunity.error instanceof ApiError ? deleteCommunity.error.message : ERROR.DEFAULT}
+            </span>
           )}
+          <ConfirmDeleteDialog
+            open={confirmDelete}
+            onOpenChange={setConfirmDelete}
+            title="Delete community?"
+            body={`Permanently delete this community and all its threads. This cannot be undone.`}
+            confirmLabel="Delete community"
+            isPending={deleteCommunity.isPending}
+            onConfirm={() =>
+              deleteCommunity.mutate(communityId, {
+                onSuccess: () => router.push("/forum"),
+              })
+            }
+            requireText={{ expectedText: name, label: `Type "${name}" to confirm` }}
+          />
         </div>
       )}
     </form>

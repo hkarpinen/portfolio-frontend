@@ -8,6 +8,7 @@ import { EmptyState } from "@/components/editorial/empty-state";
 import { Icon } from "@/components/editorial/icon";
 import { EditorialPageHead } from "@/components/editorial/editorial-page-head";
 import { DepartmentHead } from "@/components/editorial/department-head";
+import { ConfirmDeleteDialog } from "@/components/editorial/confirm-delete-dialog";
 import { choresHeadline } from "@/lib/household/editorial-copy";
 import type { ChoreDto } from "@/lib/api/chores";
 import { formatShortDate } from "@/lib/formatting";
@@ -33,16 +34,15 @@ function formatDue(iso?: string): { text: string; overdue: boolean; srText: stri
 }
 
 function ChoreRow({
-  chore, members, onComplete, onDelete, completing, deleting,
+  chore, members, onComplete, onDeleteClick, completing, deleting,
 }: {
   chore: ChoreDto;
   members: { userId: string; displayName?: string; username: string }[];
   onComplete: (id: string) => void;
-  onDelete: (id: string) => void;
+  onDeleteClick: (id: string) => void;
   completing: boolean;
   deleting: boolean;
 }) {
-  const [confirmDelete, setConfirmDelete] = useState(false);
   const assignee = members.find((m) => m.userId === chore.assignedToUserId);
   const done = !!chore.completedAt;
   const due = formatDue(chore.dueDate);
@@ -82,33 +82,14 @@ function ChoreRow({
           <span className="ed-label-muted">
             {chore.recurrenceFrequency ? FREQ_LABEL[chore.recurrenceFrequency] ?? chore.recurrenceFrequency : "One-off"}
           </span>
-          {!confirmDelete ? (
-            <button
-              onClick={() => setConfirmDelete(true)}
-              disabled={deleting}
-              className="opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity font-mono text-xs tracking-[0.08em] text-ink-3 hover:text-red focus:text-red cursor-pointer border-none bg-transparent p-0"
-              aria-label={`Delete chore: ${chore.title}`}
-            >
-              Delete
-            </button>
-          ) : (
-            <span className="flex items-center gap-2">
-              <button
-                onClick={() => { onDelete(chore.id); setConfirmDelete(false); }}
-                disabled={deleting}
-                className="font-mono text-xs tracking-[0.08em] text-red cursor-pointer border-none bg-transparent p-0"
-                aria-label={`Confirm delete: ${chore.title}`}
-              >
-                {deleting ? "…" : "Confirm"}
-              </button>
-              <button
-                onClick={() => setConfirmDelete(false)}
-                className="font-mono text-xs tracking-[0.08em] text-ink-3 cursor-pointer border-none bg-transparent p-0"
-              >
-                Cancel
-              </button>
-            </span>
-          )}
+          <button
+            onClick={() => onDeleteClick(chore.id)}
+            disabled={deleting}
+            className="opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity font-mono text-xs tracking-[0.08em] text-ink-3 hover:text-red focus:text-red cursor-pointer border-none bg-transparent p-0"
+            aria-label={`Delete chore: ${chore.title}`}
+          >
+            Delete
+          </button>
         </div>
       </td>
     </tr>
@@ -118,6 +99,7 @@ function ChoreRow({
 export default function ChoresPage() {
   const { id: householdId } = useParams<{ id: string }>();
   const [showAll, setShowAll] = useState(true);
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
   const choresQuery = useChores(householdId, !showAll);
   const membersQuery = useHouseholdMembers(householdId);
   const complete = useCompleteChore(householdId);
@@ -134,6 +116,15 @@ export default function ChoresPage() {
     displayName: (m as any).displayName as string | undefined,
     username: (m as any).username as string,
   }));
+
+  const targetChore = chores.find((c) => c.id === deleteTarget);
+
+  function handleDeleteConfirm() {
+    if (!deleteTarget) return;
+    del.mutate(deleteTarget, {
+      onSuccess: () => setDeleteTarget(null),
+    });
+  }
 
   return (
     <div className="page-enter flex flex-col gap-6">
@@ -189,7 +180,7 @@ export default function ChoresPage() {
                   chore={chore}
                   members={members}
                   onComplete={(id) => complete.mutate(id)}
-                  onDelete={(id) => del.mutate(id)}
+                  onDeleteClick={(id) => setDeleteTarget(id)}
                   completing={complete.isPending && complete.variables === chore.id}
                   deleting={del.isPending && del.variables === chore.id}
                 />
@@ -199,6 +190,15 @@ export default function ChoresPage() {
         </div>
       )}
       </section>
+
+      <ConfirmDeleteDialog
+        open={deleteTarget !== null}
+        onOpenChange={(isOpen) => { if (!isOpen) setDeleteTarget(null); }}
+        title={`Delete "${targetChore?.title ?? "chore"}"?`}
+        body="This chore will be permanently removed."
+        isPending={del.isPending}
+        onConfirm={handleDeleteConfirm}
+      />
     </div>
   );
 }
