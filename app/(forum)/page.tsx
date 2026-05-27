@@ -4,7 +4,8 @@ import { ThreadActions } from "./forum/g/[slug]/threads/[threadId]/thread-action
 import { fetchThreadsServer } from "@/lib/api/forum";
 import { fetchCommunitiesServer } from "@/lib/api/communities";
 import { getCookieHeader } from "@/lib/server-cookies";
-import { timeAgo, getInitials } from "@/lib/utils";
+import { timeAgo } from "@/lib/utils";
+import { UserInitials } from "@/components/editorial/user-initials";
 import { Icon } from "@/components/editorial/icon";
 import type { ThreadSummaryResponse, CommunitySummaryResponse } from "@/types/forum";
 
@@ -115,9 +116,7 @@ export default async function ForumFeedPage({
                     >
                       <div className="card-hover bg-paper p-8 shadow-card cursor-pointer border-ink">
                         <div className="flex items-center gap-5 mb-4">
-                          <div className="w-[36px] h-[36px] bg-red-soft flex items-center justify-center text-md shrink-0">
-                            {getInitials(c.name)}
-                          </div>
+                          <UserInitials name={c.name} size="lg" className="w-[36px] h-[36px]" />
                           <div>
                             <p className="font-serif font-bold text-md text-ink">
                               {c.name}
@@ -240,9 +239,7 @@ export default async function ForumFeedPage({
                     href={`/forum/g/${c.slug ?? c.name}`}
                     className="row-hover flex items-center gap-4 no-underline py-3 px-4"
                   >
-                    <div aria-hidden="true" className="w-12 h-12 bg-red-soft flex items-center justify-center text-sm font-bold text-red shrink-0">
-                      {getInitials(c.name)}
-                    </div>
+                    <UserInitials name={c.name} size="lg" />
                     <span className="text-base text-ink-2 font-medium">
                       {c.name}
                     </span>

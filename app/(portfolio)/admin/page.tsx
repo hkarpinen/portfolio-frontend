@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { getInitials } from "@/lib/utils";
 import { useMe, useAdminUsers, useBanUser, useChangeUserRole } from "@/hooks/use-identity";
+import { UserInitials } from "@/components/editorial/user-initials";
 import { EditorialPageHead } from "@/components/editorial/editorial-page-head";
 import { LedeStat } from "@/components/editorial/lede-stat";
 import { DepartmentHead } from "@/components/editorial/department-head";
@@ -91,12 +91,7 @@ export default function AdminPage() {
                       {/* User */}
                       <td className="py-5 px-6">
                         <div className="flex items-center gap-3 min-w-0">
-                          <span
-                            className="w-[28px] h-[28px] shrink-0 bg-red-soft text-red flex items-center justify-center text-sm font-bold"
-                            aria-hidden="true"
-                          >
-                            {getInitials(user.displayName)}
-                          </span>
+                          <UserInitials name={user.displayName} size="sm" className="w-[28px] h-[28px]" />
                           <span className="text-base font-medium text-ink overflow-hidden text-ellipsis whitespace-nowrap">
                             {user.displayName}
                             {isSelf && <span className="text-sm text-red ml-3" aria-label="(this is you)">(you)</span>}

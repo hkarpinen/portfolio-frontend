@@ -2,7 +2,7 @@
 
 import { useCommunityMembers, useAppointModerator, useRemoveModerator } from "@/hooks/use-community";
 import { ApiError } from "@/lib/api-client";
-import { getInitials } from "@/lib/utils";
+import { UserInitials } from "@/components/editorial/user-initials";
 
 interface Props {
   communityId: string;
@@ -54,17 +54,13 @@ export function CommunityMembersTab({ communityId, currentUserId }: Props) {
           (appointModerator.isPending && appointModerator.variables === m.membershipId) ||
           (removeModerator.isPending && removeModerator.variables === m.membershipId);
 
-        const initials = getInitials(m.displayName);
-
         return (
           <div
             key={m.membershipId}
             className={`flex items-center justify-between py-[10px] px-[14px] bg-paper-2 border-ink transition-opacity duration-150${isPending ? " opacity-50" : ""}`}
           >
             <div className="flex items-center gap-5">
-              <span className="w-16 h-16 bg-red-soft text-red flex items-center justify-center text-sm font-bold">
-                {initials}
-              </span>
+              <UserInitials name={m.displayName} size="lg" />
               <div>
                 <p className="text-base font-medium text-ink">
                   {m.displayName ?? `${m.userId.slice(0, 8)}…`}

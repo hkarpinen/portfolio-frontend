@@ -6,9 +6,8 @@ import { useUpdateCommunity, useUploadCommunityImage, useDeleteCommunity } from 
 import { useMe } from "@/hooks/use-identity";
 import { ApiError } from "@/lib/api-client";
 import { ERROR } from "@/lib/error-messages";
-import { getInitials } from "@/lib/utils";
 import styles from "./settings-form.module.css";
-import { Btn, Alert, Input, Textarea, SelectField } from "@/components/editorial";
+import { Btn, Alert, Input, Textarea, SelectField, UserInitials } from "@/components/editorial";
 import { DeleteConfirm } from "./delete-confirm";
 interface Props {
   communityId: string;
@@ -82,18 +81,7 @@ export function CommunitySettingsForm({
 
       {/* Profile image */}
       <div className="bg-paper-2 p-8 flex items-center gap-8 border-ink">
-        {imageUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={imageUrl}
-            alt=""
-            className="w-[56px] h-[56px] object-cover shrink-0 border-ink"
-          />
-        ) : (
-          <div className="w-[56px] h-[56px] bg-red-soft shrink-0 flex items-center justify-center text-xl font-bold font-serif text-red">
-            {getInitials(name)}
-          </div>
-        )}
+        <UserInitials name={name} avatarUrl={imageUrl} size="lg" className="w-[56px] h-[56px] text-xl border-ink" />
         <div className="flex-1 flex flex-col gap-3">
           <span className="text-base font-medium text-ink-2">Community image</span>
           <input

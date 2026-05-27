@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import { ApiError } from "@/lib/api-client";
-import { getInitials } from "@/lib/utils";
 import { useCommunityMembership, useJoinCommunity } from "@/hooks/use-community";
 import type { CommunityActivitySnapshot } from "@/types/forum";
 import { formatShortDate } from "@/lib/formatting";
+import { UserInitials } from "@/components/editorial/user-initials";
 
 
 interface CommunityCardProps {
@@ -33,16 +33,7 @@ function formatRelative(dateStr: string) {
 }
 
 function ActivityAvatar({ avatarUrl, name }: { avatarUrl?: string; name?: string }) {
-  if (avatarUrl) {
-    return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img src={avatarUrl} alt="" className="w-[18px] h-[18px] object-cover shrink-0" />
-    );
-  }
-  const initial = getInitials(name);
-  return (
-    <div className="w-[18px] h-[18px] bg-red-soft flex items-center justify-center text-sm font-bold text-red shrink-0">{initial}</div>
-  );
+  return <UserInitials name={name} avatarUrl={avatarUrl} size="sm" />;
 }
 
 export function CommunityCard({ communityId, slug, name, description, imageUrl, memberCount, threadCount, commentCount, latestActivity }: CommunityCardProps) {
@@ -75,18 +66,7 @@ export function CommunityCard({ communityId, slug, name, description, imageUrl, 
     >
       <div className="flex items-start justify-between gap-8">
         <Link href={`/forum/g/${slug}`} className="flex-1 min-w-0 flex items-center gap-6 no-underline">
-          {imageUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={imageUrl}
-              alt=""
-              className="w-24 h-24 object-cover shrink-0 border-ink"
-            />
-          ) : (
-            <div className="w-24 h-24 bg-red-soft shrink-0 flex items-center justify-center text-lg font-bold text-red font-serif">
-              {getInitials(name)}
-            </div>
-          )}
+          <UserInitials name={name} avatarUrl={imageUrl} size="lg" className="w-24 h-24 text-lg border-ink" />
           <div className="min-w-0">
             <h2 className="font-serif font-semibold text-xl text-ink m-0">{name}</h2>
             {description && (

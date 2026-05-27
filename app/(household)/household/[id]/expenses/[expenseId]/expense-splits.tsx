@@ -5,8 +5,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { ApiError } from "@/lib/api-client";
 import { ERROR } from "@/lib/error-messages";
-import { getInitials } from "@/lib/utils";
 import { useAddExpenseSplit, useRemoveExpenseSplit } from "@/hooks/use-expenses";
+import { UserInitials } from "@/components/editorial/user-initials";
 import { Btn, Alert, Input, SelectField } from "@/components/editorial";
 import type { HouseholdExpenseDetailResponse } from "@/types/finance";
 import { formatCurrency, formatAmount } from "@/lib/formatting";
@@ -114,7 +114,6 @@ export function ExpenseSplits({ expense, splits, members, isPrivileged, currentM
         ) : (
           <div className="flex flex-col gap-4 mb-8">
             {splits.map((split) => {
-              const initials = getInitials(split.displayName);
               const isRemoving = removeSplitMutation.isPending && removeSplitMutation.variables === split.splitId;
               return (
                 <div
@@ -122,7 +121,7 @@ export function ExpenseSplits({ expense, splits, members, isPrivileged, currentM
                   className={`bg-paper py-6 px-8 flex items-center justify-between border-ink transition-opacity duration-150${isRemoving ? " opacity-50" : ""}`}
                 >
                   <div className="flex items-center gap-5">
-                    <span className="w-16 h-16 bg-red-soft text-red flex items-center justify-center text-sm font-bold font-serif">{initials}</span>
+                    <UserInitials name={split.displayName} size="lg" />
                     <div>
                       <p className="text-base font-medium text-ink">
                         {split.displayName || `${(split.splitId ?? split.userId ?? "").slice(0, 8)}…`}
