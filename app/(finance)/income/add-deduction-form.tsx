@@ -55,7 +55,7 @@ export function AddDeductionForm({
   const canAdd = dValue && !isNaN(val) && val > 0;
 
   return (
-    <div className="bg-paper-2 p-8 flex flex-col gap-[14px] border border-[var(--accent-border)]">
+    <div className="bg-paper-2 p-8 flex flex-col gap-[14px] border border-accent-border">
 
       {/* Type */}
       <FieldGroup label="Type">

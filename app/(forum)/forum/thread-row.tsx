@@ -18,7 +18,7 @@ export function ThreadRow({
   return (
     <Link
       href={`/forum/g/${slug}/threads/${thread.threadId}`}
-      className="flex gap-6 sm:gap-10 py-6 border-b border-[var(--rule-soft)] last:border-b-0 no-underline group items-start"
+      className="flex gap-6 sm:gap-10 py-6 border-b border-rule-soft last:border-b-0 no-underline group items-start"
     >
       <div className="flex flex-col items-center w-14 shrink-0 pt-0.5">
         <span className="font-serif italic text-ink text-[1.625rem] leading-none">{thread.voteScore ?? 0}</span>

@@ -182,7 +182,7 @@ export default function NewExpensePage({ params }: { params: { id: string } }) {
                       disabled={!s.checked}
                       value={s.percent}
                       onChange={(e) => updatePercent(idx, e.target.value)}
-                      className="w-[72px] h-9 px-2 text-right font-mono text-sm border border-[var(--ink)] bg-paper text-ink disabled:opacity-40 disabled:cursor-not-allowed"
+                      className="w-[72px] h-9 px-2 text-right font-mono text-sm border border-ink bg-paper text-ink disabled:opacity-40 disabled:cursor-not-allowed"
                       aria-label={`${s.displayName} share percentage`}
                     />
                     <span className="font-mono text-sm text-ink-3" aria-hidden>%</span>
@@ -201,7 +201,7 @@ export default function NewExpensePage({ params }: { params: { id: string } }) {
         )}
 
         {/* Recurring expense */}
-        <div className="flex flex-col gap-3 pt-2 border-t border-[var(--rule-soft)]">
+        <div className="flex flex-col gap-3 pt-2 border-t border-rule-soft">
           <label className="flex items-center gap-3 cursor-pointer">
             <input id="isRecurring" type="checkbox" {...register("isRecurring")} className="w-4 h-4 accent-[var(--red)]" />
             <span className="font-mono text-[0.72rem] tracking-[0.08em] uppercase text-ink-3">Recurring expense</span>

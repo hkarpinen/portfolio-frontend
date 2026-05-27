@@ -45,7 +45,7 @@ function CommentNode({
   return (
     <article
       aria-label={`Comment by ${authorName}`}
-      className={isLast ? "" : "border-b border-[var(--rule-soft)]"}
+      className={isLast ? "" : "border-b border-rule-soft"}
       style={{
         paddingLeft: depth > 0 ? "20px" : "0",
         borderLeft: depth > 0 ? `2px solid ${railColor(depth)}` : "none",

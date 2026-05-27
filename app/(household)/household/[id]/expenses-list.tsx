@@ -72,7 +72,7 @@ function ExpenseRow({
   const detailHref = `/household/${householdId}/expenses/${expense.expenseId}`;
 
   return (
-    <tr className="border-b border-[var(--rule-soft)] group">
+    <tr className="border-b border-rule-soft group">
       <td className="py-[14px] pr-6">
         <Link
           href={detailHref}
@@ -166,7 +166,7 @@ export function ExpensesList({
       <div className="overflow-x-auto">
         <table className="w-full border-collapse" aria-label="Shared expenses">
           <thead>
-            <tr className="border-b border-[var(--ink)]">
+            <tr className="border-b border-ink">
               <th scope="col" className="text-left ed-kicker pb-[10px] pr-6 font-normal">Expense</th>
               <th scope="col" className="text-left ed-kicker pb-[10px] pr-6 font-normal">Category</th>
               <th scope="col" className="text-left ed-kicker pb-[10px] pr-6 font-normal">Date</th>

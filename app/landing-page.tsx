@@ -187,13 +187,13 @@ function LandingPageInner({ displayName, avatarUrl }: { displayName: string | nu
 
         {/* Stack summary strip */}
         <section className="ed-landing-section" aria-label="Technical highlights">
-          <div className="flex flex-wrap items-center gap-4 py-4 border-t border-b border-[var(--rule-soft)]">
+          <div className="flex flex-wrap items-center gap-4 py-4 border-t border-b border-rule-soft">
             <span className="ed-label-muted shrink-0">Built with</span>
             <div className="flex flex-wrap gap-2 items-center">
               {["Next.js 14", ".NET 8", "Postgres", "RabbitMQ", "MassTransit", "Docker", "Nginx", "JWT", "AWS"].map(t => (
                 <span
                   key={t}
-                  className="font-mono text-[0.72rem] font-600 uppercase tracking-[0.12em] px-2 py-1 border border-[var(--ink-3)] text-[var(--ink-2)]"
+                  className="font-mono text-[0.72rem] font-600 uppercase tracking-[0.12em] px-2 py-1 border border-ink-3 text-[var(--ink-2)]"
                 >{t}</span>
               ))}
             </div>

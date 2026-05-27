@@ -144,7 +144,7 @@ export default function ExpensePage() {
 
       {/* 2-column metadata card */}
       <div
-        className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-[var(--rule)] border border-[var(--rule)]"
+        className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-[var(--rule)] border border-rule"
         aria-label="Expense details"
       >
         <div className="bg-paper p-5 flex flex-col gap-1">
@@ -225,7 +225,7 @@ export default function ExpensePage() {
               <div className="overflow-x-auto">
                 <table className="w-full border-collapse" aria-label="Expense splits by member">
                   <thead>
-                    <tr className="border-b border-[var(--ink)]">
+                    <tr className="border-b border-ink">
                       <th scope="col" className="text-left ed-kicker pb-[10px] pr-6 font-normal">Member</th>
                       <th scope="col" className="text-right ed-kicker pb-[10px] pr-6 font-normal">Share</th>
                       <th scope="col" className="text-right ed-kicker pb-[10px] pr-6 font-normal">Amount</th>
@@ -252,7 +252,7 @@ export default function ExpensePage() {
                       const isRemoving = removeSplitMutation.isPending && removeSplitMutation.variables === split.splitId;
 
                       return (
-                        <tr key={split.splitId} className="border-b border-[var(--rule-soft)]">
+                        <tr key={split.splitId} className="border-b border-rule-soft">
                           <td className="py-[14px] pr-6 font-serif italic text-ink text-[1.0625rem]">
                             {split.displayName || `Member ${(split.splitId ?? split.userId ?? "").slice(0, 6)}…`}
                           </td>

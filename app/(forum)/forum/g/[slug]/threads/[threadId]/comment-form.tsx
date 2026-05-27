@@ -95,7 +95,7 @@ export function CommentForm({ threadId, isAuthed }: CommentFormProps) {
 
       {previewing ? (
         <div
-          className="prose prose-slate max-w-none text-md text-ink-2 leading-[1.7] min-h-[120px] p-5 border border-[var(--rule-soft)] bg-paper-2"
+          className="prose prose-slate max-w-none text-md text-ink-2 leading-[1.7] min-h-[120px] p-5 border border-rule-soft bg-paper-2"
           aria-label="Reply preview"
           dangerouslySetInnerHTML={{
             __html: previewHtml.trim() || `<p class="text-ink-3 italic">Nothing to preview yet.</p>`,

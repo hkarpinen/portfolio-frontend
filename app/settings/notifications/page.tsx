@@ -152,7 +152,7 @@ export default function NotificationsSettingsPage() {
             {group.events.map(({ key, label, hint }, idx) => (
               <div
                 key={key}
-                className={`grid items-center${idx < group.events.length - 1 ? " border-b border-[var(--rule-soft)]" : ""}`}
+                className={`grid items-center${idx < group.events.length - 1 ? " border-b border-rule-soft" : ""}`}
                 style={{ gridTemplateColumns: "1fr 72px 72px 80px" }}
                 role="row"
               >

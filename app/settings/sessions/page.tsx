@@ -131,7 +131,7 @@ export default function SessionsPage() {
           {sessions.map((s, idx) => (
             <div
               key={s.sessionId}
-              className={`grid items-center${idx < sessions.length - 1 ? " border-b border-[var(--rule-soft)]" : ""}`}
+              className={`grid items-center${idx < sessions.length - 1 ? " border-b border-rule-soft" : ""}`}
               style={{ gridTemplateColumns: "1fr 140px 140px 100px" }}
               role="row"
             >

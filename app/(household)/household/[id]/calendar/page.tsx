@@ -94,7 +94,7 @@ export default function CalendarPage({ params }: { params: { id: string } }) {
               .map((ev) => (
                 <li
                   key={ev.id}
-                  className="flex justify-between items-center py-3 gap-6 border-b border-[var(--rule-soft)] last:border-b-0"
+                  className="flex justify-between items-center py-3 gap-6 border-b border-rule-soft last:border-b-0"
                 >
                   <div>
                     <p className="font-serif text-md">{ev.title}</p>

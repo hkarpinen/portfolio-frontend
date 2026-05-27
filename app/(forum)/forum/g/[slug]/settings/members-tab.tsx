@@ -18,7 +18,7 @@ export function CommunityMembersTab({ communityId, currentUserId }: Props) {
   if (isLoading) {
     return (
       <div className="flex justify-center p-20">
-        <div className="w-[28px] h-[28px] border-2 border-[var(--ink-4)] border-t-ink animate-spin" />
+        <div className="w-[28px] h-[28px] border-2 border-ink-4 border-t-ink animate-spin" />
       </div>
     );
   }

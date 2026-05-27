@@ -191,6 +191,12 @@ const config: Config = {
         shimmer:     'shimmer 1.6s ease-in-out infinite',
       },
 
+      borderColor: {
+        rule:            'var(--rule)',
+        'rule-soft':     'var(--rule-soft)',
+        'accent-border': 'var(--accent-border)',
+      },
+
       minHeight: {
         // Touch target floor — every interactive control uses this
         hit: '44px',

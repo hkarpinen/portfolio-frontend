@@ -66,7 +66,7 @@ export default function ProfilePage({ params }: { params: { userId: string } }) 
             )}
           </div>
           {isOwnProfile && (
-            <Link href="/settings/profile" className="text-base font-semibold text-ink-2 py-[7px] px-[14px] border border-[var(--ink-3)] no-underline shrink-0 transition-colors duration-[110ms] hover:bg-paper-2">Edit profile</Link>
+            <Link href="/settings/profile" className="text-base font-semibold text-ink-2 py-[7px] px-[14px] border border-ink-3 no-underline shrink-0 transition-colors duration-[110ms] hover:bg-paper-2">Edit profile</Link>
           )}
         </div>
       </div>

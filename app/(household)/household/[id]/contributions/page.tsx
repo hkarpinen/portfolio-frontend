@@ -94,7 +94,7 @@ export default function HouseholdContributionsPage() {
             <select
               value={activePeriod}
               onChange={(e) => setSelectedPeriod(e.target.value)}
-              className="h-9 px-3 font-mono text-[0.72rem] tracking-[0.08em] uppercase bg-paper text-ink border border-[var(--ink)] cursor-pointer"
+              className="h-9 px-3 font-mono text-[0.72rem] tracking-[0.08em] uppercase bg-paper text-ink border border-ink cursor-pointer"
               aria-label="Select month"
             >
               {periodOptions.map((o) => (
@@ -115,7 +115,7 @@ export default function HouseholdContributionsPage() {
               <div className="overflow-x-auto">
                 <table className="w-full border-collapse" aria-label={`Member contributions for ${month?.periodLabel ?? "this period"}`}>
                   <thead>
-                    <tr className="border-b border-[var(--ink)]">
+                    <tr className="border-b border-ink">
                       <th scope="col" className="text-left ed-kicker pb-[10px] pr-6 font-normal">Member</th>
                       <th scope="col" className="text-right ed-kicker pb-[10px] pr-6 font-normal">Paid</th>
                       <th scope="col" className="text-right ed-kicker pb-[10px] pr-6 font-normal">Owed</th>
@@ -131,7 +131,7 @@ export default function HouseholdContributionsPage() {
                         ? `${netAbs} surplus (overpaid)`
                         : `${netAbs} owed (underpaid)`;
                       return (
-                        <tr key={m.userId} className="border-b border-[var(--rule-soft)]">
+                        <tr key={m.userId} className="border-b border-rule-soft">
                           <td className="py-[14px] pr-6 font-serif italic text-ink text-[1.0625rem]">
                             {m.displayName || `Member ${m.userId.slice(0, 6)}…`}
                           </td>
@@ -166,11 +166,11 @@ export default function HouseholdContributionsPage() {
                 title="Minimum <em>transfers</em> to balance"
                 deck="The fewest payments needed to bring every member to $0 net."
               />
-              <div className="border border-[var(--rule)] bg-paper">
+              <div className="border border-rule bg-paper">
                 {settlements.map((s, i) => (
                   <div
                     key={i}
-                    className="flex items-center justify-between gap-4 px-6 py-4 border-b border-[var(--rule-soft)] last:border-b-0"
+                    className="flex items-center justify-between gap-4 px-6 py-4 border-b border-rule-soft last:border-b-0"
                   >
                     <span className="font-serif italic text-ink text-base">
                       {s.from} → {s.to}
@@ -184,7 +184,7 @@ export default function HouseholdContributionsPage() {
               {/* TODO(handoff8): SETTLE UP CTA — wire to a settle-up endpoint when available */}
               <div>
                 <button
-                  className="font-mono text-[0.78rem] tracking-[0.1em] uppercase text-ink bg-paper border border-[var(--ink)] px-5 h-11 cursor-pointer hover:bg-ink hover:text-paper transition-colors"
+                  className="font-mono text-[0.78rem] tracking-[0.1em] uppercase text-ink bg-paper border border-ink px-5 h-11 cursor-pointer hover:bg-ink hover:text-paper transition-colors"
                   disabled
                   title="Settle-up endpoint not yet available"
                 >

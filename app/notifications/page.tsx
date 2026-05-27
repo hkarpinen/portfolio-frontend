@@ -50,7 +50,7 @@ function Row({ n, onRead }: { n: NotificationItem; onRead: (id: string) => void 
     </>
   );
 
-  const cls = `flex gap-4 py-5 border-b border-[var(--rule-soft)] ${n.isRead ? "" : "bg-paper-2 px-3 -mx-3"}`;
+  const cls = `flex gap-4 py-5 border-b border-rule-soft ${n.isRead ? "" : "bg-paper-2 px-3 -mx-3"}`;
 
   if (n.deepLink) {
     return (

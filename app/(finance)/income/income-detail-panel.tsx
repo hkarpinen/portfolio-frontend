@@ -28,7 +28,7 @@ export function IncomeDetailPanel({ incomeId, period, onPeriodChange }: IncomeDe
   if (isLoading) {
     return (
       <div className="p-[16px_0_4px] flex items-center gap-4">
-        <div className="w-8 h-8 border-2 border-[var(--ink-4)] border-t-ink animate-spin" />
+        <div className="w-8 h-8 border-2 border-ink-4 border-t-ink animate-spin" />
         <span className="text-base text-ink-3">Loading breakdown…</span>
       </div>
     );
@@ -104,7 +104,7 @@ export function IncomeDetailPanel({ incomeId, period, onPeriodChange }: IncomeDe
       )}
 
       {/* ── Net Take-Home ── */}
-      <div className="flex justify-between items-center py-[10px] px-[14px] bg-red-soft border border-[var(--accent-border)]">
+      <div className="flex justify-between items-center py-[10px] px-[14px] bg-red-soft border border-accent-border">
         <span className="text-sm font-bold text-red uppercase tracking-[0.08em]">
           Net Take-Home
         </span>

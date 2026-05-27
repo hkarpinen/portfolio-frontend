@@ -48,7 +48,7 @@ function ChoreRow({
   const due = formatDue(chore.dueDate);
 
   return (
-    <tr className={`border-b border-[var(--rule-soft)] group${due.overdue ? "" : ""}`}>
+    <tr className={`border-b border-rule-soft group${due.overdue ? "" : ""}`}>
       <td className="py-[14px] pr-4 w-[36px]">
         <button
           onClick={() => onComplete(chore.id)}
@@ -163,7 +163,7 @@ export default function ChoresPage() {
         <div className="overflow-x-auto">
           <table className="w-full border-collapse" aria-label="Household chores">
             <thead>
-              <tr className="border-b border-[var(--ink)]">
+              <tr className="border-b border-ink">
                 <th scope="col" className="pb-[10px] w-[36px]">
                   <span className="sr-only">Complete</span>
                 </th>

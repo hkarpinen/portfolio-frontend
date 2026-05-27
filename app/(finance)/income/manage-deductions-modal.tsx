@@ -191,7 +191,7 @@ export function ManageDeductionsModal({ source, onClose }: ManageDeductionsModal
           {activeTab === "deductions" && (
             <div className="flex flex-col gap-5">
               {existingDeductions.length === 0 && !addOpen ? (
-                <div className="py-[28px] px-[20px] text-center border-[1.5px] border-dashed border-[var(--ink-3)]">
+                <div className="py-[28px] px-[20px] text-center border-[1.5px] border-dashed border-ink-3">
                   <p className="text-base text-ink-3 italic">No deductions added yet.</p>
                   <p className="text-sm text-ink-3 mt-2">401(k), health insurance, HSA, and more.</p>
                 </div>
