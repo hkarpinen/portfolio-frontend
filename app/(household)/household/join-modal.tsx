@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useJoinHousehold } from "@/hooks/use-household";
 import { ApiError } from "@/lib/api-client";
-import { Btn, Modal, Alert } from "@/components/editorial";
+import { Btn, Modal, Alert, Input } from "@/components/editorial";
 
 interface JoinHouseholdModalProps {
   open: boolean;
@@ -57,19 +57,14 @@ export function JoinHouseholdModal({ open, onOpenChange }: JoinHouseholdModalPro
             {joinMutation.error instanceof ApiError ? joinMutation.error.message : "Invalid or expired invite code."}
           </Alert>
         )}
-        <div className="flex flex-col gap-3">
-          <label className="text-base font-medium text-ink-2 tracking-[0.02em]">
-            Invite Code
-          </label>
-          <input
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            onKeyDown={(e) => { if (e.key === "Enter") handleJoin(); }}
-            placeholder="Enter invite code…"
-            autoFocus
-            className="h-[38px] w-full bg-paper-2 p-[0_12px] text-md text-ink outline-none font-mono border-ink transition-[border-color,box-shadow] duration-[110ms] focus:shadow-[0_0_0_3px_rgba(178,42,26,0.08)]"
-          />
-        </div>
+        <Input
+          label="Invite Code"
+          value={code}
+          onChange={(e) => setCode(e.target.value)}
+          onKeyDown={(e) => { if (e.key === "Enter") handleJoin(); }}
+          placeholder="Enter invite code…"
+          autoFocus
+        />
       </div>
     </Modal>
   );

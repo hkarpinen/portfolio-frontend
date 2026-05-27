@@ -10,7 +10,8 @@ import {
   TYPE_CONFIGS, US_STATES, FILING_STATUS_OPTIONS,
 } from "./deduction-config";
 import { DeductionChip } from "./deduction-chip";
-import { AddDeductionForm, FieldGroup, fieldCls, onFocus, onBlur } from "./add-deduction-form";
+import { AddDeductionForm, FieldGroup } from "./add-deduction-form";
+import { SelectField } from "@/components/editorial";
 import { Icon } from "@/components/editorial/icon";
 import { Btn } from "@/components/editorial/button";
 
@@ -152,20 +153,20 @@ export function ManageDeductionsModal({ source, onClose }: ManageDeductionsModal
               {taxEnabled && (
                 <div className="form-grid-2">
                   <FieldGroup label="Filing Status">
-                    <select value={filingStatus} onChange={(e) => setFilingStatus(e.target.value as FilingStatus)} className={`cursor-pointer border-ink ${fieldCls}`} onFocus={onFocus} onBlur={onBlur}>
+                    <SelectField id="filing-status" value={filingStatus} onChange={(e) => setFilingStatus(e.target.value as FilingStatus)}>
                       {FILING_STATUS_OPTIONS.map((o) => (
                         <option key={o.value} value={o.value}>{o.label}</option>
                       ))}
-                    </select>
+                    </SelectField>
                   </FieldGroup>
 
                   <FieldGroup label="State">
-                    <select value={stateCode} onChange={(e) => setStateCode(e.target.value)} className={`cursor-pointer border-ink ${fieldCls}`} onFocus={onFocus} onBlur={onBlur}>
+                    <SelectField id="state-code" value={stateCode} onChange={(e) => setStateCode(e.target.value)}>
                       <option value="">— None / no state income tax —</option>
                       {US_STATES.map((s) => (
                         <option key={s.code} value={s.code}>{s.code} – {s.name}</option>
                       ))}
-                    </select>
+                    </SelectField>
                   </FieldGroup>
                 </div>
               )}

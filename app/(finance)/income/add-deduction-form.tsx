@@ -2,19 +2,7 @@
 
 import type { DeductionCalculationMethod, DeductionType } from "@/types/finance";
 import { TYPE_CONFIGS, VOLUNTARY_TYPES, DEDUCTION_FREQUENCIES } from "./deduction-config";
-import { Btn } from "@/components/editorial/button";
-
-// ── Shared field styles & helpers ─────────────────────────────────────────────
-export const fieldCls = "h-[40px] w-full bg-paper-2 p-[0_12px] text-[var(--ts-body-sm)] text-ink outline-none font-body";
-
-export function onFocus(e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) {
-  e.currentTarget.style.borderColor = "var(--ink)";
-  e.currentTarget.style.boxShadow = "0 0 0 3px rgba(178,42,26,0.08)";
-}
-export function onBlur(e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) {
-  e.currentTarget.style.borderColor = "var(--ink-3)";
-  e.currentTarget.style.boxShadow = "none";
-}
+import { Btn, Input, SelectField } from "@/components/editorial";
 
 export function FieldGroup({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -71,40 +59,38 @@ export function AddDeductionForm({
 
       {/* Type */}
       <FieldGroup label="Type">
-        <select value={dType} onChange={(e) => setDType(e.target.value as DeductionType)} className={`cursor-pointer border-ink ${fieldCls}`} onFocus={onFocus} onBlur={onBlur}>
+        <SelectField id="deduction-type" value={dType} onChange={(e) => setDType(e.target.value as DeductionType)}>
           {VOLUNTARY_TYPES.map((t) => (
             <option key={t} value={t}>{TYPE_CONFIGS[t as string]?.label ?? t}</option>
           ))}
-        </select>
+        </SelectField>
         {cfg?.hint ? <span className="text-sm text-red mt-[1px]">{cfg.hint}</span> : null}
       </FieldGroup>
 
       {/* Label (optional) */}
       <FieldGroup label="Label (optional)">
-        <input type="text" value={dLabel} onChange={(e) => setDLabel(e.target.value)}
+        <Input id="deduction-label" type="text" value={dLabel} onChange={(e) => setDLabel(e.target.value)}
           placeholder={`e.g. ${cfg?.label ?? "Custom deduction"}`}
-          className={`border-ink ${fieldCls}`} onFocus={onFocus} onBlur={onBlur}
         />
       </FieldGroup>
 
       {/* Amount / Frequency / Method */}
       <div className="grid gap-5 [grid-template-columns:repeat(auto-fit,minmax(120px,1fr))]">
         <FieldGroup label={dMethod === "PercentOfGross" ? "Percentage" : "Amount ($)"}>
-          <input type="number" min={0} step="0.01" value={dValue} onChange={(e) => setDValue(e.target.value)}
+          <Input id="deduction-value" type="number" min={0} step="0.01" value={dValue} onChange={(e) => setDValue(e.target.value)}
             placeholder={dMethod === "PercentOfGross" ? "e.g. 6" : "e.g. 214.00"}
-            className={`border-ink ${fieldCls}`} onFocus={onFocus} onBlur={onBlur}
           />
         </FieldGroup>
         <FieldGroup label="Frequency">
-          <select value={dFreq} onChange={(e) => setDFreq(e.target.value)} className={`cursor-pointer border-ink ${fieldCls}`} onFocus={onFocus} onBlur={onBlur}>
+          <SelectField id="deduction-freq" value={dFreq} onChange={(e) => setDFreq(e.target.value)}>
             {DEDUCTION_FREQUENCIES.map((f) => <option key={f.value} value={f.value}>{f.label}</option>)}
-          </select>
+          </SelectField>
         </FieldGroup>
         <FieldGroup label="Method">
-          <select value={dMethod} onChange={(e) => setDMethod(e.target.value as DeductionCalculationMethod)} className={`cursor-pointer border-ink ${fieldCls}`} onFocus={onFocus} onBlur={onBlur}>
+          <SelectField id="deduction-method" value={dMethod} onChange={(e) => setDMethod(e.target.value as DeductionCalculationMethod)}>
             <option value="FixedAmount">Fixed ($)</option>
             <option value="PercentOfGross">% of Gross</option>
-          </select>
+          </SelectField>
         </FieldGroup>
       </div>
 

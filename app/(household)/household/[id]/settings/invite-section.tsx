@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Btn, Alert } from "@/components/editorial";
+import { Btn, Alert, Input } from "@/components/editorial";
 import { useGenerateInvite } from "@/hooks/use-household";
 
 export function InviteSection({ householdId }: { householdId: string }) {
@@ -43,18 +43,13 @@ export function InviteSection({ householdId }: { householdId: string }) {
         </Link>
         .
       </p>
-      <div className="flex flex-col gap-2">
-        <label className="text-sm text-ink-3 font-body">
-          Send to email <span className="text-ink-4">(optional)</span>
-        </label>
-        <input
-          type="email"
-          value={recipientEmail}
-          onChange={(e) => setRecipientEmail(e.target.value)}
-          placeholder="recipient@example.com"
-          className="bg-paper py-[10px] px-[12px] text-base text-ink font-body border-ink w-full outline-none"
-        />
-      </div>
+      <Input
+        type="email"
+        label="Send to email (optional)"
+        value={recipientEmail}
+        onChange={(e) => setRecipientEmail(e.target.value)}
+        placeholder="recipient@example.com"
+      />
       {inviteError && <Alert variant="danger">{inviteError}</Alert>}
       {inviteResult ? (
         <div className="flex flex-col gap-5">

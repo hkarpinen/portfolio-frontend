@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { Modal, Btn } from "@/components/editorial";
+import { Modal, Btn, SelectField, Textarea } from "@/components/editorial";
 
 const REPORT_REASONS = [
   "Spam or self-promotion",
@@ -95,33 +95,25 @@ export function ReportButton({ kind, targetId, triggerClassName, triggerLabel = 
           </p>
         ) : (
           <div className="flex flex-col gap-8">
+            <SelectField
+              id={`report-reason-${targetId}`}
+              label="Reason"
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+            >
+              {REPORT_REASONS.map((r) => (
+                <option key={r} value={r}>{r}</option>
+              ))}
+            </SelectField>
             <div>
-              <label htmlFor={`report-reason-${targetId}`} className="block text-base font-semibold text-ink-2 mb-3">
-                Reason
-              </label>
-              <select
-                id={`report-reason-${targetId}`}
-                value={reason}
-                onChange={(e) => setReason(e.target.value)}
-                className="w-full py-4 px-6 bg-paper-2 text-ink text-base outline-none border-ink"
-              >
-                {REPORT_REASONS.map((r) => (
-                  <option key={r} value={r}>{r}</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label htmlFor={`report-details-${targetId}`} className="block text-base font-semibold text-ink-2 mb-3">
-                Additional details <span className="font-normal text-ink-3">(optional)</span>
-              </label>
-              <textarea
+              <Textarea
                 id={`report-details-${targetId}`}
+                label="Additional details (optional)"
                 value={details}
                 onChange={(e) => setDetails(e.target.value)}
                 placeholder="Describe the issue..."
                 rows={3}
                 maxLength={500}
-                className="w-full py-4 px-6 bg-paper-2 text-ink text-base outline-none leading-[1.5] border-ink resize-y box-border font-body"
               />
               <p className="text-sm text-ink-3 text-right mt-1" aria-live="polite">
                 {details.length}/500
