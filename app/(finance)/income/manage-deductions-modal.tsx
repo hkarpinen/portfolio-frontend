@@ -12,6 +12,7 @@ import {
 import { DeductionChip } from "./deduction-chip";
 import { AddDeductionForm, FieldGroup, fieldCls, onFocus, onBlur } from "./add-deduction-form";
 import { Icon } from "@/components/editorial/icon";
+import { Btn } from "@/components/editorial/button";
 
 interface ManageDeductionsModalProps {
   source: IncomeSource;
@@ -169,13 +170,14 @@ export function ManageDeductionsModal({ source, onClose }: ManageDeductionsModal
                 </div>
               )}
 
-              <button
+              <Btn
+                variant={taxEnabled ? "primary" : "secondary"}
                 onClick={handleSaveTaxProfile}
                 disabled={setTaxProfileMutation.isPending}
-                className={`p-[11px] text-base font-semibold border-none transition-[background,color] duration-150 cursor-pointer disabled:cursor-not-allowed disabled:opacity-70${taxEnabled ? " bg-ink text-white" : " bg-paper-3 text-ink-3"}`}
+                fullWidth
               >
                 {setTaxProfileMutation.isPending ? "Saving…" : taxEnabled ? "Save Tax Profile" : "Clear Tax Profile"}
-              </button>
+              </Btn>
 
               {setTaxProfileMutation.isSuccess && (
                 <p className="text-base text-green text-center inline-flex items-center justify-center gap-[5px] w-full">
@@ -201,13 +203,14 @@ export function ManageDeductionsModal({ source, onClose }: ManageDeductionsModal
               )}
 
               {!addOpen ? (
-                <button
+                <Btn
+                  variant="outline"
                   onClick={() => setAddOpen(true)}
-                  className="flex items-center justify-center gap-3 p-[11px] bg-red-soft text-red text-base font-semibold cursor-pointer border border-dashed border-[var(--accent-border)]"
+                  fullWidth
+                  iconLeft={<Icon name="plus" size={14} strokeWidth={2.5} />}
                 >
-                  <Icon name="plus" size={14} strokeWidth={2.5} />
                   Add Deduction
-                </button>
+                </Btn>
               ) : (
                 <AddDeductionForm
                   dType={dType}              setDType={applyTypeDefaults}

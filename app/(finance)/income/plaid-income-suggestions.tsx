@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRecurringStreams, useRefreshRecurring, useAcceptRecurring, usePlaidItems } from "@/hooks/use-connections";
 import { Icon } from "@/components/editorial/icon";
+import { Btn } from "@/components/editorial/button";
 import { formatAmount, formatShortDate } from "@/lib/formatting";
 import type { RecurringSuggestion } from "@/lib/api/plaid";
 
@@ -56,13 +57,15 @@ function StreamCard({ stream, onAccept, accepting }: { stream: RecurringSuggesti
           <Icon name="check" size={11} strokeWidth={2} /> Added
         </a>
       ) : (
-        <button
+        <Btn
+          variant="primary"
+          size="sm"
           onClick={onAccept}
           disabled={accepting}
-          className="bg-red text-white py-[7px] px-[16px] text-base font-semibold shrink-0 border-none transition-opacity duration-150 cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
+          className="shrink-0"
         >
           {accepting ? "Adding…" : "Add to income"}
-        </button>
+        </Btn>
       )}
     </div>
   );

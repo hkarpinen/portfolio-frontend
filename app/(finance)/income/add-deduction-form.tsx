@@ -2,6 +2,7 @@
 
 import type { DeductionCalculationMethod, DeductionType } from "@/types/finance";
 import { TYPE_CONFIGS, VOLUNTARY_TYPES, DEDUCTION_FREQUENCIES } from "./deduction-config";
+import { Btn } from "@/components/editorial/button";
 
 // ── Shared field styles & helpers ─────────────────────────────────────────────
 export const fieldCls = "h-[40px] w-full bg-paper-2 p-[0_12px] text-[var(--ts-body-sm)] text-ink outline-none font-body";
@@ -131,16 +132,12 @@ export function AddDeductionForm({
 
       {/* Actions */}
       <div className="flex gap-4">
-        <button type="button" onClick={onCancel}
-          className="flex-1 p-[11px] bg-transparent text-ink-2 text-base font-semibold cursor-pointer border-ink"
-        >
+        <Btn type="button" variant="secondary" onClick={onCancel} className="flex-1">
           Cancel
-        </button>
-        <button type="button" onClick={onAdd} disabled={isPending || !canAdd}
-          className={`flex-[2] p-[11px] text-base font-semibold transition-[background,color] duration-150 border-none cursor-pointer disabled:cursor-not-allowed${canAdd && !isPending ? " bg-ink text-white" : " bg-paper-3 text-ink-3"}`}
-        >
+        </Btn>
+        <Btn type="button" variant="primary" onClick={onAdd} disabled={isPending || !canAdd} className="flex-[2]">
           {isPending ? "Adding…" : "Add Deduction"}
-        </button>
+        </Btn>
       </div>
     </div>
   );

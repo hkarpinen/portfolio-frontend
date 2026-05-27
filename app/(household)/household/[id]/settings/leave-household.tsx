@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useRemoveMember } from "@/hooks/use-household";
 import { ConfirmDeleteDialog } from "@/components/editorial/confirm-delete-dialog";
+import { Btn } from "@/components/editorial/button";
 
 interface LeaveHouseholdProps {
   householdId: string;
@@ -27,13 +28,14 @@ export function LeaveHousehold({ householdId, membershipId }: LeaveHouseholdProp
       <p className="ed-body text-ink-2">
         Leaving will remove you from this household. Your past expense history will remain.
       </p>
-      <button
+      <Btn
+        variant="danger"
+        size="sm"
         onClick={() => setOpen(true)}
-        className="self-start font-mono text-[0.72rem] tracking-[0.1em] uppercase h-11 px-5 bg-paper text-red cursor-pointer"
-        style={{ border: "1px solid var(--danger)" }}
+        className="self-start"
       >
         Leave household
-      </button>
+      </Btn>
 
       {removeMember.isError && (
         <p role="alert" className="ed-hint text-red">

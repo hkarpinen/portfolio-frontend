@@ -62,19 +62,21 @@ export function InviteSection({ householdId }: { householdId: string }) {
             <code className="flex-1 font-mono text-md bg-paper-2 py-5 px-8 text-ink break-all border-ink">
               {inviteResult}
             </code>
-            <button
+            <Btn
+              variant="secondary"
               onClick={onCopy}
-              className={`bg-paper-2 py-4 px-8 text-base font-medium cursor-pointer whitespace-nowrap font-body border-ink ${copied ? "text-green" : "text-ink-2"}`}
+              className={`whitespace-nowrap${copied ? " text-green" : ""}`}
             >
               {copied ? "Copied!" : "Copy"}
-            </button>
+            </Btn>
           </div>
-          <button
+          <Btn
+            variant="ghost"
             onClick={() => { setInviteResult(null); setRecipientEmail(""); }}
-            className="text-base text-ink-3 bg-transparent cursor-pointer p-0 text-left font-body border-none"
+            className="self-start p-0"
           >
             Generate another
-          </button>
+          </Btn>
         </div>
       ) : (
         <Btn onClick={onGenerateInvite} disabled={generateInviteMutation.isPending} variant="primary">

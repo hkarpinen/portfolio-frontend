@@ -6,6 +6,7 @@ import { UserInitials } from "@/components/editorial/user-initials";
 import { EditorialPageHead } from "@/components/editorial/editorial-page-head";
 import { LedeStat } from "@/components/editorial/lede-stat";
 import { DepartmentHead } from "@/components/editorial/department-head";
+import { Btn } from "@/components/editorial/button";
 
 /**
  * Admin panel — visible only to users with the Admin role.
@@ -141,19 +142,15 @@ export default function AdminPage() {
                       {/* Actions */}
                       <td className="py-5 px-4">
                         {!isSelf ? (
-                          <button
+                          <Btn
+                            variant={user.isBanned ? "secondary" : "danger"}
+                            size="xs"
                             disabled={isBanning}
                             onClick={() => banUser.mutate(user.id)}
-                            className="py-2 px-5 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-50"
-                            style={{
-                              background: user.isBanned ? "var(--paper-3)" : "var(--danger-s)",
-                              color: user.isBanned ? "var(--text-3)" : "var(--danger)",
-                              border: `1px solid ${user.isBanned ? "var(--ink-3)" : "oklch(62% 0.21 22 / 0.25)"}`,
-                            }}
                             aria-label={user.isBanned ? `Unban ${user.displayName}` : `Ban ${user.displayName}`}
                           >
                             {isBanning ? "…" : user.isBanned ? "Unban" : "Ban"}
-                          </button>
+                          </Btn>
                         ) : (
                           <span className="text-[0.72rem] text-ink-4 font-mono uppercase tracking-wide">—</span>
                         )}
@@ -169,25 +166,25 @@ export default function AdminPage() {
         {/* Pagination */}
         {totalPages > 1 && (
           <nav className="flex gap-4 justify-center mt-8" aria-label="User list pagination">
-            <button
+            <Btn
+              variant="secondary"
               disabled={page <= 1}
               onClick={() => setPage((p) => p - 1)}
-              className="py-3 px-8 bg-paper-2 text-base font-medium text-ink-2 border-ink disabled:cursor-not-allowed disabled:opacity-50"
               aria-label="Previous page"
             >
               ← Prev
-            </button>
+            </Btn>
             <span className="flex items-center text-base text-ink-3" aria-live="polite" aria-atomic="true">
               Page {page} of {totalPages}
             </span>
-            <button
+            <Btn
+              variant="secondary"
               disabled={page >= totalPages}
               onClick={() => setPage((p) => p + 1)}
-              className="py-3 px-8 bg-paper-2 text-base font-medium text-ink-2 border-ink disabled:cursor-not-allowed disabled:opacity-50"
               aria-label="Next page"
             >
               Next →
-            </button>
+            </Btn>
           </nav>
         )}
       </section>

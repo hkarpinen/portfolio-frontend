@@ -5,6 +5,7 @@ import type { PayrollDeduction } from "@/types/finance";
 import { formatAmount } from "@/lib/formatting";
 import { TYPE_CONFIGS } from "./deduction-config";
 import { Icon } from "@/components/editorial/icon";
+import { Btn } from "@/components/editorial/button";
 
 export function DeductionChip({ d, onRemove, removeDisabled }: {
   d: PayrollDeduction;
@@ -49,14 +50,15 @@ export function DeductionChip({ d, onRemove, removeDisabled }: {
             <DetailPill label="Frequency" value={d.frequency ?? "Monthly"} />
             {cfg?.hint ? <DetailPill label="Tax treatment" value={cfg.hint} /> : null}
           </div>
-          <button
+          <Btn
+            variant="danger"
+            size="sm"
             onClick={() => onRemove(d.type, d.label)}
             disabled={removeDisabled}
-            className="flex items-center gap-3 py-[7px] px-[12px] bg-red-soft text-red text-base font-semibold self-start border border-[var(--danger-border)] cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+            iconLeft={<Icon name="trash" size={13} strokeWidth={2} />}
           >
-            <Icon name="trash" size={13} strokeWidth={2} />
             Remove Deduction
-          </button>
+          </Btn>
         </div>
       )}
     </div>

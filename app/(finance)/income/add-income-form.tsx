@@ -299,15 +299,16 @@ export function AddIncomeForm() {
                   <span id="employer-sponsored-hint" className="sr-only">Check this if your employer pays part of this benefit.</span>
                 </label>
 
-                <button
+                <Btn
                   type="button"
+                  variant="outline"
+                  size="sm"
                   onClick={addPendingDeduction}
                   disabled={!dValue}
-                  className="py-[7px] px-[16px] bg-transparent text-red text-base font-semibold cursor-pointer self-start [border:1.5px_solid_var(--red)] disabled:opacity-50"
-                  aria-disabled={!dValue}
+                  className="self-start"
                 >
                   + Add to list
-                </button>
+                </Btn>
               </div>
             )}
           </div>

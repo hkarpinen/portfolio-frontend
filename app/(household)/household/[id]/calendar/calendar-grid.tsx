@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { CalendarEventDto } from "@/lib/api/calendar";
+import { Btn } from "@/components/editorial/button";
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -139,14 +140,15 @@ export function CalendarGrid({ year, month, events, onDelete, deleting }: Calend
                   )}
                 </p>
               </div>
-              <button
+              <Btn
+                variant="secondary"
+                size="sm"
                 onClick={() => { onDelete(selectedEvent.id); setSelected(null); }}
                 disabled={deleting}
                 aria-label={`Delete event: ${selectedEvent.title}`}
-                className="bg-transparent py-[6px] px-[14px] font-mono text-sm tracking-[0.05em] uppercase cursor-pointer text-ink border border-ink hover:text-red hover:border-red transition-colors"
               >
                 Delete
-              </button>
+              </Btn>
             </div>
           </div>
         )}

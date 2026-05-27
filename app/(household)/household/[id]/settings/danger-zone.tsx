@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useDeleteHousehold } from "@/hooks/use-household";
 import type { MembershipResponse } from "@/types/finance";
+import { Btn } from "@/components/editorial/button";
 
 interface DangerZoneProps {
   householdId: string;
@@ -34,20 +35,20 @@ export function DangerZone({ householdId, members }: DangerZoneProps) {
             Are you sure? Deleting this household is permanent and cannot be undone.
           </p>
           <div className="flex gap-5">
-            <button
+            <Btn
+              variant="danger"
               onClick={() => deleteHousehold.mutate(householdId, { onSuccess: () => router.push("/household") })}
               disabled={deleteHousehold.isPending}
               aria-label="Confirm: permanently delete this household"
-              className={`bg-red text-white py-4 px-10 text-base font-semibold font-body border-none ${deleteHousehold.isPending ? "cursor-not-allowed opacity-60" : "cursor-pointer"}`}
             >
               {deleteHousehold.isPending ? "Deleting…" : "Yes, delete household"}
-            </button>
-            <button
+            </Btn>
+            <Btn
+              variant="secondary"
               onClick={() => setShowDeleteConfirm(false)}
-              className="bg-transparent text-ink-2 py-4 px-10 text-base font-medium cursor-pointer font-body border-ink"
             >
               Cancel
-            </button>
+            </Btn>
           </div>
           {deleteHousehold.isError && (
             <p role="alert" className="text-base text-red">
@@ -60,13 +61,13 @@ export function DangerZone({ householdId, members }: DangerZoneProps) {
           <p className="text-base text-ink-2">
             You are the only member. Deleting this household is permanent and cannot be undone.
           </p>
-          {/* border uses --danger token — kept as dynamic style */}
-          <button
+          <Btn
+            variant="danger"
             onClick={() => setShowDeleteConfirm(true)}
-            className="bg-red-soft text-red py-4 px-10 text-base font-medium cursor-pointer self-start font-body" style={{ border: "1px solid var(--danger)" }}
+            className="self-start"
           >
             Delete Household
-          </button>
+          </Btn>
         </>
       )}
     </section>

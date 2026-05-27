@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRemoveMember, useChangeMemberRole, useTransferOwnership } from "@/hooks/use-household";
 import type { MembershipResponse } from "@/types/finance";
+import { Btn } from "@/components/editorial/button";
 
 interface MemberActionsProps {
   householdId: string;
@@ -66,34 +67,35 @@ export function MemberActions({ householdId, members, myUserId, isOwner, isPrivi
                       {transferTargetId === m.membershipId ? (
                         <div className="flex gap-3 items-center">
                           <span className="text-base text-ink-2">Transfer to {m.displayName || m.userId.slice(0, 8)}?</span>
-                          <button
+                          <Btn
+                            variant="primary"
+                            size="sm"
                             onClick={() => transferOwnership.mutate(m.userId, { onSuccess: () => setTransferTargetId(null) })}
                             disabled={transferOwnership.isPending}
-                            className={`bg-red text-white py-2 px-5 text-base font-semibold font-body border-none ${transferOwnership.isPending ? "cursor-not-allowed" : "cursor-pointer"}`}
                           >
                             {transferOwnership.isPending ? "Transferring…" : "Confirm"}
-                          </button>
-                          <button onClick={() => setTransferTargetId(null)} className="bg-transparent text-base text-ink-3 cursor-pointer font-body border-none">
+                          </Btn>
+                          <Btn variant="ghost" size="sm" onClick={() => setTransferTargetId(null)}>
                             Cancel
-                          </button>
+                          </Btn>
                         </div>
                       ) : (
-                        <button
+                        <Btn
+                          variant="secondary"
+                          size="sm"
                           onClick={() => setTransferTargetId(m.membershipId)}
-                          className="bg-paper-2 text-ink-2 py-2 px-6 text-base font-medium cursor-pointer font-body border-ink"
                         >
                           Transfer Ownership
-                        </button>
+                        </Btn>
                       )}
-                      {/* border uses --danger token — kept as dynamic style */}
-                      <button
+                      <Btn
+                        variant="danger"
+                        size="sm"
                         onClick={() => onRemoveMember(m.membershipId)}
                         disabled={removingId === m.membershipId}
-                        className={`bg-red-soft text-red py-2 px-6 text-base font-medium font-body ${removingId === m.membershipId ? "cursor-not-allowed opacity-50" : "cursor-pointer"}`}
-                        style={{ border: "1px solid var(--danger)" }}
                       >
                         {removingId === m.membershipId ? "Removing…" : "Remove"}
-                      </button>
+                      </Btn>
                     </div>
                   )}
                 </div>
