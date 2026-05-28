@@ -1,6 +1,6 @@
 "use client";
 
-import { SectionHeader } from "@/components/editorial/section-header";
+import { SectionHeader } from "@/components/editorial";
 import { CategoryTabs } from "./category-tabs";
 import { useConverter } from "./use-converter";
 import { QUICK_VALUES, formatNumber } from "./convert-config";

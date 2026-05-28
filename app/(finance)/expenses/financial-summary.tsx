@@ -1,6 +1,7 @@
-import { LedeStat } from "@/components/editorial/lede-stat";
-import { PullQuote } from "@/components/editorial/pull-quote";
+
+import { LedeStat, PullQuote } from "@/components/editorial";
 import { expensesPullQuote } from "@/lib/finance/editorial-copy";
+import { formatCurrency } from "@/lib/formatting";
 import { toMonthlyAmount } from "@/lib/utils";
 import type { ContributionPeriod } from "@/types/contributions";
 import type { IncomeSource } from "@/types/income";
@@ -26,8 +27,9 @@ function computeIncomeMonthly(sources: IncomeSource[]) {
   return { monthlyGross, monthlyNet: monthlyGross - monthlyDeductions };
 }
 
-const fmt0 = (n: number) => `$${Math.abs(Math.round(n)).toLocaleString("en-US")}`;
-const fmtSigned0 = (n: number) => (Math.round(n) === 0 ? "$0" : `${n < 0 ? "−" : "+"}${fmt0(n)}`);
+// Personal-finance pages assume USD (see audit §5.1 caveat in
+// lib/finance/editorial-copy.ts). Inline `formatCurrency(n, "USD", …)`
+// rather than re-aliasing.
 
 /**
  * FinancialSummary — top-of-page editorial figure block.
@@ -100,18 +102,26 @@ export function FinancialSummary({
     <div className="flex flex-col gap-8">
       <LedeStat
         label={`Net · ${monthName}`}
-        value={fmtSigned0(disposable)}
+        value={formatCurrency(disposable, "USD", { precision: 0, signed: true })}
         negative={netOver}
         deck={
           income > 0
-            ? `${fmt0(income)} in against ${fmt0(totalOut)} out across ${personalRecurringCount + sharedBillIds.size + oneTimeBills.length} posted item${personalRecurringCount + sharedBillIds.size + oneTimeBills.length === 1 ? "" : "s"}.`
+            ? `${formatCurrency(income, "USD", { precision: 0 })} in against ${formatCurrency(totalOut, "USD", { precision: 0 })} out across ${personalRecurringCount + sharedBillIds.size + oneTimeBills.length} posted item${personalRecurringCount + sharedBillIds.size + oneTimeBills.length === 1 ? "" : "s"}.`
             : "No income on file — add a source on the Income desk to see this month's read."
         }
         aside={[
-          { label: "In · take-home", value: fmt0(netIncome) },
-          { label: "Out · total", value: fmt0(totalOut) },
-          { label: "Recurring", value: fmt0(monthlyRecurringTotal), sub: recurringSub },
-          { label: "One-time", value: fmt0(oneTimeTotal), sub: oneTimeSub },
+          { label: "In · take-home", value: formatCurrency(netIncome, "USD", { precision: 0 }) },
+          { label: "Out · total", value: formatCurrency(totalOut, "USD", { precision: 0 }) },
+          {
+            label: "Recurring",
+            value: formatCurrency(monthlyRecurringTotal, "USD", { precision: 0 }),
+            sub: recurringSub,
+          },
+          {
+            label: "One-time",
+            value: formatCurrency(oneTimeTotal, "USD", { precision: 0 }),
+            sub: oneTimeSub,
+          },
         ]}
       />
 

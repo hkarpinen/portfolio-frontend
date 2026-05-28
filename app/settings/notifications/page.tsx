@@ -1,8 +1,8 @@
 "use client";
 
+import { Alert, Btn } from "@/components/editorial";
 import { useEffect, useState } from "react";
 import { z } from "zod";
-import { Btn, Alert } from "@/components/editorial";
 
 // TODO(handoff8): wire to backend persistence via /api/notifications/preferences
 // (GET to load, PUT to save). Currently persists to localStorage only.

@@ -1,5 +1,6 @@
 "use client";
 
+import { Alert, Btn, Icon, Input, SectionHeader, SelectField, Textarea } from "@/components/editorial";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -8,15 +9,6 @@ import { useCreateThread } from "@/hooks/use-forum";
 import { useCommunities } from "@/hooks/use-community";
 import { useIsDemo } from "@/hooks/use-demo";
 import { getErrorMessage } from "@/lib/error-messages";
-import {
-  Btn,
-  Input,
-  Textarea,
-  SelectField,
-  Alert,
-  Icon,
-  SectionHeader,
-} from "@/components/editorial";
 
 // FLAIR dropdown is kept alongside the new TAGS field.
 // Flair maps to the backend's thread categorisation (enum-constrained).

@@ -1,9 +1,9 @@
 "use client";
 
+import { Btn, Input, Toggle } from "@/components/editorial";
 import { useState } from "react";
 import { useMe, useEnable2FA, useConfirm2FA } from "@/hooks/use-identity";
 import { getErrorMessage } from "@/lib/error-messages";
-import { Btn, Input, Toggle } from "@/components/editorial";
 
 export function TwoFactorSection() {
   // The `Me` query is the single source of truth for whether 2FA is enabled —

@@ -1,11 +1,12 @@
+
+import { DepartmentHead, EditorialPageHead } from "@/components/editorial";
 import Link from "next/link";
 import { ForumFeed } from "./forum-feed";
 import { CommunityStrip } from "./community-strip";
 import { fetchCommunitiesServer } from "@/lib/api/communities";
 import { fetchThreadsServer } from "@/lib/api/forum";
 import type { CommunitySummaryResponse } from "@/types/forum";
-import { EditorialPageHead } from "@/components/editorial/editorial-page-head";
-import { DepartmentHead } from "@/components/editorial/department-head";
+
 import { forumHeadline, forumDeck } from "@/lib/forum/editorial-copy";
 
 export const dynamic = "force-dynamic";

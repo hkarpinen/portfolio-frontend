@@ -6,8 +6,15 @@
  * Returned `*Headline` strings may contain inline `<em>` for the red italic
  * accent — they are interpolated into `dangerouslySetInnerHTML` consumers
  * (SectionHeader, DepartmentHead). Source: page code only, never user input.
+ *
+ * Currency: personal-finance pages currently assume USD. The amounts come
+ * from the personal income/expenses domain, which doesn't carry a per-
+ * source currency. If the personal side ever supports non-USD, every
+ * `formatCurrency(n, "USD", …)` below needs to take a currency parameter
+ * from the caller — likely sourced from the user's preferred currency.
  */
 
+import { formatCurrency } from "@/lib/formatting";
 import type { TickerItem } from "@/types/ticker";
 
 const MONTHS = [
@@ -25,15 +32,6 @@ const MONTHS = [
   "December",
 ];
 
-function fmt0(n: number): string {
-  return `$${Math.abs(Math.round(n)).toLocaleString("en-US")}`;
-}
-
-function fmtSigned0(n: number): string {
-  if (Math.round(n) === 0) return "$0";
-  return `${n < 0 ? "−" : "+"}${fmt0(n)}`;
-}
-
 export function currentMonthName(now: Date = new Date()): string {
   return MONTHS[now.getUTCMonth()];
 }
@@ -50,7 +48,7 @@ export function expensesHeadline({ disposable, income, monthName }: ExpensesHead
   if (income <= 0) {
     return `${monthName} reports <em>no income</em> on file`;
   }
-  const figure = fmt0(disposable);
+  const figure = formatCurrency(disposable, "USD", { precision: 0 });
   if (Math.round(disposable) === 0) return `${monthName} reads <em>even</em>`;
   if (disposable > 0) return `${monthName} runs <em>${figure}</em> in the black`;
   return `${monthName} runs <em>${figure}</em> in the red`;
@@ -76,13 +74,13 @@ export function expensesDeck({
   }
   const totalBills = recurringCount + oneTimeCount + sharedBillCount;
   if (totalBills === 0) {
-    return `Nothing posted yet against ${fmt0(income)} earned — the desk is quiet.`;
+    return `Nothing posted yet against ${formatCurrency(income, "USD", { precision: 0 })} earned — the desk is quiet.`;
   }
   const parts: string[] = [];
   if (recurringCount > 0) parts.push(`${recurringCount} recurring`);
   if (sharedBillCount > 0) parts.push(`${sharedBillCount} shared`);
   if (oneTimeCount > 0) parts.push(`${oneTimeCount} one-time`);
-  return `${parts.join(", ")} posted; outflows total ${fmt0(totalOut)} against ${fmt0(income)} earned.`;
+  return `${parts.join(", ")} posted; outflows total ${formatCurrency(totalOut, "USD", { precision: 0 })} against ${formatCurrency(income, "USD", { precision: 0 })} earned.`;
 }
 
 export interface ExpensesPullQuote {
@@ -102,12 +100,12 @@ export function expensesPullQuote({
   if (Math.abs(disposable) < 100) return null;
   if (disposable > 0) {
     return {
-      body: `You're <em>${fmt0(disposable)}</em> under budget this month — a comfortable read against ${monthName}'s run-rate.`,
+      body: `You're <em>${formatCurrency(disposable, "USD", { precision: 0 })}</em> under budget this month — a comfortable read against ${monthName}'s run-rate.`,
       attribution: `${monthName} ledger · disposable income`,
     };
   }
   return {
-    body: `Outlays exceeded income by <em>${fmt0(disposable)}</em> this month — the desk recommends a review.`,
+    body: `Outlays exceeded income by <em>${formatCurrency(disposable, "USD", { precision: 0 })}</em> this month — the desk recommends a review.`,
     attribution: `${monthName} ledger · cash balance`,
   };
 }
@@ -133,7 +131,7 @@ export function incomeHeadline({
             ? "Four"
             : `${sourcesCount}`;
   const stream = sourcesCount === 1 ? "stream" : "streams";
-  return `${word} ${stream}, <em>${fmt0(monthlyNet)}</em> net monthly`;
+  return `${word} ${stream}, <em>${formatCurrency(monthlyNet, "USD", { precision: 0 })}</em> net monthly`;
 }
 
 export function incomeDeck({
@@ -150,10 +148,13 @@ export function incomeDeck({
   if (sourcesCount === 0) {
     return "Add a paycheck or contract to begin modelling net pay.";
   }
+  const gross = formatCurrency(monthlyGross, "USD", { precision: 0 });
   if (totalTaxWithheld > 0) {
-    return `${fmt0(monthlyGross)} gross, ${fmt0(totalTaxWithheld)} withheld in tax, ${fmt0(monthlyNet)} take-home.`;
+    const tax = formatCurrency(totalTaxWithheld, "USD", { precision: 0 });
+    const net = formatCurrency(monthlyNet, "USD", { precision: 0 });
+    return `${gross} gross, ${tax} withheld in tax, ${net} take-home.`;
   }
-  return `${fmt0(monthlyGross)} gross, no deductions on file.`;
+  return `${gross} gross, no deductions on file.`;
 }
 
 // ── Tickers ──────────────────────────────────────────────────────────────────
@@ -181,11 +182,21 @@ export function buildExpensesTicker({
     {
       kicker: "MONTH",
       label: monthName,
-      value: fmtSigned0(disposable),
+      value: formatCurrency(disposable, "USD", { precision: 0, signed: true }),
       direction: disposable < 0 ? "down" : "up",
     },
-    { kicker: "OUT", label: "Total", value: fmt0(totalOut), direction: "flat" },
-    { kicker: "IN", label: "Earned", value: fmt0(income), direction: "flat" },
+    {
+      kicker: "OUT",
+      label: "Total",
+      value: formatCurrency(totalOut, "USD", { precision: 0 }),
+      direction: "flat",
+    },
+    {
+      kicker: "IN",
+      label: "Earned",
+      value: formatCurrency(income, "USD", { precision: 0 }),
+      direction: "flat",
+    },
   ];
   // Surface the next ~4 upcoming bills so the ticker is genuinely useful.
   for (const b of upcoming.slice(0, 4)) {
@@ -194,7 +205,7 @@ export function buildExpensesTicker({
     items.push({
       kicker: "DUE",
       label: b.title,
-      value: `${fmt0(b.amount)} ${dueLabel}`,
+      value: `${formatCurrency(b.amount, "USD", { precision: 0 })} ${dueLabel}`,
       direction: "flat",
     });
   }
@@ -215,15 +226,30 @@ export function buildIncomeTicker({
   sourcesCount: number;
 }): TickerItem[] {
   return [
-    { kicker: "NET", label: "Monthly", value: fmt0(monthlyNet), direction: "up" },
-    { kicker: "GROSS", label: "Monthly", value: fmt0(monthlyGross), direction: "flat" },
+    {
+      kicker: "NET",
+      label: "Monthly",
+      value: formatCurrency(monthlyNet, "USD", { precision: 0 }),
+      direction: "up",
+    },
+    {
+      kicker: "GROSS",
+      label: "Monthly",
+      value: formatCurrency(monthlyGross, "USD", { precision: 0 }),
+      direction: "flat",
+    },
     {
       kicker: "TAX",
       label: "Withheld",
-      value: fmt0(totalTaxWithheld),
+      value: formatCurrency(totalTaxWithheld, "USD", { precision: 0 }),
       direction: totalTaxWithheld > 0 ? "down" : "flat",
     },
-    { kicker: "ANNUAL", label: "Gross", value: fmt0(annualGross), direction: "flat" },
+    {
+      kicker: "ANNUAL",
+      label: "Gross",
+      value: formatCurrency(annualGross, "USD", { precision: 0 }),
+      direction: "flat",
+    },
     {
       kicker: "SOURCES",
       label: sourcesCount === 1 ? "On file" : "On file",

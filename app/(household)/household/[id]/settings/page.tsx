@@ -1,3 +1,5 @@
+
+import { EditorialPageHead } from "@/components/editorial";
 import Link from "next/link";
 import { z } from "zod";
 import { cookies } from "next/headers";
@@ -5,7 +7,7 @@ import { parsedServerFetch } from "@/lib/server-api-client";
 import { HouseholdSchema } from "@/types/household";
 import { MembershipResponseSchema } from "@/types/membership";
 import { MeSchema } from "@/types/identity";
-import { EditorialPageHead } from "@/components/editorial/editorial-page-head";
+
 import { SettingsForm } from "./settings-form";
 import { InviteSection } from "./invite-section";
 import { MemberActions } from "./member-actions";
@@ -130,7 +132,13 @@ export default async function HouseholdSettingsPage({ params }: Props) {
             {canLeave && myMembership && (
               <LeaveHousehold householdId={params.id} membershipId={myMembership.membershipId} />
             )}
-            {isOwner && <DangerZone householdId={params.id} members={members} />}
+            {isOwner && (
+              <DangerZone
+                householdId={params.id}
+                householdName={household.name}
+                members={members}
+              />
+            )}
           </section>
         </div>
       </div>

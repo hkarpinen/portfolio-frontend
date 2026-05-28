@@ -1,7 +1,7 @@
 "use client";
 
+import { MastheadRow } from "@/components/editorial";
 import { usePathname } from "next/navigation";
-import { MastheadRow } from "@/components/editorial/masthead-row";
 
 /**
  * <PortfolioMasthead> — layout-level masthead for the (portfolio) group.

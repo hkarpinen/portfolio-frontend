@@ -1,5 +1,6 @@
 "use client";
 
+import { Btn, DepartmentHead, EditorialPageHead, EmptyDispatch, EmptyState, Icon } from "@/components/editorial";
 import { useState } from "react";
 import Link from "next/link";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -9,12 +10,7 @@ import {
   markNotificationRead,
   type NotificationItem,
 } from "@/lib/api/notifications";
-import { EditorialPageHead } from "@/components/editorial/editorial-page-head";
-import { DepartmentHead } from "@/components/editorial/department-head";
-import { EmptyDispatch } from "@/components/editorial/empty-dispatch";
-import { Btn } from "@/components/editorial/button";
-import { EmptyState } from "@/components/editorial/empty-state";
-import { Icon } from "@/components/editorial/icon";
+
 import { timeAgo } from "@/lib/utils";
 import { notificationKeys } from "@/lib/query-keys";
 import { notificationsHeadline, notificationsDeck } from "@/lib/notifications/editorial-copy";

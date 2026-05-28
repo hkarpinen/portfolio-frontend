@@ -1,9 +1,9 @@
 "use client";
 
+import { Btn, Icon } from "@/components/editorial";
 import Link from "next/link";
 import * as Popover from "@radix-ui/react-popover";
-import { Btn } from "@/components/editorial";
-import { Icon } from "@/components/editorial/icon";
+
 import { Avatar } from "@/components/layout/sidebar-nav";
 import { useNotificationsContext } from "@/components/layout/notifications-provider";
 import { NAV_LINKS } from "./landing-config";

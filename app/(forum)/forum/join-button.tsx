@@ -1,8 +1,8 @@
 "use client";
 
+import { Btn } from "@/components/editorial";
 import { useCommunityMembership, useJoinCommunity } from "@/hooks/use-community";
 import { ApiError } from "@/lib/api-client";
-import { Btn } from "@/components/editorial";
 
 interface JoinButtonProps {
   communityId: string;

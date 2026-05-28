@@ -1,5 +1,6 @@
 "use client";
 
+import { Alert, Btn, LoadingSplash } from "@/components/editorial";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
@@ -10,7 +11,6 @@ import { useHousehold, useHouseholdMembers } from "@/hooks/use-household";
 import { ExpenseEditForm } from "./expense-edit-form";
 import { ExpenseMetadataCard } from "./expense-metadata-card";
 import { ExpenseSplitsSection } from "./expense-splits-section";
-import { Alert, Btn } from "@/components/editorial";
 
 // TODO(handoff8): activity sidebar — no activity hook exists; omitted per instructions
 
@@ -59,11 +59,7 @@ export default function ExpensePage() {
   }
 
   if (isLoading) {
-    return (
-      <div className="flex h-[200px] items-center justify-center">
-        <div className="h-16 w-16 animate-spin border-2 border-ink-4 border-t-[var(--ink)]" />
-      </div>
-    );
+    return <LoadingSplash kicker="Loading expense" />;
   }
 
   if (fetchError) {

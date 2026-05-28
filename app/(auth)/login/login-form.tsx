@@ -1,5 +1,6 @@
 "use client";
 
+import { Alert, Btn, Icon, Input } from "@/components/editorial";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -9,8 +10,6 @@ import { loginSchema, type LoginInput } from "@/schemas/auth";
 import { useLogin } from "@/hooks/use-identity";
 import { getErrorMessage } from "@/lib/error-messages";
 import { resendConfirmationEmail } from "@/lib/api/identity";
-import { Btn, Input, Alert } from "@/components/editorial";
-import { Icon } from "@/components/editorial/icon";
 
 interface LoginFormProps {
   from: string;

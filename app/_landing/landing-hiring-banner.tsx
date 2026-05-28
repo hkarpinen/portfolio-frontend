@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import { Btn } from "@/components/editorial";
+import { useState } from "react";
 
 /**
  * Dark hiring banner — kicker + "Let's work together" CTA + inline

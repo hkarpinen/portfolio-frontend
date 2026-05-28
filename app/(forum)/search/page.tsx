@@ -1,10 +1,11 @@
 "use client";
 
+import { Icon, Spinner } from "@/components/editorial";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useForumSearch } from "@/hooks/use-forum";
 import { timeAgo } from "@/lib/utils";
-import { Icon } from "@/components/editorial/icon";
+
 import type { SearchResult } from "@/types/forum";
 
 export const dynamic = "force-dynamic";
@@ -54,9 +55,9 @@ export default function SearchPage() {
           className={`box-border w-full border-ink bg-paper px-8 py-6 pl-20 text-md text-ink shadow-card outline-none ${loading ? "pr-11" : "pr-4"}`}
         />
         {loading && (
-          <div
-            aria-hidden="true"
-            className="absolute right-[14px] top-[50%] h-8 w-8 -translate-y-1/2 animate-spin rounded-full border-2 border-ink-4 border-t-red"
+          <Spinner
+            size={20}
+            className="absolute right-[14px] top-[50%] -translate-y-1/2 text-red"
           />
         )}
       </div>

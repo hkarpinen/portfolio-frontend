@@ -199,6 +199,27 @@ export const fetchMyForumProfile = () =>
 export const updateMyForumProfile = (payload: { bio: string | null; signature: string | null }) =>
   api.send.put("/api/forum/profiles/me", payload);
 
+// ─── Moderation: reporting ───────────────────────────────────────────────────
+
+export interface ReportPayload {
+  reason: string;
+  /** Optional free-text context. The caller should trim and treat empty as absent. */
+  details?: string;
+}
+
+/**
+ * Fire-and-forget: report a thread or a comment to moderators. The audit
+ * (§5.4) called out that this endpoint was hit via raw `fetch()` from two
+ * separate UI surfaces — routing through the typed api-client here means
+ * the next backend rename surfaces via ESLint / tsc instead of as a
+ * silent 404.
+ */
+export const reportThread = (threadId: string, payload: ReportPayload) =>
+  api.send.post(`/api/forum/threads/${threadId}/report`, payload);
+
+export const reportComment = (commentId: string, payload: ReportPayload) =>
+  api.send.post(`/api/forum/comments/${commentId}/report`, payload);
+
 // ─── Server-side (RSC) fetchers ──────────────────────────────────────────────
 
 export const fetchThreadsServer = (

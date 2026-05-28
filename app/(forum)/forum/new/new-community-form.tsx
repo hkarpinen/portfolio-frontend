@@ -1,11 +1,11 @@
 "use client";
 
+import { Btn, Input, SelectField, Textarea } from "@/components/editorial";
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCreateCommunity, useUploadCommunityImage } from "@/hooks/use-community";
 import { useIsDemo } from "@/hooks/use-demo";
 import { getErrorMessage } from "@/lib/error-messages";
-import { Btn, Input, Textarea, SelectField } from "@/components/editorial";
 
 export function NewCommunityForm() {
   const router = useRouter();

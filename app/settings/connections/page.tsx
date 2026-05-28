@@ -1,8 +1,8 @@
 "use client";
 
+import { Btn, Icon } from "@/components/editorial";
 import { usePlaidLink, usePlaidItems } from "@/hooks/use-connections";
-import { Icon } from "@/components/editorial/icon";
-import { Btn } from "@/components/editorial";
+
 import type { Connection } from "@/lib/api/plaid";
 import { ConnectionCard } from "./connection-card";
 

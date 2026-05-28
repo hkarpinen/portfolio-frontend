@@ -1,11 +1,11 @@
 "use client";
 
+import { Alert, Btn, Icon } from "@/components/editorial";
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useVerify2FA } from "@/hooks/use-identity";
 import { getErrorMessage } from "@/lib/error-messages";
-import { Btn, Alert, Icon } from "@/components/editorial";
 
 const OTP_LENGTH = 6;
 

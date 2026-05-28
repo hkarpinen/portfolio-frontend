@@ -1,12 +1,9 @@
 "use client";
 
+import { Btn, DepartmentHead, EditorialPageHead, EmptyDispatch, Icon } from "@/components/editorial";
 import { useState, useMemo } from "react";
 import { useCalendarEvents, useDeleteCalendarEvent } from "@/hooks/use-calendar";
-import { Icon } from "@/components/editorial/icon";
-import { Btn } from "@/components/editorial/button";
-import { EditorialPageHead } from "@/components/editorial/editorial-page-head";
-import { DepartmentHead } from "@/components/editorial/department-head";
-import { EmptyDispatch } from "@/components/editorial/empty-dispatch";
+
 import { CalendarGrid } from "./calendar-grid";
 import { calendarHeadline } from "@/lib/household/editorial-copy";
 

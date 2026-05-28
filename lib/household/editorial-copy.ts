@@ -4,9 +4,9 @@
  * inline `<em>` for the red italic accent.
  */
 
+import { formatCurrency } from "@/lib/formatting";
+
 const num = (n: number) => n.toLocaleString("en-US");
-const fmt0 = (n: number, currency = "USD") =>
-  `${currency} ${Math.abs(Math.round(n)).toLocaleString("en-US")}`;
 
 // ── List page ────────────────────────────────────────────────────────────────
 
@@ -45,9 +45,9 @@ export function householdDetailHeadline({
     return `${name} reports <em>no bills</em> this ${monthName.toLowerCase()}`;
   }
   if (yourShare !== null && yourShare > 0) {
-    return `Your share: <em>${fmt0(yourShare, currency)}</em> this ${monthName.toLowerCase()}`;
+    return `Your share: <em>${formatCurrency(yourShare, currency, { precision: 0 })}</em> this ${monthName.toLowerCase()}`;
   }
-  return `${name} owes <em>${fmt0(monthlyObligations, currency)}</em> this ${monthName.toLowerCase()}`;
+  return `${name} owes <em>${formatCurrency(monthlyObligations, currency, { precision: 0 })}</em> this ${monthName.toLowerCase()}`;
 }
 
 export function householdDetailDeck({
@@ -70,7 +70,7 @@ export function householdDetailDeck({
   const e = `${expensesCount} expense${expensesCount === 1 ? "" : "s"}`;
   if (yourShare !== null && monthlyObligations !== null && monthlyObligations > 0) {
     const pct = Math.round((yourShare / monthlyObligations) * 100);
-    return `${m}, ${e} posted; your share is ${pct}% of ${fmt0(monthlyObligations, currency)} due across the household.`;
+    return `${m}, ${e} posted; your share is ${pct}% of ${formatCurrency(monthlyObligations, currency, { precision: 0 })} due across the household.`;
   }
   return `${m}, ${e} posted.`;
 }
@@ -104,5 +104,5 @@ export function contributionsHeadline({
   monthLabel: string;
 }): string {
   if (unsettled === 0) return `${monthLabel} is <em>squared up</em>`;
-  return `<em>${fmt0(unsettled, currency)}</em> unsettled in ${monthLabel}`;
+  return `<em>${formatCurrency(unsettled, currency, { precision: 0 })}</em> unsettled in ${monthLabel}`;
 }

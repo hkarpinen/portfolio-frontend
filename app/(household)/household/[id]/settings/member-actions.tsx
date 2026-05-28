@@ -1,9 +1,9 @@
 "use client";
 
+import { Btn } from "@/components/editorial";
 import { useState } from "react";
 import { useRemoveMember, useChangeMemberRole, useTransferOwnership } from "@/hooks/use-household";
 import type { MembershipResponse } from "@/types/membership";
-import { Btn } from "@/components/editorial/button";
 
 interface MemberActionsProps {
   householdId: string;

@@ -1,5 +1,6 @@
 "use client";
 
+import { Btn, Icon, SelectField } from "@/components/editorial";
 import { useState } from "react";
 import { useSetTaxProfile } from "@/hooks/use-income";
 import type { IncomeSource } from "@/types/income";
@@ -7,9 +8,6 @@ import { FilingStatus, type TaxWithholdingProfile } from "@/types/tax";
 import { parseEnum } from "@/lib/parse-enum";
 import { US_STATES, FILING_STATUS_OPTIONS } from "./deduction-config";
 import { FieldGroup } from "./add-deduction-form";
-import { SelectField } from "@/components/editorial";
-import { Icon } from "@/components/editorial/icon";
-import { Btn } from "@/components/editorial/button";
 
 /**
  * Tax-withholding tab of ManageDeductionsModal. Owns the toggle / filing-

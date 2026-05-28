@@ -1,8 +1,7 @@
+
+import { DepartmentHead, EditorialPageHead, EmptyState, Icon } from "@/components/editorial";
 import Link from "next/link";
-import { EditorialPageHead } from "@/components/editorial/editorial-page-head";
-import { DepartmentHead } from "@/components/editorial/department-head";
-import { Icon } from "@/components/editorial/icon";
-import { EmptyState } from "@/components/editorial/empty-state";
+
 import { fetchCommunitiesServer } from "@/lib/api/communities";
 import { JoinButton } from "../join-button";
 import type { CommunitySummaryResponse } from "@/types/forum";

@@ -18,7 +18,7 @@ export { ProgressBar } from "./progress";
 export { Spinner } from "./spinner";
 export { Skeleton } from "./skeleton";
 export { Modal } from "./modal";
-export { Icon } from "./icon";
+export { Icon, type IconName } from "./icon";
 export { Collapsible } from "./collapsible";
 export { ImageUpload } from "./image-upload";
 export { MastheadRow } from "./masthead-row";

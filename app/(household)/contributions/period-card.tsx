@@ -1,11 +1,12 @@
 "use client";
 
+import { Icon } from "@/components/editorial";
 import { useState } from "react";
 import { useIsMobile } from "@/hooks/use-media";
 import type { AggregatedPeriod } from "@/lib/contributions";
 import { ItemTableRow, StackedItemRow, tdMeta } from "./item-table-row";
 import { usePeriodItems } from "./period-items";
-import { Icon } from "@/components/editorial/icon";
+
 import { formatAmount } from "@/lib/formatting";
 
 type GranularityTab = "monthly" | "quarterly" | "yearly";

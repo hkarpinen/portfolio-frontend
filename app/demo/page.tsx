@@ -1,12 +1,13 @@
 "use client";
 
+import { Btn, Icon } from "@/components/editorial";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { startDemo } from "@/lib/api/identity";
 import { checkDemoReady } from "@/lib/api/households";
 import { RecaptchaScript, useRecaptcha } from "@/components/recaptcha";
-import { Btn, Icon } from "@/components/editorial";
+
 import { ERROR } from "@/lib/error-messages";
 
 const DEMO_EXPIRES_AT_KEY = "demo_expires_at";

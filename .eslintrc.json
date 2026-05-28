@@ -18,6 +18,17 @@
     "react/jsx-boolean-value": ["error", "never"],
     "react/jsx-curly-brace-presence": ["error", { "props": "never", "children": "never" }],
     "import/no-duplicates": "error",
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": ["@/components/editorial/*"],
+            "message": "Import editorial components from the barrel: `import { … } from \"@/components/editorial\"`. Deep paths are reserved for sibling imports inside components/editorial itself."
+          }
+        ]
+      }
+    ],
     "no-restricted-syntax": [
       "error",
       {
@@ -29,5 +40,13 @@
         "message": "Blind generic on serverFetch<T> bypasses zod validation. Use parsedServerFetch(path, schema, cookieHeader)."
       }
     ]
-  }
+  },
+  "overrides": [
+    {
+      "files": ["components/editorial/**/*.{ts,tsx}"],
+      "rules": {
+        "no-restricted-imports": "off"
+      }
+    }
+  ]
 }

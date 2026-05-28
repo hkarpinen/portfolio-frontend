@@ -23,5 +23,3 @@ export function computeIncomeMonthly(sources: IncomeSource[]) {
   return { monthlyGross, monthlyNet: monthlyGross - monthlyDeductions };
 }
 
-/** Short-cut $-prefixed integer formatting for ticker rows. */
-export const fmtUsdInt = (n: number) => `$${Math.abs(Math.round(n)).toLocaleString("en-US")}`;

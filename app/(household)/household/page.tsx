@@ -1,13 +1,11 @@
+
+import { Btn, DepartmentHead, EditorialPageHead, EmptyDispatch, Icon } from "@/components/editorial";
 import Link from "next/link";
 import { getCookieHeader } from "@/lib/server-cookies";
 import { JoinHouseholdButton } from "./join-button";
 import { listHouseholdsServer } from "@/lib/api/households";
 import type { HouseholdSummaryDto } from "@/lib/api/households";
-import { EditorialPageHead } from "@/components/editorial/editorial-page-head";
-import { DepartmentHead } from "@/components/editorial/department-head";
-import { EmptyDispatch } from "@/components/editorial/empty-dispatch";
-import { Btn } from "@/components/editorial/button";
-import { Icon } from "@/components/editorial/icon";
+
 import { HouseholdBalanceBadge } from "@/components/finance/household-balance-badge";
 import { householdsHeadline, householdsDeck } from "@/lib/household/editorial-copy";
 import s from "./page.module.css";

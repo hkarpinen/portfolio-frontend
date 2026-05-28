@@ -1,8 +1,8 @@
 "use client";
 
+import { Btn } from "@/components/editorial";
 import { useState } from "react";
 import { JoinHouseholdModal } from "./join-modal";
-import { Btn } from "@/components/editorial/button";
 
 export function JoinHouseholdButton({
   size = "sm",

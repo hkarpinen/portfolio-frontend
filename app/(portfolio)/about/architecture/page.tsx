@@ -1,7 +1,8 @@
+
+import { Btn, EditorialPageHead, Icon, PullQuote } from "@/components/editorial";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { EditorialPageHead, PullQuote, Btn } from "@/components/editorial";
-import { Icon } from "@/components/editorial/icon";
+
 import { LifecycleRibbon } from "@/components/architecture/lifecycle-ribbon";
 import { BoundedContextsMap } from "@/components/architecture/bounded-contexts-map";
 

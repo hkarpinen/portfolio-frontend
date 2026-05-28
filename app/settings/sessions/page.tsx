@@ -1,8 +1,8 @@
 "use client";
 
+import { Alert, Btn, EmptyState, Icon } from "@/components/editorial";
 import { useEffect, useState, useCallback } from "react";
-import { Btn, Alert, EmptyState } from "@/components/editorial";
-import { Icon } from "@/components/editorial/icon";
+
 import {
   fetchSessions,
   signOutSession,

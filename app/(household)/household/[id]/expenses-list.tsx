@@ -1,5 +1,6 @@
 "use client";
 
+import { ConfirmDeleteDialog, EmptyState, Icon } from "@/components/editorial";
 import { useState } from "react";
 import Link from "next/link";
 import {
@@ -8,9 +9,7 @@ import {
   usePayHouseholdExpense,
   useUnpayHouseholdExpense,
 } from "@/hooks/use-expenses";
-import { EmptyState } from "@/components/editorial/empty-state";
-import { Icon } from "@/components/editorial/icon";
-import { ConfirmDeleteDialog } from "@/components/editorial/confirm-delete-dialog";
+
 import type { HouseholdExpense, HouseholdExpenseListResponse } from "@/types/household-expense";
 import { formatCurrency, formatShortDate } from "@/lib/formatting";
 

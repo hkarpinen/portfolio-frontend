@@ -1,5 +1,6 @@
 "use client";
 
+import { Alert, Btn, Input, Textarea } from "@/components/editorial";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -7,7 +8,7 @@ import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { useMe, useUpdateMe } from "@/hooks/use-identity";
 import { getErrorMessage } from "@/lib/error-messages";
-import { Btn, Alert, Input, Textarea } from "@/components/editorial";
+
 import { ProfileTabs } from "../profile-tabs";
 import { cardClassName } from "../../settings-ui";
 import { AvatarUpload } from "../avatar-upload";

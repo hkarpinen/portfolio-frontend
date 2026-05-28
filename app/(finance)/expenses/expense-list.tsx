@@ -1,9 +1,9 @@
 "use client";
 
+import { EmptyState, Icon } from "@/components/editorial";
 import { useState } from "react";
 import { useDeleteExpense, useExpenses } from "@/hooks/use-expenses";
-import { EmptyState } from "@/components/editorial/empty-state";
-import { Icon } from "@/components/editorial/icon";
+
 import type { ExpensePage, Expense } from "@/types/expense";
 import { ExpenseRow } from "./expense-row";
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useHouseholdBalances } from "@/hooks/use-expenses";
+import { formatCurrency } from "@/lib/formatting";
 import type { MemberBalance } from "@/types/membership";
 
 /**
@@ -116,15 +117,6 @@ function summarizeBalances(items: MemberBalance[]): BalanceSummary {
     : { status: "owes", amount: -rounded, currency };
 }
 
-function formatCurrency(amount: number, currency: string): string {
-  try {
-    return new Intl.NumberFormat(undefined, {
-      style: "currency",
-      currency,
-      maximumFractionDigits: 2,
-    }).format(amount);
-  } catch {
-    // Bad currency code — fall back to a plain number with the code suffix.
-    return `${amount.toFixed(2)} ${currency}`;
-  }
-}
+// formatCurrency lives in lib/formatting.ts — same Intl-backed
+// implementation, locale-correct symbol per currency code.
+

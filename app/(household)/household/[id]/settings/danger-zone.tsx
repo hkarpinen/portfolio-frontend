@@ -1,19 +1,27 @@
 "use client";
 
+import { Btn, ConfirmDeleteDialog } from "@/components/editorial";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useDeleteHousehold } from "@/hooks/use-household";
 import type { MembershipResponse } from "@/types/membership";
-import { Btn } from "@/components/editorial/button";
 
 interface DangerZoneProps {
   householdId: string;
+  householdName?: string;
   members: MembershipResponse[];
 }
 
-export function DangerZone({ householdId, members }: DangerZoneProps) {
+/**
+ * Permanent household deletion. The audit (§5.2) called out this flow as
+ * one of three sites that hand-rolled the confirm-delete state; routes
+ * through `<ConfirmDeleteDialog>` instead. `requireText` makes the user
+ * type the household name before the confirm button enables — an extra
+ * gate on the most irreversible action in the app.
+ */
+export function DangerZone({ householdId, householdName, members }: DangerZoneProps) {
   const router = useRouter();
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [open, setOpen] = useState(false);
   const deleteHousehold = useDeleteHousehold();
 
   const activeMemberCount = members.filter((m) => m.isActive).length;
@@ -31,43 +39,42 @@ export function DangerZone({ householdId, members }: DangerZoneProps) {
           To delete this household, first remove all other members or transfer ownership to someone
           else.
         </p>
-      ) : showDeleteConfirm ? (
-        <div className="flex flex-col gap-5" role="alert">
-          <p className="text-base font-semibold text-red">
-            Are you sure? Deleting this household is permanent and cannot be undone.
-          </p>
-          <div className="flex gap-5">
-            <Btn
-              variant="danger"
-              onClick={() =>
-                deleteHousehold.mutate(householdId, { onSuccess: () => router.push("/household") })
-              }
-              disabled={deleteHousehold.isPending}
-              aria-label="Confirm: permanently delete this household"
-            >
-              {deleteHousehold.isPending ? "Deleting…" : "Yes, delete household"}
-            </Btn>
-            <Btn variant="secondary" onClick={() => setShowDeleteConfirm(false)}>
-              Cancel
-            </Btn>
-          </div>
-          {deleteHousehold.isError && (
-            <p role="alert" className="text-base text-red">
-              {deleteHousehold.error instanceof Error
-                ? deleteHousehold.error.message
-                : "Failed to delete household."}
-            </p>
-          )}
-        </div>
       ) : (
         <>
           <p className="text-base text-ink-2">
             You are the only member. Deleting this household is permanent and cannot be undone.
           </p>
-          <Btn variant="danger" onClick={() => setShowDeleteConfirm(true)} className="self-start">
+          <Btn variant="danger" onClick={() => setOpen(true)} className="self-start">
             Delete Household
           </Btn>
         </>
+      )}
+
+      <ConfirmDeleteDialog
+        open={open}
+        onOpenChange={setOpen}
+        title="Delete this household?"
+        body="This permanently removes the household, every shared expense, and every split. There is no undo."
+        confirmLabel="Delete household"
+        isPending={deleteHousehold.isPending}
+        requireText={
+          householdName
+            ? { expectedText: householdName, label: `Type "${householdName}" to confirm` }
+            : undefined
+        }
+        onConfirm={() =>
+          deleteHousehold.mutate(householdId, {
+            onSuccess: () => router.push("/household"),
+          })
+        }
+      />
+
+      {deleteHousehold.isError && (
+        <p role="alert" className="text-base text-red">
+          {deleteHousehold.error instanceof Error
+            ? deleteHousehold.error.message
+            : "Failed to delete household."}
+        </p>
       )}
     </section>
   );

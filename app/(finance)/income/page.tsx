@@ -1,25 +1,28 @@
+
+import { DepartmentHead, EditorialPageHead, LedeStat, Ticker } from "@/components/editorial";
 import { getCookieHeader } from "@/lib/server-cookies";
 import { IncomeList } from "./income-list";
 import { fetchIncomeServer, fetchNetPaySummaryServer } from "@/lib/api/income";
 import type { IncomeSource } from "@/types/income";
 import type { NetPaySummary } from "@/types/tax";
-import { EditorialPageHead } from "@/components/editorial/editorial-page-head";
-import { LedeStat } from "@/components/editorial/lede-stat";
-import { Ticker } from "@/components/editorial/ticker";
+
 // LedgerStrip removed — its figures duplicated the LedeStat aside.
-import { DepartmentHead } from "@/components/editorial/department-head";
+
 import {
   currentMonthName,
   incomeHeadline,
   incomeDeck,
   buildIncomeTicker,
 } from "@/lib/finance/editorial-copy";
-import { formatAmount } from "@/lib/formatting";
+import { formatCurrency } from "@/lib/formatting";
 
 export const dynamic = "force-dynamic";
 
-const fmt0 = (n: number) => `$${Math.abs(Math.round(n)).toLocaleString("en-US")}`;
-const fmt2 = (n: number) => `$${formatAmount(n)}`;
+// Personal income is USD-only today (no per-source currency field). The
+// audit's §5.1 concern about hardcoded "$" is acknowledged in
+// lib/finance/editorial-copy.ts; same applies here. When personal-side
+// non-USD ships, thread `user.currency` into the page from `useMe()` /
+// `fetchMeServer()` and replace these "USD" literals.
 
 export default async function IncomePage() {
   const cookieHeader = await getCookieHeader();
@@ -68,20 +71,28 @@ export default async function IncomePage() {
 
       <LedeStat
         label="Net · monthly take-home"
-        value={fmt2(monthlyNet)}
+        value={formatCurrency(monthlyNet, "USD")}
         deck={
           totalTaxWithheld > 0
-            ? `After ${fmt0(totalTaxWithheld)} withheld in federal, state, and FICA.`
+            ? `After ${formatCurrency(totalTaxWithheld, "USD", { precision: 0 })} withheld in federal, state, and FICA.`
             : "No payroll deductions on file — gross equals net."
         }
         aside={[
-          { label: "Gross monthly", value: fmt0(monthlyGross), sub: "before deductions" },
+          {
+            label: "Gross monthly",
+            value: formatCurrency(monthlyGross, "USD", { precision: 0 }),
+            sub: "before deductions",
+          },
           {
             label: "Tax withheld",
-            value: fmt0(totalTaxWithheld),
+            value: formatCurrency(totalTaxWithheld, "USD", { precision: 0 }),
             sub: totalTaxWithheld > 0 ? "fed + state + FICA" : undefined,
           },
-          { label: "Annual gross", value: fmt0(annualGross), sub: "monthly × 12" },
+          {
+            label: "Annual gross",
+            value: formatCurrency(annualGross, "USD", { precision: 0 }),
+            sub: "monthly × 12",
+          },
           { label: "Sources", value: String(sources.length) },
         ]}
       />

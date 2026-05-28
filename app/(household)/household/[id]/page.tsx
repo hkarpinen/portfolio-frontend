@@ -1,3 +1,5 @@
+
+import { Btn, DepartmentHead, EditorialPageHead, Icon, LedeStat } from "@/components/editorial";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ExpensesList } from "./expenses-list";
@@ -8,18 +10,12 @@ import { getCookieHeader } from "@/lib/server-cookies";
 import type { HouseholdExpense, HouseholdExpenseListResponse } from "@/types/household-expense";
 import { HouseholdRole, type MembershipResponse } from "@/types/membership";
 import { parseEnum } from "@/lib/parse-enum";
-import { EditorialPageHead } from "@/components/editorial/editorial-page-head";
-import { LedeStat } from "@/components/editorial/lede-stat";
-import { DepartmentHead } from "@/components/editorial/department-head";
-import { Btn } from "@/components/editorial/button";
-import { Icon } from "@/components/editorial/icon";
+
 import { currentMonthName } from "@/lib/finance/editorial-copy";
 import { householdDetailHeadline, householdDetailDeck } from "@/lib/household/editorial-copy";
+import { formatCurrency } from "@/lib/formatting";
 
 export const dynamic = "force-dynamic";
-
-const fmt0 = (n: number, currency = "USD") =>
-  `${currency} ${Math.abs(Math.round(n)).toLocaleString("en-US")}`;
 
 export default async function HouseholdPage({ params }: { params: { id: string } }) {
   const cookieHeader = await getCookieHeader();
@@ -87,17 +83,23 @@ export default async function HouseholdPage({ params }: { params: { id: string }
 
       <LedeStat
         label={`Your share · ${monthName}`}
-        value={yourShare !== null ? fmt0(yourShare, household.currencyCode) : "—"}
+        value={
+          yourShare !== null
+            ? formatCurrency(yourShare, household.currencyCode, { precision: 0 })
+            : "—"
+        }
         deck={
           monthlyObligations !== null && monthlyObligations > 0 && yourSharePct !== null
-            ? `${yourSharePct}% of ${fmt0(monthlyObligations, household.currencyCode)} total owed across the household this month.`
+            ? `${yourSharePct}% of ${formatCurrency(monthlyObligations, household.currencyCode, { precision: 0 })} total owed across the household this month.`
             : "Add an expense with member splits to start tracking your share."
         }
         aside={[
           {
             label: "Total this month",
             value:
-              monthlyObligations !== null ? fmt0(monthlyObligations, household.currencyCode) : "—",
+              monthlyObligations !== null
+                ? formatCurrency(monthlyObligations, household.currencyCode, { precision: 0 })
+                : "—",
             sub: `${householdExpenses.length} expense${householdExpenses.length === 1 ? "" : "s"}`,
           },
           { label: "Members", value: String(memberCount), sub: household.currencyCode },

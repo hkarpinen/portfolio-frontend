@@ -1,5 +1,6 @@
 "use client";
 
+import { Alert, Btn, Input, SelectField } from "@/components/editorial";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -8,7 +9,7 @@ import { useCreateIncomeSource } from "@/hooks/use-income";
 import { getErrorMessage } from "@/lib/error-messages";
 import { type IncomeFormData, INCOME_FREQUENCY_OPTIONS, incomeSchema } from "./_income-form-shared";
 import { Frequency, FREQUENCY_LABELS } from "@/types/schedule";
-import { Btn, Alert, Input, SelectField } from "@/components/editorial";
+
 import type { PayrollDeduction } from "@/types/deductions";
 import { DeductionAccumulator } from "./deduction-accumulator";
 

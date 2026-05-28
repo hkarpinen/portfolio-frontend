@@ -14,6 +14,9 @@ import {
   fetchProfileMemberships,
   fetchMyForumProfile,
   updateMyForumProfile,
+  reportThread,
+  reportComment,
+  type ReportPayload,
 } from "@/lib/api/forum";
 import { forumKeys } from "@/lib/query-keys";
 
@@ -146,5 +149,22 @@ export function useUpdateMyForumProfile() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: forumKeys.myProfile() });
     },
+  });
+}
+
+// ─── Moderation: report ──────────────────────────────────────────────────────
+
+/**
+ * Fire-and-forget report submission for a thread or a comment.
+ *
+ * Both UI surfaces (`<ReportButton>` and `<ThreadActions>` per the audit
+ * §5.4) call this hook so the api-client envelope (auth, error handling,
+ * eslint-banned-generic protection) is shared. The mutation does not
+ * invalidate any cache — reports don't surface back to the reporter.
+ */
+export function useReportContent(kind: "thread" | "comment", targetId: string) {
+  return useMutation({
+    mutationFn: (payload: ReportPayload) =>
+      kind === "thread" ? reportThread(targetId, payload) : reportComment(targetId, payload),
   });
 }

@@ -1,9 +1,10 @@
 "use client";
 
+import { Icon } from "@/components/editorial";
 import Link from "next/link";
 import * as Toast from "@radix-ui/react-toast";
 import { useNotificationsContext } from "@/components/layout/notifications-provider";
-import { Icon } from "@/components/editorial/icon";
+
 import styles from "./notifications-toaster.module.css";
 
 const typeStyles: Record<"success" | "error" | "info", React.CSSProperties> = {

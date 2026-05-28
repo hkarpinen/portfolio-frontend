@@ -1,7 +1,10 @@
 "use client";
 
+import { Btn, Modal, SelectField, Textarea } from "@/components/editorial";
 import { useState, useCallback } from "react";
-import { Modal, Btn, SelectField, Textarea } from "@/components/editorial";
+
+import { useReportContent } from "@/hooks/use-forum";
+import { REPORT_SUBMITTED_COPY } from "@/lib/forum/editorial-copy";
 
 const REPORT_REASONS = [
   "Spam or self-promotion",
@@ -37,12 +40,7 @@ export function ReportButton({
   const [reason, setReason] = useState(REPORT_REASONS[0]);
   const [details, setDetails] = useState("");
   const [submitted, setSubmitted] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-
-  const endpoint =
-    kind === "thread"
-      ? `/api/forum/threads/${targetId}/report`
-      : `/api/forum/comments/${targetId}/report`;
+  const report = useReportContent(kind, targetId);
 
   const close = useCallback(() => {
     setOpen(false);
@@ -54,20 +52,11 @@ export function ReportButton({
   }, []);
 
   const submit = useCallback(async () => {
-    setSubmitting(true);
-    try {
-      await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ reason, details: details.trim() || undefined }),
-        credentials: "include",
-      });
-    } catch {
-      // no-op — fire-and-forget
-    }
-    setSubmitting(false);
+    // Mutation is fire-and-forget — we surface the confirmation regardless
+    // of network success (consistent with the previous direct-fetch flow).
+    await report.mutateAsync({ reason, details: details.trim() || undefined }).catch(() => {});
     setSubmitted(true);
-  }, [endpoint, reason, details]);
+  }, [report, reason, details]);
 
   return (
     <>
@@ -99,7 +88,7 @@ export function ReportButton({
               <Btn variant="secondary" onClick={close}>
                 Cancel
               </Btn>
-              <Btn variant="danger" loading={submitting} onClick={submit}>
+              <Btn variant="danger" loading={report.isPending} onClick={submit}>
                 Submit report
               </Btn>
             </div>
@@ -107,9 +96,7 @@ export function ReportButton({
         }
       >
         {submitted ? (
-          <p className="p-[8px_0] text-center text-md text-ink-2">
-            Thanks for the report. Our moderators will review it shortly.
-          </p>
+          <p className="p-[8px_0] text-center text-md text-ink-2">{REPORT_SUBMITTED_COPY}</p>
         ) : (
           <div className="flex flex-col gap-8">
             <SelectField

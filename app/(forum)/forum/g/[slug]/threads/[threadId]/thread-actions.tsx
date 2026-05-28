@@ -1,9 +1,11 @@
 "use client";
 
+import { Btn, Icon, Modal, SelectField, Textarea } from "@/components/editorial";
 import { useState, useCallback } from "react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { Modal, Btn, SelectField, Textarea } from "@/components/editorial";
-import { Icon } from "@/components/editorial/icon";
+
+import { useReportContent } from "@/hooks/use-forum";
+import { REPORT_SUBMITTED_COPY } from "@/lib/forum/editorial-copy";
 
 interface ThreadActionsProps {
   threadId: string;
@@ -39,7 +41,7 @@ export function ThreadActions({
   const [reason, setReason] = useState(REPORT_REASONS[0]);
   const [details, setDetails] = useState("");
   const [submitted, setSubmitted] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
+  const report = useReportContent("thread", threadId);
 
   const focusComposer = useCallback(() => {
     const el = document.getElementById(replyTargetId) as HTMLTextAreaElement | null;
@@ -68,20 +70,12 @@ export function ThreadActions({
   }, [threadUrl]);
 
   const handleReportSubmit = useCallback(async () => {
-    setSubmitting(true);
-    try {
-      await fetch(`/api/forum/threads/${threadId}/report`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ reason, details: details.trim() || undefined }),
-        credentials: "include",
-      });
-    } catch {
-      // no-op — fire-and-forget
-    }
-    setSubmitting(false);
+    // Fire-and-forget by design (audit §5.4): a failed report still shows
+    // the confirmation; the user shouldn't be the one to know moderation
+    // queues are down.
+    await report.mutateAsync({ reason, details: details.trim() || undefined }).catch(() => {});
     setSubmitted(true);
-  }, [threadId, reason, details]);
+  }, [report, reason, details]);
 
   const handleReportClose = useCallback(() => {
     setReportOpen(false);
@@ -156,7 +150,7 @@ export function ThreadActions({
               <Btn variant="secondary" onClick={handleReportClose}>
                 Cancel
               </Btn>
-              <Btn variant="danger" loading={submitting} onClick={handleReportSubmit}>
+              <Btn variant="danger" loading={report.isPending} onClick={handleReportSubmit}>
                 Submit report
               </Btn>
             </div>
@@ -179,9 +173,7 @@ export function ThreadActions({
                 <polyline points="20 6 9 17 4 12" />
               </svg>
             </div>
-            <p className="m-0 text-center text-md text-ink-2">
-              Thanks for the report. Our moderators will review it shortly.
-            </p>
+            <p className="m-0 text-center text-md text-ink-2">{REPORT_SUBMITTED_COPY}</p>
           </div>
         ) : (
           <div className="flex flex-col gap-8">

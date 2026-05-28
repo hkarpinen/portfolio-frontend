@@ -1,8 +1,7 @@
 "use client";
 
+import { Btn, Card, EditorialPageHead, Icon, Input, Textarea } from "@/components/editorial";
 import { useState } from "react";
-import { Input, Textarea, Btn, Card, EditorialPageHead } from "@/components/editorial";
-import { Icon } from "@/components/editorial/icon";
 
 const LINKS = [
   { label: "GitHub", href: "https://github.com/hkarpinen", display: "github.com/hkarpinen" },

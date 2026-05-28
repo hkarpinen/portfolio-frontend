@@ -1,10 +1,9 @@
 "use client";
 
+import { Btn, Icon, MastheadRow } from "@/components/editorial";
 import { usePathname, useParams } from "next/navigation";
 import Link from "next/link";
-import { MastheadRow } from "@/components/editorial/masthead-row";
-import { Btn } from "@/components/editorial/button";
-import { Icon } from "@/components/editorial/icon";
+
 import { useHousehold } from "@/hooks/use-household";
 
 /**

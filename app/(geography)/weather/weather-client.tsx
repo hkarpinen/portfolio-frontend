@@ -1,9 +1,9 @@
 "use client";
 
+import { SectionHeader, StatCard } from "@/components/editorial";
 import { useState, useEffect } from "react";
 import { useWeather } from "@/hooks/use-weather";
-import { SectionHeader } from "@/components/editorial/section-header";
-import { StatCard } from "@/components/editorial/stat-card";
+
 import { WeatherMap } from "./weather-map";
 import { LocationSearch } from "./location-search";
 import { WeatherUnit, type GeoCoordinates } from "@/types/geography";

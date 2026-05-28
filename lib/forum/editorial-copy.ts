@@ -41,3 +41,14 @@ export function communityDeck({
   }
   return `${counts}.`;
 }
+
+// /forum/.../report (moderation) ─────────────────────────────────────────────
+
+/**
+ * Confirmation shown after a thread/comment report submits. Previously
+ * lived inline at both `report-button.tsx` and `thread-actions.tsx`
+ * (audit §5.7) — keeping it centralised means a copy edit lands in one
+ * place and the two surfaces can never disagree on tone.
+ */
+export const REPORT_SUBMITTED_COPY =
+  "Thanks for the report. Our moderators will review it shortly.";

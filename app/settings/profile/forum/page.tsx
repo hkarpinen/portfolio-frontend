@@ -1,5 +1,6 @@
 "use client";
 
+import { Alert, Btn } from "@/components/editorial";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -7,7 +8,7 @@ import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { useMyForumProfile, useUpdateMyForumProfile } from "@/hooks/use-forum";
 import { getErrorMessage } from "@/lib/error-messages";
-import { Btn, Alert } from "@/components/editorial";
+
 import { ProfileTabs } from "../profile-tabs";
 import { cardClassName, FocusTextarea } from "../../settings-ui";
 

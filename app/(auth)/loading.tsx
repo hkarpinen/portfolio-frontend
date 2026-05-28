@@ -1,4 +1,4 @@
-import { LoadingSplash } from "@/components/editorial/loading-splash";
+import { LoadingSplash } from "@/components/editorial";
 
 export default function AuthLoading() {
   return <LoadingSplash kicker="Auth · Loading" />;

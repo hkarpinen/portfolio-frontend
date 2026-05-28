@@ -1,7 +1,6 @@
+
+import { EmptyState, Icon, SectionHeader } from "@/components/editorial";
 import Link from "next/link";
-import { EmptyState } from "@/components/editorial/empty-state";
-import { Icon } from "@/components/editorial/icon";
-import { SectionHeader } from "@/components/editorial/section-header";
 
 export default function ModQueuePage({ params }: { params: { slug: string } }) {
   return (

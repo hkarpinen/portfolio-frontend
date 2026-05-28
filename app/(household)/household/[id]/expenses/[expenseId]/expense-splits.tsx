@@ -1,12 +1,12 @@
 "use client";
 
+import { Alert, Btn, Input, SelectField, UserInitials } from "@/components/editorial";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { getErrorMessage } from "@/lib/error-messages";
 import { useAddExpenseSplit, useRemoveExpenseSplit } from "@/hooks/use-expenses";
-import { UserInitials } from "@/components/editorial/user-initials";
-import { Btn, Alert, Input, SelectField } from "@/components/editorial";
+
 import type { HouseholdExpenseDetailResponse } from "@/types/household-expense";
 import { formatCurrency } from "@/lib/formatting";
 

@@ -1,9 +1,10 @@
 "use client";
 
+import { Btn, Input, SelectField } from "@/components/editorial";
 import { DeductionCalculationMethod, DeductionType } from "@/types/deductions";
 import { Frequency } from "@/types/schedule";
 import { TYPE_CONFIGS, VOLUNTARY_DEDUCTION_TYPES, DEDUCTION_FREQUENCIES } from "./deduction-config";
-import { Btn, Input, SelectField } from "@/components/editorial";
+
 import { parseEnum } from "@/lib/parse-enum";
 
 export function FieldGroup({ label, children }: { label: string; children: React.ReactNode }) {

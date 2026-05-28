@@ -1,6 +1,6 @@
-"use client";
+import { ErrorSplash } from "@/components/editorial";
 
-import { ErrorSplash } from "@/components/editorial/error-splash";
+"use client";
 
 /**
  * Root-level error boundary — catches anything that bubbles past a route

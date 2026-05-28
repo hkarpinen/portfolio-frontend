@@ -1,9 +1,11 @@
+
+import { EditorialPageHead } from "@/components/editorial";
 import { getCookieHeader } from "@/lib/server-cookies";
 import { fetchExpensesServer } from "@/lib/api/expenses";
 import { fetchContributionSummaryServer, listHouseholdsServer } from "@/lib/api/households";
 import type { HouseholdSummaryDto } from "@/lib/api/households";
 import { fetchIncomeServer } from "@/lib/api/income";
-import { EditorialPageHead } from "@/components/editorial/editorial-page-head";
+
 import { ExpensesClient } from "./expenses-client";
 import { currentMonthName, expensesHeadline, expensesDeck } from "@/lib/finance/editorial-copy";
 import { toMonthlyAmount } from "@/lib/utils";

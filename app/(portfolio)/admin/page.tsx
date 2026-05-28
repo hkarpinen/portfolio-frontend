@@ -1,12 +1,8 @@
 "use client";
 
+import { Btn, DepartmentHead, EditorialPageHead, LedeStat, Spinner, UserInitials } from "@/components/editorial";
 import { useState } from "react";
 import { useMe, useAdminUsers, useBanUser, useChangeUserRole } from "@/hooks/use-identity";
-import { UserInitials } from "@/components/editorial/user-initials";
-import { EditorialPageHead } from "@/components/editorial/editorial-page-head";
-import { LedeStat } from "@/components/editorial/lede-stat";
-import { DepartmentHead } from "@/components/editorial/department-head";
-import { Btn } from "@/components/editorial/button";
 
 /**
  * Admin panel — visible only to users with the Admin role.
@@ -63,10 +59,7 @@ export default function AdminPage() {
               role="status"
               aria-label="Loading users"
             >
-              <div
-                className="h-[28px] w-[28px] animate-spin border-2 border-ink-4 border-t-ink"
-                aria-hidden="true"
-              />
+              <Spinner size={28} className="text-ink" />
               <span className="sr-only">Loading users…</span>
             </div>
           ) : users.length === 0 ? (

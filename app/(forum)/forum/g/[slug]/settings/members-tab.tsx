@@ -1,12 +1,11 @@
 "use client";
 
+import { Btn, LoadingSplash, UserInitials } from "@/components/editorial";
 import {
   useCommunityMembers,
   useAppointModerator,
   useRemoveModerator,
 } from "@/hooks/use-community";
-import { UserInitials } from "@/components/editorial/user-initials";
-import { Btn } from "@/components/editorial";
 
 interface Props {
   communityId: string;
@@ -18,11 +17,7 @@ export function CommunityMembersTab({ communityId }: Props) {
   const removeModerator = useRemoveModerator(communityId);
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center p-20">
-        <div className="h-[28px] w-[28px] animate-spin border-2 border-ink-4 border-t-ink" />
-      </div>
-    );
+    return <LoadingSplash kicker="Loading members" />;
   }
 
   if (!members?.length) {

@@ -62,6 +62,12 @@ const SUPPRESSED_EXACT = new Set<string>([
   "/about",
   "/contact",
   "/admin",
+  // The new-source pages hand-roll their own in-content breadcrumb with
+  // friendlier labels ("Add source" / "Add expense" instead of the literal
+  // "new" URL segment). The audit (§5.6) flagged that both render on these
+  // routes — suppress the auto trail to leave just the polished one.
+  "/expenses/new",
+  "/income/new",
 ]);
 
 /** Routes whose entire subtree is wayfound by their group's MastheadRow

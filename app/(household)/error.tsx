@@ -1,6 +1,6 @@
-"use client";
+import { ErrorSplash } from "@/components/editorial";
 
-import { ErrorSplash } from "@/components/editorial/error-splash";
+"use client";
 
 export default function HouseholdError({
   error,

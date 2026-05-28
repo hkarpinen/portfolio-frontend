@@ -1,7 +1,7 @@
 "use client";
 
+import { EditorialPageHead } from "@/components/editorial";
 import { usePathname } from "next/navigation";
-import { EditorialPageHead } from "@/components/editorial/editorial-page-head";
 
 /**
  * <SettingsPageHead> — pathname-aware editorial header for /settings/*.

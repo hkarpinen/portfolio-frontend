@@ -1,12 +1,13 @@
 "use client";
 
+import { VoteControl } from "@/components/editorial";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { timeAgo, getInitials, authorHandle } from "@/lib/utils";
 import type { Comment } from "@/types/forum";
 import styles from "./comment-tree.module.css";
-import { VoteControl } from "@/components/editorial/vote-control";
+
 import { InlineReplyForm } from "./inline-reply-form";
 import { ReportButton } from "./report-button";
 import { useIsDemo } from "@/hooks/use-demo";

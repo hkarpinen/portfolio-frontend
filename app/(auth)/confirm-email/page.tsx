@@ -1,10 +1,10 @@
 "use client";
 
+import { Btn, Icon } from "@/components/editorial";
 import { useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useConfirmEmail } from "@/hooks/use-identity";
 import { getErrorMessage } from "@/lib/error-messages";
-import { Btn, Icon } from "@/components/editorial";
 
 function ConfirmEmailContent() {
   const searchParams = useSearchParams();

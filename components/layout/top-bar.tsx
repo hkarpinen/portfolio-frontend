@@ -1,8 +1,9 @@
 "use client";
 
+import { Icon } from "@/components/editorial";
 import Link from "next/link";
 import * as Popover from "@radix-ui/react-popover";
-import { Icon } from "@/components/editorial/icon";
+
 import { Avatar } from "./sidebar-nav";
 import type { Notification } from "@/hooks/use-notifications";
 

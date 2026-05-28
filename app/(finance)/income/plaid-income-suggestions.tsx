@@ -1,5 +1,6 @@
 "use client";
 
+import { Btn, Icon } from "@/components/editorial";
 import { useState } from "react";
 import {
   useRecurringStreams,
@@ -7,8 +8,7 @@ import {
   useAcceptRecurring,
   usePlaidItems,
 } from "@/hooks/use-connections";
-import { Icon } from "@/components/editorial/icon";
-import { Btn } from "@/components/editorial/button";
+
 import { formatAmount, formatShortDate } from "@/lib/formatting";
 import type { RecurringSuggestion } from "@/lib/api/plaid";
 

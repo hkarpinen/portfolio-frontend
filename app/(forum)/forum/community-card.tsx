@@ -1,12 +1,11 @@
 "use client";
 
+import { Btn, UserInitials } from "@/components/editorial";
 import Link from "next/link";
 import { ApiError } from "@/lib/api-client";
 import { useCommunityMembership, useJoinCommunity } from "@/hooks/use-community";
 import type { CommunityActivitySnapshot } from "@/types/forum";
 import { formatShortDate } from "@/lib/formatting";
-import { UserInitials } from "@/components/editorial/user-initials";
-import { Btn } from "@/components/editorial";
 
 interface CommunityCardProps {
   communityId: string;

@@ -1,5 +1,6 @@
 "use client";
 
+import { Alert, Btn, Textarea } from "@/components/editorial";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -11,7 +12,6 @@ import { useCreateComment } from "@/hooks/use-forum";
 import { useIsDemo } from "@/hooks/use-demo";
 import { getErrorMessage } from "@/lib/error-messages";
 import { parseMarkdown } from "@/lib/markdown";
-import { Alert, Btn, Textarea } from "@/components/editorial";
 
 interface CommentFormProps {
   threadId: string;

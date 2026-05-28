@@ -1,5 +1,6 @@
 "use client";
 
+import { Btn, Icon } from "@/components/editorial";
 import { useState } from "react";
 import { useAddDeduction, useRemoveDeduction } from "@/hooks/use-income";
 import type { IncomeSource } from "@/types/income";
@@ -12,8 +13,6 @@ import { Frequency } from "@/types/schedule";
 import { TYPE_CONFIGS } from "./deduction-config";
 import { DeductionChip } from "./deduction-chip";
 import { AddDeductionForm } from "./add-deduction-form";
-import { Icon } from "@/components/editorial/icon";
-import { Btn } from "@/components/editorial/button";
 
 /**
  * Deductions tab of ManageDeductionsModal. Owns the add-deduction form

@@ -1,6 +1,6 @@
-"use client";
+import { MastheadRow } from "@/components/editorial";
 
-import { MastheadRow } from "@/components/editorial/masthead-row";
+"use client";
 
 /**
  * <SettingsMasthead> — layout-level masthead for /settings/*.

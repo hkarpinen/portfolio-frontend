@@ -1,8 +1,10 @@
+
+import { SectionHeader } from "@/components/editorial";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { fetchCommunityBySlugServer } from "@/lib/api/communities";
 import { getCookieHeader } from "@/lib/server-cookies";
-import { SectionHeader } from "@/components/editorial/section-header";
+
 import { SettingsTabs } from "./settings-tabs";
 import { CommunityVisibility, type CommunityDetailResponse } from "@/types/forum";
 import { parseEnum } from "@/lib/parse-enum";

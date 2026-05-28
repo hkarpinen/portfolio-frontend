@@ -1,11 +1,10 @@
+
+import { DepartmentHead, EditorialPageHead, EmptyState, Icon } from "@/components/editorial";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { fetchCommunityBySlugServer } from "@/lib/api/communities";
 import { fetchThreadsServer } from "@/lib/api/forum";
-import { EmptyState } from "@/components/editorial/empty-state";
-import { Icon } from "@/components/editorial/icon";
-import { EditorialPageHead } from "@/components/editorial/editorial-page-head";
-import { DepartmentHead } from "@/components/editorial/department-head";
+
 import { CommunityMembersTab } from "./settings/members-tab";
 import { CommunityActions } from "./community-actions";
 import { communityHeadline, communityDeck } from "@/lib/forum/editorial-copy";

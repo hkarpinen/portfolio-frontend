@@ -1,9 +1,11 @@
 "use client";
 
+import { Icon } from "@/components/editorial";
+import type { IconName } from "@/components/editorial";
 import Link from "next/link";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import { useLogout } from "@/hooks/use-identity";
-import { Icon, type IconName } from "@/components/editorial/icon";
+
 import { getInitials } from "@/lib/utils";
 
 /**

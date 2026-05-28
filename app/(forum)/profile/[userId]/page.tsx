@@ -1,4 +1,6 @@
 "use client";
+
+import { Icon } from "@/components/editorial";
 import Link from "next/link";
 import { useMe } from "@/hooks/use-identity";
 import {
@@ -8,7 +10,6 @@ import {
   useProfileComments,
 } from "@/hooks/use-forum";
 import { timeAgo, formatDate, getInitials } from "@/lib/utils";
-import { Icon } from "@/components/editorial/icon";
 
 export default function ProfilePage({ params }: { params: { userId: string } }) {
   const { userId } = params;

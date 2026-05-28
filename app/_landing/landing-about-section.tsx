@@ -1,5 +1,6 @@
-import Image from "next/image";
 import { Btn } from "@/components/editorial";
+import Image from "next/image";
+
 import { SKILLS } from "./landing-config";
 
 /**

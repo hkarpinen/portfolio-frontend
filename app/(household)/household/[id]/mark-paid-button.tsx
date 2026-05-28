@@ -1,7 +1,7 @@
 "use client";
 
+import { Icon } from "@/components/editorial";
 import { usePayHouseholdExpense, useUnpayHouseholdExpense } from "@/hooks/use-expenses";
-import { Icon } from "@/components/editorial/icon";
 
 interface Props {
   householdId: string;

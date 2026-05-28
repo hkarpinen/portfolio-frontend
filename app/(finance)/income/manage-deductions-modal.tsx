@@ -1,8 +1,9 @@
 "use client";
 
+import { Icon } from "@/components/editorial";
 import { useState } from "react";
 import type { IncomeSource } from "@/types/income";
-import { Icon } from "@/components/editorial/icon";
+
 import { TaxWithholdingTab } from "./tax-withholding-tab";
 import { DeductionsTab } from "./deductions-tab";
 

@@ -1,8 +1,9 @@
 "use client";
 
+import { Alert, Btn, Input } from "@/components/editorial";
 import { useState } from "react";
 import Link from "next/link";
-import { Btn, Alert, Input } from "@/components/editorial";
+
 import { useGenerateInvite } from "@/hooks/use-household";
 
 export function InviteSection({ householdId }: { householdId: string }) {

@@ -1,5 +1,6 @@
-import Link from "next/link";
 import { Badge } from "@/components/editorial";
+import Link from "next/link";
+
 import { MODULES } from "./landing-config";
 
 /** "What's inside" — grid of module cards, two public + three behind login. */

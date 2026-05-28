@@ -1,11 +1,12 @@
 "use client";
 
+import { Alert, Btn, Icon, Input } from "@/components/editorial";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { forgotPassword } from "@/lib/api/identity";
-import { Btn, Input, Alert, Icon } from "@/components/editorial";
+
 import { ERROR } from "@/lib/error-messages";
 
 const schema = z.object({

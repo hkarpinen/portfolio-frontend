@@ -1,11 +1,11 @@
 "use client";
 
+import { Alert, Btn, Collapsible, Input } from "@/components/editorial";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useUpdatePassword } from "@/hooks/use-identity";
 import { getErrorMessage } from "@/lib/error-messages";
-import { Btn, Input, Alert, Collapsible } from "@/components/editorial";
 
 const passwordSchema = z
   .object({

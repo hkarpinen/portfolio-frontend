@@ -1,11 +1,11 @@
 "use client";
 
+import { CommunityAvatar, Icon, ThreadCard } from "@/components/editorial";
 import * as RadixTabs from "@radix-ui/react-tabs";
 import Link from "next/link";
-import { ThreadCard } from "@/components/editorial/thread-card";
-import { CommunityAvatar } from "@/components/editorial/community-avatar";
+
 import { JoinButton } from "./join-button";
-import { Icon } from "@/components/editorial/icon";
+
 import type { CommunitySummaryResponse, ThreadSummaryResponse } from "@/types/forum";
 
 interface ForumTabsProps {

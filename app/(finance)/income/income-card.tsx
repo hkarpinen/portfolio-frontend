@@ -1,10 +1,10 @@
 "use client";
 
+import { DeleteIconButton, Icon } from "@/components/editorial";
 import { useState } from "react";
 import { useNetPayBreakdown } from "@/hooks/use-income";
 import type { IncomeSource } from "@/types/income";
-import { DeleteIconButton } from "@/components/editorial/delete-icon-button";
-import { Icon } from "@/components/editorial";
+
 import { IncomeDetailPanel, PERIODS, type Period } from "./income-detail-panel";
 import { ManageDeductionsModal } from "./manage-deductions-modal";
 import { IncomeCardEditForm } from "./income-card-edit-form";

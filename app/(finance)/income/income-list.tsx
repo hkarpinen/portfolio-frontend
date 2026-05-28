@@ -1,9 +1,9 @@
 "use client";
 
+import { EmptyState, Icon } from "@/components/editorial";
 import { useDeleteIncomeSource, useIncome } from "@/hooks/use-income";
 import type { IncomeListResponse, IncomeSource } from "@/types/income";
-import { EmptyState } from "@/components/editorial/empty-state";
-import { Icon } from "@/components/editorial";
+
 import { IncomeCard } from "./income-card";
 
 /**

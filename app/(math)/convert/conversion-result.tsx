@@ -1,6 +1,6 @@
-"use client";
+import { StatCard } from "@/components/editorial";
 
-import { StatCard } from "@/components/editorial/stat-card";
+"use client";
 
 function formatNumber(n: number): string {
   const s = n.toFixed(10).replace(/\.?0+$/, "");

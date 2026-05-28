@@ -1,12 +1,12 @@
 "use client";
 
+import { Alert, Btn, Input } from "@/components/editorial";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMe, useUpdateMe } from "@/hooks/use-identity";
 import { getErrorMessage } from "@/lib/error-messages";
-import { Btn, Input, Alert } from "@/components/editorial";
 
 const emailSchema = z.object({
   email: z.string().email("Enter a valid email address"),

@@ -1,9 +1,9 @@
 "use client";
 
+import { Icon, ListWithLoadingAndEmpty } from "@/components/editorial";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Icon } from "@/components/editorial/icon";
-import { ListWithLoadingAndEmpty } from "@/components/editorial/list-with-loading-and-empty";
+
 import { ThreadRow } from "./thread-row";
 import { fetchThreads } from "@/lib/api/forum";
 import { forumKeys } from "@/lib/query-keys";

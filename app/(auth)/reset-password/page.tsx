@@ -1,5 +1,6 @@
 "use client";
 
+import { Alert, Btn, Icon, Input } from "@/components/editorial";
 import { useState, Suspense } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -7,7 +8,6 @@ import { z } from "zod";
 import { useSearchParams } from "next/navigation";
 import { getErrorMessage } from "@/lib/error-messages";
 import { useResetPassword } from "@/hooks/use-identity";
-import { Btn, Input, Alert, Icon } from "@/components/editorial";
 
 const EYE = (show: boolean) => (
   <svg

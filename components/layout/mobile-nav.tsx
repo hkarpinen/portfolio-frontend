@@ -1,7 +1,8 @@
 "use client";
 
+import { Icon } from "@/components/editorial";
+import type { IconName } from "@/components/editorial";
 import Link from "next/link";
-import { Icon, type IconName } from "@/components/editorial/icon";
 
 /**
  * <MobileNav> — bottom strip nav for mobile (redesign)

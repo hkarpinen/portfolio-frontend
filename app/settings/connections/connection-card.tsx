@@ -1,9 +1,9 @@
 "use client";
 
+import { Btn, ConfirmDeleteDialog, Icon } from "@/components/editorial";
 import { useState } from "react";
 import { useSyncPlaidItem, useUnlinkPlaidItem } from "@/hooks/use-connections";
-import { Icon } from "@/components/editorial/icon";
-import { Btn } from "@/components/editorial";
+
 import type { Connection, LinkedAccountResponse } from "@/lib/api/plaid";
 import { formatCurrency } from "@/lib/formatting";
 
@@ -98,33 +98,26 @@ export function ConnectionCard({ item }: { item: Connection }) {
             {isSyncing ? "Syncing…" : "↻ Sync"}
           </Btn>
 
-          {confirming ? (
-            <>
-              <Btn variant="ghost" size="sm" onClick={() => setConfirming(false)}>
-                Cancel
-              </Btn>
-              <Btn
-                variant="danger"
-                size="sm"
-                onClick={() => {
-                  unlink.mutate(item.connectionId);
-                  setConfirming(false);
-                }}
-                className="whitespace-nowrap"
-              >
-                Confirm remove
-              </Btn>
-            </>
-          ) : (
-            <Btn
-              variant="danger"
-              size="sm"
-              onClick={() => setConfirming(true)}
-              disabled={isUnlinking}
-            >
-              Remove
-            </Btn>
-          )}
+          <Btn
+            variant="danger"
+            size="sm"
+            onClick={() => setConfirming(true)}
+            disabled={isUnlinking}
+          >
+            Remove
+          </Btn>
+          <ConfirmDeleteDialog
+            open={confirming}
+            onOpenChange={setConfirming}
+            title={`Disconnect ${item.institutionName}?`}
+            body="We'll stop syncing transactions from this institution. You can reconnect later; historical data already imported stays in place."
+            confirmLabel="Disconnect"
+            isPending={isUnlinking}
+            onConfirm={() => {
+              unlink.mutate(item.connectionId);
+              setConfirming(false);
+            }}
+          />
 
           <button
             type="button"

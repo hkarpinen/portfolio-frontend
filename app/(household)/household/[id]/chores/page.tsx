@@ -1,14 +1,11 @@
 "use client";
 
+import { ConfirmDeleteDialog, DepartmentHead, EditorialPageHead, EmptyState, Icon } from "@/components/editorial";
 import { useState } from "react";
 import { useParams } from "next/navigation";
 import { useChores, useCompleteChore, useDeleteChore } from "@/hooks/use-chores";
 import { useHouseholdMembers } from "@/hooks/use-household";
-import { EmptyState } from "@/components/editorial/empty-state";
-import { Icon } from "@/components/editorial/icon";
-import { EditorialPageHead } from "@/components/editorial/editorial-page-head";
-import { DepartmentHead } from "@/components/editorial/department-head";
-import { ConfirmDeleteDialog } from "@/components/editorial/confirm-delete-dialog";
+
 import { choresHeadline } from "@/lib/household/editorial-copy";
 import type { ChoreDto } from "@/lib/api/chores";
 import { formatShortDate } from "@/lib/formatting";

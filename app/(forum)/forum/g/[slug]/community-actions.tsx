@@ -1,9 +1,10 @@
 "use client";
 
+import { Icon } from "@/components/editorial";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCommunityMembership, useJoinCommunity } from "@/hooks/use-community";
-import { Icon } from "@/components/editorial/icon";
+
 import { getErrorMessage } from "@/lib/error-messages";
 
 interface CommunityActionsProps {

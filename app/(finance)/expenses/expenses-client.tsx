@@ -1,16 +1,16 @@
 "use client";
 
+import { DepartmentHead, EmptyDispatch, Ticker } from "@/components/editorial";
 import { useOverview } from "@/hooks/use-household";
 import { useIncome } from "@/hooks/use-income";
 import { ExpenseList } from "./expense-list";
 import { FinancialSummary } from "./financial-summary";
 import { OneTimeTable } from "./one-time-table";
 import { SharedSplitsTable, groupSharedSplitsByBill } from "./shared-splits-table";
-import { computeIncomeMonthly, fmtUsdInt } from "./expenses-derivations";
-import { Ticker } from "@/components/editorial/ticker";
-import { DepartmentHead } from "@/components/editorial/department-head";
-import { EmptyDispatch } from "@/components/editorial/empty-dispatch";
+import { computeIncomeMonthly } from "./expenses-derivations";
+
 import { buildExpensesTicker, type UpcomingBill } from "@/lib/finance/editorial-copy";
+import { formatCurrency } from "@/lib/formatting";
 import type { ExpensePage, ExpenseItem } from "@/types/expense";
 import type { ContributionPeriod } from "@/types/contributions";
 import type { IncomeSource } from "@/types/income";
@@ -94,7 +94,7 @@ export function ExpensesClient({
       <section className="flex flex-col gap-5">
         <DepartmentHead
           kicker="Recurring · Personal"
-          count={`${personalRecurringCount} bill${personalRecurringCount === 1 ? "" : "s"} · ${fmtUsdInt(personalRecurringTotal)}/mo`}
+          count={`${personalRecurringCount} bill${personalRecurringCount === 1 ? "" : "s"} · ${formatCurrency(personalRecurringTotal, "USD", { precision: 0 })}/mo`}
           title="Personal <em>recurring</em>"
           deck="Bills you owe on a schedule. Edit cadence and category from the row."
         />
@@ -104,7 +104,7 @@ export function ExpensesClient({
       <section className="flex flex-col gap-5">
         <DepartmentHead
           kicker="Shared · Households"
-          count={`${sharedSplitGroups.length} bill${sharedSplitGroups.length === 1 ? "" : "s"} · ${fmtUsdInt(sharedTotal)}/mo`}
+          count={`${sharedSplitGroups.length} bill${sharedSplitGroups.length === 1 ? "" : "s"} · ${formatCurrency(sharedTotal, "USD", { precision: 0 })}/mo`}
           title="Shared <em>household splits</em>"
           deck="Your share of recurring bills across every household you contribute to."
         />
@@ -122,7 +122,7 @@ export function ExpensesClient({
           kicker={`One-time · ${monthName}`}
           count={
             oneTimeBills.length > 0
-              ? `${oneTimeBills.length} expense${oneTimeBills.length === 1 ? "" : "s"} · ${fmtUsdInt(oneTimeTotal)}`
+              ? `${oneTimeBills.length} expense${oneTimeBills.length === 1 ? "" : "s"} · ${formatCurrency(oneTimeTotal, "USD", { precision: 0 })}`
               : "—"
           }
           title="One time <em>this month</em>"

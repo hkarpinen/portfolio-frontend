@@ -1,5 +1,6 @@
 "use client";
 
+import { Btn, Input, SelectField } from "@/components/editorial";
 import { useState } from "react";
 import {
   DeductionType,
@@ -11,7 +12,6 @@ import { TYPE_CONFIGS, VOLUNTARY_DEDUCTION_TYPES } from "./deduction-config";
 import { INCOME_FREQUENCY_OPTIONS } from "./_income-form-shared";
 import { parseEnum } from "@/lib/parse-enum";
 import { formatAmount } from "@/lib/formatting";
-import { Btn, Input, SelectField } from "@/components/editorial";
 
 /**
  * Accumulates a list of payroll deductions inside the Add Income form.

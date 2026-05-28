@@ -1,9 +1,7 @@
 "use client";
 
+import { Btn, Icon, MastheadRow } from "@/components/editorial";
 import { usePathname, useParams } from "next/navigation";
-import { MastheadRow } from "@/components/editorial/masthead-row";
-import { Btn } from "@/components/editorial/button";
-import { Icon } from "@/components/editorial/icon";
 
 /**
  * <ForumMasthead> — layout-level masthead for the (forum) route group.

@@ -1,8 +1,8 @@
 "use client";
 
+import { EmptyDispatch, SourceNote } from "@/components/editorial";
 import type { ExpenseItem } from "@/types/expense";
-import { EmptyDispatch } from "@/components/editorial/empty-dispatch";
-import { SourceNote } from "@/components/editorial/source-note";
+
 import { formatCurrency, formatAmount, formatShortDate } from "@/lib/formatting";
 
 /**

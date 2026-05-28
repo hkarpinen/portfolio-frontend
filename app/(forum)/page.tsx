@@ -1,14 +1,14 @@
+
+import { Icon, LinkTabs, UserInitials, VoteControl } from "@/components/editorial";
 import Link from "next/link";
 import { Suspense } from "react";
-import { VoteControl } from "@/components/editorial/vote-control";
+
 import { ThreadActions } from "./forum/g/[slug]/threads/[threadId]/thread-actions";
 import { fetchThreadsServer } from "@/lib/api/forum";
 import { fetchCommunitiesServer } from "@/lib/api/communities";
 import { getCookieHeader } from "@/lib/server-cookies";
 import { timeAgo } from "@/lib/utils";
-import { UserInitials } from "@/components/editorial/user-initials";
-import { Icon } from "@/components/editorial/icon";
-import { LinkTabs } from "@/components/editorial/link-tabs";
+
 import type { ThreadSummaryResponse, CommunitySummaryResponse } from "@/types/forum";
 
 export const dynamic = "force-dynamic";

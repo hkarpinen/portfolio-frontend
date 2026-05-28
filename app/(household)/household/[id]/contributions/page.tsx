@@ -1,19 +1,14 @@
 "use client";
 
+import { DepartmentHead, EditorialPageHead, EmptyState, Icon } from "@/components/editorial";
 import { useState, useMemo } from "react";
 import { useParams } from "next/navigation";
 import { useHouseholdContributions } from "@/hooks/use-expenses";
 import { useHousehold } from "@/hooks/use-household";
-import { EmptyState } from "@/components/editorial/empty-state";
-import { Icon } from "@/components/editorial/icon";
-import { EditorialPageHead } from "@/components/editorial/editorial-page-head";
-import { DepartmentHead } from "@/components/editorial/department-head";
+
 import { contributionsHeadline } from "@/lib/household/editorial-copy";
 import type { HouseholdMonthlyContributions } from "@/types/contributions";
 import { formatCurrency } from "@/lib/formatting";
-
-const fmtCurrency = (amount: number | undefined, currency: string) =>
-  formatCurrency(amount ?? 0, currency || "USD");
 
 /** Compute the minimal settlement transactions from net member balances. */
 function computeSettlements(
@@ -114,7 +109,7 @@ export default function HouseholdContributionsPage() {
             <section className="flex flex-col gap-5">
               <DepartmentHead
                 kicker={`Period · ${month.periodLabel}`}
-                count={`Total ${fmtCurrency(month.total, cur)}`}
+                count={`Total ${formatCurrency(month.total, cur)}`}
                 title="Member <em>contributions</em>"
               />
 
@@ -142,7 +137,7 @@ export default function HouseholdContributionsPage() {
                   <tbody>
                     {(month.members ?? []).map((m) => {
                       const net = (m.totalPaid ?? 0) - (m.totalDue ?? 0);
-                      const netAbs = fmtCurrency(Math.abs(net), cur);
+                      const netAbs = formatCurrency(Math.abs(net), cur);
                       const netSign = net >= 0 ? "+" : "−";
                       const netLabel =
                         net >= 0 ? `${netAbs} surplus (overpaid)` : `${netAbs} owed (underpaid)`;
@@ -152,10 +147,10 @@ export default function HouseholdContributionsPage() {
                             {m.displayName || `Member ${m.userId.slice(0, 6)}…`}
                           </td>
                           <td className="whitespace-nowrap py-[14px] pr-6 text-right font-mono text-sm text-ink">
-                            {fmtCurrency(m.totalPaid, cur)}
+                            {formatCurrency(m.totalPaid, cur)}
                           </td>
                           <td className="whitespace-nowrap py-[14px] pr-6 text-right font-mono text-sm text-ink">
-                            {fmtCurrency(m.totalDue, cur)}
+                            {formatCurrency(m.totalDue, cur)}
                           </td>
                           <td
                             className={`whitespace-nowrap py-[14px] text-right font-mono text-sm ${net >= 0 ? "text-green" : "text-red"}`}
@@ -181,7 +176,7 @@ export default function HouseholdContributionsPage() {
             <section className="flex flex-col gap-5">
               <DepartmentHead
                 kicker="Settlement · Suggested"
-                count={`${settlements.length} transfer${settlements.length === 1 ? "" : "s"} · ${fmtCurrency(unsettledTotal, cur)}`}
+                count={`${settlements.length} transfer${settlements.length === 1 ? "" : "s"} · ${formatCurrency(unsettledTotal, cur)}`}
                 title="Minimum <em>transfers</em> to balance"
                 deck="The fewest payments needed to bring every member to $0 net."
               />
@@ -195,7 +190,7 @@ export default function HouseholdContributionsPage() {
                       {s.from} → {s.to}
                     </span>
                     <span className="whitespace-nowrap font-mono text-sm text-ink">
-                      {fmtCurrency(s.amount, cur)}
+                      {formatCurrency(s.amount, cur)}
                     </span>
                   </div>
                 ))}

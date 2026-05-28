@@ -1,5 +1,6 @@
 "use client";
 
+import { Spinner } from "@/components/editorial";
 import { useNetPayBreakdown } from "@/hooks/use-income";
 
 export type Period = "weekly" | "biweekly" | "monthly" | "annually";
@@ -27,8 +28,8 @@ export function IncomeDetailPanel({ incomeId, period, onPeriodChange }: IncomeDe
 
   if (isLoading) {
     return (
-      <div className="flex items-center gap-4 p-[16px_0_4px]">
-        <div className="h-8 w-8 animate-spin border-2 border-ink-4 border-t-ink" />
+      <div className="flex items-center gap-4 p-[16px_0_4px]" role="status">
+        <Spinner size={20} className="text-ink" />
         <span className="text-base text-ink-3">Loading breakdown…</span>
       </div>
     );

@@ -1,9 +1,9 @@
 "use client";
 
+import { ImageUpload } from "@/components/editorial";
 import { useRouter } from "next/navigation";
 import { useUploadAvatar } from "@/hooks/use-identity";
 import { getErrorMessage } from "@/lib/error-messages";
-import { ImageUpload } from "@/components/editorial";
 
 interface AvatarUploadProps {
   value: string | null;

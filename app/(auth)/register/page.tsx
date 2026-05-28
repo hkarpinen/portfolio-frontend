@@ -1,5 +1,6 @@
 "use client";
 
+import { Alert, Btn, Icon, Input } from "@/components/editorial";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
@@ -8,7 +9,7 @@ import type { RegisterInput } from "@/schemas/auth";
 import { registerSchema } from "@/schemas/auth";
 import { useRegister } from "@/hooks/use-identity";
 import { getErrorMessage } from "@/lib/error-messages";
-import { Btn, Input, Alert, Icon } from "@/components/editorial";
+
 import { RecaptchaScript, useRecaptcha } from "@/components/recaptcha";
 
 function PasswordStrength({ password }: { password: string }) {

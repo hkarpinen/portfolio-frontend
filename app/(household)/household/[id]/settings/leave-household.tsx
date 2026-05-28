@@ -1,10 +1,9 @@
 "use client";
 
+import { Btn, ConfirmDeleteDialog } from "@/components/editorial";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useRemoveMember } from "@/hooks/use-household";
-import { ConfirmDeleteDialog } from "@/components/editorial/confirm-delete-dialog";
-import { Btn } from "@/components/editorial/button";
 
 interface LeaveHouseholdProps {
   householdId: string;

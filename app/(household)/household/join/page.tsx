@@ -1,5 +1,6 @@
 "use client";
 
+import { Alert, Btn, Icon, Input, SectionHeader } from "@/components/editorial";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -7,7 +8,6 @@ import { z } from "zod";
 import Link from "next/link";
 import { useJoinHousehold } from "@/hooks/use-household";
 import { getErrorMessage } from "@/lib/error-messages";
-import { Btn, Alert, Input, Icon, SectionHeader } from "@/components/editorial";
 
 const joinSchema = z.object({
   invitationCode: z.string().min(1, "Invitation code is required").trim(),

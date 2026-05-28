@@ -1,8 +1,8 @@
 "use client";
 
+import { Btn } from "@/components/editorial";
 import { useState } from "react";
 import type { CalendarEventDto } from "@/lib/api/calendar";
-import { Btn } from "@/components/editorial/button";
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 

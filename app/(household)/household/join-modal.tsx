@@ -1,10 +1,10 @@
 "use client";
 
+import { Alert, Btn, Input, Modal } from "@/components/editorial";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useJoinHousehold } from "@/hooks/use-household";
 import { getErrorMessage } from "@/lib/error-messages";
-import { Btn, Modal, Alert, Input } from "@/components/editorial";
 
 interface JoinHouseholdModalProps {
   open: boolean;

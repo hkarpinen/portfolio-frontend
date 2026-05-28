@@ -1,8 +1,9 @@
 "use client";
 
+import { SourceNote } from "@/components/editorial";
 import Link from "next/link";
 import type { ContributionItem } from "@/types/contributions";
-import { SourceNote } from "@/components/editorial/source-note";
+
 import { formatCurrency, formatAmount } from "@/lib/formatting";
 
 export interface SharedSplitGroup {

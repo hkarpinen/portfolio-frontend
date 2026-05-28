@@ -1,7 +1,6 @@
+
+import { EmptyState, Icon, SectionHeader } from "@/components/editorial";
 import Link from "next/link";
-import { SectionHeader } from "@/components/editorial/section-header";
-import { EmptyState } from "@/components/editorial/empty-state";
-import { Icon } from "@/components/editorial/icon";
 
 export default function ModLogPage({ params }: { params: { slug: string } }) {
   return (

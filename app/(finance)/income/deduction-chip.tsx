@@ -1,11 +1,10 @@
 "use client";
 
+import { Btn, Icon } from "@/components/editorial";
 import { useState } from "react";
 import type { PayrollDeduction } from "@/types/deductions";
 import { formatAmount } from "@/lib/formatting";
 import { TYPE_CONFIGS } from "./deduction-config";
-import { Icon } from "@/components/editorial/icon";
-import { Btn } from "@/components/editorial/button";
 
 export function DeductionChip({
   d,
