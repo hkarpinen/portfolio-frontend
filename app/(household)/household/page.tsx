@@ -5,6 +5,7 @@ import { getCookieHeader } from "@/lib/server-cookies";
 import { JoinHouseholdButton } from "./join-button";
 import { listHouseholdsServer } from "@/lib/api/households";
 import type { HouseholdSummaryDto } from "@/lib/api/households";
+import { fetchAllBalancesServer } from "@/lib/api/household-expenses";
 
 import { HouseholdBalanceBadge } from "@/components/finance/household-balance-badge";
 import { householdsHeadline, householdsDeck } from "@/lib/household/editorial-copy";
@@ -19,9 +20,13 @@ const ORIENT = [
 ];
 
 export default async function HouseholdsPage() {
-  const households: HouseholdSummaryDto[] =
-    (await listHouseholdsServer(await getCookieHeader())) ?? [];
+  const cookieHeader = await getCookieHeader();
+  const households: HouseholdSummaryDto[] = (await listHouseholdsServer(cookieHeader)) ?? [];
   const count = households.length;
+  // Audit §3.4: prefetch every household's balance in one parallel sweep
+  // server-side, hand each badge its own initialData, and the page no
+  // longer fires N client fetches on mount.
+  const balancesById = count > 0 ? await fetchAllBalancesServer(households.map((h) => h.id), cookieHeader) : {};
 
   return (
     <div className="page-enter flex flex-col gap-8">
@@ -105,7 +110,11 @@ export default async function HouseholdsPage() {
                       {memberLabel} · {h.currencyCode}
                     </p>
                     <div className="ed-module-foot">
-                      <HouseholdBalanceBadge householdId={h.id} variant="card" />
+                      <HouseholdBalanceBadge
+                        householdId={h.id}
+                        variant="card"
+                        initialData={balancesById[h.id] ?? null}
+                      />
                       <span className="ed-module-arrow" aria-hidden>
                         Open →
                       </span>

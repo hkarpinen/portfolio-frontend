@@ -34,6 +34,7 @@ import type {
   HouseholdExpenseDetailResponse,
   ExpenseSplit,
 } from "@/types/household-expense";
+import type { MemberBalanceListResponse } from "@/types/membership";
 
 // ─── Personal expenses ────────────────────────────────────────────────────────
 
@@ -134,13 +135,21 @@ export function useHouseholdContributions(id: string) {
 /**
  * Per-other-member balances for one household, from the caller's POV.
  * Used by the YOU'RE OWED / YOU OWE badge on the household list and detail.
+ *
+ * Accepts an optional `initialData` so RSC-prefetched balances hydrate the
+ * cache and the badge skips its initial client fetch — see the N+1 fix in
+ * audit §3.4 (`fetchAllBalancesServer` on the household landing page).
  */
-export function useHouseholdBalances(householdId: string) {
+export function useHouseholdBalances(
+  householdId: string,
+  initialData?: MemberBalanceListResponse,
+) {
   return useQuery({
     queryKey: financeKeys.householdBalances(householdId),
     queryFn: () => fetchHouseholdBalances(householdId),
     staleTime: 60_000,
     enabled: !!householdId,
+    initialData,
   });
 }
 

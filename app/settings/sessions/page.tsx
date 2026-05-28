@@ -1,14 +1,14 @@
 "use client";
 
 import { Alert, Btn, EmptyState, Icon } from "@/components/editorial";
-import { useEffect, useState, useCallback } from "react";
+import { useState } from "react";
 
 import {
-  fetchSessions,
-  signOutSession,
-  signOutAllOtherSessions,
-  type SessionItem,
-} from "@/lib/api/identity";
+  useSessions,
+  useSignOutSession,
+  useSignOutAllOtherSessions,
+} from "@/hooks/use-identity";
+import type { SessionItem } from "@/lib/api/identity";
 import { timeAgo } from "@/lib/utils";
 
 /** Parse a user-agent string into a friendly "Browser · OS" label without external deps. */
@@ -46,56 +46,36 @@ function parseUserAgent(ua: string | null): string {
 }
 
 export default function SessionsPage() {
-  const [sessions, setSessions] = useState<SessionItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [signingOut, setSigningOut] = useState<string | null>(null);
-  const [signingOutAll, setSigningOutAll] = useState(false);
+  // /api/identity/sessions may not be wired everywhere; useSessions tolerates
+  // 4xx via retry:false and we render an empty state in that branch.
+  const sessionsQuery = useSessions();
+  const signOut = useSignOutSession();
+  const signOutAll = useSignOutAllOtherSessions();
   const [notice, setNotice] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const load = useCallback(() => {
-    setLoading(true);
-    fetchSessions()
-      .then((res) => setSessions(res.sessions ?? []))
-      .catch(() => {
-        // TODO(handoff8): /api/identity/sessions endpoint may not be implemented yet — show empty state
-        setSessions([]);
-        setError(null);
-      })
-      .finally(() => setLoading(false));
-  }, []);
-
-  useEffect(() => {
-    load();
-  }, [load]);
-
-  const handleSignOut = async (sessionId: string) => {
-    setSigningOut(sessionId);
-    try {
-      await signOutSession(sessionId);
-      setSessions((prev) => prev.filter((s) => s.sessionId !== sessionId));
-      setNotice("Session signed out.");
-    } catch {
-      setError("Failed to sign out session. Please try again.");
-    } finally {
-      setSigningOut(null);
-    }
-  };
-
-  const handleSignOutAll = async () => {
-    setSigningOutAll(true);
-    try {
-      await signOutAllOtherSessions();
-      setSessions((prev) => prev.filter((s) => s.isCurrent));
-      setNotice("All other sessions signed out.");
-    } catch {
-      setError("Failed to sign out other sessions. Please try again.");
-    } finally {
-      setSigningOutAll(false);
-    }
-  };
-
+  const isLoading = sessionsQuery.isLoading;
+  // A failed fetch falls through to "no sessions" — same UX the previous
+  // imperative load() rendered. We don't surface fetchError to keep the
+  // page useful when the endpoint isn't deployed.
+  const sessions: SessionItem[] = sessionsQuery.data?.sessions ?? [];
   const otherSessions = sessions.filter((s) => !s.isCurrent);
+
+  const handleSignOut = (sessionId: string) => {
+    setError(null);
+    signOut.mutate(sessionId, {
+      onSuccess: () => setNotice("Session signed out."),
+      onError: () => setError("Failed to sign out session. Please try again."),
+    });
+  };
+
+  const handleSignOutAll = () => {
+    setError(null);
+    signOutAll.mutate(undefined, {
+      onSuccess: () => setNotice("All other sessions signed out."),
+      onError: () => setError("Failed to sign out other sessions. Please try again."),
+    });
+  };
 
   return (
     <div className="page-enter flex flex-col gap-8">
@@ -112,7 +92,7 @@ export default function SessionsPage() {
         {error && <Alert variant="danger">{error}</Alert>}
       </div>
 
-      {loading ? (
+      {isLoading ? (
         <div className="border-ink bg-paper-2 p-5">
           <p className="text-base text-ink-3">Loading sessions…</p>
         </div>
@@ -179,10 +159,12 @@ export default function SessionsPage() {
                     size="sm"
                     type="button"
                     onClick={() => handleSignOut(s.sessionId)}
-                    disabled={signingOut === s.sessionId}
+                    disabled={signOut.isPending && signOut.variables === s.sessionId}
                     aria-label={`Sign out ${parseUserAgent(s.userAgent)} session`}
                   >
-                    {signingOut === s.sessionId ? "Signing out…" : "Sign out"}
+                    {signOut.isPending && signOut.variables === s.sessionId
+                      ? "Signing out…"
+                      : "Sign out"}
                   </Btn>
                 )}
               </div>
@@ -191,10 +173,15 @@ export default function SessionsPage() {
         </div>
       )}
 
-      {!loading && otherSessions.length > 0 && (
+      {!isLoading && otherSessions.length > 0 && (
         <div className="flex items-center gap-4">
-          <Btn variant="outline" type="button" onClick={handleSignOutAll} disabled={signingOutAll}>
-            {signingOutAll ? "Signing out…" : "Sign out all other sessions"}
+          <Btn
+            variant="outline"
+            type="button"
+            onClick={handleSignOutAll}
+            disabled={signOutAll.isPending}
+          >
+            {signOutAll.isPending ? "Signing out…" : "Sign out all other sessions"}
           </Btn>
           <p className="text-sm text-ink-3">
             {otherSessions.length} other {otherSessions.length === 1 ? "session" : "sessions"}{" "}

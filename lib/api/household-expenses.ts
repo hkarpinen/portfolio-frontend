@@ -7,6 +7,7 @@ import {
   ExpenseSplitSchema,
 } from "@/types/household-expense";
 import { MemberBalanceListResponseSchema } from "@/types/membership";
+import type { MemberBalanceListResponse } from "@/types/membership";
 
 export const fetchHouseholdExpenses = (householdId: string) =>
   api.parsed.get(
@@ -88,6 +89,38 @@ export const fetchHouseholdBalances = (householdId: string) =>
     `/api/finance/groups/${householdId}/balances`,
     MemberBalanceListResponseSchema,
   );
+
+/** Server-side counterpart for RSC prefetch (audit §3.4 — household N+1 fix). */
+export const fetchHouseholdBalancesServer = (householdId: string, cookieHeader: string) =>
+  parsedServerFetch(
+    `/api/finance/groups/${householdId}/balances`,
+    MemberBalanceListResponseSchema,
+    cookieHeader,
+  );
+
+/**
+ * Prefetch the balance map for many households in one render pass. Returns a
+ * Record keyed by householdId so the consumer can hand each card its own
+ * `initialData` without per-card client fetches. Failures collapse to a
+ * missing entry — the badge component falls back to a normal client fetch
+ * for any household whose key isn't in the map.
+ *
+ * The audit (§3.4) measured this as the most visible N+1 on the landing
+ * page: one `listHouseholdsServer` + N `useHouseholdBalances` client calls
+ * fired in parallel on every visit. Prefetching makes balances arrive in
+ * the same response payload as the household list.
+ */
+export const fetchAllBalancesServer = async (
+  householdIds: readonly string[],
+  cookieHeader: string,
+): Promise<Record<string, MemberBalanceListResponse | null>> => {
+  const entries = await Promise.all(
+    householdIds.map(
+      async (id) => [id, await fetchHouseholdBalancesServer(id, cookieHeader)] as const,
+    ),
+  );
+  return Object.fromEntries(entries);
+};
 
 export const createHouseholdExpense = (
   householdId: string,

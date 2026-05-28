@@ -18,6 +18,9 @@ import {
   updateMe as updateMeRequest,
   updatePassword as updatePasswordRequest,
   uploadAvatar as uploadAvatarRequest,
+  fetchSessions,
+  signOutSession,
+  signOutAllOtherSessions,
   type LoginPayload,
   type RegisterPayload,
   type UpdateMePayload,
@@ -208,6 +211,48 @@ export function useUploadAvatar() {
     mutationFn: (file: File) => uploadAvatarRequest(file),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: identityKeys.me() });
+    },
+  });
+}
+
+// ─── Active sessions (settings/sessions page) ────────────────────────────────
+
+/**
+ * Active login sessions for the current user. The audit (§3.5) flagged
+ * this as the only real `useEffect`-for-data offender — moving it into
+ * React Query brings it into the same cache graph as everything else
+ * (auto refetch on focus, single in-flight dedup, predictable invalidation
+ * from the revoke mutations below).
+ *
+ * Note: the underlying endpoint may not exist in every backend deployment
+ * (cf. the page's prior TODO). React Query's `retry: false` here keeps the
+ * UI from spamming a 404 — the consumer falls back to an empty state.
+ */
+export function useSessions() {
+  return useQuery({
+    queryKey: identityKeys.sessions(),
+    queryFn: fetchSessions,
+    retry: false,
+    staleTime: 60_000,
+  });
+}
+
+export function useSignOutSession() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (sessionId: string) => signOutSession(sessionId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: identityKeys.sessions() });
+    },
+  });
+}
+
+export function useSignOutAllOtherSessions() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => signOutAllOtherSessions(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: identityKeys.sessions() });
     },
   });
 }

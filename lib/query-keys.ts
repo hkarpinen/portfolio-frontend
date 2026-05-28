@@ -91,6 +91,7 @@ export const identityKeys = {
   all: ["identity"] as const,
   me: () => [...identityKeys.all, "me"] as const,
   adminUsers: (page: number) => [...identityKeys.all, "admin-users", page] as const,
+  sessions: () => [...identityKeys.all, "sessions"] as const,
 } as const;
 
 export const geographyKeys = {

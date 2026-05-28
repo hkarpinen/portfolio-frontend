@@ -2,7 +2,7 @@
 
 import { useHouseholdBalances } from "@/hooks/use-expenses";
 import { formatCurrency } from "@/lib/formatting";
-import type { MemberBalance } from "@/types/membership";
+import type { MemberBalance, MemberBalanceListResponse } from "@/types/membership";
 
 /**
  * Compact "YOU'RE OWED / YOU OWE / Settled" badge for one household,
@@ -22,11 +22,19 @@ import type { MemberBalance } from "@/types/membership";
 export function HouseholdBalanceBadge({
   householdId,
   variant = "card",
+  initialData,
 }: {
   householdId: string;
   variant?: "card" | "header";
+  /**
+   * Server-prefetched balance payload for this household. When provided,
+   * React Query hydrates the cache and skips the initial client fetch —
+   * eliminating the N+1 described in audit §3.4. Subsequent
+   * invalidations still refetch on the client as normal.
+   */
+  initialData?: MemberBalanceListResponse | null;
 }) {
-  const { data, isLoading, isError } = useHouseholdBalances(householdId);
+  const { data, isLoading, isError } = useHouseholdBalances(householdId, initialData ?? undefined);
 
   const baseClass = variant === "card" ? "ed-mod-badge" : "ed-mod-badge";
 
