@@ -146,8 +146,15 @@ function ArrowPath({
 }) {
   const head = 8;
   const stroke = accent ? RED : INK;
-  const [px, py] = points[points.length - 1];
-  const [qx, qy] = points[points.length - 2];
+  // `points` is the caller's segment polyline; this component is only
+  // ever called with ≥2 points (the arrow head needs the last two), so
+  // the non-null assertions are sound. Skip rendering instead of
+  // crashing if a caller ever violates that.
+  const last = points[points.length - 1];
+  const prev = points[points.length - 2];
+  if (!last || !prev) return null;
+  const [px, py] = last;
+  const [qx, qy] = prev;
   const dx = px - qx;
   const dy = py - qy;
   const len = Math.hypot(dx, dy) || 1;

@@ -105,7 +105,10 @@ function summarizeBalances(items: MemberBalance[]): BalanceSummary {
 
   // Pick the currency with the largest absolute net.
   let net = 0;
-  let currency = items[0].currency || "USD";
+  // items.length > 0 is checked above; the fallback is dead code but
+  // satisfies strict-indexed-access without spreading non-null
+  // assertions through the rest of the function.
+  let currency = items[0]?.currency || "USD";
   let bestMagnitude = -1;
   for (const [cur, sum] of byCurrency) {
     if (Math.abs(sum) > bestMagnitude) {

@@ -38,7 +38,7 @@ export function ThreadActions({
 }: ThreadActionsProps) {
   const [copied, setCopied] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
-  const [reason, setReason] = useState(REPORT_REASONS[0]);
+  const [reason, setReason] = useState(REPORT_REASONS[0] ?? "");
   const [details, setDetails] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const report = useReportContent("thread", threadId);
@@ -81,7 +81,7 @@ export function ThreadActions({
     setReportOpen(false);
     setTimeout(() => {
       setSubmitted(false);
-      setReason(REPORT_REASONS[0]);
+      setReason(REPORT_REASONS[0] ?? "");
       setDetails("");
     }, 200);
   }, []);

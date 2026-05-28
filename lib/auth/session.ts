@@ -65,7 +65,10 @@ export const getSession = cache(async (): Promise<Session | null> => {
   return {
     userId: me.id,
     email: me.email,
-    displayName: me.displayName,
+    // MeSchema.displayName is `string | null | undefined`; the session
+    // type is `string | undefined`. Normalise null → undefined here so
+    // downstream consumers don't have to branch on both.
+    displayName: me.displayName ?? undefined,
     avatarUrl: me.avatarUrl ?? null,
     role: normalizeRole(me.role),
   };

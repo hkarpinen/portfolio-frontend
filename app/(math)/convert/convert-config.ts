@@ -77,7 +77,9 @@ export const QUICK_VALUES: Record<
 /** Trailing-zero-stripped, comma-grouped number formatting for the result row. */
 export function formatNumber(n: number): string {
   const s = n.toFixed(10).replace(/\.?0+$/, "");
-  const [int, dec] = s.split(".");
+  // `split(".")` always returns at least one element; pin int with a
+  // default so strict-indexed-access doesn't widen it to undefined.
+  const [int = "", dec] = s.split(".");
   const intFmt = int.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   return dec ? `${intFmt}.${dec}` : intFmt;
 }

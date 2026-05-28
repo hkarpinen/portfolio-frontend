@@ -30,14 +30,20 @@ function computeSettlements(
   const d = debtors.map((x) => ({ ...x }));
 
   while (ci < c.length && di < d.length) {
-    const pay = Math.min(c[ci].net, -d[di].net);
+    // The loop guard `ci < c.length && di < d.length` proves these
+    // indexed accesses are defined, but TS's strict-indexed-access
+    // can't see it. Bind to locals once so the non-null assertion
+    // happens at the source, not every reference.
+    const credit = c[ci]!;
+    const debit = d[di]!;
+    const pay = Math.min(credit.net, -debit.net);
     if (pay > 0.005) {
-      settlements.push({ from: d[di].name, to: c[ci].name, amount: pay });
+      settlements.push({ from: debit.name, to: credit.name, amount: pay });
     }
-    c[ci].net -= pay;
-    d[di].net += pay;
-    if (Math.abs(c[ci].net) < 0.005) ci++;
-    if (Math.abs(d[di].net) < 0.005) di++;
+    credit.net -= pay;
+    debit.net += pay;
+    if (Math.abs(credit.net) < 0.005) ci++;
+    if (Math.abs(debit.net) < 0.005) di++;
   }
 
   return settlements;

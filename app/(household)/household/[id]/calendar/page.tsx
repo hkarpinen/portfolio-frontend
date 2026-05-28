@@ -52,7 +52,8 @@ export default function CalendarPage({ params }: { params: { id: string } }) {
     setMonth(today.getMonth());
   }
 
-  const monthName = MONTHS[month];
+  // month is 0–11; MONTHS has length 12. Strict-indexed-access fallback.
+  const monthName = MONTHS[month] ?? "";
   const headline = calendarHeadline({ count: events.length, monthName });
 
   return (

@@ -33,24 +33,36 @@ export const EXPENSE_CATEGORY_OPTIONS = Object.values(ExpenseCategory);
 
 // ── Personal expense ──────────────────────────────────────────────────────────
 
+/**
+ * Unified expense shape — mirrors `ExpenseResponseDto` in
+ * finance/src/Application/Dtos/ExpenseDtos.cs. `scope` discriminates
+ * Personal vs Household; scope-specific ids (`userId`, `groupId`,
+ * `createdBy`, `payerMembershipId`) are nullable on the wire.
+ */
+export const ExpenseScopeSchema = z.enum(["Personal", "Household"]);
+export type ExpenseScope = z.infer<typeof ExpenseScopeSchema>;
+
 export const ExpenseSchema = z.object({
   expenseId: z.string(),
-  userId: z.string(),
-  householdId: z.string().optional(),
+  scope: ExpenseScopeSchema,
+  userId: z.string().nullish(),
+  groupId: z.string().nullish(),
+  createdBy: z.string().nullish(),
   title: z.string(),
-  description: z.string().optional(),
+  description: z.string().nullish(),
   amount: z.number(),
   currency: z.string(),
-  category: ExpenseCategorySchema.optional(),
+  category: ExpenseCategorySchema.nullish(),
   dueDate: z.string(),
-  recurrenceFrequency: FrequencySchema.optional(),
-  recurrenceStartDate: z.string().optional(),
-  recurrenceEndDate: z.string().optional(),
+  recurrenceFrequency: FrequencySchema.nullish(),
+  recurrenceStartDate: z.string().nullish(),
+  recurrenceEndDate: z.string().nullish(),
   isActive: z.boolean().optional(),
   createdAt: z.string(),
   updatedAt: z.string(),
   isPaid: z.boolean().optional(),
-  currentOccurrenceDate: z.string().optional(),
+  currentOccurrenceDate: z.string().nullish(),
+  payerMembershipId: z.string().nullish(),
 });
 export type Expense = z.infer<typeof ExpenseSchema>;
 

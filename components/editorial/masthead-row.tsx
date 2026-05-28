@@ -60,7 +60,10 @@ const ROMAN = [
 
 function toRoman(n: number): string {
   if (n <= 0) return "I";
-  if (n < ROMAN.length) return ROMAN[n];
+  // `n < ROMAN.length` proves the index is in-bounds; the explicit
+  // fallback keeps the function signature `string` under
+  // strict-indexed-access.
+  if (n < ROMAN.length) return ROMAN[n] ?? String(n);
   return String(n);
 }
 

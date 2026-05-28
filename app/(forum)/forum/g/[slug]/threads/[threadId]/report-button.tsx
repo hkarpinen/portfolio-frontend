@@ -37,7 +37,9 @@ export function ReportButton({
   triggerLabel = "Report",
 }: ReportButtonProps) {
   const [open, setOpen] = useState(false);
-  const [reason, setReason] = useState(REPORT_REASONS[0]);
+  // REPORT_REASONS is a non-empty const tuple; the `?? ""` is dead code
+  // for the type-checker (audit Phase 8 — noUncheckedIndexedAccess).
+  const [reason, setReason] = useState(REPORT_REASONS[0] ?? "");
   const [details, setDetails] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const report = useReportContent(kind, targetId);
@@ -46,7 +48,7 @@ export function ReportButton({
     setOpen(false);
     setTimeout(() => {
       setSubmitted(false);
-      setReason(REPORT_REASONS[0]);
+      setReason(REPORT_REASONS[0] ?? "");
       setDetails("");
     }, 200);
   }, []);

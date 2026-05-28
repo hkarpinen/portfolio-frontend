@@ -18,7 +18,13 @@ const MAX_VISIBLE_AVATARS = 6;
 function getInitials(name?: string): string {
   if (!name) return "?";
   const parts = name.trim().split(/\s+/);
-  if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  if (parts.length >= 2) {
+    // length >= 2 guarantees both indexes; the optional-chain on the
+    // first-char access handles the "  Sam" → ["", "Sam"] edge.
+    const first = parts[0]?.[0] ?? "";
+    const last = parts[parts.length - 1]?.[0] ?? "";
+    return (first + last).toUpperCase();
+  }
   return name.slice(0, 2).toUpperCase();
 }
 

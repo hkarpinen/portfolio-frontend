@@ -4,7 +4,9 @@ import { StatCard } from "@/components/editorial";
 
 function formatNumber(n: number): string {
   const s = n.toFixed(10).replace(/\.?0+$/, "");
-  const [int, dec] = s.split(".");
+  // `split(".")` always returns at least one element for any string, so
+  // `int` is non-undefined; pin that with the fallback.
+  const [int = "", dec] = s.split(".");
   const intFmt = int.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   return dec ? `${intFmt}.${dec}` : intFmt;
 }

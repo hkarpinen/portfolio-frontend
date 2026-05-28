@@ -20,14 +20,18 @@ function pathToCrumbs(pathname: string): { label: string; href?: string }[] {
   const crumbs: { label: string; href?: string }[] = [{ label: "Home", href: "/" }];
   let acc = "";
   for (let i = 0; i < parts.length; i++) {
+    // The loop guard `i < parts.length` proves the indexed access is
+    // safe; the explicit narrow keeps the rest of the body free of
+    // non-null assertions.
     const p = parts[i];
+    if (p === undefined) continue;
     acc += "/" + p;
     if (UUID_RE.test(p)) continue;
     // Forum communities live at /forum/g/{slug}/... — merge the "g" and
     // the slug into a single "g/{slug}" crumb so it reads as one labelled
     // item, matching how the rest of the forum UI presents communities.
     if (p === "g" && i + 1 < parts.length && parts[i - 1] === "forum") {
-      const slug = parts[i + 1];
+      const slug = parts[i + 1] ?? "";
       acc += "/" + slug;
       crumbs.push({ label: `g/${slug}`, href: acc });
       i++; // consume the slug segment too
@@ -42,7 +46,7 @@ function pathToCrumbs(pathname: string): { label: string; href?: string }[] {
   // parent route (e.g. /household/{uuid}/expenses).
   if (crumbs.length > 0) {
     const last = crumbs[crumbs.length - 1];
-    crumbs[crumbs.length - 1] = { label: last.label };
+    if (last) crumbs[crumbs.length - 1] = { label: last.label };
   }
   return crumbs;
 }

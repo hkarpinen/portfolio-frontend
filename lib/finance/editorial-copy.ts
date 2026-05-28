@@ -33,7 +33,10 @@ const MONTHS = [
 ];
 
 export function currentMonthName(now: Date = new Date()): string {
-  return MONTHS[now.getUTCMonth()];
+  // getUTCMonth() returns 0-11; MONTHS has length 12. The non-null
+  // assertion is sound; the alternative is a `?? ""` fallback that's
+  // unreachable in practice but makes TS strict-indexed-access happy.
+  return MONTHS[now.getUTCMonth()]!;
 }
 
 // ── Expenses page ────────────────────────────────────────────────────────────

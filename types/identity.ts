@@ -31,9 +31,9 @@ export interface User {
 export const MeSchema = z.object({
   id: z.string(),
   email: z.string().optional(),
-  username: z.string().optional(),
-  displayName: z.string().optional(),
-  avatarUrl: z.string().optional(),
+  username: z.string().nullish(),
+  displayName: z.string().nullish(),
+  avatarUrl: z.string().nullish(),
   role: UserRoleSchema.optional(),
   /** Surfaced by /api/identity/me so the settings UI can render the
    * authenticator-app status without a parallel fetch. */
@@ -45,7 +45,7 @@ export const AdminUserSchema = z.object({
   id: z.string(),
   email: z.string(),
   displayName: z.string(),
-  avatarUrl: z.string().optional(),
+  avatarUrl: z.string().nullish(),
   role: UserRoleSchema,
   isBanned: z.boolean(),
   isEmailConfirmed: z.boolean(),

@@ -35,7 +35,10 @@ export function useConverter() {
     if (!categories || defaultsApplied) return;
     const lengthCat = categories.find((c) => c.category === "length");
     if (!lengthCat) return;
-    const defaults = DEFAULT_UNITS["length"];
+    // `DEFAULT_UNITS["length"]` is statically known to exist in the
+    // catalog config; the `?? { … }` is unreachable but quiets
+    // strict-indexed-access without spreading non-null assertions.
+    const defaults = DEFAULT_UNITS["length"] ?? { from: "", to: "" };
     const defaultFrom = lengthCat.units.find((u) => u === defaults.from) ?? lengthCat.units[0];
     const defaultTo = lengthCat.units.find((u) => u === defaults.to) ?? lengthCat.units[1] ?? "";
     setFrom(defaultFrom ?? "");
