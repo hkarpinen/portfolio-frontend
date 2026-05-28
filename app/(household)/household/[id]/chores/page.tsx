@@ -163,7 +163,7 @@ export default function ChoresPage() {
         <div className="overflow-x-auto">
           <table className="w-full border-collapse" aria-label="Household chores">
             <thead>
-              <tr className="border-b border-ink">
+              <tr className="border-b border-[var(--ink)]">
                 <th scope="col" className="pb-[10px] w-[36px]">
                   <span className="sr-only">Complete</span>
                 </th>

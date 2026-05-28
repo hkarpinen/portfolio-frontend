@@ -225,7 +225,7 @@ export default function ExpensePage() {
               <div className="overflow-x-auto">
                 <table className="w-full border-collapse" aria-label="Expense splits by member">
                   <thead>
-                    <tr className="border-b border-ink">
+                    <tr className="border-b border-[var(--ink)]">
                       <th scope="col" className="text-left ed-kicker pb-[10px] pr-6 font-normal">Member</th>
                       <th scope="col" className="text-right ed-kicker pb-[10px] pr-6 font-normal">Share</th>
                       <th scope="col" className="text-right ed-kicker pb-[10px] pr-6 font-normal">Amount</th>

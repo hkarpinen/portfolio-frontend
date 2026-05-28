@@ -182,7 +182,7 @@ export default function NewExpensePage({ params }: { params: { id: string } }) {
                       disabled={!s.checked}
                       value={s.percent}
                       onChange={(e) => updatePercent(idx, e.target.value)}
-                      className="w-[72px] h-9 px-2 text-right font-mono text-sm border border-ink bg-paper text-ink disabled:opacity-40 disabled:cursor-not-allowed"
+                      className="w-[72px] h-9 px-2 text-right font-mono text-sm border border-[var(--ink)] bg-paper text-ink disabled:opacity-40 disabled:cursor-not-allowed"
                       aria-label={`${s.displayName} share percentage`}
                     />
                     <span className="font-mono text-sm text-ink-3" aria-hidden>%</span>

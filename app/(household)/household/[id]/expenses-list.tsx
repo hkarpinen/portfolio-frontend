@@ -166,7 +166,7 @@ export function ExpensesList({
       <div className="overflow-x-auto">
         <table className="w-full border-collapse" aria-label="Shared expenses">
           <thead>
-            <tr className="border-b border-ink">
+            <tr className="border-b border-[var(--ink)]">
               <th scope="col" className="text-left ed-kicker pb-[10px] pr-6 font-normal">Expense</th>
               <th scope="col" className="text-left ed-kicker pb-[10px] pr-6 font-normal">Category</th>
               <th scope="col" className="text-left ed-kicker pb-[10px] pr-6 font-normal">Date</th>
