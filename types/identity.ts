@@ -13,15 +13,6 @@ const UserRoleSchema = z.enum(UserRole);
 
 // ─────────────────────────────────────────────────────────────────────────────
 
-export interface User {
-  id: string;
-  email: string;
-  username?: string;
-  displayName?: string;
-  avatarUrl?: string;
-  createdAt: string;
-}
-
 /**
  * Schema-first DTO for `/api/identity/me`. The type is *derived* from the
  * schema so the runtime check and the static shape can never drift apart.
@@ -39,8 +30,6 @@ export const MeSchema = z.object({
    * authenticator-app status without a parallel fetch. */
   twoFactorEnabled: z.boolean().optional(),
 });
-export type Me = z.infer<typeof MeSchema>;
-
 export const AdminUserSchema = z.object({
   id: z.string(),
   email: z.string(),
@@ -51,4 +40,3 @@ export const AdminUserSchema = z.object({
   isEmailConfirmed: z.boolean(),
   createdAt: z.string(),
 });
-export type AdminUser = z.infer<typeof AdminUserSchema>;

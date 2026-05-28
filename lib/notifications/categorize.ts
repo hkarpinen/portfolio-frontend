@@ -7,7 +7,7 @@
  * Lives separately from `editorial-copy.ts` because this is a domain
  * projection (event-type → filter), not a copy generator.
  */
-export type NotificationCategory = "mentions" | "household" | "forum" | "other";
+type NotificationCategory = "mentions" | "household" | "forum" | "other";
 
 const HOUSEHOLD_TOKENS = ["household", "expense", "chore", "settle", "calendar"];
 const FORUM_TOKENS = ["forum", "thread", "comment", "reply", "community", "vote"];

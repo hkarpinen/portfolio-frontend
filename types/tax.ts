@@ -15,7 +15,7 @@ export enum FilingStatus {
   HeadOfHousehold = "HeadOfHousehold",
 }
 
-export const FilingStatusSchema = z.enum(FilingStatus);
+const FilingStatusSchema = z.enum(FilingStatus);
 
 export const FILING_STATUS_LABELS: Record<FilingStatus, string> = {
   [FilingStatus.Single]: "Single",
@@ -44,7 +44,6 @@ export const NetPayBreakdownSchema = z.object({
   totalDeductions: z.number(),
   netPay: z.number(),
 });
-export type NetPayBreakdown = z.infer<typeof NetPayBreakdownSchema>;
 
 /** Aggregate of every active income source for the caller in the given
  *  month. Served by /api/finance/income/net-pay/summary; replaces the

@@ -17,10 +17,9 @@ export const NotificationItemSchema = z.object({
 });
 export type NotificationItem = z.infer<typeof NotificationItemSchema>;
 
-export const NotificationListResponseSchema = z.object({
+const NotificationListResponseSchema = z.object({
   items: z.array(NotificationItemSchema),
 });
-export type NotificationListResponse = z.infer<typeof NotificationListResponseSchema>;
 
 export const fetchNotifications = () =>
   api.parsed.get("/api/notifications", NotificationListResponseSchema);

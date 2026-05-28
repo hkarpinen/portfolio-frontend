@@ -18,7 +18,7 @@
 type StringEnum = Record<string, string>;
 type EnumValue<E extends StringEnum> = E[keyof E];
 
-export function isEnumValue<E extends StringEnum>(e: E, value: unknown): value is EnumValue<E> {
+function isEnumValue<E extends StringEnum>(e: E, value: unknown): value is EnumValue<E> {
   return typeof value === "string" && (Object.values(e) as string[]).includes(value);
 }
 

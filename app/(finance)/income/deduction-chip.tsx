@@ -81,7 +81,7 @@ export function DeductionChip({
   );
 }
 
-export function DetailPill({ label, value }: { label: string; value: string }) {
+function DetailPill({ label, value }: { label: string; value: string }) {
   return (
     <div className="border-ink bg-paper-3 px-5 py-1.5 font-mono text-sm text-ink-2">
       <span className="text-ink-3">{label}: </span>

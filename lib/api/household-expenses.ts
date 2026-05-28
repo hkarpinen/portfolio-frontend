@@ -85,7 +85,7 @@ export const fetchHouseholdBalances = (householdId: string) =>
   api.parsed.get(`/api/finance/groups/${householdId}/balances`, MemberBalanceListResponseSchema);
 
 /** Server-side counterpart for RSC prefetch (audit §3.4 — household N+1 fix). */
-export const fetchHouseholdBalancesServer = (householdId: string, cookieHeader: string) =>
+const fetchHouseholdBalancesServer = (householdId: string, cookieHeader: string) =>
   parsedServerFetch(
     `/api/finance/groups/${householdId}/balances`,
     MemberBalanceListResponseSchema,

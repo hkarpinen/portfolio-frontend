@@ -13,7 +13,7 @@ import type { PersonalBillItem } from "@/types/expense";
 // offset, etc.) flips in one place.
 
 /** YYYY-MM key for `now`, used to match against `ContributionPeriod.periodStart`. */
-export const periodMonthKey = (now: Date = new Date()): string => now.toISOString().slice(0, 7);
+const periodMonthKey = (now: Date = new Date()): string => now.toISOString().slice(0, 7);
 
 /**
  * Pick the period that contains `now` (defaults to today). Pass an explicit

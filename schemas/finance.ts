@@ -17,6 +17,3 @@ export const updateIncomeSchema = z.object({
   amount: z.number().nonnegative(),
 });
 
-export type CreateHouseholdInput = z.infer<typeof createHouseholdSchema>;
-export type CreateHouseholdExpenseInput = z.infer<typeof createHouseholdExpenseSchema>;
-export type UpdateIncomeInput = z.infer<typeof updateIncomeSchema>;

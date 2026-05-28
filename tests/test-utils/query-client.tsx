@@ -8,7 +8,7 @@ import type { ReactNode } from "react";
  * pollutes the test output for an expected error. One client per test
  * because state leaks otherwise.
  */
-export function makeTestQueryClient(): QueryClient {
+function makeTestQueryClient(): QueryClient {
   return new QueryClient({
     defaultOptions: {
       // gcTime stays high: with gcTime: 0, observer-less entries created via
@@ -21,7 +21,7 @@ export function makeTestQueryClient(): QueryClient {
   });
 }
 
-export function wrapWithClient(qc: QueryClient) {
+function wrapWithClient(qc: QueryClient) {
   return ({ children }: { children: ReactNode }) => (
     <QueryClientProvider client={qc}>{children}</QueryClientProvider>
   );

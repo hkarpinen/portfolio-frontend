@@ -7,7 +7,7 @@ import type { ContributionItem } from "@/types/contributions";
 import { formatCurrency, formatAmount } from "@/lib/formatting";
 import { pluralize, sumBy } from "@/lib/utils";
 
-export interface SharedSplitGroup {
+interface SharedSplitGroup {
   billId: string;
   billTitle: string;
   billCategory?: string;

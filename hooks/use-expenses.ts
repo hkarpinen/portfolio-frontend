@@ -19,7 +19,6 @@ import {
   createHouseholdExpense,
   updateHouseholdExpense,
 } from "@/lib/api/household-expenses";
-import { fetchHouseholdIncome } from "@/lib/api/income";
 import { fetchHouseholdContributions } from "@/lib/api/households";
 import { financeKeys } from "@/lib/query-keys";
 import {
@@ -111,15 +110,6 @@ export function useHouseholdExpenseDetail(householdId: string, householdExpenseI
     queryFn: () => fetchHouseholdExpenseDetail(householdId, householdExpenseId),
     staleTime: 60_000,
     enabled: !!householdId && !!householdExpenseId,
-  });
-}
-
-export function useHouseholdIncome(id: string) {
-  return useQuery({
-    queryKey: financeKeys.householdIncome(id),
-    queryFn: () => fetchHouseholdIncome(id),
-    staleTime: 60_000,
-    enabled: !!id,
   });
 }
 
@@ -279,18 +269,3 @@ export function usePayContributionSplit() {
   });
 }
 
-export function useUnpayContributionSplit() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({
-      householdId,
-      billId,
-      occurrenceDate,
-    }: {
-      householdId: string;
-      billId: string;
-      occurrenceDate: string;
-    }) => unpayHouseholdExpense(householdId, billId, occurrenceDate),
-    onSuccess: (_data, { householdId }) => invalidateContributionSplit(queryClient, householdId),
-  });
-}

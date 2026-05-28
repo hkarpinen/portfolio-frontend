@@ -18,9 +18,9 @@ import { MeSchema } from "@/types/identity";
  * (layout + nested layouts + page) hits the identity service exactly once.
  */
 
-export type Role = "Member" | "Admin";
+type Role = "Member" | "Admin";
 
-export interface Session {
+interface Session {
   userId: string;
   email?: string;
   displayName?: string;

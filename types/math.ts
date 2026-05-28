@@ -9,7 +9,6 @@ export const ConversionResultDtoSchema = z.object({
   outputValue: z.number(),
   category: z.string(),
 });
-export type ConversionResultDto = z.infer<typeof ConversionResultDtoSchema>;
 
 export const UnitCategoryDtoSchema = z.object({
   category: z.string(),

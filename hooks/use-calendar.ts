@@ -2,7 +2,6 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   fetchCalendarEvents,
   createCalendarEvent,
-  updateCalendarEvent,
   deleteCalendarEvent,
 } from "@/lib/api/calendar";
 import { financeKeys } from "@/lib/query-keys";
@@ -27,24 +26,6 @@ export function useCreateCalendarEvent(householdId: string) {
       endsAt?: string;
       allDay: boolean;
     }) => createCalendarEvent(householdId, body),
-    onSuccess: () => invalidateHouseholdCalendar(queryClient, householdId),
-  });
-}
-
-export function useUpdateCalendarEvent(householdId: string) {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({
-      eventId,
-      ...body
-    }: {
-      eventId: string;
-      title: string;
-      description?: string;
-      startsAt: string;
-      endsAt?: string;
-      allDay: boolean;
-    }) => updateCalendarEvent(householdId, eventId, body),
     onSuccess: () => invalidateHouseholdCalendar(queryClient, householdId),
   });
 }

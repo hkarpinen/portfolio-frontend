@@ -25,7 +25,7 @@ export function householdsDeck({ count }: { count: number }): string {
 
 // ── Detail page ──────────────────────────────────────────────────────────────
 
-export interface HouseholdDetailHeadlineInput {
+interface HouseholdDetailHeadlineInput {
   householdName?: string;
   yourShare: number | null;
   monthlyObligations: number | null;

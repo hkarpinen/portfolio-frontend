@@ -58,7 +58,7 @@ export const US_STATES = [
 
 // ── Per-deduction-type config ────────────────────────────────────────────────
 
-export interface TypeConfig {
+interface TypeConfig {
   label: string;
   defaultMethod: DeductionCalculationMethod;
   defaultFreq: Frequency;
@@ -159,9 +159,6 @@ const ALL_DEDUCTION_TYPES = Object.keys(TYPE_CONFIGS) as DeductionType[];
 export const VOLUNTARY_DEDUCTION_TYPES: readonly DeductionType[] = ALL_DEDUCTION_TYPES.filter(
   (t) => TYPE_CONFIGS[t] !== undefined,
 );
-
-/** @deprecated Use VOLUNTARY_DEDUCTION_TYPES */
-export const VOLUNTARY_TYPES = VOLUNTARY_DEDUCTION_TYPES;
 
 // ── Filing status options (form-ready value/label pairs) ─────────────────────
 

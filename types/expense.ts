@@ -40,7 +40,6 @@ export const EXPENSE_CATEGORY_OPTIONS = Object.values(ExpenseCategory);
  * `createdBy`, `payerMembershipId`) are nullable on the wire.
  */
 export const ExpenseScopeSchema = z.enum(["Personal", "Household"]);
-export type ExpenseScope = z.infer<typeof ExpenseScopeSchema>;
 
 export const ExpenseSchema = z.object({
   expenseId: z.string(),

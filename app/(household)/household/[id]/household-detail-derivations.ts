@@ -8,7 +8,7 @@ import type { HouseholdExpense } from "@/types/household-expense";
  * weighted-by-presence variants ship later.
  */
 
-export interface HouseholdMonthFigures {
+interface HouseholdMonthFigures {
   /** Sum of all shared-expense amounts; null when the household has none. */
   monthlyObligations: number | null;
   /** Even split across members; null when obligations or memberCount are 0. */

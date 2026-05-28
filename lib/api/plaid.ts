@@ -16,9 +16,6 @@ export const LinkedAccountResponseSchema = z.object({
 });
 export type LinkedAccountResponse = z.infer<typeof LinkedAccountResponseSchema>;
 
-/** @deprecated Use Connection instead */
-export type PlaidAccountResponse = LinkedAccountResponse;
-
 const ConnectionStatusSchema = z.enum(["Healthy", "LoginRequired", "Revoked", "Error"]);
 
 export const ConnectionSchema = z.object({
@@ -31,10 +28,7 @@ export const ConnectionSchema = z.object({
 });
 export type Connection = z.infer<typeof ConnectionSchema>;
 
-/** @deprecated Use Connection instead */
-export type PlaidItem = Connection;
-
-export const SyncResultSchema = z.object({
+const SyncResultSchema = z.object({
   connectionId: z.string(),
   added: z.number(),
   modified: z.number(),
@@ -42,7 +36,6 @@ export const SyncResultSchema = z.object({
   hasMore: z.boolean(),
   syncedAt: z.string(),
 });
-export type SyncResult = z.infer<typeof SyncResultSchema>;
 
 const RecurringFrequencySchema = z.enum([
   "Daily",
@@ -73,23 +66,6 @@ export const RecurringSuggestionSchema = z.object({
 });
 export type RecurringSuggestion = z.infer<typeof RecurringSuggestionSchema>;
 
-/** @deprecated Use RecurringSuggestion instead */
-export type RecurringStream = RecurringSuggestion;
-
-export const ConnectionTransactionSchema = z.object({
-  transactionId: z.string(),
-  accountId: z.string(),
-  amount: z.number(),
-  currency: z.string(),
-  date: z.string(),
-  name: z.string(),
-  merchantName: z.string().nullable(),
-  primaryCategory: z.string().nullable(),
-  pending: z.boolean(),
-  isLinked: z.boolean(),
-});
-export type ConnectionTransaction = z.infer<typeof ConnectionTransactionSchema>;
-
 // ── Ad-hoc response shapes ───────────────────────────────────────────────────
 
 const LinkTokenSchema = z.object({
@@ -98,11 +74,6 @@ const LinkTokenSchema = z.object({
 });
 
 const ConnectionListSchema = z.object({ connections: z.array(ConnectionSchema) });
-
-const TransactionsPageSchema = z.object({
-  items: z.array(ConnectionTransactionSchema),
-  totalCount: z.number(),
-});
 
 const SuggestionsListSchema = z.object({
   suggestions: z.array(RecurringSuggestionSchema),
@@ -128,23 +99,8 @@ export const exchangePublicToken = (body: {
 export const listConnections = () =>
   api.parsed.get("/api/finance/connections", ConnectionListSchema);
 
-/** @deprecated Use listConnections instead */
-export const listPlaidItems = listConnections;
-
 export const syncConnection = (connectionId: string) =>
   api.parsed.post(`/api/finance/connections/${connectionId}/sync`, SyncResultSchema);
-
-/** @deprecated Use syncConnection instead */
-export const syncPlaidItem = syncConnection;
-
-export const listConnectionTransactions = (connectionId: string, page = 1, pageSize = 50) =>
-  api.parsed.get(
-    `/api/finance/connections/${connectionId}/transactions?page=${page}&pageSize=${pageSize}`,
-    TransactionsPageSchema,
-  );
-
-/** @deprecated Use listConnectionTransactions instead */
-export const listPlaidTransactions = listConnectionTransactions;
 
 export const refreshSuggestions = (connectionId: string) =>
   api.parsed.post(
@@ -152,14 +108,8 @@ export const refreshSuggestions = (connectionId: string) =>
     SuggestionsListSchema,
   );
 
-/** @deprecated Use refreshSuggestions instead */
-export const refreshRecurring = refreshSuggestions;
-
 export const listSuggestions = () =>
   api.parsed.get("/api/finance/connections/suggestions", SuggestionsListSchema);
-
-/** @deprecated Use listSuggestions instead */
-export const listRecurring = listSuggestions;
 
 export const acceptSuggestion = (suggestionId: string) =>
   api.parsed.post(
@@ -167,11 +117,5 @@ export const acceptSuggestion = (suggestionId: string) =>
     AcceptedSuggestionSchema,
   );
 
-/** @deprecated Use acceptSuggestion instead */
-export const acceptRecurring = acceptSuggestion;
-
 export const disconnectConnection = (connectionId: string) =>
   api.delete(`/api/finance/connections/${connectionId}`);
-
-/** @deprecated Use disconnectConnection instead */
-export const unlinkPlaidItem = disconnectConnection;

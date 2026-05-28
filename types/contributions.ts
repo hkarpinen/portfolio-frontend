@@ -33,7 +33,7 @@ export const ContributionItemSchema = z.object({
 });
 export type ContributionItem = z.infer<typeof ContributionItemSchema>;
 
-export const HouseholdContributionItemSchema = z.object({
+const HouseholdContributionItemSchema = z.object({
   splitId: z.string(),
   billId: z.string(),
   billTitle: z.string(),
@@ -43,18 +43,16 @@ export const HouseholdContributionItemSchema = z.object({
   dueDate: z.string(),
   isClaimed: z.boolean(),
 });
-export type HouseholdContributionItem = z.infer<typeof HouseholdContributionItemSchema>;
 
 // ── Monthly aggregations ─────────────────────────────────────────────────────
 
-export const MemberContributionSchema = z.object({
+const MemberContributionSchema = z.object({
   userId: z.string(),
   displayName: z.string().nullish(),
   totalDue: z.number(),
   totalPaid: z.number(),
   contributions: z.array(HouseholdContributionItemSchema),
 });
-export type MemberContribution = z.infer<typeof MemberContributionSchema>;
 
 export const HouseholdMonthlyContributionsSchema = z.object({
   periodLabel: z.string(),
@@ -72,7 +70,7 @@ export enum DisposableIncomeSource {
   Estimate = "estimate",
 }
 
-export const DisposableIncomeSourceSchema = z.enum(DisposableIncomeSource);
+const DisposableIncomeSourceSchema = z.enum(DisposableIncomeSource);
 
 export const ContributionPeriodSchema = z.object({
   periodLabel: z.string(),

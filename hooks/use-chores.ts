@@ -1,11 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  fetchChores,
-  createChore,
-  assignChore,
-  completeChore,
-  deleteChore,
-} from "@/lib/api/chores";
+import { fetchChores, createChore, completeChore, deleteChore } from "@/lib/api/chores";
 import { financeKeys } from "@/lib/query-keys";
 import type { RecurrenceFrequency } from "@/lib/api/chores";
 
@@ -27,17 +21,6 @@ export function useCreateChore(householdId: string) {
       dueDate?: string;
       recurrenceFrequency?: RecurrenceFrequency;
     }) => createChore(householdId, body),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: financeKeys.chores(householdId) });
-    },
-  });
-}
-
-export function useAssignChore(householdId: string) {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({ choreId, assignToUserId }: { choreId: string; assignToUserId: string }) =>
-      assignChore(householdId, choreId, assignToUserId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: financeKeys.chores(householdId) });
     },

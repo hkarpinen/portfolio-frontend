@@ -8,7 +8,7 @@
 // household renders correctly the moment the call site passes its currency
 // through; no code change required.
 
-export interface FormatCurrencyOptions {
+interface FormatCurrencyOptions {
   /**
    * Number of fraction digits to render.
    * - `2` (default): standard money display, e.g. "$1,234.56".

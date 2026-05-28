@@ -88,25 +88,6 @@ export const fetchNetPayBreakdown = (incomeId: string, year?: number, month?: nu
 export const fetchIncomeServer = (cookieHeader: string) =>
   parsedServerFetch("/api/finance/income", IncomeListResponseSchema, cookieHeader);
 
-/** Server-side variant of {@link fetchNetPayBreakdown} — used by the
- *  per-row detail panel so the displayed Net/Tax figures reflect
- *  tax-profile-based withholdings (not just manually-added deductions). */
-export const fetchNetPayBreakdownServer = (
-  incomeId: string,
-  cookieHeader: string,
-  year?: number,
-  month?: number,
-) => {
-  const now = new Date();
-  const y = year ?? now.getFullYear();
-  const m = month ?? now.getMonth() + 1;
-  return parsedServerFetch(
-    `/api/finance/income/${incomeId}/net-pay?year=${y}&month=${m}`,
-    NetPayBreakdownSchema,
-    cookieHeader,
-  );
-};
-
 /** Aggregate net-pay across every active income source for the caller in
  *  the given month. One round-trip; replaces N+1 per-source fan-out. */
 export const fetchNetPaySummaryServer = (cookieHeader: string, year?: number, month?: number) => {
@@ -119,10 +100,3 @@ export const fetchNetPaySummaryServer = (cookieHeader: string, year?: number, mo
     cookieHeader,
   );
 };
-
-export const fetchHouseholdIncomeServer = (householdId: string, cookieHeader: string) =>
-  parsedServerFetch(
-    `/api/finance/income?householdId=${householdId}`,
-    IncomeListResponseSchema,
-    cookieHeader,
-  );

@@ -14,6 +14,4 @@ export const createCommentSchema = z.object({
   content: z.string().min(1),
 });
 
-export type CreateCommunityInput = z.infer<typeof createCommunitySchema>;
-export type CreateThreadInput = z.infer<typeof createThreadSchema>;
 export type CreateCommentInput = z.infer<typeof createCommentSchema>;

@@ -27,7 +27,7 @@ export function currentMonthName(now: Date = new Date()): string {
 
 // ── Expenses page ────────────────────────────────────────────────────────────
 
-export interface ExpensesHeadlineInput {
+interface ExpensesHeadlineInput {
   disposable: number;
   income: number;
   monthName: string;
@@ -43,7 +43,7 @@ export function expensesHeadline({ disposable, income, monthName }: ExpensesHead
   return `${monthName} runs <em>${figure}</em> in the red`;
 }
 
-export interface ExpensesDeckInput {
+interface ExpensesDeckInput {
   income: number;
   totalOut: number;
   recurringCount: number;
@@ -72,7 +72,7 @@ export function expensesDeck({
   return `${parts.join(", ")} posted; outflows total ${formatCurrency(totalOut, "USD", { precision: 0 })} against ${formatCurrency(income, "USD", { precision: 0 })} earned.`;
 }
 
-export interface ExpensesPullQuote {
+interface ExpensesPullQuote {
   body: string; // may contain <em>
   attribution: string;
 }

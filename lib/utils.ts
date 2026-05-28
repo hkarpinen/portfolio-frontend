@@ -165,7 +165,7 @@ export function formatDate(dateStr: string): string {
 /**
  * Escape HTML special characters so user content can't inject markup.
  */
-export function escapeHtml(s: string): string {
+function escapeHtml(s: string): string {
   return s
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
@@ -244,7 +244,7 @@ export function idsEqual(a: string | null | undefined, b: string | null | undefi
  * fallbacks when a display name isn't available. Empty string if the id
  * is missing, so consumers can compose with a `??` chain.
  */
-export function shortId(id: string | null | undefined, length: number = 8): string {
+function shortId(id: string | null | undefined, length: number = 8): string {
   if (!id) return "";
   return id.slice(0, length);
 }

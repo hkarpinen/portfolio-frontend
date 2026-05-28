@@ -1,6 +1,6 @@
 import type React from "react";
 
-export const tabTriggerBase: React.CSSProperties = {
+const tabTriggerBase: React.CSSProperties = {
   padding: "10px 16px",
   background: "none",
   border: "none",
@@ -14,27 +14,9 @@ export const tabTriggerBase: React.CSSProperties = {
   transition: "color 110ms, border-color 110ms",
 };
 
-export const tabTriggerMono: React.CSSProperties = {
-  ...tabTriggerBase,
-  fontFamily: "var(--ff-mono)",
-  fontSize: "var(--ts-label)",
-  fontWeight: 400,
-  letterSpacing: "0.16em",
-  textTransform: "uppercase",
-  display: "flex",
-  alignItems: "center",
-  gap: "6px",
-};
-
 export const tabTriggerBody: React.CSSProperties = {
   ...tabTriggerBase,
   fontFamily: "var(--ff-body)",
   fontSize: "var(--ts-body)",
-  fontWeight: 600,
-};
-
-export const tabActiveStyle: React.CSSProperties = {
-  color: "var(--red)",
-  borderBottomColor: "var(--red)",
   fontWeight: 600,
 };

@@ -19,4 +19,3 @@ export const UserOverviewSchema = z.object({
   totalPersonalBillsMonthly: z.number(),
   contributionsByMonth: z.array(ContributionPeriodSchema).optional(),
 });
-export type UserOverview = z.infer<typeof UserOverviewSchema>;

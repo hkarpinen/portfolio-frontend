@@ -16,7 +16,7 @@ import { getInitials } from "@/lib/utils";
  */
 
 // ── Nav config ────────────────────────────────────────────────────────────────
-export const NAV_PORTFOLIO = [
+const NAV_PORTFOLIO = [
   { label: "About", desc: "Portfolio", href: "/about", icon: "about" as const, exactMatch: false },
   {
     label: "Contact",
@@ -27,7 +27,7 @@ export const NAV_PORTFOLIO = [
   },
 ];
 
-export const NAV_ACCOUNT = [
+const NAV_ACCOUNT = [
   {
     label: "Household",
     desc: "Household & Chores",
@@ -47,7 +47,7 @@ export const NAV_ACCOUNT = [
   { label: "Forum", desc: "Community", href: "/forum", icon: "forum" as const, exactMatch: false },
 ];
 
-export const NAV_UTILITIES = [
+const NAV_UTILITIES = [
   {
     label: "Weather",
     desc: "Live conditions",
@@ -79,17 +79,13 @@ export const NAV_UTILITIES = [
   },
 ];
 
-/** @deprecated Use NAV_PORTFOLIO / NAV_ACCOUNT / NAV_UTILITIES */
-export const NAV_ITEMS = NAV_PORTFOLIO;
-export const NAV_OFFICE = NAV_UTILITIES.filter((i) => i.label === "Settings");
-
-export function isActive(href: string, pathname: string, exact: boolean, extraPaths?: string[]) {
+function isActive(href: string, pathname: string, exact: boolean, extraPaths?: string[]) {
   if (exact ? pathname === href : pathname.startsWith(href)) return true;
   return extraPaths?.some((p) => pathname.startsWith(p)) ?? false;
 }
 
 // ── Avatar ────────────────────────────────────────────────────────────────────
-export type AvatarSize = "sm" | "md" | "lg" | "xl";
+type AvatarSize = "sm" | "md" | "lg" | "xl";
 
 const SIZE_CLASS: Record<AvatarSize, string> = {
   sm: "ed-avatar-sm",

@@ -160,12 +160,6 @@ export const searchForum = (query: string) =>
     SearchResponseSchema,
   );
 
-export const searchThreads = (query: string) =>
-  api.parsed.get(
-    `/api/forum/threads/search?q=${encodeURIComponent(query)}&page=1&pageSize=20`,
-    ThreadPageSchema,
-  );
-
 // ─── Profiles ────────────────────────────────────────────────────────────────
 
 export const fetchForumProfile = (userId: string) =>
@@ -223,11 +217,10 @@ export const fetchProfileMembershipsServer = (userId: string, cookieHeader?: str
     cookieHeader,
   );
 
-export const MyForumProfileSchema = z.object({
+const MyForumProfileSchema = z.object({
   bio: z.string().nullable().optional(),
   signature: z.string().nullable().optional(),
 });
-export type MyForumProfile = z.infer<typeof MyForumProfileSchema>;
 
 export const fetchMyForumProfile = () =>
   api.parsed.get("/api/forum/profiles/me", MyForumProfileSchema);

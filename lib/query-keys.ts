@@ -32,8 +32,6 @@ export const financeKeys = {
     householdId
       ? [...financeKeys.all, "contributions", householdId]
       : [...financeKeys.all, "contributions"],
-  accountBalance: () => [...financeKeys.all, "account-balance"] as const,
-
   // Expenses (personal)
   expenses: () => [...financeKeys.all, "expenses"] as const,
   expense: (id: string) => [...financeKeys.expenses(), id] as const,

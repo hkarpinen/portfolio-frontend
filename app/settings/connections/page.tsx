@@ -1,7 +1,7 @@
 "use client";
 
 import { Btn, Icon } from "@/components/editorial";
-import { usePlaidLink, usePlaidItems } from "@/hooks/use-connections";
+import { usePlaidLink, useConnectedAccounts } from "@/hooks/use-connections";
 
 import type { Connection } from "@/lib/api/plaid";
 import { ConnectionCard } from "./connection-card";
@@ -103,7 +103,7 @@ function EmptyState({ onConnect, loading }: { onConnect: () => void; loading: bo
 
 export default function ConnectionsPage() {
   const linkBank = usePlaidLink();
-  const itemsQuery = usePlaidItems();
+  const itemsQuery = useConnectedAccounts();
   const items = itemsQuery.data ?? [];
   const isLoading = itemsQuery.isLoading;
 

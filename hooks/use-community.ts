@@ -1,14 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   fetchCommunities,
-  fetchCommunityBySlug,
   createCommunity,
   updateCommunity,
   deleteCommunity,
   uploadCommunityImage,
   fetchMembership,
   joinCommunity,
-  fetchMyMemberships,
   fetchCommunityMembers,
   appointModerator,
   removeModerator,
@@ -24,29 +22,12 @@ export function useCommunities(page = 1, pageSize = 20) {
   });
 }
 
-export function useCommunity(slug: string) {
-  return useQuery({
-    queryKey: forumKeys.community(slug),
-    queryFn: () => fetchCommunityBySlug(slug),
-    staleTime: 60_000,
-    enabled: !!slug,
-  });
-}
-
 export function useCommunityMembership(communityId: string) {
   return useQuery({
     queryKey: forumKeys.communityMembership(communityId),
     queryFn: () => fetchMembership(communityId).catch(() => null),
     staleTime: 60_000,
     enabled: !!communityId,
-  });
-}
-
-export function useMyMemberships() {
-  return useQuery({
-    queryKey: forumKeys.memberships(),
-    queryFn: fetchMyMemberships,
-    staleTime: 60_000,
   });
 }
 

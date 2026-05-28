@@ -69,7 +69,7 @@ function DemoBanner() {
 }
 
 /* ── Main export ─────────────────────────────────────────────────────────────*/
-export type AppShellProps = {
+type AppShellProps = {
   children: React.ReactNode;
   displayName: string | null;
   avatarUrl: string | null;

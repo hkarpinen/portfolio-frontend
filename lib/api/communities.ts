@@ -6,7 +6,6 @@ import {
   CommunityMembershipSchema,
   CommunityMemberItemSchema,
   CommunityPageSchema,
-  UserCommunityItemSchema,
   type CommunitySummaryResponse,
 } from "@/types/forum";
 
@@ -81,15 +80,9 @@ export const fetchCommunityBySlugServer = (slug: string, cookieHeader?: string) 
     cookieHeader,
   );
 
-export const fetchMyMembershipsServer = (cookieHeader: string) =>
-  parsedServerFetch("/api/forum/memberships", MyMembershipsListSchema, cookieHeader);
-
 export const fetchMembershipServer = (communityId: string, cookieHeader: string) =>
   parsedServerFetch(
     `/api/forum/communities/${communityId}/membership`,
     CommunityMembershipSchema,
     cookieHeader,
   );
-
-export const fetchProfileMembershipsApi = (userId: string) =>
-  api.parsed.get(`/api/forum/profiles/${userId}/memberships`, z.array(UserCommunityItemSchema));

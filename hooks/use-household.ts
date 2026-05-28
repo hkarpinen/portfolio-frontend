@@ -2,7 +2,6 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   fetchContributionSummary,
   fetchHousehold,
-  fetchHouseholdDetail,
   fetchHouseholdMembers,
   createHousehold,
   updateHousehold,
@@ -34,15 +33,6 @@ export function useHousehold(id: string) {
   return useQuery({
     queryKey: financeKeys.household(id),
     queryFn: () => fetchHousehold(id),
-    staleTime: 60_000,
-    enabled: !!id,
-  });
-}
-
-export function useHouseholdDetail(id: string) {
-  return useQuery({
-    queryKey: financeKeys.householdDetail(id),
-    queryFn: () => fetchHouseholdDetail(id),
     staleTime: 60_000,
     enabled: !!id,
   });

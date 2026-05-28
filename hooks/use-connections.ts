@@ -16,13 +16,6 @@ import {
 } from "@/lib/api/plaid";
 import { financeKeys, connectionKeys } from "@/lib/query-keys";
 
-// Re-export so existing call sites that imported these from the hook file
-// continue to compile. The canonical home is now @/lib/query-keys.
-export { connectionKeys };
-
-/** @deprecated Use connectionKeys */
-export const plaidKeys = connectionKeys;
-
 /**
  * Lazy-load Plaid Link's vanilla CDN build. The PlaidLinkGlobal type lives
  * in `types/plaid.d.ts` as a `window.Plaid?` ambient declaration, which
@@ -94,16 +87,13 @@ export function usePlaidLink() {
   };
 }
 
-/** Connected bank accounts (previously usePlaidItems) */
+/** Connected bank accounts. */
 export function useConnectedAccounts() {
   return useQuery({
     queryKey: connectionKeys.items(),
     queryFn: () => listConnections().then((r) => r.connections as Connection[]),
   });
 }
-
-/** @deprecated Use useConnectedAccounts */
-export const usePlaidItems = useConnectedAccounts;
 
 export function useSyncPlaidItem() {
   const queryClient = useQueryClient();
@@ -127,16 +117,13 @@ export function useUnlinkPlaidItem() {
   });
 }
 
-/** Bank sync suggestions (previously useRecurringStreams) */
+/** Bank sync suggestions. */
 export function useBankSyncSuggestions() {
   return useQuery({
     queryKey: connectionKeys.recurring(),
     queryFn: () => listSuggestions().then((r) => r.suggestions as RecurringSuggestion[]),
   });
 }
-
-/** @deprecated Use useBankSyncSuggestions */
-export const useRecurringStreams = useBankSyncSuggestions;
 
 export function useRefreshRecurring() {
   const queryClient = useQueryClient();
@@ -146,7 +133,7 @@ export function useRefreshRecurring() {
   });
 }
 
-/** Accept a bank sync suggestion (previously useAcceptRecurring) */
+/** Accept a bank sync suggestion. */
 export function useAcceptSuggestion() {
   const queryClient = useQueryClient();
   return useMutation({
@@ -164,14 +151,3 @@ export function useAcceptSuggestion() {
   });
 }
 
-/** @deprecated Use useAcceptSuggestion */
-export const useAcceptRecurring = useAcceptSuggestion;
-
-/** Account balance from connected bank account */
-export function useAccountBalance() {
-  return useQuery({
-    queryKey: financeKeys.accountBalance(),
-    queryFn: async () => null, // TODO: implement when backend endpoint is ready
-    enabled: false,
-  });
-}

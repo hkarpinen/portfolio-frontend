@@ -16,7 +16,7 @@ export function FieldGroup({ label, children }: { label: string; children: React
   );
 }
 
-export function CheckRow({
+function CheckRow({
   label,
   hint,
   checked,
@@ -44,7 +44,7 @@ export function CheckRow({
 }
 
 // ── Add deduction form ─────────────────────────────────────────────────────────
-export interface AddDeductionFormProps {
+interface AddDeductionFormProps {
   dType: DeductionType;
   setDType: (t: DeductionType) => void;
   dLabel: string;

@@ -3,10 +3,10 @@
 import { Btn, Icon } from "@/components/editorial";
 import { useState } from "react";
 import {
-  useRecurringStreams,
+  useBankSyncSuggestions,
   useRefreshRecurring,
-  useAcceptRecurring,
-  usePlaidItems,
+  useAcceptSuggestion,
+  useConnectedAccounts,
 } from "@/hooks/use-connections";
 
 import { formatAmount, formatShortDate } from "@/lib/formatting";
@@ -90,10 +90,10 @@ function StreamCard({
  * Hidden entirely when no banks are linked or there are no suggestions.
  */
 export function PlaidIncomeSuggestions() {
-  const itemsQuery = usePlaidItems();
-  const streamsQuery = useRecurringStreams();
+  const itemsQuery = useConnectedAccounts();
+  const streamsQuery = useBankSyncSuggestions();
   const refresh = useRefreshRecurring();
-  const accept = useAcceptRecurring();
+  const accept = useAcceptSuggestion();
   const [acceptingId, setAcceptingId] = useState<string | null>(null);
   const [collapsed, setCollapsed] = useState(false);
 

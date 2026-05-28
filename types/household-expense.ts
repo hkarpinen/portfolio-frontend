@@ -67,4 +67,3 @@ export const UpcomingHouseholdExpenseSchema = z.object({
   currency: z.string(),
   dueDate: z.string(),
 });
-export type UpcomingHouseholdExpense = z.infer<typeof UpcomingHouseholdExpenseSchema>;

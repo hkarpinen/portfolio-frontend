@@ -1,9 +1,8 @@
 import { z } from "zod";
 import { api } from "@/lib/api-client";
 import { parsedServerFetch } from "@/lib/server-api-client";
-import { HouseholdSchema, HouseholdDetailResponseSchema } from "@/types/household";
+import { HouseholdSchema } from "@/types/household";
 import { MembershipResponseSchema } from "@/types/membership";
-import { UserOverviewSchema } from "@/types/user-overview";
 import {
   HouseholdMonthlyContributionsSchema,
   ContributionPeriodSchema,
@@ -25,7 +24,7 @@ export const HouseholdSummaryDtoSchema = z.object({
 });
 export type HouseholdSummaryDto = z.infer<typeof HouseholdSummaryDtoSchema>;
 
-export const HouseholdDetailDtoSchema = z.object({
+const HouseholdDetailDtoSchema = z.object({
   id: z.string(),
   name: z.string(),
   description: z.string().nullish(),
@@ -34,9 +33,8 @@ export const HouseholdDetailDtoSchema = z.object({
   createdAt: z.string(),
   memberCount: z.number(),
 });
-export type HouseholdDetailDto = z.infer<typeof HouseholdDetailDtoSchema>;
 
-export const MemberDtoSchema = z.object({
+const MemberDtoSchema = z.object({
   membershipId: z.string(),
   userId: z.string(),
   username: z.string(),
@@ -44,7 +42,6 @@ export const MemberDtoSchema = z.object({
   role: z.string(),
   joinedAt: z.string(),
 });
-export type MemberDto = z.infer<typeof MemberDtoSchema>;
 
 // Small inline shapes for one-off endpoint responses. Not promoted to a
 // named type because they have no other consumers.
@@ -54,13 +51,8 @@ const DemoReadySchema = z.object({ ready: z.boolean() });
 
 // ── Endpoints ─────────────────────────────────────────────────────────────────
 
-export const fetchOverview = () => api.parsed.get("/api/finance/overview", UserOverviewSchema);
-
 export const fetchHousehold = (id: string) =>
   api.parsed.get(`/api/households/${id}`, HouseholdSchema);
-
-export const fetchHouseholdDetail = (id: string) =>
-  api.parsed.get(`/api/households/${id}`, HouseholdDetailResponseSchema);
 
 export const fetchHouseholdMembers = (id: string) =>
   api.parsed.get(`/api/households/${id}/members`, z.array(MembershipResponseSchema));
@@ -105,9 +97,6 @@ export const transferOwnership = (householdId: string, newOwnerId: string) =>
     newOwnerId,
   });
 
-export const fetchOverviewServer = (cookieHeader: string) =>
-  parsedServerFetch("/api/finance/overview", UserOverviewSchema, cookieHeader);
-
 export const fetchContributionSummary = (months = 13, past = 3) =>
   api.parsed.get(
     `/api/finance/contribution-summary?months=${months}&past=${past}`,
@@ -124,20 +113,10 @@ export const fetchContributionSummaryServer = (cookieHeader: string, months = 13
 export const listHouseholdsServer = (cookieHeader: string) =>
   parsedServerFetch("/api/households", z.array(HouseholdSummaryDtoSchema), cookieHeader);
 
-export const fetchHouseholdDetailServer = (id: string, cookieHeader: string) =>
-  parsedServerFetch(`/api/households/${id}`, HouseholdDetailResponseSchema, cookieHeader);
-
 export const fetchHouseholdServer = (id: string, cookieHeader: string) =>
   parsedServerFetch(`/api/households/${id}`, HouseholdDetailDtoSchema, cookieHeader);
 
 export const fetchHouseholdMembersServer = (id: string, cookieHeader: string) =>
   parsedServerFetch(`/api/households/${id}/members`, z.array(MemberDtoSchema), cookieHeader);
-
-export const fetchHouseholdContributionsServer = (householdId: string, cookieHeader: string) =>
-  parsedServerFetch(
-    `/api/finance/groups/${householdId}/contributions`,
-    z.array(HouseholdMonthlyContributionsSchema),
-    cookieHeader,
-  );
 
 export const checkDemoReady = () => api.parsed.get("/api/households/demo/ready", DemoReadySchema);

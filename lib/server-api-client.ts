@@ -20,25 +20,12 @@ import type { z, ZodTypeAny } from "zod";
 import { SERVER_API } from "./api-url";
 import { ResponseValidationError } from "./api-client";
 
-export async function serverFetch<T>(path: string, cookieHeader?: string): Promise<T | null> {
-  try {
-    const res = await fetch(`${SERVER_API}${path}`, {
-      headers: cookieHeader ? { Cookie: cookieHeader } : undefined,
-      cache: "no-store",
-    });
-    if (!res.ok) return null;
-    return res.json() as Promise<T>;
-  } catch {
-    return null;
-  }
-}
-
 /**
  * Validated server-side fetch. HTTP-level failures (4xx, 5xx, network) still
- * resolve to `null` — that matches `serverFetch` and gives RSC code its
- * existing `if (!data) notFound()` pattern. A schema mismatch is treated as a
- * contract bug and *thrown* (ResponseValidationError), so the nearest
- * error.tsx boundary renders rather than silently rendering an empty state.
+ * resolve to `null` — gives RSC code an `if (!data) notFound()` pattern. A
+ * schema mismatch is treated as a contract bug and *thrown*
+ * (ResponseValidationError), so the nearest error.tsx boundary renders
+ * rather than silently rendering an empty state.
  */
 export async function parsedServerFetch<S extends ZodTypeAny>(
   path: string,

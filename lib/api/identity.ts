@@ -83,12 +83,11 @@ export const uploadAvatar = (file: File) => {
  * the consumer falls back through them in order. Once the .NET side settles
  * on one, prune the other two and the validation gets stricter for free.
  */
-export const Enable2FAResponseSchema = z.object({
+const Enable2FAResponseSchema = z.object({
   qrCodeUrl: z.string().optional(),
   qrCode: z.string().optional(),
   otpAuthUrl: z.string().optional(),
 });
-export type Enable2FAResponse = z.infer<typeof Enable2FAResponseSchema>;
 
 export const enable2FA = () => api.parsed.post("/api/identity/2fa/enable", Enable2FAResponseSchema);
 

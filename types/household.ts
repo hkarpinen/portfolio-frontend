@@ -29,16 +29,14 @@ export const HouseholdSummarySchema = HouseholdSchema.extend({
   netBalance: z.number(),
   isOvercommitted: z.boolean(),
 });
-export type HouseholdSummary = z.infer<typeof HouseholdSummarySchema>;
 
 /**
  * Matches `CoverageStatusKind` in finance/src/Application/Dtos/DashboardDtos.cs.
  * Serialized as enum name strings via JsonStringEnumConverter.
  */
-export const CoverageStatusKindSchema = z.enum(["FullyCovered", "AtRisk", "Overcommitted"]);
-export type CoverageStatusKind = z.infer<typeof CoverageStatusKindSchema>;
+const CoverageStatusKindSchema = z.enum(["FullyCovered", "AtRisk", "Overcommitted"]);
 
-export const HouseholdDashboardSchema = z.object({
+const HouseholdDashboardSchema = z.object({
   groupId: z.string(),
   totalBills: z.number(),
   totalGrossIncome: z.number(),
@@ -53,7 +51,6 @@ export const HouseholdDashboardSchema = z.object({
   availableBalance: z.number().nullable().optional(),
   balanceAsOf: z.string().nullable().optional(),
 });
-export type HouseholdDashboard = z.infer<typeof HouseholdDashboardSchema>;
 
 export const HouseholdDetailResponseSchema = z.object({
   household: HouseholdSchema,
@@ -61,4 +58,3 @@ export const HouseholdDetailResponseSchema = z.object({
   bills: z.array(HouseholdExpenseSchema),
   dashboard: HouseholdDashboardSchema,
 });
-export type HouseholdDetailResponse = z.infer<typeof HouseholdDetailResponseSchema>;
