@@ -187,6 +187,43 @@ export const fetchProfileMemberships = (userId: string) =>
     z.array(UserCommunityItemSchema),
   );
 
+// Server-side counterparts for the profile RSC (audit §3.3 — server-ifying
+// the profile page). Each is the parsedServerFetch mirror of the client
+// fetcher above with the same schema.
+export const fetchForumProfileServer = (userId: string, cookieHeader?: string) =>
+  parsedServerFetch(`/api/forum/profiles/${userId}`, ForumProfileSchema, cookieHeader);
+
+export const fetchProfileThreadsServer = (
+  userId: string,
+  cookieHeader?: string,
+  page = 1,
+  pageSize = 20,
+) =>
+  parsedServerFetch(
+    `/api/forum/profiles/${userId}/threads?page=${page}&pageSize=${pageSize}`,
+    ThreadPageSchema,
+    cookieHeader,
+  );
+
+export const fetchProfileCommentsServer = (
+  userId: string,
+  cookieHeader?: string,
+  page = 1,
+  pageSize = 20,
+) =>
+  parsedServerFetch(
+    `/api/forum/profiles/${userId}/comments?page=${page}&pageSize=${pageSize}`,
+    ProfileCommentPageSchema,
+    cookieHeader,
+  );
+
+export const fetchProfileMembershipsServer = (userId: string, cookieHeader?: string) =>
+  parsedServerFetch(
+    `/api/forum/profiles/${userId}/memberships`,
+    z.array(UserCommunityItemSchema),
+    cookieHeader,
+  );
+
 export const MyForumProfileSchema = z.object({
   bio: z.string().nullable().optional(),
   signature: z.string().nullable().optional(),

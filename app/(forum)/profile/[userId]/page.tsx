@@ -1,37 +1,43 @@
-"use client";
-
 import { Icon } from "@/components/editorial";
 import Link from "next/link";
-import { useMe } from "@/hooks/use-identity";
+import { getCookieHeader } from "@/lib/server-cookies";
+import { fetchMeServer } from "@/lib/api/identity";
 import {
-  useForumProfile,
-  useProfileThreads,
-  useProfileMemberships,
-  useProfileComments,
-} from "@/hooks/use-forum";
+  fetchForumProfileServer,
+  fetchProfileThreadsServer,
+  fetchProfileMembershipsServer,
+  fetchProfileCommentsServer,
+} from "@/lib/api/forum";
 import { timeAgo, formatDate, getInitials } from "@/lib/utils";
 
-export default function ProfilePage({ params }: { params: { userId: string } }) {
+export const dynamic = "force-dynamic";
+
+/**
+ * Server component (audit §3.3). The whole page is data display — no
+ * client state or event handlers — so every section renders on the
+ * server. The "You" badge comparison runs server-side too via
+ * `fetchMeServer`, eliminating the JS bundle for the entire profile
+ * route.
+ */
+export default async function ProfilePage({ params }: { params: { userId: string } }) {
   const { userId } = params;
-  const { data: me } = useMe();
-  const { data: profile, isLoading: profileLoading } = useForumProfile(userId);
-  const { data: threadsData } = useProfileThreads(userId);
-  const { data: memberships } = useProfileMemberships(userId);
-  const { data: commentsData } = useProfileComments(userId);
+  const cookieHeader = await getCookieHeader();
+
+  // Parallel fetch — the four profile sub-fetches and `me` share a
+  // single request burst so the page renders in one round-trip.
+  const [profile, threadsData, memberships, commentsData, me] = await Promise.all([
+    fetchForumProfileServer(userId, cookieHeader),
+    fetchProfileThreadsServer(userId, cookieHeader),
+    fetchProfileMembershipsServer(userId, cookieHeader),
+    fetchProfileCommentsServer(userId, cookieHeader),
+    fetchMeServer(cookieHeader).catch(() => null),
+  ]);
 
   const isOwnProfile = me?.id === userId;
   const displayName = profile?.displayName ?? "Unknown User";
   const initials = getInitials(displayName);
   const threads = threadsData?.items ?? [];
   const comments = commentsData?.items ?? [];
-
-  if (profileLoading) {
-    return (
-      <div className="flex h-[200px] items-center justify-center">
-        <span className="text-base text-ink-3">Loading profile…</span>
-      </div>
-    );
-  }
 
   return (
     <div className="page-enter flex flex-col gap-12">
