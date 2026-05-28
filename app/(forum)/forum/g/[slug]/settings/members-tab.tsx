@@ -51,7 +51,7 @@ export function CommunityMembersTab({ communityId }: Props) {
         return (
           <div
             key={m.membershipId}
-            className={`flex items-center justify-between border-ink bg-paper-2 px-[14px] py-[10px] transition-opacity duration-150${isPending ? "opacity-50" : ""}`}
+            className={`flex items-center justify-between border-ink bg-paper-2 px-7 py-5 transition-opacity duration-150${isPending ? "opacity-50" : ""}`}
           >
             <div className="flex items-center gap-5">
               <UserInitials name={m.displayName} size="lg" />

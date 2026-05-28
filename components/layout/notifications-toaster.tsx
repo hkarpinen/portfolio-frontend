@@ -40,7 +40,7 @@ export function NotificationsToaster() {
               removeToast(n.id);
             }
           }}
-          className="px-[14px] py-[12px] shadow-stamp"
+          className="px-7 py-6 shadow-stamp"
           style={{ ...typeStyles[n.type] }}
         >
           <div className="flex items-start justify-between gap-4">
@@ -74,7 +74,7 @@ export function NotificationsToaster() {
           </div>
         </Toast.Root>
       ))}
-      <Toast.Viewport className="max-w-[calc(100vw - 32px)] fixed bottom-[20px] right-[20px] z-notifications m-0 flex w-[320px] list-none flex-col gap-4 p-0 outline-none" />
+      <Toast.Viewport className="max-w-[calc(100vw - 32px)] fixed bottom-10 right-10 z-notifications m-0 flex w-[320px] list-none flex-col gap-4 p-0 outline-none" />
     </Toast.Provider>
   );
 }

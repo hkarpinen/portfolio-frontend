@@ -130,7 +130,7 @@ export function DeductionAccumulator({
         hidden={!showForm}
       >
         {showForm && (
-          <div className="flex flex-col gap-5 border-ink bg-paper-2 p-[14px]">
+          <div className="flex flex-col gap-5 border-ink bg-paper-2 p-7">
             <div className="grid grid-cols-2 gap-5">
               <SelectField
                 label="Type"

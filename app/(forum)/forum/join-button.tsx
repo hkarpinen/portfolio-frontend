@@ -20,7 +20,7 @@ export function JoinButton({ communityId }: JoinButtonProps) {
 
   if (joined) {
     return (
-      <span className="shrink-0 border-ink bg-paper-2 px-[12px] py-[5px] text-base font-semibold text-ink-3">
+      <span className="shrink-0 border-ink bg-paper-2 px-6 py-[5px] text-base font-semibold text-ink-3">
         Joined
       </span>
     );

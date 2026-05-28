@@ -57,7 +57,7 @@ export function IncomeCardEditForm({
     <form
       id={`income-edit-${source.incomeId}`}
       onSubmit={handleSubmit(onSubmit)}
-      className="mt-[14px] flex flex-col gap-5 border-t border-ink pt-[14px]"
+      className="mt-7 flex flex-col gap-5 border-t border-ink pt-7"
       aria-label={`Edit ${source.source}`}
       noValidate
     >

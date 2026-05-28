@@ -49,7 +49,7 @@ export function PasswordSection() {
     >
       <form
         onSubmit={handleSubmit(onPasswordSubmit)}
-        className="border-ink-t mt-10 flex flex-col gap-[14px] pt-10"
+        className="border-ink-t mt-10 flex flex-col gap-7 pt-10"
       >
         {updatePassword.isError && (
           <Alert variant="danger">{getErrorMessage(updatePassword.error)}</Alert>
@@ -58,21 +58,21 @@ export function PasswordSection() {
           <Alert variant="success">Password updated successfully!</Alert>
         )}
         <div>
-          <label className="ed-label mb-[6px] block">Current Password</label>
+          <label className="ed-label mb-3 block">Current Password</label>
           <Input type="password" {...register("currentPassword")} placeholder="••••••••" />
           {errors.currentPassword && (
             <p className="mt-2 text-base text-red">{errors.currentPassword.message}</p>
           )}
         </div>
         <div>
-          <label className="ed-label mb-[6px] block">New Password</label>
+          <label className="ed-label mb-3 block">New Password</label>
           <Input type="password" {...register("newPassword")} placeholder="••••••••" />
           {errors.newPassword && (
             <p className="mt-2 text-base text-red">{errors.newPassword.message}</p>
           )}
         </div>
         <div>
-          <label className="ed-label mb-[6px] block">Confirm New Password</label>
+          <label className="ed-label mb-3 block">Confirm New Password</label>
           <Input type="password" {...register("confirmPassword")} placeholder="••••••••" />
           {errors.confirmPassword && (
             <p className="mt-2 text-base text-red">{errors.confirmPassword.message}</p>

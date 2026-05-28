@@ -189,7 +189,7 @@ export default function NotificationsSettingsPage() {
               >
                 <div className="px-5 py-5" role="cell">
                   <span className="text-base leading-snug text-ink">{label}</span>
-                  {hint && <p className="mt-[2px] text-sm leading-snug text-ink-3">{hint}</p>}
+                  {hint && <p className="mt-1 text-sm leading-snug text-ink-3">{hint}</p>}
                 </div>
                 {CHANNELS.map(({ key: ch, label: chLabel }) => (
                   <div key={ch} className="flex items-center justify-center px-2 py-5" role="cell">

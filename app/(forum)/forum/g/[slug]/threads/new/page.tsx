@@ -207,7 +207,7 @@ export default function NewThreadPage({ params }: { params: { slug: string } }) 
             type="checkbox"
             checked={isDiscussion}
             onChange={(e) => setIsDiscussion(e.target.checked)}
-            className="h-[18px] w-[18px] cursor-pointer accent-[var(--red)]"
+            className="h-9 w-9 cursor-pointer accent-[var(--red)]"
           />
           <span className="text-base font-semibold text-ink transition-colors group-hover:text-red">
             Mark as discussion

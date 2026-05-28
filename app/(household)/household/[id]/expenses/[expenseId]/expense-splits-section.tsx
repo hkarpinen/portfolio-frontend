@@ -153,20 +153,20 @@ function SplitsTable({
       <table className="w-full border-collapse" aria-label="Expense splits by member">
         <thead>
           <tr className="border-b border-[var(--ink)]">
-            <th scope="col" className="ed-kicker pb-[10px] pr-6 text-left font-normal">
+            <th scope="col" className="ed-kicker pb-5 pr-6 text-left font-normal">
               Member
             </th>
-            <th scope="col" className="ed-kicker pb-[10px] pr-6 text-right font-normal">
+            <th scope="col" className="ed-kicker pb-5 pr-6 text-right font-normal">
               Share
             </th>
-            <th scope="col" className="ed-kicker pb-[10px] pr-6 text-right font-normal">
+            <th scope="col" className="ed-kicker pb-5 pr-6 text-right font-normal">
               Amount
             </th>
-            <th scope="col" className="ed-kicker pb-[10px] pr-6 text-left font-normal">
+            <th scope="col" className="ed-kicker pb-5 pr-6 text-left font-normal">
               Status
             </th>
             {canEditSplits && (
-              <th scope="col" className="ed-kicker pb-[10px] text-right font-normal">
+              <th scope="col" className="ed-kicker pb-5 text-right font-normal">
                 <span className="sr-only">Actions</span>
               </th>
             )}
@@ -190,21 +190,21 @@ function SplitsTable({
 
             return (
               <tr key={split.splitId} className="border-b border-rule-soft">
-                <td className="py-[14px] pr-6 font-serif text-[1.0625rem] italic text-ink">
+                <td className="py-7 pr-6 font-serif text-[1.0625rem] italic text-ink">
                   {split.displayName ||
                     `Member ${(split.splitId ?? split.userId ?? "").slice(0, 6)}…`}
                 </td>
-                <td className="whitespace-nowrap py-[14px] pr-6 text-right font-mono text-sm text-ink-3">
+                <td className="whitespace-nowrap py-7 pr-6 text-right font-mono text-sm text-ink-3">
                   {pct}%
                 </td>
-                <td className="whitespace-nowrap py-[14px] pr-6 text-right font-mono text-sm text-ink">
+                <td className="whitespace-nowrap py-7 pr-6 text-right font-mono text-sm text-ink">
                   {splitFmt}
                 </td>
-                <td className="whitespace-nowrap py-[14px] pr-6">
+                <td className="whitespace-nowrap py-7 pr-6">
                   <SplitStatusPill claimed={split.isClaimed} />
                 </td>
                 {canEditSplits && (
-                  <td className="whitespace-nowrap py-[14px] text-right">
+                  <td className="whitespace-nowrap py-7 text-right">
                     {mayRemove && (
                       <button
                         type="button"

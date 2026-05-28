@@ -47,7 +47,7 @@ export function BudgetView({ months: initialMonths }: { months: ContributionPeri
         ))}
       </div>
 
-      <div key={granularity} className="flex flex-col gap-[14px]">
+      <div key={granularity} className="flex flex-col gap-7">
         {periods.map((p) => (
           <PeriodCard
             key={p.label}

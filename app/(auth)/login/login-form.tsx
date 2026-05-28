@@ -160,7 +160,7 @@ export function LoginForm({ from }: LoginFormProps) {
           {...register("email")}
         />
 
-        <div className="flex flex-col gap-[6px]">
+        <div className="flex flex-col gap-3">
           <div className="relative">
             <Input
               type={showPw ? "text" : "password"}
@@ -174,7 +174,7 @@ export function LoginForm({ from }: LoginFormProps) {
               type="button"
               onClick={() => setShowPw((s) => !s)}
               aria-label={showPw ? "Hide password" : "Show password"}
-              className="absolute bottom-[7px] right-0 cursor-pointer border-none bg-transparent p-0 leading-none text-ink-3"
+              className="absolute bottom-3.5 right-0 cursor-pointer border-none bg-transparent p-0 leading-none text-ink-3"
             >
               <svg
                 width="14"

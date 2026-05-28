@@ -83,7 +83,7 @@ export function DeductionsTab({ source }: { source: IncomeSource }) {
   return (
     <div className="flex flex-col gap-5">
       {existingDeductions.length === 0 && !addOpen ? (
-        <div className="border-[1.5px] border-dashed border-ink-3 px-[20px] py-[28px] text-center">
+        <div className="border-[1.5px] border-dashed border-ink-3 px-10 py-14 text-center">
           <p className="text-base italic text-ink-3">No deductions added yet.</p>
           <p className="mt-2 text-sm text-ink-3">401(k), health insurance, HSA, and more.</p>
         </div>

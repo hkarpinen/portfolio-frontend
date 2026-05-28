@@ -78,7 +78,7 @@ export function NewCommunityForm() {
       <div className="border-ink bg-paper p-12 shadow-stamp">
         <form onSubmit={handleSubmit} className="flex flex-col gap-8">
           {createCommunity.isError && (
-            <div className="bg-red-soft px-[14px] py-[10px] text-base text-red [border:1px_solid_var(--danger)]">
+            <div className="bg-red-soft px-7 py-5 text-base text-red [border:1px_solid_var(--danger)]">
               {getErrorMessage(createCommunity.error, "An unexpected error occurred.")}
             </div>
           )}

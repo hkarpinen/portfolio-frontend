@@ -18,7 +18,7 @@ export function GranularityButton({
   return (
     <button
       onClick={onClick}
-      className={`cursor-pointer px-[14px] py-[6px] text-base transition-all duration-[110ms] ${
+      className={`cursor-pointer px-7 py-3 text-base transition-all duration-[110ms] ${
         active
           ? "bg-red-soft font-bold text-red [border:1.5px_solid_var(--red)]"
           : "border-ink bg-paper-2 font-medium text-ink-3"

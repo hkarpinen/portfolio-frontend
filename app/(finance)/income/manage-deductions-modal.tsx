@@ -37,7 +37,7 @@ export function ManageDeductionsModal({ source, onClose }: ManageDeductionsModal
     >
       <div className="modal-sheet">
         <div className="flex justify-center p-[10px_0_0]">
-          <div className="h-2 w-[36px] bg-[var(--border-2)]" />
+          <div className="h-2 w-18 bg-[var(--border-2)]" />
         </div>
 
         <div className="flex items-center justify-between p-[10px_20px_14px]">

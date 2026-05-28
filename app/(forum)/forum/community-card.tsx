@@ -107,7 +107,7 @@ export function CommunityCard({
 
         <div className="shrink-0">
           {joined === null ? (
-            <div className="skeleton h-[28px] w-32 bg-paper-3" />
+            <div className="skeleton h-14 w-32 bg-paper-3" />
           ) : joined ? (
             <span className="border-ink bg-paper-3 px-4 py-1 text-sm font-medium text-ink-3">
               Joined

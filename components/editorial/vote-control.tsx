@@ -48,7 +48,7 @@ export function VoteControl({
     : "flex flex-col items-center gap-2 shrink-0 w-20";
 
   const scoreClass = isRow
-    ? "text-base font-bold font-serif leading-none min-w-[28px] text-center"
+    ? "text-base font-bold font-serif leading-none min-w-14 text-center"
     : "text-base font-bold font-serif leading-none";
 
   // Thread column uses larger buttons; comment row uses compact

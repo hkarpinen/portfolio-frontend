@@ -85,7 +85,7 @@ export default async function ForumFeedPage({ searchParams }: { searchParams: { 
                 <div className="flex flex-col items-center gap-6 border-ink bg-paper px-12 py-24 text-center">
                   <div
                     aria-hidden="true"
-                    className="flex h-[56px] w-[56px] items-center justify-center bg-red-soft"
+                    className="flex h-28 w-28 items-center justify-center bg-red-soft"
                   >
                     <svg
                       width="24"
@@ -126,7 +126,7 @@ export default async function ForumFeedPage({ searchParams }: { searchParams: { 
                     >
                       <div className="card-hover cursor-pointer border-ink bg-paper p-8 shadow-card">
                         <div className="mb-4 flex items-center gap-5">
-                          <UserInitials name={c.name} size="lg" className="h-[36px] w-[36px]" />
+                          <UserInitials name={c.name} size="lg" className="h-18 w-18" />
                           <div>
                             <p className="font-serif text-md font-bold text-ink">{c.name}</p>
                             <p className="text-sm text-ink-3">{c.description ?? ""}</p>
@@ -143,7 +143,7 @@ export default async function ForumFeedPage({ searchParams }: { searchParams: { 
             </>
           ) : threads.length === 0 ? (
             <div className="flex flex-col items-center gap-6 border-ink bg-paper px-12 py-24 text-center">
-              <div className="flex h-[56px] w-[56px] items-center justify-center bg-red-soft">
+              <div className="flex h-28 w-28 items-center justify-center bg-red-soft">
                 <span className="text-ink">
                   <Icon name="forum" size={24} strokeWidth={2} />
                 </span>
@@ -159,7 +159,7 @@ export default async function ForumFeedPage({ searchParams }: { searchParams: { 
                 return (
                   <li key={thread.threadId}>
                     <article
-                      className="flex items-start gap-6 border-ink bg-paper px-[16px] py-[14px] shadow-card"
+                      className="flex items-start gap-6 border-ink bg-paper px-8 py-7 shadow-card"
                       aria-label={thread.title}
                     >
                       {/* Vote column */}

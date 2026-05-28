@@ -43,7 +43,7 @@ function categoryOf(eventType: string): Filter | "other" {
 function Row({ n, onRead }: { n: NotificationItem; onRead: (id: string) => void }) {
   const unreadDot = (
     <span
-      className={`mt-[7px] h-2 w-2 shrink-0 rounded-full ${n.isRead ? "border border-ink-4" : "bg-red"}`}
+      className={`mt-3.5 h-2 w-2 shrink-0 rounded-full ${n.isRead ? "border border-ink-4" : "bg-red"}`}
       aria-label={n.isRead ? undefined : "Unread"}
       title={n.isRead ? undefined : "Unread"}
     />

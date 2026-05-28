@@ -87,7 +87,7 @@ export default async function ProfilePage({ params }: { params: { userId: string
           {isOwnProfile && (
             <Link
               href="/settings/profile"
-              className="shrink-0 border border-ink-3 px-[14px] py-[7px] text-base font-semibold text-ink-2 no-underline transition-colors duration-[110ms] hover:bg-paper-2"
+              className="shrink-0 border border-ink-3 px-7 py-3.5 text-base font-semibold text-ink-2 no-underline transition-colors duration-[110ms] hover:bg-paper-2"
             >
               Edit profile
             </Link>
@@ -159,7 +159,7 @@ export default async function ProfilePage({ params }: { params: { userId: string
                   className={`flex items-center gap-6 px-10 py-6 no-underline transition-colors duration-[110ms] hover:bg-paper-2${i === 0 ? "border-ink-t" : ""}${i < threads.length - 1 ? "border-ink-b" : ""}`}
                 >
                   <div
-                    className="w-[36px] shrink-0 text-center"
+                    className="w-18 shrink-0 text-center"
                     aria-label={`${thread.voteScore ?? 0} votes`}
                   >
                     <span aria-hidden="true" className="text-base font-bold text-ink">

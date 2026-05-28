@@ -33,8 +33,8 @@ function StreamCard({
   accepting: boolean;
 }) {
   return (
-    <div className="flex items-center justify-between gap-8 border-ink bg-paper px-[18px] py-[16px] shadow-stamp">
-      <div className="flex min-w-0 items-center gap-[14px]">
+    <div className="flex items-center justify-between gap-8 border-ink bg-paper px-9 py-8 shadow-stamp">
+      <div className="flex min-w-0 items-center gap-7">
         {/* Icon */}
         <div className="flex h-20 w-20 shrink-0 items-center justify-center bg-green-soft">
           <svg
@@ -137,7 +137,7 @@ export function PlaidIncomeSuggestions() {
             <span className="text-sm text-ink-3">Loading…</span>
           )}
           {inflows.length > 0 && (
-            <span className="bg-red-soft px-[8px] py-[1px] text-sm font-bold text-red">
+            <span className="bg-red-soft px-4 py-0.5 text-sm font-bold text-red">
               {inflows.filter((s) => !s.isLinked).length} new
             </span>
           )}
@@ -174,7 +174,7 @@ export function PlaidIncomeSuggestions() {
       {!collapsed && (
         <div className="flex flex-col gap-5">
           {showEmpty ? (
-            <div className="border-ink bg-paper px-[18px] py-[20px] text-center text-base text-ink-3">
+            <div className="border-ink bg-paper px-9 py-10 text-center text-base text-ink-3">
               No recurring deposits detected yet.{" "}
               <button
                 onClick={() =>

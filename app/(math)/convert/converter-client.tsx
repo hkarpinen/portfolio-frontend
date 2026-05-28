@@ -147,7 +147,7 @@ export function ConverterClient() {
                   type="button"
                   onClick={() => c.applyQuickValue(chip)}
                   aria-label={`Apply conversion: ${chip.label}`}
-                  className="min-h-[36px] cursor-pointer border-[1.5px] border-[color:var(--ink-3)] bg-transparent px-3 py-2 font-mono text-xs uppercase tracking-[0.1em] text-ink-2 transition-colors hover:border-[color:var(--ink)] hover:text-ink"
+                  className="min-h-18 cursor-pointer border-[1.5px] border-[color:var(--ink-3)] bg-transparent px-3 py-2 font-mono text-xs uppercase tracking-[0.1em] text-ink-2 transition-colors hover:border-[color:var(--ink)] hover:text-ink"
                 >
                   {chip.label}
                 </button>

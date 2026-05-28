@@ -21,20 +21,20 @@ export function DeductionChip({
   return (
     <div className="overflow-hidden border-ink bg-paper-2">
       <div
-        className="flex cursor-pointer items-center justify-between px-[14px] py-[11px]"
+        className="flex cursor-pointer items-center justify-between px-7 py-[11px]"
         onClick={() => setExpanded((v) => !v)}
       >
-        <div className="flex min-w-0 items-center gap-[7px]">
+        <div className="flex min-w-0 items-center gap-3.5">
           <span className="overflow-hidden text-ellipsis whitespace-nowrap text-base font-semibold text-ink">
             {d.label}
           </span>
           {d.isTaxExempt && (
-            <span className="shrink-0 bg-red-soft px-[6px] py-[1px] text-sm font-semibold text-red">
+            <span className="shrink-0 bg-red-soft px-3 py-0.5 text-sm font-semibold text-red">
               Pre-tax
             </span>
           )}
           {d.isEmployerSponsored && (
-            <span className="shrink-0 bg-green-soft px-[6px] py-[1px] text-sm font-semibold text-green">
+            <span className="shrink-0 bg-green-soft px-3 py-0.5 text-sm font-semibold text-green">
               Employer
             </span>
           )}
@@ -83,7 +83,7 @@ export function DeductionChip({
 
 export function DetailPill({ label, value }: { label: string; value: string }) {
   return (
-    <div className="border-ink bg-paper-3 px-[10px] py-[3px] font-mono text-sm text-ink-2">
+    <div className="border-ink bg-paper-3 px-5 py-1.5 font-mono text-sm text-ink-2">
       <span className="text-ink-3">{label}: </span>
       {value}
     </div>

@@ -93,12 +93,12 @@ export function WeatherMap({ coords }: { coords: GeoCoordinates }) {
         <div
           role="group"
           aria-label="Map overlay layers"
-          className="border-ink-b flex flex-wrap items-center gap-[10px] bg-paper-2 p-[10px_14px]"
+          className="border-ink-b flex flex-wrap items-center gap-5 bg-paper-2 p-[10px_14px]"
         >
           <span className="ed-label-muted shrink-0 uppercase tracking-[0.22em]" aria-hidden="true">
             Overlay
           </span>
-          <div className="flex flex-wrap gap-[6px]">
+          <div className="flex flex-wrap gap-3">
             {LAYERS.map((l) => {
               const on = activeLayer === l.key;
               return (
@@ -108,7 +108,7 @@ export function WeatherMap({ coords }: { coords: GeoCoordinates }) {
                   onClick={() => toggle(l.key)}
                   aria-pressed={on}
                   aria-label={`${on ? "Hide" : "Show"} ${l.label} overlay`}
-                  className={`ed-label-muted cursor-pointer border-ink p-[3px_9px] font-mono uppercase tracking-[0.18em] transition-colors min-h-[36px]${on ? "bg-ink text-paper" : "bg-transparent text-ink-2"}`}
+                  className={`ed-label-muted cursor-pointer border-ink p-[3px_9px] font-mono uppercase tracking-[0.18em] transition-colors min-h-18${on ? "bg-ink text-paper" : "bg-transparent text-ink-2"}`}
                 >
                   {on && (
                     <span aria-hidden="true" className="mr-1 text-red">

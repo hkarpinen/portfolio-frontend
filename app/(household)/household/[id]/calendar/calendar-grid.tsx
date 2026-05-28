@@ -84,7 +84,7 @@ export function CalendarGrid({ year, month, events, onDelete, deleting }: Calend
                   key={`empty-${idx}`}
                   role="gridcell"
                   aria-label="No date"
-                  className={`min-h-[80px] bg-paper-2${(idx + 1) % 7 !== 0 ? "border-r border-ink-4" : ""}${idx < cells.length - 7 ? "border-b border-ink-4" : ""}`}
+                  className={`min-h-40 bg-paper-2${(idx + 1) % 7 !== 0 ? "border-r border-ink-4" : ""}${idx < cells.length - 7 ? "border-b border-ink-4" : ""}`}
                 />
               );
             }
@@ -97,7 +97,7 @@ export function CalendarGrid({ year, month, events, onDelete, deleting }: Calend
                 key={day}
                 role="gridcell"
                 aria-label={dateLabel}
-                className={`min-h-[80px] bg-paper p-3 align-top${(idx + 1) % 7 !== 0 ? "border-r border-ink-4" : ""}${idx < cells.length - 7 ? "border-b border-ink-4" : ""}`}
+                className={`min-h-40 bg-paper p-3 align-top${(idx + 1) % 7 !== 0 ? "border-r border-ink-4" : ""}${idx < cells.length - 7 ? "border-b border-ink-4" : ""}`}
               >
                 {/* bg/color/weight are data-driven (isToday); red per design */}
                 <span
@@ -112,13 +112,13 @@ export function CalendarGrid({ year, month, events, onDelete, deleting }: Calend
                     onClick={() => setSelected(ev.id === selected ? null : ev.id)}
                     aria-expanded={selected === ev.id}
                     aria-label={`${ev.title}${ev.allDay ? ", all day" : ""} — click to ${selected === ev.id ? "close" : "view"} details`}
-                    className={`mt-[3px] block w-full cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap border px-2 py-[2px] text-left font-mono text-[0.66rem] uppercase tracking-[0.06em] border-red${selected === ev.id ? "bg-ink text-paper" : "bg-red-soft text-ink"}`}
+                    className={`mt-1.5 block w-full cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap border px-2 py-1 text-left font-mono text-[0.66rem] uppercase tracking-[0.06em] border-red${selected === ev.id ? "bg-ink text-paper" : "bg-red-soft text-ink"}`}
                   >
                     <span aria-hidden>{ev.title}</span>
                   </button>
                 ))}
                 {dayEvents.length > 3 && (
-                  <p className="mt-[2px] pl-2 font-mono text-[0.66rem] tracking-[0.04em] text-ink-3">
+                  <p className="mt-1 pl-2 font-mono text-[0.66rem] tracking-[0.04em] text-ink-3">
                     +{dayEvents.length - 3} more
                   </p>
                 )}

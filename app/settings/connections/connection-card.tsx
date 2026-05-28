@@ -32,7 +32,7 @@ function AccountRow({ account }: { account: LinkedAccountResponse }) {
           {account.mask ? ` ····${account.mask}` : ""}
         </span>
         {account.subtype && (
-          <span className="bg-paper-2 px-[7px] py-[2px] text-sm text-ink-3">{account.subtype}</span>
+          <span className="bg-paper-2 px-3.5 py-1 text-sm text-ink-3">{account.subtype}</span>
         )}
       </div>
       <span className="text-base tabular-nums text-ink-3">{balance}</span>
@@ -62,7 +62,7 @@ export function ConnectionCard({ item }: { item: Connection }) {
     <div
       className={`overflow-hidden border-ink bg-paper transition-opacity duration-200${isUnlinking ? "opacity-50" : "opacity-100"}`}
     >
-      <div className="flex items-center gap-[14px] px-10 py-8">
+      <div className="flex items-center gap-7 px-10 py-8">
         <div className="flex h-[42px] w-[42px] shrink-0 items-center justify-center bg-paper-2">
           <Icon name="bank" size={20} strokeWidth={1.75} />
         </div>
@@ -80,7 +80,7 @@ export function ConnectionCard({ item }: { item: Connection }) {
               {statusLabel[item.status]}
             </span>
           </div>
-          <p className="mt-[3px] text-base text-ink-3">
+          <p className="mt-1.5 text-base text-ink-3">
             {item.accounts.length} account{item.accounts.length !== 1 ? "s" : ""}
             {lastSync ? ` · Synced ${lastSync}` : " · Never synced"}
           </p>

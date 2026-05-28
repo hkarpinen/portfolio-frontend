@@ -137,7 +137,7 @@ export default function SessionsPage() {
                 {s.isCurrent && (
                   <span
                     aria-label="This is your current device"
-                    className="inline-block self-start border border-ink bg-paper px-[8px] py-[3px] text-sm font-semibold uppercase tracking-widest text-ink"
+                    className="inline-block self-start border border-ink bg-paper px-4 py-1.5 text-sm font-semibold uppercase tracking-widest text-ink"
                     style={{ fontSize: "0.65rem" }}
                   >
                     This device

@@ -42,11 +42,11 @@ export function IncomeDetailPanel({ incomeId, period, onPeriodChange }: IncomeDe
   const { factor } = PERIODS.find((p) => p.value === period)!;
 
   return (
-    <div className="pt-[14px]">
-      <div className="mb-6 h-[1px] bg-[var(--ink-3)]" />
+    <div className="pt-7">
+      <div className="mb-6 h-0.5 bg-[var(--ink-3)]" />
 
       {/* ── Period picker ── */}
-      <div className="mb-[14px] flex gap-2">
+      <div className="mb-7 flex gap-2">
         {PERIODS.map((p) => (
           <button
             key={p.value}
@@ -89,7 +89,7 @@ export function IncomeDetailPanel({ incomeId, period, onPeriodChange }: IncomeDe
                   {d.label}
                 </span>
                 {d.isEmployerSponsored && (
-                  <span className="shrink-0 bg-green-soft px-[5px] py-[1px] text-sm font-semibold text-green">
+                  <span className="shrink-0 bg-green-soft px-[5px] py-0.5 text-sm font-semibold text-green">
                     Employer
                   </span>
                 )}
@@ -111,7 +111,7 @@ export function IncomeDetailPanel({ incomeId, period, onPeriodChange }: IncomeDe
       )}
 
       {/* ── Net Take-Home ── */}
-      <div className="flex items-center justify-between border border-accent-border bg-red-soft px-[14px] py-[10px]">
+      <div className="flex items-center justify-between border border-accent-border bg-red-soft px-7 py-5">
         <span className="text-sm font-bold uppercase tracking-[0.08em] text-red">
           Net Take-Home
         </span>

@@ -77,7 +77,7 @@ function ExpenseRow({
 
   return (
     <tr className="group border-b border-rule-soft">
-      <td className="py-[14px] pr-6">
+      <td className="py-7 pr-6">
         <Link
           href={detailHref}
           className="font-serif text-[1.0625rem] italic text-ink no-underline hover:text-red focus:text-red"
@@ -85,27 +85,27 @@ function ExpenseRow({
           {expense.title}
         </Link>
       </td>
-      <td className="whitespace-nowrap py-[14px] pr-6 font-mono text-xs uppercase tracking-[0.08em] text-ink-3">
+      <td className="whitespace-nowrap py-7 pr-6 font-mono text-xs uppercase tracking-[0.08em] text-ink-3">
         {expense.category ? expense.category : <span aria-label="No category">—</span>}
       </td>
-      <td className="whitespace-nowrap py-[14px] pr-6 font-mono text-xs tracking-[0.04em] text-ink-3">
+      <td className="whitespace-nowrap py-7 pr-6 font-mono text-xs tracking-[0.04em] text-ink-3">
         {formattedDate}
       </td>
       {/* TODO(handoff8): wire to payer — HouseholdExpense has no payerId yet; show "—" until API returns it */}
-      <td className="whitespace-nowrap py-[14px] pr-6 font-mono text-xs tracking-[0.04em] text-ink-3">
+      <td className="whitespace-nowrap py-7 pr-6 font-mono text-xs tracking-[0.04em] text-ink-3">
         <span aria-label="Payer not yet available">—</span>
       </td>
-      <td className="whitespace-nowrap py-[14px] pr-6 text-right font-serif text-[1.0625rem] font-bold text-ink">
+      <td className="whitespace-nowrap py-7 pr-6 text-right font-serif text-[1.0625rem] font-bold text-ink">
         {formatCurrency(Number(expense.amount), expense.currency)}
       </td>
-      <td className="whitespace-nowrap py-[14px]">
+      <td className="whitespace-nowrap py-7">
         <div className="flex items-center gap-3">
           <StatusCell expense={expense} householdId={householdId} />
           {canManage && (
             <>
               <Link
                 href={`${detailHref}?edit=1`}
-                className="inline-flex h-7 w-7 items-center justify-center text-ink-3 no-underline hover:text-red focus:text-red"
+                className="inline-flex min-h-hit min-w-hit items-center justify-center text-ink-3 no-underline hover:text-red focus:text-red"
                 aria-label={`Edit expense: ${expense.title}`}
                 title="Edit"
               >
@@ -114,7 +114,7 @@ function ExpenseRow({
               <button
                 onClick={() => onDeleteClick(expense.expenseId)}
                 disabled={isDeleting}
-                className="inline-flex h-7 w-7 cursor-pointer items-center justify-center border-none bg-transparent p-0 text-ink-3 hover:text-red focus:text-red disabled:opacity-50"
+                className="inline-flex min-h-hit min-w-hit cursor-pointer items-center justify-center border-none bg-transparent p-0 text-ink-3 hover:text-red focus:text-red disabled:opacity-50"
                 aria-label={`Delete expense: ${expense.title}`}
                 title="Delete"
               >
@@ -169,22 +169,22 @@ export function ExpensesList({
         <table className="w-full border-collapse" aria-label="Shared expenses">
           <thead>
             <tr className="border-b border-[var(--ink)]">
-              <th scope="col" className="ed-kicker pb-[10px] pr-6 text-left font-normal">
+              <th scope="col" className="ed-kicker pb-5 pr-6 text-left font-normal">
                 Expense
               </th>
-              <th scope="col" className="ed-kicker pb-[10px] pr-6 text-left font-normal">
+              <th scope="col" className="ed-kicker pb-5 pr-6 text-left font-normal">
                 Category
               </th>
-              <th scope="col" className="ed-kicker pb-[10px] pr-6 text-left font-normal">
+              <th scope="col" className="ed-kicker pb-5 pr-6 text-left font-normal">
                 Date
               </th>
-              <th scope="col" className="ed-kicker pb-[10px] pr-6 text-left font-normal">
+              <th scope="col" className="ed-kicker pb-5 pr-6 text-left font-normal">
                 Payer
               </th>
-              <th scope="col" className="ed-kicker pb-[10px] pr-6 text-right font-normal">
+              <th scope="col" className="ed-kicker pb-5 pr-6 text-right font-normal">
                 Amount
               </th>
-              <th scope="col" className="ed-kicker pb-[10px] text-left font-normal">
+              <th scope="col" className="ed-kicker pb-5 text-left font-normal">
                 Status
               </th>
             </tr>

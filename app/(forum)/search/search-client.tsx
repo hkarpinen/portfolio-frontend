@@ -37,7 +37,7 @@ export function SearchClient() {
         </label>
         <span
           aria-hidden="true"
-          className="pointer-events-none absolute left-[14px] top-[50%] inline-flex shrink-0 -translate-y-1/2 text-ink-3"
+          className="pointer-events-none absolute left-7 top-[50%] inline-flex shrink-0 -translate-y-1/2 text-ink-3"
         >
           <Icon name="search" size={16} strokeWidth={2} />
         </span>
@@ -54,7 +54,7 @@ export function SearchClient() {
         {loading && (
           <Spinner
             size={20}
-            className="absolute right-[14px] top-[50%] -translate-y-1/2 text-red"
+            className="absolute right-7 top-[50%] -translate-y-1/2 text-red"
           />
         )}
       </div>
@@ -84,7 +84,7 @@ export function SearchClient() {
         >
           <div
             aria-hidden="true"
-            className="flex h-[56px] w-[56px] items-center justify-center bg-red-soft"
+            className="flex h-28 w-28 items-center justify-center bg-red-soft"
           >
             <Icon name="search" size={24} strokeWidth={1.75} />
           </div>
@@ -129,7 +129,7 @@ function SearchResultRow({
   return (
     <Link
       href={href}
-      className={`flex items-start gap-6 px-[18px] py-[14px] no-underline hover:bg-paper-2 transition-colors${isLast ? "" : "border-ink-b"}`}
+      className={`flex items-start gap-6 px-9 py-7 no-underline hover:bg-paper-2 transition-colors${isLast ? "" : "border-ink-b"}`}
     >
       <span
         className={`mt-1 shrink-0 px-4 py-1 font-mono text-sm uppercase tracking-[0.04em] ${isCommunity ? "bg-red-soft text-red" : "bg-paper-3 text-ink-2"}`}
@@ -139,9 +139,9 @@ function SearchResultRow({
       <div className="min-w-0 flex-1">
         <p className="m-0 font-serif text-md font-semibold leading-snug text-ink">{result.title}</p>
         {result.snippet && (
-          <p className="mt-[6px] line-clamp-2 text-base text-ink-3">{result.snippet}</p>
+          <p className="mt-3 line-clamp-2 text-base text-ink-3">{result.snippet}</p>
         )}
-        <div className="mt-[6px] flex flex-wrap items-center gap-4">
+        <div className="mt-3 flex flex-wrap items-center gap-4">
           {!isCommunity && result.communityName && (
             <span className="font-mono text-sm text-ink-3">f/{result.communityName}</span>
           )}

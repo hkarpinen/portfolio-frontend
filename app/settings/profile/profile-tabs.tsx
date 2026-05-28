@@ -12,7 +12,7 @@ const PROFILE_TAB_HREFS: Record<ProfileTab, string> = {
 
 export function ProfileTabs({ active }: { active: ProfileTab }) {
   return (
-    <nav aria-label="Profile sections" className="border-ink-b mb-[28px] flex gap-2">
+    <nav aria-label="Profile sections" className="border-ink-b mb-14 flex gap-2">
       {PROFILE_TABS.map((tab) => {
         const isActive = tab === active;
         return (

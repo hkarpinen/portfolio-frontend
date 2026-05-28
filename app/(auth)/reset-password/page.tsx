@@ -77,7 +77,7 @@ function ResetPasswordContent() {
   if (!userId || !token) {
     return (
       <div className="ed-auth-card text-center">
-        <div className="mx-auto mb-8 flex h-[56px] w-[56px] items-center justify-center border border-red bg-red-soft">
+        <div className="mx-auto mb-8 flex h-28 w-28 items-center justify-center border border-red bg-red-soft">
           <span className="text-red">
             <Icon name="x" size={24} strokeWidth={2} />
           </span>
@@ -97,7 +97,7 @@ function ResetPasswordContent() {
   if (resetMutation.isSuccess) {
     return (
       <div className="ed-auth-card text-center">
-        <div className="mx-auto mb-8 flex h-[56px] w-[56px] items-center justify-center border border-green bg-green-soft">
+        <div className="mx-auto mb-8 flex h-28 w-28 items-center justify-center border border-green bg-green-soft">
           <span className="text-green">
             <Icon name="check" size={24} strokeWidth={2} />
           </span>
@@ -156,7 +156,7 @@ function ResetPasswordContent() {
             onClick={() => setShowNew((s) => !s)}
             aria-label={showNew ? "Hide password" : "Show password"}
             aria-pressed={showNew}
-            className="absolute bottom-[7px] right-0 cursor-pointer border-none bg-transparent p-0 leading-none text-ink-3"
+            className="absolute bottom-3.5 right-0 cursor-pointer border-none bg-transparent p-0 leading-none text-ink-3"
           >
             {EYE(showNew)}
           </button>
@@ -176,7 +176,7 @@ function ResetPasswordContent() {
             onClick={() => setShowConfirm((s) => !s)}
             aria-label={showConfirm ? "Hide confirm password" : "Show confirm password"}
             aria-pressed={showConfirm}
-            className="absolute bottom-[7px] right-0 cursor-pointer border-none bg-transparent p-0 leading-none text-ink-3"
+            className="absolute bottom-3.5 right-0 cursor-pointer border-none bg-transparent p-0 leading-none text-ink-3"
           >
             {EYE(showConfirm)}
           </button>
@@ -205,7 +205,7 @@ export default function ResetPasswordPage() {
         <div className="ed-auth-card flex items-center justify-center py-16">
           {/* Spinner: composite border + animation has no single Tailwind equivalent — kept inline */}
           <div
-            className="h-[48px] w-[48px]"
+            className="h-24 w-24"
             style={{
               border: "2px solid var(--ink-4)",
               borderTopColor: "var(--ink)",

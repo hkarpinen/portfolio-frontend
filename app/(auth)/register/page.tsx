@@ -29,7 +29,7 @@ function PasswordStrength({ password }: { password: string }) {
 
   return (
     <div className="mt-2 flex flex-col gap-2">
-      <div className="flex gap-[3px]">
+      <div className="flex gap-1.5">
         {[0, 1, 2, 3].map((i) => (
           <div
             key={i}
@@ -231,7 +231,7 @@ export default function RegisterPage() {
                 onClick={() => setShowPw((s) => !s)}
                 aria-label={showPw ? "Hide password" : "Show password"}
                 aria-pressed={showPw}
-                className="absolute bottom-[7px] right-0 cursor-pointer border-none bg-transparent p-0 leading-none text-ink-3"
+                className="absolute bottom-3.5 right-0 cursor-pointer border-none bg-transparent p-0 leading-none text-ink-3"
               >
                 {EYE(showPw)}
               </button>
@@ -256,7 +256,7 @@ export default function RegisterPage() {
               onClick={() => setShowConfirm((s) => !s)}
               aria-label={showConfirm ? "Hide password" : "Show password"}
               aria-pressed={showConfirm}
-              className="absolute bottom-[7px] right-0 cursor-pointer border-none bg-transparent p-0 leading-none text-ink-3"
+              className="absolute bottom-3.5 right-0 cursor-pointer border-none bg-transparent p-0 leading-none text-ink-3"
             >
               {EYE(showConfirm)}
             </button>

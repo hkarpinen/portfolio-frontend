@@ -94,7 +94,7 @@ export function CommunitySettingsForm({
           name={name}
           avatarUrl={imageUrl}
           size="lg"
-          className="h-[56px] w-[56px] border-ink text-xl"
+          className="h-28 w-28 border-ink text-xl"
         />
         <div className="flex flex-1 flex-col gap-3">
           <span className="text-base font-medium text-ink-2">Community image</span>

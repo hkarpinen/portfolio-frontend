@@ -62,7 +62,7 @@ export function AddIncomeForm() {
     <div className="border-ink bg-paper p-10 shadow-stamp">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-[14px]"
+        className="flex flex-col gap-7"
         aria-label="Add income source"
         noValidate
       >

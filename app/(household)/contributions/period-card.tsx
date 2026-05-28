@@ -90,7 +90,7 @@ function PeriodCardHeader({
         <div className="flex min-w-0 items-center gap-4">
           <h3 className="m-0 whitespace-nowrap font-serif text-md font-bold text-ink">{p.label}</h3>
           {p.isCurrent && (
-            <span className="shrink-0 bg-red-soft px-[7px] py-[1px] text-sm font-semibold text-red">
+            <span className="shrink-0 bg-red-soft px-3.5 py-0.5 text-sm font-semibold text-red">
               Current
             </span>
           )}
@@ -142,7 +142,7 @@ function PeriodCardTable({
       <thead>
         <tr className="bg-paper-2">
           <th
-            className="border-ink-b w-[44px] pl-10 pr-4 text-right text-sm font-bold uppercase tracking-[0.08em] text-ink-3"
+            className="border-ink-b w-11 pl-10 pr-4 text-right text-sm font-bold uppercase tracking-[0.08em] text-ink-3"
             style={{ ...tdMeta }}
           >
             {isMonthly ? "Day" : ""}

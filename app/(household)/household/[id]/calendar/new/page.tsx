@@ -68,7 +68,7 @@ export default function NewCalendarEventPage({ params }: { params: { id: string 
 
         <Textarea
           label="Description"
-          className="min-h-[80px]"
+          className="min-h-40"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Optional notes…"

@@ -50,7 +50,7 @@ export default function AppearancePage() {
                     className="h-4 w-4 shrink-0 accent-[var(--red)]"
                     aria-describedby={`theme-desc-${opt.id}`}
                   />
-                  <span className="flex min-w-0 flex-col gap-[2px]">
+                  <span className="flex min-w-0 flex-col gap-1">
                     <span
                       className={`text-base font-semibold ${isActive ? "text-paper" : "text-ink"}`}
                     >
@@ -98,7 +98,7 @@ export default function AppearancePage() {
                     className="h-4 w-4 shrink-0 accent-[var(--red)]"
                     aria-describedby={`density-desc-${opt.id}`}
                   />
-                  <span className="flex min-w-0 flex-col gap-[2px]">
+                  <span className="flex min-w-0 flex-col gap-1">
                     <span
                       className={`text-base font-semibold ${isActive ? "text-paper" : "text-ink"}`}
                     >

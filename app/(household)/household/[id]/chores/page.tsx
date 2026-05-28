@@ -51,7 +51,7 @@ function ChoreRow({
 
   return (
     <tr className={`border-b border-rule-soft group${due.overdue ? "" : ""}`}>
-      <td className="w-[36px] py-[14px] pr-4">
+      <td className="w-18 py-7 pr-4">
         <button
           onClick={() => onComplete(chore.id)}
           disabled={completing || done}
@@ -62,7 +62,7 @@ function ChoreRow({
           {done && <Icon name="check" size={12} strokeWidth={2.5} aria-hidden />}
         </button>
       </td>
-      <td className="py-[14px] pr-6">
+      <td className="py-7 pr-6">
         <span
           className={`font-serif text-[1.0625rem] italic ${done ? "text-ink-3 line-through" : "text-ink"}`}
         >
@@ -70,11 +70,11 @@ function ChoreRow({
           {done && <span className="sr-only"> (completed)</span>}
         </span>
       </td>
-      <td className="ed-label-muted whitespace-nowrap py-[14px] pr-6">
+      <td className="ed-label-muted whitespace-nowrap py-7 pr-6">
         {assignee ? (assignee.displayName ?? assignee.username) : "Anyone"}
       </td>
       <td
-        className={`whitespace-nowrap py-[14px] pr-6 font-mono text-xs tracking-[0.04em] ${due.overdue ? "font-semibold text-red" : "text-ink-3"}`}
+        className={`whitespace-nowrap py-7 pr-6 font-mono text-xs tracking-[0.04em] ${due.overdue ? "font-semibold text-red" : "text-ink-3"}`}
       >
         {/* Color alone never conveys overdue — the word "Overdue" is in the sr-text */}
         <span aria-label={due.srText}>
@@ -90,7 +90,7 @@ function ChoreRow({
           </span>
         )}
       </td>
-      <td className="whitespace-nowrap py-[14px]">
+      <td className="whitespace-nowrap py-7">
         <div className="flex items-center justify-between gap-4">
           <span className="ed-label-muted">
             {chore.recurrenceFrequency
@@ -181,19 +181,19 @@ export default function ChoresPage() {
             <table className="w-full border-collapse" aria-label="Household chores">
               <thead>
                 <tr className="border-b border-[var(--ink)]">
-                  <th scope="col" className="w-[36px] pb-[10px]">
+                  <th scope="col" className="w-18 pb-5">
                     <span className="sr-only">Complete</span>
                   </th>
-                  <th scope="col" className="ed-kicker pb-[10px] pr-6 text-left font-normal">
+                  <th scope="col" className="ed-kicker pb-5 pr-6 text-left font-normal">
                     Chore
                   </th>
-                  <th scope="col" className="ed-kicker pb-[10px] pr-6 text-left font-normal">
+                  <th scope="col" className="ed-kicker pb-5 pr-6 text-left font-normal">
                     Assigned to
                   </th>
-                  <th scope="col" className="ed-kicker pb-[10px] pr-6 text-left font-normal">
+                  <th scope="col" className="ed-kicker pb-5 pr-6 text-left font-normal">
                     Due
                   </th>
-                  <th scope="col" className="ed-kicker pb-[10px] text-left font-normal">
+                  <th scope="col" className="ed-kicker pb-5 text-left font-normal">
                     Repeats
                   </th>
                 </tr>

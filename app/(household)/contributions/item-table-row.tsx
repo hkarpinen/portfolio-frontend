@@ -34,7 +34,7 @@ export function ItemTableRow({ item, isLast }: { item: TableItem; isLast: boolea
   const borderCls = isLast ? "" : " border-ink-b";
   return (
     <tr>
-      <td className={`w-[44px] pl-10 pr-4 text-right${borderCls}`} style={{ ...tdMeta }}>
+      <td className={`w-11 pl-10 pr-4 text-right${borderCls}`} style={{ ...tdMeta }}>
         {item.dayLabel}
       </td>
       <td className={`font-semibold${borderCls}`} style={{ ...tdBase }}>
@@ -43,7 +43,7 @@ export function ItemTableRow({ item, isLast }: { item: TableItem; isLast: boolea
       <td className={borderCls} style={{ ...tdMeta }}>
         {/* bg/color/border are data-driven (Shared vs Personal) */}
         <span
-          className={`inline-block px-[7px] py-[1px] font-mono text-sm ${item.type === "Shared" ? "bg-red-soft text-red [border:1px_solid_rgba(178,42,26,0.3)]" : "border border-ink-3 bg-paper-3 text-ink-3"}`}
+          className={`inline-block px-3.5 py-0.5 font-mono text-sm ${item.type === "Shared" ? "bg-red-soft text-red [border:1px_solid_rgba(178,42,26,0.3)]" : "border border-ink-3 bg-paper-3 text-ink-3"}`}
         >
           {item.type}
         </span>
@@ -83,13 +83,13 @@ export function ItemTableRow({ item, isLast }: { item: TableItem; isLast: boolea
 export function StackedItemRow({ item, isLast }: { item: TableItem; isLast: boolean }) {
   return (
     <div
-      className={`flex items-start justify-between gap-5 py-[11px] px-[16px]${isLast ? "" : "border-ink-b"}`}
+      className={`flex items-start justify-between gap-5 py-[11px] px-8${isLast ? "" : "border-ink-b"}`}
     >
       <div className="min-w-0 flex-1">
         <div className="overflow-hidden text-ellipsis whitespace-nowrap text-base font-semibold text-ink">
           {item.name}
         </div>
-        <div className="mt-[3px] flex flex-wrap items-center gap-3">
+        <div className="mt-1.5 flex flex-wrap items-center gap-3">
           {item.dayLabel !== "—" && <span className="text-sm text-ink-3">Day {item.dayLabel}</span>}
           {/* bg/color/border are data-driven (Shared vs Personal) */}
           <span

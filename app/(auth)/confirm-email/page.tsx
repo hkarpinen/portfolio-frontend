@@ -46,7 +46,7 @@ function ConfirmEmailContent() {
           <div
             role="status"
             aria-label="Confirming your email, please wait"
-            className="mx-auto mb-10 h-[56px] w-[56px]"
+            className="mx-auto mb-10 h-28 w-28"
             style={{
               border: "2px solid var(--ink-4)",
               borderTopColor: "var(--ink)",
@@ -61,7 +61,7 @@ function ConfirmEmailContent() {
 
       {status === "success" && (
         <>
-          <div className="mx-auto mb-10 flex h-[56px] w-[56px] items-center justify-center border border-green bg-green-soft">
+          <div className="mx-auto mb-10 flex h-28 w-28 items-center justify-center border border-green bg-green-soft">
             <span className="text-green">
               <Icon name="check" size={24} strokeWidth={2} />
             </span>
@@ -69,7 +69,7 @@ function ConfirmEmailContent() {
           <h1 className="ed-h1 mb-4">
             Email confirmed<span className="text-red">.</span>
           </h1>
-          <p className="mb-[28px] text-base leading-[1.6] text-ink-3">{message}</p>
+          <p className="mb-14 text-base leading-[1.6] text-ink-3">{message}</p>
           <Btn href="/login" variant="primary">
             Sign in
           </Btn>
@@ -78,7 +78,7 @@ function ConfirmEmailContent() {
 
       {status === "error" && (
         <>
-          <div className="mx-auto mb-10 flex h-[56px] w-[56px] items-center justify-center border border-red bg-red-soft">
+          <div className="mx-auto mb-10 flex h-28 w-28 items-center justify-center border border-red bg-red-soft">
             <span className="text-red">
               <Icon name="x" size={24} strokeWidth={2} />
             </span>
@@ -113,7 +113,7 @@ export default function ConfirmEmailPage() {
         <div className="ed-auth-card text-center">
           {/* Spinner: composite border + animation combo has no single Tailwind equivalent — kept inline */}
           <div
-            className="mx-auto h-[48px] w-[48px]"
+            className="mx-auto h-24 w-24"
             style={{
               border: "2px solid var(--ink-4)",
               borderTopColor: "var(--ink)",

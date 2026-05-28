@@ -1014,6 +1014,49 @@ html[data-density="compact"] {
     color: var(--paper);
   }
 
+  /* ── Settings-page inputs (audit §2.5) ──────────────────────────────
+     The settings UI uses a bottom-border-only input variant (smaller,
+     more typewritten than ed-input). Previously these styles lived as
+     React state + inline `style={{}}` in app/settings/settings-ui.tsx;
+     pulling them into CSS lets the focus state be a real `:focus`
+     pseudo-class and eliminates the per-render re-creation of style
+     objects. */
+  .ed-settings-input {
+    width: 100%;
+    height: 38px;
+    padding: 0 12px;
+    background: transparent;
+    color: var(--ink);
+    font-family: var(--ff-body);
+    font-size: 0.938rem;
+    border: 0;
+    border-bottom: 1.5px solid var(--ink-3);
+    border-radius: 0;
+    outline: none;
+    transition: border-color 150ms ease;
+  }
+  .ed-settings-input:focus {
+    border-color: var(--ink);
+    box-shadow: 0 0 0 3px rgba(178, 42, 26, 0.08);
+  }
+  .ed-settings-textarea {
+    width: 100%;
+    resize: vertical;
+    padding: 10px 12px;
+    background: var(--paper-2);
+    color: var(--ink);
+    font-family: var(--ff-body);
+    font-size: 0.938rem;
+    border: 1.5px solid var(--ink-3);
+    border-radius: 0;
+    outline: none;
+    transition: border-color 150ms ease;
+  }
+  .ed-settings-textarea:focus {
+    border-color: var(--ink);
+    box-shadow: 0 0 0 3px rgba(178, 42, 26, 0.08);
+  }
+
   /* ── Input / Textarea / Select ────────────────────────────────────── */
   .ed-input {
     width: 100%;

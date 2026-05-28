@@ -48,7 +48,7 @@ export function IncomeCard({
 
   return (
     <>
-      <div className="border-ink bg-paper px-[16px] py-[14px] shadow-stamp">
+      <div className="border-ink bg-paper px-8 py-7 shadow-stamp">
         <CardHeaderRow
           source={source}
           expanded={expanded}
@@ -158,7 +158,7 @@ function CardHeaderRow({
         aria-label={`Gross ${periodLabel}: $${formatAmount(grossMonthly * factor)}${netMonthly !== null && netMonthly !== grossMonthly ? `, net: $${formatAmount(netMonthly * factor)}` : ""}`}
       >
         <div className="text-right">
-          <div className="mb-[1px] text-sm font-bold uppercase tracking-[0.08em] text-ink-3">
+          <div className="mb-0.5 text-sm font-bold uppercase tracking-[0.08em] text-ink-3">
             Gross · {periodLabel}
           </div>
           <span className="font-serif text-md font-bold tabular-nums tracking-snug text-ink">
@@ -171,7 +171,7 @@ function CardHeaderRow({
               <Icon name="arrowRight" size={10} strokeWidth={2.5} />
             </span>
             <div className="text-right">
-              <div className="mb-[1px] text-sm font-bold uppercase tracking-[0.08em] text-ink-3">
+              <div className="mb-0.5 text-sm font-bold uppercase tracking-[0.08em] text-ink-3">
                 Net
               </div>
               <span className="font-serif text-md font-bold tabular-nums tracking-snug text-ink">
@@ -246,11 +246,11 @@ function CardHeaderRow({
 
 function DeductionChips({ source }: { source: IncomeSource }) {
   return (
-    <div className="mt-[10px] flex flex-wrap gap-[6px]">
+    <div className="mt-5 flex flex-wrap gap-3">
       {source.deductions!.map((d, i) => (
         <span
           key={i}
-          className="inline-flex items-center gap-[4px] px-[8px] py-[2px] text-sm font-semibold uppercase tracking-[0.06em]"
+          className="inline-flex items-center gap-2 px-4 py-1 text-sm font-semibold uppercase tracking-[0.06em]"
           style={{
             background: "var(--paper-3)",
             color: "var(--ink-3)",
@@ -264,7 +264,7 @@ function DeductionChips({ source }: { source: IncomeSource }) {
       ))}
       {source.taxProfile && (
         <span
-          className="inline-flex items-center gap-[4px] px-[8px] py-[2px] text-sm font-semibold uppercase tracking-[0.06em]"
+          className="inline-flex items-center gap-2 px-4 py-1 text-sm font-semibold uppercase tracking-[0.06em]"
           style={{
             background: "rgba(178,42,26,0.06)",
             color: "var(--red)",

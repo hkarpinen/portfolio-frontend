@@ -92,7 +92,7 @@ export function AddDeductionForm({
   const canAdd = dValue && !isNaN(val) && val > 0;
 
   return (
-    <div className="flex flex-col gap-[14px] border border-accent-border bg-paper-2 p-8">
+    <div className="flex flex-col gap-7 border border-accent-border bg-paper-2 p-8">
       {/* Type */}
       <FieldGroup label="Type">
         <SelectField
@@ -106,7 +106,7 @@ export function AddDeductionForm({
             </option>
           ))}
         </SelectField>
-        {cfg?.hint ? <span className="mt-[1px] text-sm text-red">{cfg.hint}</span> : null}
+        {cfg?.hint ? <span className="mt-0.5 text-sm text-red">{cfg.hint}</span> : null}
       </FieldGroup>
 
       {/* Label (optional) */}
@@ -167,7 +167,7 @@ export function AddDeductionForm({
         <button
           type="button"
           onClick={() => setAdvancedOpen(!advancedOpen)}
-          className="flex w-full cursor-pointer items-center justify-between border-none bg-transparent px-[12px] py-[9px]"
+          className="flex w-full cursor-pointer items-center justify-between border-none bg-transparent px-6 py-[9px]"
         >
           <span className="text-base font-semibold text-ink-3">Advanced</span>
           <svg

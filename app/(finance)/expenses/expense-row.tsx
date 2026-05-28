@@ -218,7 +218,7 @@ export function ExpenseRow({
       {/* Inline edit form */}
       {isEditing && (
         <div
-          className="border-t border-ink bg-paper-2 px-[18px] py-[16px]"
+          className="border-t border-ink bg-paper-2 px-9 py-8"
           role="region"
           aria-label={`Edit ${expense.title}`}
         >

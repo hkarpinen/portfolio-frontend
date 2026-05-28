@@ -132,18 +132,33 @@ const config: Config = {
       },
 
       spacing: {
+        // Audit §2.2: extended to absorb the half-step values that previously
+        // forced 127 `gap-[Npx]` / `p-[Npx]` arbitrary classes. The scale is
+        // still on a 2px grain, with half-steps (0.5/1.5/3.5/9/…) added for
+        // the pixel values the design actually uses. Touch-target floor
+        // (44px) stays in `minHeight.hit` rather than here so it doesn't
+        // sprawl into width/padding shorthands.
+        "0.5": "1px", // hairlines, fine offsets
         "1": "2px",
+        "1.5": "3px",
         "2": "4px",
         "3": "6px",
+        "3.5": "7px",
         "4": "8px",
         "5": "10px",
         "6": "12px",
+        "7": "14px", // common: input padding, icon-row gap, masthead pad
         "8": "16px",
+        "9": "18px",
         "10": "20px",
+        "11": "44px", // WCAG 2.5.5 touch-target floor (matches minHeight.hit)
         "12": "24px",
+        "14": "28px",
         "16": "32px",
+        "18": "36px",
         "20": "40px",
         "24": "48px",
+        "28": "56px", // avatar slot used in 6+ places
         "32": "64px",
         "40": "80px",
         "48": "96px",
@@ -195,6 +210,12 @@ const config: Config = {
 
       minHeight: {
         // Touch target floor — every interactive control uses this
+        hit: "44px",
+      },
+
+      minWidth: {
+        // Companion to minHeight.hit; square 44×44 click areas are the
+        // common WCAG 2.5.5 target for icon-only buttons.
         hit: "44px",
       },
 

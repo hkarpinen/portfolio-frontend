@@ -53,7 +53,7 @@ export function TwoFactorSection() {
         {twoFaEnabled === true && (
           <span
             role="status"
-            className="bg-green-soft px-[10px] py-[3px] text-sm font-semibold text-green"
+            className="bg-green-soft px-5 py-1.5 text-sm font-semibold text-green"
             style={{ border: "1px solid oklch(68% 0.18 152 / 0.25)" }}
           >
             Active
@@ -69,7 +69,7 @@ export function TwoFactorSection() {
 
       {twoFaEnabled === false && !qrCodeUrl && (
         <div>
-          <p className="mb-[14px] text-base text-ink-3">
+          <p className="mb-7 text-base text-ink-3">
             Add an extra layer of security to your account using an authenticator app.
           </p>
           {totpError && (
@@ -87,7 +87,7 @@ export function TwoFactorSection() {
       )}
 
       {qrCodeUrl && (
-        <div className="flex flex-col gap-[14px]">
+        <div className="flex flex-col gap-7">
           <p className="text-base text-ink-3">
             Scan the QR code with your authenticator app, then enter the 6-digit code below to
             confirm.

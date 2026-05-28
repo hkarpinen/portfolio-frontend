@@ -34,7 +34,7 @@ export function MarkPaidButton({
       <button
         onClick={handleClick}
         disabled={isPending}
-        className="inline-flex cursor-pointer items-center gap-3 rounded-full px-[14px] py-[6px] text-base font-semibold transition-[background] duration-[110ms] disabled:cursor-not-allowed disabled:opacity-70"
+        className="inline-flex cursor-pointer items-center gap-3 rounded-full px-7 py-3 text-base font-semibold transition-[background] duration-[110ms] disabled:cursor-not-allowed disabled:opacity-70"
         /* background/color/border use color-mix() — no Tailwind equivalent */
         style={{
           background: isPending
@@ -54,7 +54,7 @@ export function MarkPaidButton({
     <button
       onClick={handleClick}
       disabled={isPending}
-      className="inline-flex cursor-pointer items-center gap-3 rounded-full px-[14px] py-[6px] text-base font-medium transition-[background] duration-[110ms] disabled:cursor-not-allowed disabled:opacity-70"
+      className="inline-flex cursor-pointer items-center gap-3 rounded-full px-7 py-3 text-base font-medium transition-[background] duration-[110ms] disabled:cursor-not-allowed disabled:opacity-70"
       /* background/color use CSS token expressions; border uses oklch literal */
       style={{
         background: isPending ? "var(--paper-3)" : "var(--success-s)",

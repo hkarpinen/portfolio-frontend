@@ -50,7 +50,7 @@ export function JoinHouseholdModal({ open, onOpenChange }: JoinHouseholdModalPro
       actions={actions}
       maxWidth={400}
     >
-      <div className="flex flex-col gap-[14px]">
+      <div className="flex flex-col gap-7">
         <p className="text-base leading-[1.5] text-ink-2">
           Enter the invite code shared by a household member to join their household.
         </p>

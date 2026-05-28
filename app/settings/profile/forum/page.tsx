@@ -63,7 +63,7 @@ export default function ForumProfileSettingsPage() {
               )}
             </div>
             <div>
-              <label htmlFor="forum-bio" className="ed-label mb-[6px] block">
+              <label htmlFor="forum-bio" className="ed-label mb-3 block">
                 Bio <span className="font-normal text-ink-3">(optional)</span>
               </label>
               <FocusTextarea
@@ -80,7 +80,7 @@ export default function ForumProfileSettingsPage() {
               )}
             </div>
             <div>
-              <label htmlFor="forum-signature" className="ed-label mb-[6px] block">
+              <label htmlFor="forum-signature" className="ed-label mb-3 block">
                 Signature <span className="font-normal text-ink-3">(optional)</span>
               </label>
               <FocusTextarea

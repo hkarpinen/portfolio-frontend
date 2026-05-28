@@ -38,7 +38,7 @@ export function ForumTabs({
         <div className="flex flex-col gap-5">
           {communities.length === 0 ? (
             <div className="flex flex-col items-center justify-center gap-6 border-ink bg-paper px-12 py-32">
-              <div className="flex h-[56px] w-[56px] items-center justify-center bg-red-soft">
+              <div className="flex h-28 w-28 items-center justify-center bg-red-soft">
                 <Icon name="community" size={24} strokeWidth={1.5} />
               </div>
               <p className="font-serif text-md font-bold text-ink">No communities yet</p>
@@ -55,7 +55,7 @@ export function ForumTabs({
                 className="no-underline"
               >
                 <div
-                  className="community-card flex items-center gap-6 border-ink bg-paper px-[18px] py-[16px]"
+                  className="community-card flex items-center gap-6 border-ink bg-paper px-9 py-8"
                   style={{ transition: "transform 200ms var(--ease-spring), box-shadow 200ms" }}
                 >
                   <CommunityAvatar community={community} size={44} />
@@ -88,7 +88,7 @@ export function ForumTabs({
         <div className="flex flex-col gap-5">
           {feedThreads.length === 0 ? (
             <div className="flex flex-col items-center justify-center gap-6 border-ink bg-paper px-12 py-32">
-              <div className="flex h-[56px] w-[56px] items-center justify-center bg-red-soft">
+              <div className="flex h-28 w-28 items-center justify-center bg-red-soft">
                 <Icon name="feed" size={24} strokeWidth={1.5} />
               </div>
               <p className="font-serif text-md font-bold text-ink">No threads yet</p>
@@ -112,7 +112,7 @@ export function ForumTabs({
         <div className="flex flex-col gap-5">
           {hotThreads.length === 0 ? (
             <div className="flex flex-col items-center justify-center gap-6 border-ink bg-paper px-12 py-32">
-              <div className="flex h-[56px] w-[56px] items-center justify-center bg-red-soft">
+              <div className="flex h-28 w-28 items-center justify-center bg-red-soft">
                 <Icon name="trendUp" size={24} strokeWidth={1.5} />
               </div>
               <p className="font-serif text-md font-bold text-ink">Nothing trending yet</p>

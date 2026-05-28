@@ -38,7 +38,7 @@ export function TaxWithholdingTab({ source }: { source: IncomeSource }) {
 
   return (
     <div className="flex flex-col gap-8">
-      <label className="flex cursor-pointer items-center justify-between border-ink bg-paper-2 px-[14px] py-[12px]">
+      <label className="flex cursor-pointer items-center justify-between border-ink bg-paper-2 px-7 py-6">
         <div>
           <span className="text-base font-semibold text-ink">Calculate tax withholding</span>
           <p className="mt-1 text-sm text-ink-3">
@@ -58,7 +58,7 @@ export function TaxWithholdingTab({ source }: { source: IncomeSource }) {
           />
           {/* left position is dynamic; --ease-spring has no Tailwind equivalent */}
           <div
-            className={`absolute top-[3px] h-8 w-8 rounded-full bg-white shadow-[0_1px_3px_rgba(0,0,0,0.25)]${taxEnabled ? "left-[21px]" : "left-[3px]"}`}
+            className={`absolute top-1.5 h-8 w-8 rounded-full bg-white shadow-[0_1px_3px_rgba(0,0,0,0.25)]${taxEnabled ? "left-[21px]" : "left-1.5"}`}
             style={{ transition: "left 150ms var(--ease-spring)" }}
           />
         </div>

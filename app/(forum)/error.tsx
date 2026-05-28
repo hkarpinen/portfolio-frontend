@@ -1,6 +1,6 @@
-import { ErrorSplash } from "@/components/editorial";
-
 "use client";
+
+import { ErrorSplash } from "@/components/editorial";
 
 export default function ForumError({
   error,

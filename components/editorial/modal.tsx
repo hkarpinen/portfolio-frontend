@@ -40,7 +40,7 @@ export function Modal({
           >
             {/* Header */}
             <div
-              className="flex shrink-0 items-center justify-between px-[22px] py-[16px]"
+              className="flex shrink-0 items-center justify-between px-[22px] py-8"
               style={{ borderBottom: "1.5px solid var(--ink)" }}
             >
               <Dialog.Title
@@ -72,7 +72,7 @@ export function Modal({
             {/* Actions */}
             {actions && (
               <div
-                className="flex shrink-0 items-center justify-end gap-[10px] px-[22px] py-[14px]"
+                className="flex shrink-0 items-center justify-end gap-5 px-[22px] py-7"
                 style={{ borderTop: "1.5px solid var(--ink)" }}
               >
                 {actions}

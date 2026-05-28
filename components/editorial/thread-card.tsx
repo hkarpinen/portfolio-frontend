@@ -17,15 +17,15 @@ export function ThreadCard({ thread, slug, communityName, showCommunity = true }
 
   return (
     <div
-      className="thread-card border-ink bg-paper px-[18px] py-[16px]"
+      className="thread-card border-ink bg-paper px-9 py-8"
       style={{ transition: "transform 200ms var(--ease-spring), box-shadow 200ms" }}
     >
       {/* Desktop: horizontal vote + content */}
       <div className="thread-card-inner flex items-start gap-6">
         {/* Vote score — static */}
-        <div className="thread-vote-col flex w-[28px] shrink-0 flex-col items-center justify-center">
+        <div className="thread-vote-col flex w-14 shrink-0 flex-col items-center justify-center">
           <span
-            className="min-w-[28px] text-center text-base font-bold"
+            className="min-w-14 text-center text-base font-bold"
             style={{ color: "var(--text-2)" }}
           >
             {thread.voteScore ?? 0}
@@ -50,7 +50,7 @@ export function ThreadCard({ thread, slug, communityName, showCommunity = true }
               </span>
               {thread.isPinned && (
                 <span
-                  className="bg-green-soft px-[6px] py-[1px] font-mono text-green"
+                  className="bg-green-soft px-3 py-0.5 font-mono text-green"
                   style={{ fontSize: "0.594rem", letterSpacing: "0.12em" }}
                 >
                   Pinned
@@ -58,7 +58,7 @@ export function ThreadCard({ thread, slug, communityName, showCommunity = true }
               )}
               {thread.flair && thread.flair !== "None" && (
                 <span
-                  className="bg-red-soft px-[6px] py-[1px] font-mono text-red"
+                  className="bg-red-soft px-3 py-0.5 font-mono text-red"
                   style={{ fontSize: "0.594rem", letterSpacing: "0.12em" }}
                 >
                   {thread.flair}

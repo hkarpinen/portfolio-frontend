@@ -51,9 +51,9 @@ export function SettingsForm({ household }: { household: Household }) {
   };
 
   return (
-    <section className="flex flex-col gap-[16px] border-ink bg-paper-2 p-[24px] shadow-sm">
+    <section className="flex flex-col gap-8 border-ink bg-paper-2 p-12 shadow-sm">
       <p className="text-sm font-bold uppercase tracking-[0.1em] text-ink-3">Household Details</p>
-      <form onSubmit={handleSubmit(onSave)} className="flex flex-col gap-[14px]">
+      <form onSubmit={handleSubmit(onSave)} className="flex flex-col gap-7">
         {updateHouseholdMutation.isError && (
           <Alert variant="danger">{getErrorMessage(updateHouseholdMutation.error)}</Alert>
         )}

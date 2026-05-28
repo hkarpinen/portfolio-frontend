@@ -108,7 +108,7 @@ export default function AdminPage() {
                           <UserInitials
                             name={user.displayName}
                             size="sm"
-                            className="h-[28px] w-[28px]"
+                            className="h-14 w-14"
                           />
                           <span className="overflow-hidden text-ellipsis whitespace-nowrap text-base font-medium text-ink">
                             {user.displayName}
@@ -140,7 +140,7 @@ export default function AdminPage() {
                           onChange={(e) =>
                             changeRole.mutate({ userId: user.id, role: e.target.value })
                           }
-                          className="h-[36px] cursor-pointer border-ink bg-paper-2 px-2 text-base text-ink outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                          className="h-18 cursor-pointer border-ink bg-paper-2 px-2 text-base text-ink outline-none disabled:cursor-not-allowed disabled:opacity-50"
                           aria-label={`Change role for ${user.displayName}`}
                         >
                           <option value="Member">Member</option>

@@ -120,16 +120,16 @@ export default function HouseholdContributionsPage() {
                 >
                   <thead>
                     <tr className="border-b border-[var(--ink)]">
-                      <th scope="col" className="ed-kicker pb-[10px] pr-6 text-left font-normal">
+                      <th scope="col" className="ed-kicker pb-5 pr-6 text-left font-normal">
                         Member
                       </th>
-                      <th scope="col" className="ed-kicker pb-[10px] pr-6 text-right font-normal">
+                      <th scope="col" className="ed-kicker pb-5 pr-6 text-right font-normal">
                         Paid
                       </th>
-                      <th scope="col" className="ed-kicker pb-[10px] pr-6 text-right font-normal">
+                      <th scope="col" className="ed-kicker pb-5 pr-6 text-right font-normal">
                         Owed
                       </th>
-                      <th scope="col" className="ed-kicker pb-[10px] text-right font-normal">
+                      <th scope="col" className="ed-kicker pb-5 text-right font-normal">
                         Net (+ surplus / − owed)
                       </th>
                     </tr>
@@ -143,17 +143,17 @@ export default function HouseholdContributionsPage() {
                         net >= 0 ? `${netAbs} surplus (overpaid)` : `${netAbs} owed (underpaid)`;
                       return (
                         <tr key={m.userId} className="border-b border-rule-soft">
-                          <td className="py-[14px] pr-6 font-serif text-[1.0625rem] italic text-ink">
+                          <td className="py-7 pr-6 font-serif text-[1.0625rem] italic text-ink">
                             {m.displayName || `Member ${m.userId.slice(0, 6)}…`}
                           </td>
-                          <td className="whitespace-nowrap py-[14px] pr-6 text-right font-mono text-sm text-ink">
+                          <td className="whitespace-nowrap py-7 pr-6 text-right font-mono text-sm text-ink">
                             {formatCurrency(m.totalPaid, cur)}
                           </td>
-                          <td className="whitespace-nowrap py-[14px] pr-6 text-right font-mono text-sm text-ink">
+                          <td className="whitespace-nowrap py-7 pr-6 text-right font-mono text-sm text-ink">
                             {formatCurrency(m.totalDue, cur)}
                           </td>
                           <td
-                            className={`whitespace-nowrap py-[14px] text-right font-mono text-sm ${net >= 0 ? "text-green" : "text-red"}`}
+                            className={`whitespace-nowrap py-7 text-right font-mono text-sm ${net >= 0 ? "text-green" : "text-red"}`}
                             aria-label={netLabel}
                           >
                             {/* Sign (+ or −) provides non-color indicator alongside color */}

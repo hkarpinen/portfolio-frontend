@@ -1,6 +1,6 @@
-import { MastheadRow } from "@/components/editorial";
-
 "use client";
+
+import { MastheadRow } from "@/components/editorial";
 
 /**
  * <NotificationsMasthead> — layout-level masthead for /notifications.

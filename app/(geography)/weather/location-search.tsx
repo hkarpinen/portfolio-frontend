@@ -73,7 +73,7 @@ export function LocationSearch({
                 onClick={() => onUnitChange(u)}
                 aria-pressed={isActive}
                 aria-label={`Show temperatures in ${u === WeatherUnit.Imperial ? "Fahrenheit" : "Celsius"}`}
-                className={`ed-label-muted cursor-pointer border-none px-5 py-3 font-mono uppercase tracking-[0.18em] transition-colors min-h-[44px]${isActive ? "bg-ink text-paper" : "bg-transparent text-ink-2"}${i > 0 ? "border-l-[1.5px] border-[var(--ink)]" : ""}`}
+                className={`ed-label-muted cursor-pointer border-none px-5 py-3 font-mono uppercase tracking-[0.18em] transition-colors min-h-11${isActive ? "bg-ink text-paper" : "bg-transparent text-ink-2"}${i > 0 ? "border-l-[1.5px] border-[var(--ink)]" : ""}`}
               >
                 {label}
               </button>

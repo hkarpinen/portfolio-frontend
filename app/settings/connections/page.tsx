@@ -45,7 +45,7 @@ function OAuthServiceCard({ service }: { service: OAuthService }) {
             <span className="ml-2 text-sm font-normal text-ink-3">· {service.handle}</span>
           )}
         </p>
-        <p className="mt-[3px] text-sm text-ink-3">
+        <p className="mt-1.5 text-sm text-ink-3">
           {service.connected
             ? `Connected · ${service.description}`
             : `Not connected · ${service.description}`}
@@ -84,7 +84,7 @@ function OAuthServiceCard({ service }: { service: OAuthService }) {
 
 function EmptyState({ onConnect, loading }: { onConnect: () => void; loading: boolean }) {
   return (
-    <div className="border border-dashed border-ink-3 bg-paper-2 px-[24px] py-[52px] text-center">
+    <div className="border border-dashed border-ink-3 bg-paper-2 px-12 py-[52px] text-center">
       <div className="mb-10 flex justify-center">
         <span className="text-ink">
           <Icon name="home" size={48} strokeWidth={1.5} />
@@ -156,7 +156,7 @@ export default function ConnectionsPage() {
 
         {linkBank.exchangeError && (
           <p
-            className="mb-8 px-[14px] py-[10px] text-base text-red"
+            className="mb-8 px-7 py-5 text-base text-red"
             style={{ background: "color-mix(in oklch, var(--danger) 10%, transparent)" }}
           >
             Could not link account — please try again.
