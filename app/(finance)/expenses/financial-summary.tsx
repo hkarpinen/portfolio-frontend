@@ -1,4 +1,3 @@
-
 import { LedeStat, PullQuote } from "@/components/editorial";
 import { expensesPullQuote } from "@/lib/finance/editorial-copy";
 import { formatCurrency } from "@/lib/formatting";

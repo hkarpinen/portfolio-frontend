@@ -16,12 +16,15 @@ import { ExpenseCategorySchema, ExpenseItemSchema } from "./expense";
 export const ContributionItemSchema = z.object({
   splitId: z.string(),
   billId: z.string(),
-  groupId: z.string(),
-  /** @deprecated use groupId */
-  householdId: z.string(),
-  householdName: z.string(),
+  /** Nullable on the wire — DTO comment notes it may be null for per-member breakdowns. */
+  groupId: z.string().nullish(),
+  /** @deprecated use groupId — kept for back-compat; backend no longer emits it. */
+  householdId: z.string().nullish(),
+  /** Not currently emitted by ContributionItemDto; consumers render empty until backend joins it in. */
+  householdName: z.string().nullish(),
   billTitle: z.string(),
-  billCategory: ExpenseCategorySchema.optional(),
+  /** Backend sends a raw category string; if it doesn't match the enum, treat as undefined. */
+  billCategory: ExpenseCategorySchema.nullish(),
   amount: z.number(),
   currency: z.string(),
   dueDate: z.string(),
@@ -46,7 +49,7 @@ export type HouseholdContributionItem = z.infer<typeof HouseholdContributionItem
 
 export const MemberContributionSchema = z.object({
   userId: z.string(),
-  displayName: z.string().optional(),
+  displayName: z.string().nullish(),
   totalDue: z.number(),
   totalPaid: z.number(),
   contributions: z.array(HouseholdContributionItemSchema),

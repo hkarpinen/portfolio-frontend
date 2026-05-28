@@ -43,9 +43,7 @@ export function ExpenseSplitsSection({
   const splitUserIds = new Set(
     splits.map((s) => s.userId?.toLowerCase()).filter(Boolean) as string[],
   );
-  const eligibleMembers = members.filter(
-    (m) => !splitUserIds.has(m.userId?.toLowerCase() ?? ""),
-  );
+  const eligibleMembers = members.filter((m) => !splitUserIds.has(m.userId?.toLowerCase() ?? ""));
   const currentUserInSplit = !!(
     currentMembership && splitUserIds.has(currentMembership.userId?.toLowerCase() ?? "")
   );

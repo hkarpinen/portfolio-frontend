@@ -1,6 +1,14 @@
 "use client";
 
-import { Alert, Btn, ConfirmDeleteDialog, Input, SelectField, Textarea, UserInitials } from "@/components/editorial";
+import {
+  Alert,
+  Btn,
+  ConfirmDeleteDialog,
+  Input,
+  SelectField,
+  Textarea,
+  UserInitials,
+} from "@/components/editorial";
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -82,9 +90,7 @@ export function CommunitySettingsForm({
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-10">
       {updateCommunity.isError && (
-        <Alert variant="danger">
-          {getErrorMessage(updateCommunity.error)}
-        </Alert>
+        <Alert variant="danger">{getErrorMessage(updateCommunity.error)}</Alert>
       )}
       {updateCommunity.isSuccess && <Alert variant="success">Settings saved.</Alert>}
 
@@ -188,9 +194,7 @@ export function CommunitySettingsForm({
             Delete community
           </Btn>
           {deleteCommunity.isError && (
-            <span className="text-base text-red">
-              {getErrorMessage(deleteCommunity.error)}
-            </span>
+            <span className="text-base text-red">{getErrorMessage(deleteCommunity.error)}</span>
           )}
           <ConfirmDeleteDialog
             open={confirmDelete}

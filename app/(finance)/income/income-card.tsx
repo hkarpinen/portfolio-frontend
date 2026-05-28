@@ -68,13 +68,9 @@ export function IncomeCard({
           onDelete={() => onDelete(source.incomeId)}
         />
 
-        {(source.deductions?.length ?? 0) > 0 && (
-          <DeductionChips source={source} />
-        )}
+        {(source.deductions?.length ?? 0) > 0 && <DeductionChips source={source} />}
 
-        {editOpen && (
-          <IncomeCardEditForm source={source} onClose={() => setEditOpen(false)} />
-        )}
+        {editOpen && <IncomeCardEditForm source={source} onClose={() => setEditOpen(false)} />}
 
         <div id={`income-detail-${source.incomeId}`}>
           {expanded && (
@@ -87,9 +83,7 @@ export function IncomeCard({
         </div>
       </div>
 
-      {modalOpen && (
-        <ManageDeductionsModal source={source} onClose={() => setModalOpen(false)} />
-      )}
+      {modalOpen && <ManageDeductionsModal source={source} onClose={() => setModalOpen(false)} />}
     </>
   );
 }

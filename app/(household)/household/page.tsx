@@ -1,5 +1,10 @@
-
-import { Btn, DepartmentHead, EditorialPageHead, EmptyDispatch, Icon } from "@/components/editorial";
+import {
+  Btn,
+  DepartmentHead,
+  EditorialPageHead,
+  EmptyDispatch,
+  Icon,
+} from "@/components/editorial";
 import Link from "next/link";
 import { getCookieHeader } from "@/lib/server-cookies";
 import { JoinHouseholdButton } from "./join-button";
@@ -26,7 +31,13 @@ export default async function HouseholdsPage() {
   // Audit §3.4: prefetch every household's balance in one parallel sweep
   // server-side, hand each badge its own initialData, and the page no
   // longer fires N client fetches on mount.
-  const balancesById = count > 0 ? await fetchAllBalancesServer(households.map((h) => h.id), cookieHeader) : {};
+  const balancesById =
+    count > 0
+      ? await fetchAllBalancesServer(
+          households.map((h) => h.id),
+          cookieHeader,
+        )
+      : {};
 
   return (
     <div className="page-enter flex flex-col gap-8">

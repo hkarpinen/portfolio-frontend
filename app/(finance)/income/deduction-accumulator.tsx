@@ -186,9 +186,7 @@ export function DeductionAccumulator({
               <SelectField
                 label="Frequency"
                 value={dFrequency}
-                onChange={(e) =>
-                  setDFrequency(parseEnum(Frequency, e.target.value, dFrequency))
-                }
+                onChange={(e) => setDFrequency(parseEnum(Frequency, e.target.value, dFrequency))}
               >
                 {INCOME_FREQUENCY_OPTIONS.map((f) => (
                   <option key={f} value={f}>

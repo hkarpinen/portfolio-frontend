@@ -140,10 +140,7 @@ export function useHouseholdContributions(id: string) {
  * cache and the badge skips its initial client fetch — see the N+1 fix in
  * audit §3.4 (`fetchAllBalancesServer` on the household landing page).
  */
-export function useHouseholdBalances(
-  householdId: string,
-  initialData?: MemberBalanceListResponse,
-) {
+export function useHouseholdBalances(householdId: string, initialData?: MemberBalanceListResponse) {
   return useQuery({
     queryKey: financeKeys.householdBalances(householdId),
     queryFn: () => fetchHouseholdBalances(householdId),
@@ -167,8 +164,7 @@ export function useUpdateHouseholdExpense(householdId: string, householdExpenseI
   return useMutation({
     mutationFn: (body: Parameters<typeof updateHouseholdExpense>[2]) =>
       updateHouseholdExpense(householdId, householdExpenseId, body),
-    onSuccess: () =>
-      invalidateHouseholdExpenseDetail(queryClient, householdId, householdExpenseId),
+    onSuccess: () => invalidateHouseholdExpenseDetail(queryClient, householdId, householdExpenseId),
   });
 }
 
@@ -196,7 +192,7 @@ export function usePayHouseholdExpense(householdId: string, householdExpenseId: 
                 ...old,
                 items: old.items.map((b) =>
                   b.expenseId === householdExpenseId
-                    ? { ...b, callerIsPaid: true, currentOccurrenceDate: occurrenceDate }
+                    ? { ...b, isPaid: true, currentOccurrenceDate: occurrenceDate }
                     : b,
                 ),
               }
@@ -220,7 +216,7 @@ export function useUnpayHouseholdExpense(householdId: string, householdExpenseId
             ? {
                 ...old,
                 items: old.items.map((b) =>
-                  b.expenseId === householdExpenseId ? { ...b, callerIsPaid: false } : b,
+                  b.expenseId === householdExpenseId ? { ...b, isPaid: false } : b,
                 ),
               }
             : old,

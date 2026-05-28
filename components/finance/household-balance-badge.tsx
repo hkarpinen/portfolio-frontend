@@ -130,4 +130,3 @@ function summarizeBalances(items: MemberBalance[]): BalanceSummary {
 
 // formatCurrency lives in lib/formatting.ts — same Intl-backed
 // implementation, locale-correct symbol per currency code.
-

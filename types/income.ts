@@ -22,10 +22,10 @@ export const IncomeSourceSchema = z.object({
   currency: z.string().optional(),
   startDate: z.string().optional(),
   /** Date of the most recent paycheck — used as recurrence anchor on the backend. */
-  lastPaycheckDate: z.string().optional(),
+  lastPaycheckDate: z.string().nullish(),
   householdId: z.string().optional(),
   taxProfile: TaxWithholdingProfileSchema.nullable().optional(),
-  deductions: z.array(PayrollDeductionSchema).optional(),
+  deductions: z.array(PayrollDeductionSchema).nullish(),
 });
 export type IncomeSource = z.infer<typeof IncomeSourceSchema>;
 

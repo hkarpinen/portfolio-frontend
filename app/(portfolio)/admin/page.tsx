@@ -1,6 +1,13 @@
 "use client";
 
-import { Btn, DepartmentHead, EditorialPageHead, LedeStat, Spinner, UserInitials } from "@/components/editorial";
+import {
+  Btn,
+  DepartmentHead,
+  EditorialPageHead,
+  LedeStat,
+  Spinner,
+  UserInitials,
+} from "@/components/editorial";
 import { useState } from "react";
 import { useMe, useAdminUsers, useBanUser, useChangeUserRole } from "@/hooks/use-identity";
 
@@ -105,11 +112,7 @@ export default function AdminPage() {
                       {/* User */}
                       <td className="px-6 py-5">
                         <div className="flex min-w-0 items-center gap-3">
-                          <UserInitials
-                            name={user.displayName}
-                            size="sm"
-                            className="h-14 w-14"
-                          />
+                          <UserInitials name={user.displayName} size="sm" className="h-14 w-14" />
                           <span className="overflow-hidden text-ellipsis whitespace-nowrap text-base font-medium text-ink">
                             {user.displayName}
                             {isSelf && (

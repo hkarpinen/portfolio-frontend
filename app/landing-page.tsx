@@ -34,11 +34,7 @@ export function LandingPage({ displayName = null, avatarUrl = null }: LandingPag
           Skip to content
         </a>
 
-        <LandingPublicNav
-          signedIn={signedIn}
-          displayName={displayName}
-          avatarUrl={avatarUrl}
-        />
+        <LandingPublicNav signedIn={signedIn} displayName={displayName} avatarUrl={avatarUrl} />
 
         <main id="main" tabIndex={-1} className="ed-landing-main">
           <LandingHero />

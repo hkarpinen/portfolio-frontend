@@ -118,9 +118,9 @@ for (const dir of SCAN_DIRS) {
     const before = readFileSync(file, "utf8");
     const after = rewrite(before);
     if (after !== before) {
-      const fileMigrations =
-        (before.match(RE) || []).filter((m) => PX_TO_TOKEN[m.match(/\[(.+?)\]/)?.[1] ?? ""])
-          .length;
+      const fileMigrations = (before.match(RE) || []).filter(
+        (m) => PX_TO_TOKEN[m.match(/\[(.+?)\]/)?.[1] ?? ""],
+      ).length;
       writeFileSync(file, after, "utf8");
       changed += 1;
       migrations += fileMigrations;
@@ -128,4 +128,6 @@ for (const dir of SCAN_DIRS) {
     }
   }
 }
-console.log(`\nDone. ${changed} file${changed === 1 ? "" : "s"} touched, ${migrations} arbitrary-value classes migrated.`);
+console.log(
+  `\nDone. ${changed} file${changed === 1 ? "" : "s"} touched, ${migrations} arbitrary-value classes migrated.`,
+);

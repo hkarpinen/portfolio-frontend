@@ -1,4 +1,3 @@
-
 import { Btn, DepartmentHead, EditorialPageHead, Icon, LedeStat } from "@/components/editorial";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -32,9 +31,11 @@ export default async function HouseholdPage({ params }: { params: { id: string }
   const members: MembershipResponse[] = (membersRaw ?? []).map((m) => ({
     membershipId: m.membershipId,
     userId: m.userId,
+    username: m.username,
     displayName: m.displayName ?? m.username,
     role: parseEnum(HouseholdRole, m.role, HouseholdRole.Member),
-    isActive: true,
+    joinedAt: m.joinedAt,
+    pendingInvitationCode: null,
   }));
   const householdExpenses: HouseholdExpense[] = billsPage?.items ?? [];
   const initialBillsData: HouseholdExpenseListResponse = billsPage ?? { items: [], totalCount: 0 };

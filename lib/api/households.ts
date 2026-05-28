@@ -16,7 +16,7 @@ import {
 export const HouseholdSummaryDtoSchema = z.object({
   id: z.string(),
   name: z.string(),
-  description: z.string().optional(),
+  description: z.string().nullish(),
   currencyCode: z.string(),
   role: z.string(),
   joinedAt: z.string(),
@@ -28,7 +28,7 @@ export type HouseholdSummaryDto = z.infer<typeof HouseholdSummaryDtoSchema>;
 export const HouseholdDetailDtoSchema = z.object({
   id: z.string(),
   name: z.string(),
-  description: z.string().optional(),
+  description: z.string().nullish(),
   ownerId: z.string(),
   currencyCode: z.string(),
   createdAt: z.string(),
@@ -40,7 +40,7 @@ export const MemberDtoSchema = z.object({
   membershipId: z.string(),
   userId: z.string(),
   username: z.string(),
-  displayName: z.string().optional(),
+  displayName: z.string().nullish(),
   role: z.string(),
   joinedAt: z.string(),
 });

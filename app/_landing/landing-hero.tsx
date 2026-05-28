@@ -20,8 +20,8 @@ export function LandingHero() {
         A full-stack app, <em>built from scratch.</em>
       </h2>
       <p className="ed-deck ed-hero-deck">
-        Six services, thirty screens, hand-rolled auth and a moderation queue — all running behind
-        a single Nginx gateway. Click <em>Try the demo</em> below — no signup, no email, you&apos;re
+        Six services, thirty screens, hand-rolled auth and a moderation queue — all running behind a
+        single Nginx gateway. Click <em>Try the demo</em> below — no signup, no email, you&apos;re
         in inside three seconds.
       </p>
       <div className="ed-hero-cta-row">

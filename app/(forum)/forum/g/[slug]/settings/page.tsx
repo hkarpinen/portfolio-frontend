@@ -1,4 +1,3 @@
-
 import { SectionHeader } from "@/components/editorial";
 import { notFound } from "next/navigation";
 import Link from "next/link";
@@ -37,7 +36,11 @@ export default async function CommunitySettingsPage({ params }: { params: { slug
         initialName={community.name}
         initialDescription={community.description ?? ""}
         initialImageUrl={community.imageUrl ?? ""}
-        initialVisibility={parseEnum(CommunityVisibility, community.visibility, CommunityVisibility.Public)}
+        initialVisibility={parseEnum(
+          CommunityVisibility,
+          community.visibility,
+          CommunityVisibility.Public,
+        )}
         initialRules={community.rules ?? ""}
       />
     </div>

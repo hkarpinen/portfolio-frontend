@@ -22,4 +22,3 @@ export function computeIncomeMonthly(sources: IncomeSource[]) {
   }
   return { monthlyGross, monthlyNet: monthlyGross - monthlyDeductions };
 }
-

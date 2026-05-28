@@ -12,16 +12,18 @@ import { MembershipResponseSchema } from "./membership";
  */
 
 export const HouseholdSchema = z.object({
-  householdId: z.string(),
+  id: z.string(),
   name: z.string(),
-  description: z.string().optional(),
+  description: z.string().nullish(),
   currencyCode: z.string(),
   ownerId: z.string(),
+  timezone: z.string(),
+  createdAt: z.string(),
+  memberCount: z.number(),
 });
 export type Household = z.infer<typeof HouseholdSchema>;
 
 export const HouseholdSummarySchema = HouseholdSchema.extend({
-  memberCount: z.number(),
   totalBills: z.number(),
   totalGrossIncome: z.number(),
   netBalance: z.number(),
@@ -29,12 +31,25 @@ export const HouseholdSummarySchema = HouseholdSchema.extend({
 });
 export type HouseholdSummary = z.infer<typeof HouseholdSummarySchema>;
 
+/**
+ * Matches `CoverageStatusKind` in finance/src/Application/Dtos/DashboardDtos.cs.
+ * Serialized as enum name strings via JsonStringEnumConverter.
+ */
+export const CoverageStatusKindSchema = z.enum(["FullyCovered", "AtRisk", "Overcommitted"]);
+export type CoverageStatusKind = z.infer<typeof CoverageStatusKindSchema>;
+
 export const HouseholdDashboardSchema = z.object({
+  groupId: z.string(),
   totalBills: z.number(),
   totalGrossIncome: z.number(),
   totalNetIncome: z.number(),
   netBalance: z.number(),
   isOvercommitted: z.boolean(),
+  coverageRatio: z.number(),
+  isFullyCovered: z.boolean(),
+  coverageStatus: CoverageStatusKindSchema,
+  periodStart: z.string(),
+  periodEnd: z.string(),
   availableBalance: z.number().nullable().optional(),
   balanceAsOf: z.string().nullable().optional(),
 });

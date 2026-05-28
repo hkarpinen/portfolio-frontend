@@ -24,7 +24,7 @@ type SettingsForm = z.infer<typeof settingsSchema>;
 
 export function SettingsForm({ household }: { household: Household }) {
   const router = useRouter();
-  const updateHouseholdMutation = useUpdateHousehold(household.householdId);
+  const updateHouseholdMutation = useUpdateHousehold(household.id);
 
   const {
     register,

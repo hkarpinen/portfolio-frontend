@@ -5,10 +5,7 @@ import { Frequency } from "@/types/schedule";
 /** Frequencies the expense form doesn't offer as a billing cadence.
  *  Daily isn't useful as a billing cadence. OneTime is filtered here
  *  until the backend mirrors it — see TODO below. */
-const EXPENSE_FORM_HIDDEN_FREQUENCIES: readonly Frequency[] = [
-  Frequency.Daily,
-  Frequency.OneTime,
-];
+const EXPENSE_FORM_HIDDEN_FREQUENCIES: readonly Frequency[] = [Frequency.Daily, Frequency.OneTime];
 
 export const EXPENSE_FREQUENCY_OPTIONS: readonly Frequency[] = Object.values(Frequency).filter(
   (f) => !EXPENSE_FORM_HIDDEN_FREQUENCIES.includes(f),

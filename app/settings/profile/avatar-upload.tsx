@@ -29,7 +29,9 @@ export function AvatarUpload({ value, onChange }: AvatarUploadProps) {
       onChange={onChange}
       onUpload={handleUpload}
       uploading={upload.isPending}
-      error={upload.isError ? getErrorMessage(upload.error, "Upload failed. Please try again.") : null}
+      error={
+        upload.isError ? getErrorMessage(upload.error, "Upload failed. Please try again.") : null
+      }
       shape="circle"
       size={160}
     />

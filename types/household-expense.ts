@@ -12,27 +12,35 @@ import { pagedResponseSchema } from "./shared";
  * splits, payer membership, and per-caller claim state.
  */
 
+/**
+ * Mirrors the household-scope projection of the unified `ExpenseResponseDto`.
+ * The DTO uses a single `isPaid` field whose meaning is scope-aware: in
+ * household responses it carries the *caller's* pay status (see
+ * ExpenseDtos.cs). Several fields are nullable on the wire (`description`,
+ * `recurrenceFrequency`, `currentOccurrenceDate`) — `.nullish()` accepts
+ * both `null` and missing.
+ */
 export const HouseholdExpenseSchema = z.object({
   expenseId: z.string(),
   title: z.string(),
   amount: z.number(),
   currency: z.string(),
   dueDate: z.string(),
-  category: ExpenseCategorySchema.optional(),
-  recurrenceFrequency: FrequencySchema.optional(),
+  category: ExpenseCategorySchema.nullish(),
+  recurrenceFrequency: FrequencySchema.nullish(),
   isActive: z.boolean().optional(),
-  description: z.string().optional(),
-  currentOccurrenceDate: z.string().optional(),
-  callerIsPaid: z.boolean().optional(),
+  description: z.string().nullish(),
+  currentOccurrenceDate: z.string().nullish(),
+  isPaid: z.boolean().optional(),
 });
 export type HouseholdExpense = z.infer<typeof HouseholdExpenseSchema>;
 
 export const ExpenseSplitSchema = z.object({
   splitId: z.string(),
   userId: z.string(),
-  displayName: z.string().optional(),
-  avatarUrl: z.string().optional(),
-  role: HouseholdRoleSchema,
+  displayName: z.string().nullish(),
+  avatarUrl: z.string().nullish(),
+  membershipRole: z.string(),
   amount: z.number(),
   currency: z.string(),
   isClaimed: z.boolean(),

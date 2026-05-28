@@ -1,4 +1,3 @@
-
 import { Icon, LinkTabs, UserInitials, VoteControl } from "@/components/editorial";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -83,10 +82,7 @@ export default async function ForumFeedPage({ searchParams }: { searchParams: { 
             <>
               {communities.length === 0 ? (
                 <div className="flex flex-col items-center gap-6 border-ink bg-paper px-12 py-24 text-center">
-                  <div
-                    aria-hidden="true"
-                    className="flex h-28 w-28 items-center justify-center bg-red-soft"
-                  >
+                  <div aria-hidden="true" className="ed-medallion">
                     <svg
                       width="24"
                       height="24"
@@ -143,7 +139,7 @@ export default async function ForumFeedPage({ searchParams }: { searchParams: { 
             </>
           ) : threads.length === 0 ? (
             <div className="flex flex-col items-center gap-6 border-ink bg-paper px-12 py-24 text-center">
-              <div className="flex h-28 w-28 items-center justify-center bg-red-soft">
+              <div className="ed-medallion">
                 <span className="text-ink">
                   <Icon name="forum" size={24} strokeWidth={2} />
                 </span>

@@ -165,7 +165,7 @@ export function ExpenseSplits({
                           `${(split.splitId ?? split.userId ?? "").slice(0, 8)}…`}
                       </p>
                       <p className="text-sm text-ink-3">
-                        {split.role}
+                        {split.membershipRole}
                         {split.isClaimed ? " · Claimed" : ""}
                       </p>
                     </div>
@@ -204,9 +204,7 @@ export function ExpenseSplits({
           ) : (
             <form onSubmit={handleSubmit(onAddSplit)} className="flex flex-col gap-6">
               {addExpenseSplitMutation.isError && (
-                <Alert variant="danger">
-                  {getErrorMessage(addExpenseSplitMutation.error)}
-                </Alert>
+                <Alert variant="danger">{getErrorMessage(addExpenseSplitMutation.error)}</Alert>
               )}
 
               {isPrivileged && (

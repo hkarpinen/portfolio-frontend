@@ -131,14 +131,14 @@ export function CommunityCard({
           <div className="border-ink-t mt-6 flex min-w-0 items-center gap-4 pt-5">
             <ActivityAvatar
               avatarUrl={
-                hasReply
+                (hasReply
                   ? latestActivity.latestReplyAuthorAvatarUrl
-                  : latestActivity.authorAvatarUrl
+                  : latestActivity.authorAvatarUrl) ?? undefined
               }
               name={
-                hasReply
+                (hasReply
                   ? latestActivity.latestReplyAuthorDisplayName
-                  : latestActivity.authorDisplayName
+                  : latestActivity.authorDisplayName) ?? undefined
               }
             />
             <div className="min-w-0 flex-1">

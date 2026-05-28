@@ -1,4 +1,3 @@
-
 import { VoteControl } from "@/components/editorial";
 import { notFound } from "next/navigation";
 import { parseMarkdown } from "@/lib/markdown";

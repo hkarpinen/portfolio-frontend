@@ -1,4 +1,3 @@
-
 import { DepartmentHead, EditorialPageHead, EmptyState, Icon } from "@/components/editorial";
 import Link from "next/link";
 

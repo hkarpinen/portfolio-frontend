@@ -129,7 +129,9 @@ export function LoginForm({ from }: LoginFormProps) {
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
         {login.isError && !unconfirmedEmail && (
-          <Alert variant="danger">{getErrorMessage(login.error, "Invalid email or password.")}</Alert>
+          <Alert variant="danger">
+            {getErrorMessage(login.error, "Invalid email or password.")}
+          </Alert>
         )}
         {unconfirmedEmail && (
           <Alert variant="warning" title="Email not confirmed">

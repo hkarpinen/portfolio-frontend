@@ -122,21 +122,21 @@ export function MemberActions({
           })}
         </div>
       )}
-      {isPrivileged && members.some((m) => !m.isActive && m.invitationCode) && (
+      {isPrivileged && members.some((m) => m.pendingInvitationCode) && (
         <div>
           <p className="mb-4 text-sm font-bold uppercase tracking-[0.1em] text-ink-3">
             Pending Invites
           </p>
           <div className="flex flex-col gap-3">
             {members
-              .filter((m) => !m.isActive && m.invitationCode)
+              .filter((m) => m.pendingInvitationCode)
               .map((m) => (
                 <div
                   key={m.membershipId}
                   className="border-ink-dashed flex items-center justify-between bg-paper-2 px-7 py-5"
                 >
                   <div>
-                    <p className="font-mono text-base text-ink-2">{m.invitationCode}</p>
+                    <p className="font-mono text-base text-ink-2">{m.pendingInvitationCode}</p>
                     <p className="mt-1 text-sm text-ink-3">Awaiting acceptance</p>
                   </div>
                 </div>

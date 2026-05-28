@@ -1,4 +1,3 @@
-
 import { EmptyState, Icon, SectionHeader } from "@/components/editorial";
 import Link from "next/link";
 

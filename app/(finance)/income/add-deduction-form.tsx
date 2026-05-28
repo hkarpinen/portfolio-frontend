@@ -123,7 +123,9 @@ export function AddDeductionForm({
       {/* Amount / Frequency / Method */}
       <div className="grid gap-5 [grid-template-columns:repeat(auto-fit,minmax(120px,1fr))]">
         <FieldGroup
-          label={dMethod === DeductionCalculationMethod.PercentOfGross ? "Percentage" : "Amount ($)"}
+          label={
+            dMethod === DeductionCalculationMethod.PercentOfGross ? "Percentage" : "Amount ($)"
+          }
         >
           <Input
             id="deduction-value"
@@ -154,7 +156,9 @@ export function AddDeductionForm({
           <SelectField
             id="deduction-method"
             value={dMethod}
-            onChange={(e) => setDMethod(parseEnum(DeductionCalculationMethod, e.target.value, dMethod))}
+            onChange={(e) =>
+              setDMethod(parseEnum(DeductionCalculationMethod, e.target.value, dMethod))
+            }
           >
             <option value={DeductionCalculationMethod.FixedAmount}>Fixed ($)</option>
             <option value={DeductionCalculationMethod.PercentOfGross}>% of Gross</option>

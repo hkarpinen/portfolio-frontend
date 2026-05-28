@@ -33,7 +33,7 @@ export function ForumFeed({
   const { data, isLoading } = useQuery({
     queryKey: forumKeys.threads(undefined, sort),
     queryFn: () => fetchThreads({ sort, pageSize: 30 }),
-    initialData: sort === "hot" ? { items: initialHot, total: initialHot.length } : undefined,
+    initialData: sort === "hot" ? { items: initialHot, totalCount: initialHot.length } : undefined,
     staleTime: 60_000,
   });
 

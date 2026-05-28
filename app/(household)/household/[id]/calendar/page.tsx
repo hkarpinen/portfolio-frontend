@@ -1,6 +1,12 @@
 "use client";
 
-import { Btn, DepartmentHead, EditorialPageHead, EmptyDispatch, Icon } from "@/components/editorial";
+import {
+  Btn,
+  DepartmentHead,
+  EditorialPageHead,
+  EmptyDispatch,
+  Icon,
+} from "@/components/editorial";
 import { useState, useMemo } from "react";
 import { useCalendarEvents, useDeleteCalendarEvent } from "@/hooks/use-calendar";
 

@@ -91,9 +91,7 @@ export function ExpenseEditForm({
       <h2 className="mb-8 font-serif text-md font-bold text-ink">Edit Expense</h2>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
         {updateExpenseMutation.isError && (
-          <Alert variant="danger">
-            {getErrorMessage(updateExpenseMutation.error)}
-          </Alert>
+          <Alert variant="danger">{getErrorMessage(updateExpenseMutation.error)}</Alert>
         )}
         <div className="form-grid-2">
           <div className="col-span-full">

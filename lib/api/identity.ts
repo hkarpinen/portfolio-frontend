@@ -90,8 +90,7 @@ export const Enable2FAResponseSchema = z.object({
 });
 export type Enable2FAResponse = z.infer<typeof Enable2FAResponseSchema>;
 
-export const enable2FA = () =>
-  api.parsed.post("/api/identity/2fa/enable", Enable2FAResponseSchema);
+export const enable2FA = () => api.parsed.post("/api/identity/2fa/enable", Enable2FAResponseSchema);
 
 export const confirm2FA = (code: string) => api.send.post("/api/identity/2fa/confirm", { code });
 

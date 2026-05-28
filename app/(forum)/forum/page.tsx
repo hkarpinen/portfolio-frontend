@@ -1,4 +1,3 @@
-
 import { DepartmentHead, EditorialPageHead } from "@/components/editorial";
 import Link from "next/link";
 import { ForumFeed } from "./forum-feed";

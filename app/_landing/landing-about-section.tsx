@@ -12,11 +12,7 @@ import { SKILLS } from "./landing-config";
  */
 export function LandingAboutSection() {
   return (
-    <section
-      id="about"
-      className="ed-landing-section"
-      aria-labelledby="about-engineer-heading"
-    >
+    <section id="about" className="ed-landing-section" aria-labelledby="about-engineer-heading">
       <div className="ed-section-row">
         <h2 id="about-engineer-heading" className="ed-h3">
           Hi, I&apos;m <em>Hank Karpinen</em>.

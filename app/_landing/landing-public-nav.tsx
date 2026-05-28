@@ -100,12 +100,8 @@ function SignedInActions({
                 notifications.map((n) => (
                   <div key={n.id} className="ed-popover-item">
                     <p className="ed-meta ed-popover-item-kicker">
-                      {n.type === "success"
-                        ? "Update"
-                        : n.type === "error"
-                          ? "Error"
-                          : "Notice"}{" "}
-                      · just now
+                      {n.type === "success" ? "Update" : n.type === "error" ? "Error" : "Notice"} ·
+                      just now
                     </p>
                     {n.title && <p className="ed-h4 ed-popover-item-title">{n.title}</p>}
                     <p className="ed-popover-item-msg">{n.message}</p>

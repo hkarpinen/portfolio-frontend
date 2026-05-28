@@ -77,7 +77,7 @@ function ResetPasswordContent() {
   if (!userId || !token) {
     return (
       <div className="ed-auth-card text-center">
-        <div className="mx-auto mb-8 flex h-28 w-28 items-center justify-center border border-red bg-red-soft">
+        <div className="ed-medallion ed-medallion-bordered mx-auto mb-8">
           <span className="text-red">
             <Icon name="x" size={24} strokeWidth={2} />
           </span>

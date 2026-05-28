@@ -8,8 +8,7 @@ import {
 } from "@/types/tax";
 import type { PayrollDeduction } from "@/types/deductions";
 
-export const fetchIncome = () =>
-  api.parsed.get("/api/finance/income", IncomeListResponseSchema);
+export const fetchIncome = () => api.parsed.get("/api/finance/income", IncomeListResponseSchema);
 
 export const fetchHouseholdIncome = (householdId: string) =>
   api.parsed.get(`/api/finance/groups/${householdId}/income`, IncomeListResponseSchema);
@@ -40,8 +39,7 @@ export const updateIncomeSource = (
     startDate: string;
     lastPaycheckDate?: string;
   },
-) =>
-  api.parsed.put(`/api/finance/income/${incomeId}`, IncomeSourceSchema, { incomeId, ...body });
+) => api.parsed.put(`/api/finance/income/${incomeId}`, IncomeSourceSchema, { incomeId, ...body });
 
 export const setTaxProfile = (incomeId: string, taxProfile: TaxWithholdingProfile | null) =>
   api.parsed.put(`/api/finance/income/${incomeId}/tax-profile`, IncomeSourceSchema, {

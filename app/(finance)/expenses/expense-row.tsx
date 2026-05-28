@@ -1,6 +1,14 @@
 "use client";
 
-import { Alert, Btn, DeleteIconButton, Icon, Input, SelectField, Textarea } from "@/components/editorial";
+import {
+  Alert,
+  Btn,
+  DeleteIconButton,
+  Icon,
+  Input,
+  SelectField,
+  Textarea,
+} from "@/components/editorial";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useUpdateExpense, usePayExpense, useUnpayExpense } from "@/hooks/use-expenses";
@@ -110,8 +118,7 @@ export function ExpenseRow({
       dueDate: expense.dueDate ? new Date(expense.dueDate).toISOString().slice(0, 10) : "",
       // Empty string is the form's "no recurrence" sentinel; only narrow
       // when a real frequency comes back from the wire.
-      recurrenceFrequency:
-        parseEnum(Frequency, expense.recurrenceFrequency) ?? ("" as const),
+      recurrenceFrequency: parseEnum(Frequency, expense.recurrenceFrequency) ?? ("" as const),
       description: expense.description ?? "",
     },
   });

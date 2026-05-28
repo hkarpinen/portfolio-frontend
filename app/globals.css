@@ -1014,6 +1014,24 @@ html[data-density="compact"] {
     color: var(--paper);
   }
 
+  /* ── Icon medallion (audit §2.4) ────────────────────────────────────
+     56×56 square with a soft-red background centring an icon glyph.
+     Used by the empty-state cards on the forum index, the auth
+     confirmation cards (which add the bordered variant), and the
+     forum search no-results state. Eight inline copies were
+     consolidated here. */
+  .ed-medallion {
+    display: flex;
+    height: 56px;
+    width: 56px;
+    align-items: center;
+    justify-content: center;
+    background: var(--red-soft);
+  }
+  .ed-medallion-bordered {
+    border: 1px solid var(--red);
+  }
+
   /* ── Settings-page inputs (audit §2.5) ──────────────────────────────
      The settings UI uses a bottom-border-only input variant (smaller,
      more typewritten than ed-input). Previously these styles lived as

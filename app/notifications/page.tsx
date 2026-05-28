@@ -1,6 +1,13 @@
 "use client";
 
-import { Btn, DepartmentHead, EditorialPageHead, EmptyDispatch, EmptyState, Icon } from "@/components/editorial";
+import {
+  Btn,
+  DepartmentHead,
+  EditorialPageHead,
+  EmptyDispatch,
+  EmptyState,
+  Icon,
+} from "@/components/editorial";
 import { useState } from "react";
 import Link from "next/link";
 import { useQuery, useQueryClient } from "@tanstack/react-query";

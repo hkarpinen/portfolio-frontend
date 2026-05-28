@@ -1,6 +1,12 @@
 "use client";
 
-import { ConfirmDeleteDialog, DepartmentHead, EditorialPageHead, EmptyState, Icon } from "@/components/editorial";
+import {
+  ConfirmDeleteDialog,
+  DepartmentHead,
+  EditorialPageHead,
+  EmptyState,
+  Icon,
+} from "@/components/editorial";
 import { useState } from "react";
 import { useParams } from "next/navigation";
 import { useChores, useCompleteChore, useDeleteChore } from "@/hooks/use-chores";
@@ -47,7 +53,7 @@ function ChoreRow({
 }) {
   const assignee = members.find((m) => m.userId === chore.assignedToUserId);
   const done = !!chore.completedAt;
-  const due = formatDue(chore.dueDate);
+  const due = formatDue(chore.dueDate ?? undefined);
 
   return (
     <tr className={`border-b border-rule-soft group${due.overdue ? "" : ""}`}>

@@ -23,10 +23,11 @@ export const HouseholdRoleSchema = z.nativeEnum(HouseholdRole);
 export const MembershipResponseSchema = z.object({
   membershipId: z.string(),
   userId: z.string(),
-  displayName: z.string().optional(),
+  username: z.string(),
+  displayName: z.string().nullish(),
   role: HouseholdRoleSchema,
-  isActive: z.boolean(),
-  invitationCode: z.string().optional(),
+  joinedAt: z.string(),
+  pendingInvitationCode: z.string().nullish(),
 });
 export type MembershipResponse = z.infer<typeof MembershipResponseSchema>;
 

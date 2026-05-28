@@ -51,11 +51,11 @@ export const CommunityActivitySnapshotSchema = z.object({
   threadTitle: z.string(),
   threadCreatedAt: z.string(),
   hotScore: z.number(),
-  authorDisplayName: z.string().optional(),
-  authorAvatarUrl: z.string().optional(),
-  latestReplyAt: z.string().optional(),
-  latestReplyAuthorDisplayName: z.string().optional(),
-  latestReplyAuthorAvatarUrl: z.string().optional(),
+  authorDisplayName: z.string().nullish(),
+  authorAvatarUrl: z.string().nullish(),
+  latestReplyAt: z.string().nullish(),
+  latestReplyAuthorDisplayName: z.string().nullish(),
+  latestReplyAuthorAvatarUrl: z.string().nullish(),
 });
 export type CommunityActivitySnapshot = z.infer<typeof CommunityActivitySnapshotSchema>;
 
@@ -63,19 +63,19 @@ export const CommunitySummaryResponseSchema = z.object({
   communityId: z.string(),
   slug: z.string(),
   name: z.string(),
-  description: z.string().optional(),
-  imageUrl: z.string().optional(),
+  description: z.string().nullish(),
+  imageUrl: z.string().nullish(),
   color: z.string().optional(),
   icon: z.string().optional(),
   visibility: CommunityVisibilitySchema.optional(),
   ownerId: z.string(),
   createdAt: z.string(),
-  updatedAt: z.string().optional(),
-  rules: z.string().optional(),
+  updatedAt: z.string().nullish(),
+  rules: z.string().nullish(),
   memberCount: z.number(),
   threadCount: z.number(),
   commentCount: z.number(),
-  latestActivity: CommunityActivitySnapshotSchema.optional(),
+  latestActivity: CommunityActivitySnapshotSchema.nullish(),
 });
 export type CommunitySummaryResponse = z.infer<typeof CommunitySummaryResponseSchema>;
 
@@ -113,18 +113,18 @@ export interface Community {
 export const ThreadWireSchema = z.object({
   threadId: z.string(),
   title: z.string(),
-  content: z.string().optional(),
+  content: z.string().nullish(),
   authorId: z.string().optional(),
-  authorDisplayName: z.string().optional(),
-  authorAvatarUrl: z.string().optional(),
+  authorDisplayName: z.string().nullish(),
+  authorAvatarUrl: z.string().nullish(),
   communityId: z.string().optional(),
   voteScore: z.number().optional(),
   hotScore: z.number().optional(),
   createdAt: z.string(),
-  editedAt: z.string().optional(),
+  editedAt: z.string().nullish(),
   isLocked: z.boolean().optional(),
   isPinned: z.boolean().optional(),
-  deletedAt: z.string().optional(),
+  deletedAt: z.string().nullish(),
 });
 
 export interface Thread extends z.infer<typeof ThreadWireSchema> {
@@ -142,15 +142,15 @@ export interface Thread extends z.infer<typeof ThreadWireSchema> {
 const CommentBaseSchema = z.object({
   commentId: z.string(),
   threadId: z.string(),
-  parentCommentId: z.string().optional(),
+  parentCommentId: z.string().nullish(),
   authorId: z.string().optional(),
-  authorDisplayName: z.string().optional(),
-  authorAvatarUrl: z.string().optional(),
+  authorDisplayName: z.string().nullish(),
+  authorAvatarUrl: z.string().nullish(),
   content: z.string(),
   voteScore: z.number().optional(),
   createdAt: z.string(),
-  editedAt: z.string().optional(),
-  deletedAt: z.string().optional(),
+  editedAt: z.string().nullish(),
+  deletedAt: z.string().nullish(),
 });
 
 export interface Comment extends z.infer<typeof CommentBaseSchema> {
@@ -171,21 +171,29 @@ export const CommunityMembershipSchema = z.object({
 export type CommunityMembership = z.infer<typeof CommunityMembershipSchema>;
 
 export const ModQueueItemSchema = z.object({
-  reportId: z.string(),
-  type: ReportTargetTypeSchema,
+  queueItemId: z.string(),
+  communityId: z.string(),
+  targetType: ReportTargetTypeSchema,
   targetId: z.string(),
-  reason: z.string().optional(),
-  createdAt: z.string(),
+  targetTitle: z.string().nullish(),
+  targetAuthorId: z.string().nullish(),
+  targetAuthorName: z.string().nullish(),
+  reporterId: z.string(),
+  reporterName: z.string().nullish(),
+  reason: z.string(),
+  details: z.string().nullish(),
+  reportedAt: z.string(),
 });
 export type ModQueueItem = z.infer<typeof ModQueueItemSchema>;
 
 export const ModLogEntrySchema = z.object({
   logId: z.string(),
+  communityId: z.string(),
   action: ModerationActionSchema,
-  targetId: z.string().optional(),
-  modId: z.string().optional(),
-  modName: z.string().optional(),
-  createdAt: z.string(),
+  performedByUserId: z.string(),
+  targetUserId: z.string().nullish(),
+  targetContent: z.string().nullish(),
+  performedAt: z.string(),
 });
 export type ModLogEntry = z.infer<typeof ModLogEntrySchema>;
 
@@ -201,7 +209,7 @@ export type CommunityMemberItem = z.infer<typeof CommunityMemberItemSchema>;
 
 export const ForumProfileSchema = z.object({
   userId: z.string(),
-  displayName: z.string().optional(),
+  displayName: z.string().nullish(),
   avatarUrl: z.string().nullable().optional(),
   bio: z.string().nullable().optional(),
   signature: z.string().nullable().optional(),
@@ -239,8 +247,8 @@ export const ThreadMutationResponseSchema = z.object({
   threadId: z.string(),
   isLocked: z.boolean(),
   isPinned: z.boolean(),
-  editedAt: z.string().optional(),
-  deletedAt: z.string().optional(),
+  editedAt: z.string().nullish(),
+  deletedAt: z.string().nullish(),
 });
 export type ThreadMutationResponse = z.infer<typeof ThreadMutationResponseSchema>;
 
@@ -248,11 +256,11 @@ export type ThreadMutationResponse = z.infer<typeof ThreadMutationResponseSchema
 export const ThreadSummaryResponseSchema = z.object({
   threadId: z.string(),
   communityId: z.string(),
-  communitySlug: z.string().optional(),
-  communityName: z.string().optional(),
+  communitySlug: z.string().nullish(),
+  communityName: z.string().nullish(),
   authorId: z.string(),
-  authorDisplayName: z.string().optional(),
-  authorAvatarUrl: z.string().optional(),
+  authorDisplayName: z.string().nullish(),
+  authorAvatarUrl: z.string().nullish(),
   title: z.string(),
   createdAt: z.string(),
   hotScore: z.number(),
@@ -263,17 +271,19 @@ export const ThreadSummaryResponseSchema = z.object({
 });
 export type ThreadSummaryResponse = z.infer<typeof ThreadSummaryResponseSchema>;
 
-// Community/Thread pages use `total` (no Count suffix) rather than `totalCount`,
-// so they don't fit the shared `pagedResponseSchema` helper. Defined inline.
+// Community/Thread pages mirror the standard `*ListDto` envelope:
+// { items, totalCount }. They're defined inline rather than using the shared
+// `pagedResponseSchema` helper because they pre-date it; consolidation is fine
+// but out of scope here.
 export const CommunityPageSchema = z.object({
   items: z.array(CommunitySummaryResponseSchema),
-  total: z.number().optional(),
+  totalCount: z.number().optional(),
 });
 export type CommunityPage = z.infer<typeof CommunityPageSchema>;
 
 export const ThreadPageSchema = z.object({
   items: z.array(ThreadSummaryResponseSchema),
-  total: z.number().optional(),
+  totalCount: z.number().optional(),
 });
 export type ThreadPage = z.infer<typeof ThreadPageSchema>;
 

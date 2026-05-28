@@ -49,7 +49,10 @@ const DEEP_IMPORT_RE =
 
 function parseNames(rawList) {
   // Split on commas, trim each, separate type-only specifiers (`type Foo`).
-  return rawList.split(",").map((s) => s.trim()).filter(Boolean);
+  return rawList
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
 }
 
 function rewrite(source) {

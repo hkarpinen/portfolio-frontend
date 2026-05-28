@@ -1,4 +1,3 @@
-
 import { Btn, EditorialPageHead, Icon, PullQuote } from "@/components/editorial";
 import type { Metadata } from "next";
 import Link from "next/link";

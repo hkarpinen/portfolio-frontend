@@ -40,9 +40,12 @@ export function groupSharedSplitsByBill(items: ContributionItem[]): SharedSplitG
       byBill.set(c.billId, {
         billId: c.billId,
         billTitle: c.billTitle,
-        billCategory: c.billCategory,
-        groupId: c.groupId,
-        householdName: c.householdName,
+        // Schema fields use `.nullish()` (string | null | undefined); the
+        // local interface uses optional only (string | undefined). Normalise
+        // `null` → `undefined` here so the group stays narrow.
+        billCategory: c.billCategory ?? undefined,
+        groupId: c.groupId ?? "",
+        householdName: c.householdName ?? undefined,
         currency: c.currency,
         occurrenceCount: 1,
         monthlyAmount: Number(c.amount),

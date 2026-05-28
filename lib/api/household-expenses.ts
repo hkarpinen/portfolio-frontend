@@ -10,12 +10,9 @@ import { MemberBalanceListResponseSchema } from "@/types/membership";
 import type { MemberBalanceListResponse } from "@/types/membership";
 
 export const fetchHouseholdExpenses = (householdId: string) =>
-  api.parsed.get(
-    `/api/finance/groups/${householdId}/expenses`,
-    HouseholdExpenseListResponseSchema,
-  );
+  api.parsed.get(`/api/finance/groups/${householdId}/expenses`, HouseholdExpenseListResponseSchema);
 
-/** Server-side (RSC) version — forwards cookie so callerId is known and callerIsPaid is populated. */
+/** Server-side (RSC) version — forwards cookie so callerId is known and the caller's `isPaid` is populated. */
 export const fetchHouseholdExpensesServer = (householdId: string, cookieHeader: string) =>
   parsedServerFetch(
     `/api/finance/groups/${householdId}/expenses`,
@@ -85,10 +82,7 @@ export const removeSplit = (householdId: string, householdExpenseId: string, spl
 
 /** Per-other-member balances within a household, from the caller's POV. */
 export const fetchHouseholdBalances = (householdId: string) =>
-  api.parsed.get(
-    `/api/finance/groups/${householdId}/balances`,
-    MemberBalanceListResponseSchema,
-  );
+  api.parsed.get(`/api/finance/groups/${householdId}/balances`, MemberBalanceListResponseSchema);
 
 /** Server-side counterpart for RSC prefetch (audit §3.4 — household N+1 fix). */
 export const fetchHouseholdBalancesServer = (householdId: string, cookieHeader: string) =>
@@ -133,9 +127,4 @@ export const createHouseholdExpense = (
     description?: string;
     recurrenceFrequency?: string;
   },
-) =>
-  api.parsed.post(
-    `/api/finance/groups/${householdId}/expenses`,
-    HouseholdExpenseSchema,
-    body,
-  );
+) => api.parsed.post(`/api/finance/groups/${householdId}/expenses`, HouseholdExpenseSchema, body);

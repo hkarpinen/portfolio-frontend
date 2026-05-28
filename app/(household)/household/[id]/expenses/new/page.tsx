@@ -1,6 +1,14 @@
 "use client";
 
-import { Alert, Btn, Icon, Input, SectionHeader, SelectField, Textarea } from "@/components/editorial";
+import {
+  Alert,
+  Btn,
+  Icon,
+  Input,
+  SectionHeader,
+  SelectField,
+  Textarea,
+} from "@/components/editorial";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -128,9 +136,7 @@ export default function NewExpensePage({ params }: { params: { id: string } }) {
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
         {createExpense.isError && (
-          <Alert variant="danger">
-            {getErrorMessage(createExpense.error)}
-          </Alert>
+          <Alert variant="danger">{getErrorMessage(createExpense.error)}</Alert>
         )}
 
         <Input

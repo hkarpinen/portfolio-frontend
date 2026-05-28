@@ -1,4 +1,3 @@
-
 import { DepartmentHead, EditorialPageHead, LedeStat, Ticker } from "@/components/editorial";
 import { getCookieHeader } from "@/lib/server-cookies";
 import { IncomeList } from "./income-list";

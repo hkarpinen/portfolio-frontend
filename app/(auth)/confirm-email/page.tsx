@@ -78,7 +78,7 @@ function ConfirmEmailContent() {
 
       {status === "error" && (
         <>
-          <div className="mx-auto mb-10 flex h-28 w-28 items-center justify-center border border-red bg-red-soft">
+          <div className="ed-medallion ed-medallion-bordered mx-auto mb-10">
             <span className="text-red">
               <Icon name="x" size={24} strokeWidth={2} />
             </span>

@@ -24,7 +24,8 @@ export function DangerZone({ householdId, householdName, members }: DangerZonePr
   const [open, setOpen] = useState(false);
   const deleteHousehold = useDeleteHousehold();
 
-  const activeMemberCount = members.filter((m) => m.isActive).length;
+  // Active members are those who have joined (no pending invitation code).
+  const activeMemberCount = members.filter((m) => !m.pendingInvitationCode).length;
   const canDelete = activeMemberCount <= 1;
 
   return (

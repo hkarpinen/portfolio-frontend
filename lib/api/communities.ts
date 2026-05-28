@@ -23,10 +23,7 @@ export const uploadCommunityImage = (file: File) => {
 };
 
 export const fetchCommunities = (page = 1, pageSize = 20) =>
-  api.parsed.get(
-    `/api/forum/communities?page=${page}&pageSize=${pageSize}`,
-    CommunityPageSchema,
-  );
+  api.parsed.get(`/api/forum/communities?page=${page}&pageSize=${pageSize}`, CommunityPageSchema);
 
 export const fetchCommunityBySlug = (slug: string) =>
   api.parsed.get(`/api/forum/communities/by-slug/${slug}`, CommunityDetailResponseSchema);
@@ -39,20 +36,13 @@ export const createCommunity = (body: {
 }) => api.parsed.post("/api/forum/communities", CommunityDetailResponseSchema, body);
 
 export const updateCommunity = (communityId: string, body: Partial<CommunitySummaryResponse>) =>
-  api.parsed.put(
-    `/api/forum/communities/${communityId}`,
-    CommunityDetailResponseSchema,
-    body,
-  );
+  api.parsed.put(`/api/forum/communities/${communityId}`, CommunityDetailResponseSchema, body);
 
 export const deleteCommunity = (communityId: string) =>
   api.send.delete(`/api/forum/communities/${communityId}`);
 
 export const fetchMembership = (communityId: string) =>
-  api.parsed.get(
-    `/api/forum/communities/${communityId}/membership`,
-    CommunityMembershipSchema,
-  );
+  api.parsed.get(`/api/forum/communities/${communityId}/membership`, CommunityMembershipSchema);
 
 export const joinCommunity = (communityId: string) =>
   api.post(`/api/forum/communities/${communityId}/join`);
@@ -102,7 +92,4 @@ export const fetchMembershipServer = (communityId: string, cookieHeader: string)
   );
 
 export const fetchProfileMembershipsApi = (userId: string) =>
-  api.parsed.get(
-    `/api/forum/profiles/${userId}/memberships`,
-    z.array(UserCommunityItemSchema),
-  );
+  api.parsed.get(`/api/forum/profiles/${userId}/memberships`, z.array(UserCommunityItemSchema));

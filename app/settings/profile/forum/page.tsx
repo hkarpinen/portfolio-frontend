@@ -58,9 +58,7 @@ export default function ForumProfileSettingsPage() {
               {updateProfile.isError && (
                 <Alert variant="danger">{getErrorMessage(updateProfile.error)}</Alert>
               )}
-              {updateProfile.isSuccess && (
-                <Alert variant="success">Forum profile updated.</Alert>
-              )}
+              {updateProfile.isSuccess && <Alert variant="success">Forum profile updated.</Alert>}
             </div>
             <div>
               <label htmlFor="forum-bio" className="ed-label mb-3 block">

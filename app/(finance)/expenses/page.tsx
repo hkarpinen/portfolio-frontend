@@ -1,4 +1,3 @@
-
 import { EditorialPageHead } from "@/components/editorial";
 import { getCookieHeader } from "@/lib/server-cookies";
 import { fetchExpensesServer } from "@/lib/api/expenses";

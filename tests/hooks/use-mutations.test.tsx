@@ -39,9 +39,8 @@ vi.mock("@/lib/api/household-expenses", async () => {
 });
 
 vi.mock("@/lib/api/households", async () => {
-  const actual = await vi.importActual<typeof import("@/lib/api/households")>(
-    "@/lib/api/households",
-  );
+  const actual =
+    await vi.importActual<typeof import("@/lib/api/households")>("@/lib/api/households");
   return {
     ...actual,
     removeMember: vi.fn(),
@@ -57,16 +56,17 @@ import {
 } from "@/hooks/use-expenses";
 import { useRemoveMember } from "@/hooks/use-household";
 import { deleteExpense } from "@/lib/api/expenses";
-import {
-  deleteHouseholdExpense,
-  payHouseholdExpense,
-} from "@/lib/api/household-expenses";
+import { deleteHouseholdExpense, payHouseholdExpense } from "@/lib/api/household-expenses";
 import { removeMember } from "@/lib/api/households";
 
 const HID = "h-1";
 const EXPENSE_ID = "e-1";
 
-function seed(qc: import("@tanstack/react-query").QueryClient, key: readonly unknown[], v: unknown = "seed") {
+function seed(
+  qc: import("@tanstack/react-query").QueryClient,
+  key: readonly unknown[],
+  v: unknown = "seed",
+) {
   qc.setQueryData([...key], v);
 }
 
@@ -117,7 +117,7 @@ describe("usePayHouseholdExpense", () => {
 
     // Seed the list cache with one row so we can observe the optimistic patch.
     queryClient.setQueryData(financeKeys.householdExpenses(HID), {
-      items: [{ expenseId: EXPENSE_ID, callerIsPaid: false }],
+      items: [{ expenseId: EXPENSE_ID, isPaid: false }],
     });
     seed(queryClient, financeKeys.householdExpenseDetail(HID, EXPENSE_ID));
     seed(queryClient, financeKeys.householdContributions(HID));
@@ -134,9 +134,9 @@ describe("usePayHouseholdExpense", () => {
     // invalidation refetches. Caching this contract because removing it
     // would visibly stutter the UI on pay.
     const listCache = queryClient.getQueryData<{
-      items: { expenseId: string; callerIsPaid: boolean; currentOccurrenceDate?: string }[];
+      items: { expenseId: string; isPaid: boolean; currentOccurrenceDate?: string }[];
     }>(financeKeys.householdExpenses(HID));
-    expect(listCache?.items[0].callerIsPaid).toBe(true);
+    expect(listCache?.items[0].isPaid).toBe(true);
     expect(listCache?.items[0].currentOccurrenceDate).toBe(occurrence);
 
     await waitFor(() => {

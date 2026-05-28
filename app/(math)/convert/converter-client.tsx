@@ -109,7 +109,9 @@ export function ConverterClient() {
               >
                 <option value="">— choose unit —</option>
                 {unitOptions(
-                  c.from ? c.sorted.filter((cat) => cat.units.includes(c.from)) : c.scopedCategories,
+                  c.from
+                    ? c.sorted.filter((cat) => cat.units.includes(c.from))
+                    : c.scopedCategories,
                 )}
               </select>
             </div>

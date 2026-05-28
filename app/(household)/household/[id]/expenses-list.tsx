@@ -17,7 +17,7 @@ function StatusCell({ expense, householdId }: { expense: HouseholdExpense; house
   const payMutation = usePayHouseholdExpense(householdId, expense.expenseId);
   const unpayMutation = useUnpayHouseholdExpense(householdId, expense.expenseId);
   const isPending = payMutation.isPending || unpayMutation.isPending;
-  const isPaid = !!expense.callerIsPaid;
+  const isPaid = !!expense.isPaid;
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();

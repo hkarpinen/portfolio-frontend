@@ -5,13 +5,13 @@ export const CalendarEventDtoSchema = z.object({
   id: z.string(),
   householdId: z.string(),
   title: z.string(),
-  description: z.string().optional(),
+  description: z.string().nullish(),
   startsAt: z.string(),
-  endsAt: z.string().optional(),
+  endsAt: z.string().nullish(),
   allDay: z.boolean(),
   createdByUserId: z.string(),
   createdAt: z.string(),
-  updatedAt: z.string().optional(),
+  updatedAt: z.string().nullish(),
 });
 export type CalendarEventDto = z.infer<typeof CalendarEventDtoSchema>;
 

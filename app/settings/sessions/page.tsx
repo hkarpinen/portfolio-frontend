@@ -3,11 +3,7 @@
 import { Alert, Btn, EmptyState, Icon } from "@/components/editorial";
 import { useState } from "react";
 
-import {
-  useSessions,
-  useSignOutSession,
-  useSignOutAllOtherSessions,
-} from "@/hooks/use-identity";
+import { useSessions, useSignOutSession, useSignOutAllOtherSessions } from "@/hooks/use-identity";
 import type { SessionItem } from "@/lib/api/identity";
 import { timeAgo } from "@/lib/utils";
 

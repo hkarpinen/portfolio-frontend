@@ -78,7 +78,12 @@ function buildMonthlyItems(p: AggregatedPeriod, m: Mutations): TableItem[] {
           pending={pending}
           onToggle={(e) => {
             e.stopPropagation();
-            const householdId = c.groupId ?? c.householdId;
+            // Both groupId and householdId are `.nullish()` on the wire; the
+            // mutation expects a real string. Fall through to "" so the
+            // caller (which only ever fires with a known-good context) is
+            // type-clean. If both are missing the mutation will 400 — the
+            // earlier UX should have prevented enabling the toggle.
+            const householdId = c.groupId ?? c.householdId ?? "";
             const mut = c.isClaimed ? m.unpaySplit : m.paySplit;
             mut.mutate({ householdId, billId: c.billId, occurrenceDate: c.dueDate });
           }}

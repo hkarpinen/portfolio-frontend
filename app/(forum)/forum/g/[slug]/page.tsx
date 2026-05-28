@@ -1,4 +1,3 @@
-
 import { DepartmentHead, EditorialPageHead, EmptyState, Icon } from "@/components/editorial";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -58,7 +57,10 @@ export default async function CommunityPage({
         kicker="Community"
         title={communityHeadline({ slug: params.slug })}
         deck={communityDeck({
-          description: community.description,
+          // Schema uses `.nullish()` (string | null | undefined); the helper
+          // signature accepts string | undefined. Normalise null → undefined
+          // at the consumer to keep both honest.
+          description: community.description ?? undefined,
           memberCount: community.memberCount,
           threadCount: community.threadCount,
         })}

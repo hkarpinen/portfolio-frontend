@@ -52,10 +52,7 @@ export function SearchClient() {
           className={`box-border w-full border-ink bg-paper px-8 py-6 pl-20 text-md text-ink shadow-card outline-none ${loading ? "pr-11" : "pr-4"}`}
         />
         {loading && (
-          <Spinner
-            size={20}
-            className="absolute right-7 top-[50%] -translate-y-1/2 text-red"
-          />
+          <Spinner size={20} className="absolute right-7 top-[50%] -translate-y-1/2 text-red" />
         )}
       </div>
 
@@ -82,10 +79,7 @@ export function SearchClient() {
           className="flex flex-col items-center justify-center gap-4 border-ink bg-paper px-12 py-24 shadow-card"
           role="status"
         >
-          <div
-            aria-hidden="true"
-            className="flex h-28 w-28 items-center justify-center bg-red-soft"
-          >
+          <div aria-hidden="true" className="ed-medallion">
             <Icon name="search" size={24} strokeWidth={1.75} />
           </div>
           <p className="font-serif text-md font-bold text-ink">No results</p>

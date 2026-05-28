@@ -63,13 +63,15 @@ const CommentTreeNodeSchema: z.ZodType<{
     commentId: string;
     threadId: string;
     authorId?: string;
-    authorDisplayName?: string;
-    authorAvatarUrl?: string;
+    // The wire returns `null` for absent display data; match that here so
+    // the manual annotation lines up with the schema's `nullish()` output.
+    authorDisplayName?: string | null;
+    authorAvatarUrl?: string | null;
     content: string;
     createdAt: string;
-    editedAt?: string;
-    deletedAt?: string;
-    parentCommentId?: string;
+    editedAt?: string | null;
+    deletedAt?: string | null;
+    parentCommentId?: string | null;
     voteScore: number;
   };
   children: Array<unknown>;
@@ -78,13 +80,13 @@ const CommentTreeNodeSchema: z.ZodType<{
     commentId: z.string(),
     threadId: z.string(),
     authorId: z.string().optional(),
-    authorDisplayName: z.string().optional(),
-    authorAvatarUrl: z.string().optional(),
+    authorDisplayName: z.string().nullish(),
+    authorAvatarUrl: z.string().nullish(),
     content: z.string(),
     createdAt: z.string(),
-    editedAt: z.string().optional(),
-    deletedAt: z.string().optional(),
-    parentCommentId: z.string().optional(),
+    editedAt: z.string().nullish(),
+    deletedAt: z.string().nullish(),
+    parentCommentId: z.string().nullish(),
     voteScore: z.number(),
   }),
   children: z.lazy(() => z.array(CommentTreeNodeSchema)),
@@ -99,13 +101,13 @@ interface CommentTreeNode {
     commentId: string;
     threadId: string;
     authorId?: string;
-    authorDisplayName?: string;
-    authorAvatarUrl?: string;
+    authorDisplayName?: string | null;
+    authorAvatarUrl?: string | null;
     content: string;
     createdAt: string;
-    editedAt?: string;
-    deletedAt?: string;
-    parentCommentId?: string;
+    editedAt?: string | null;
+    deletedAt?: string | null;
+    parentCommentId?: string | null;
     voteScore: number;
   };
   children: CommentTreeNode[];
@@ -182,10 +184,7 @@ export const fetchProfileComments = (userId: string, page = 1, pageSize = 20) =>
   );
 
 export const fetchProfileMemberships = (userId: string) =>
-  api.parsed.get(
-    `/api/forum/profiles/${userId}/memberships`,
-    z.array(UserCommunityItemSchema),
-  );
+  api.parsed.get(`/api/forum/profiles/${userId}/memberships`, z.array(UserCommunityItemSchema));
 
 // Server-side counterparts for the profile RSC (audit §3.3 — server-ifying
 // the profile page). Each is the parsedServerFetch mirror of the client

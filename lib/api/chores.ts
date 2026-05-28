@@ -8,13 +8,13 @@ export const ChoreDtoSchema = z.object({
   id: z.string(),
   householdId: z.string(),
   title: z.string(),
-  description: z.string().optional(),
-  assignedToUserId: z.string().optional(),
-  dueDate: z.string().optional(),
-  recurrenceFrequency: RecurrenceFrequencySchema.optional(),
+  description: z.string().nullish(),
+  assignedToUserId: z.string().nullish(),
+  dueDate: z.string().nullish(),
+  recurrenceFrequency: RecurrenceFrequencySchema.nullish(),
   createdByUserId: z.string(),
   createdAt: z.string(),
-  completedAt: z.string().optional(),
+  completedAt: z.string().nullish(),
   isActive: z.boolean(),
 });
 export type ChoreDto = z.infer<typeof ChoreDtoSchema>;

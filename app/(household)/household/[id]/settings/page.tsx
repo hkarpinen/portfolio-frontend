@@ -1,4 +1,3 @@
-
 import { EditorialPageHead } from "@/components/editorial";
 import Link from "next/link";
 import { z } from "zod";
@@ -33,11 +32,7 @@ export default async function HouseholdSettingsPage({ params }: Props) {
   const cookieHeader = cookies().toString();
   const [household, membersRaw, me] = await Promise.all([
     parsedServerFetch(`/api/households/${params.id}`, HouseholdSchema, cookieHeader),
-    parsedServerFetch(
-      `/api/households/${params.id}/members`,
-      MembersResponseSchema,
-      cookieHeader,
-    ),
+    parsedServerFetch(`/api/households/${params.id}/members`, MembersResponseSchema, cookieHeader),
     parsedServerFetch("/api/identity/me", MeSchema, cookieHeader),
   ]);
 
