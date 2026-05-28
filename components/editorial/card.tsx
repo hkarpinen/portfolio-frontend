@@ -15,14 +15,7 @@ interface CardProps {
   className?: string;
 }
 
-export function Card({
-  accent,
-  hover,
-  muted,
-  onClick,
-  children,
-  className = "",
-}: CardProps) {
+export function Card({ accent, hover, muted, onClick, children, className = "" }: CardProps) {
   const cls = [
     "ed-card",
     accent ? "ed-card-accent" : "",

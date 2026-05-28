@@ -1,5 +1,5 @@
 import { api } from "@/lib/api-client";
-import type { WeatherDto } from "@/types/geography";
+import { WeatherDtoSchema } from "@/types/geography";
 
 export const fetchWeather = (city: string) =>
-  api.get<WeatherDto>(`/api/geography/weather?city=${encodeURIComponent(city)}`);
+  api.parsed.get(`/api/geography/weather?city=${encodeURIComponent(city)}`, WeatherDtoSchema);

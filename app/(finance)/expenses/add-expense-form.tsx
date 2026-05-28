@@ -4,14 +4,10 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCreateExpense } from "@/hooks/use-expenses";
-import { ApiError } from "@/lib/api-client";
-import { ERROR } from "@/lib/error-messages";
-import {
-  BILL_CATEGORIES,
-  FREQUENCIES,
-  expenseSchema,
-  ExpenseFormData,
-} from "./_expense-form-shared";
+import { getErrorMessage } from "@/lib/error-messages";
+import type { ExpenseFormData } from "./_expense-form-shared";
+import { EXPENSE_FREQUENCY_OPTIONS, expenseSchema } from "./_expense-form-shared";
+import { ExpenseCategory, EXPENSE_CATEGORY_OPTIONS } from "@/types/expense";
 import { Alert, Btn, Input, SelectField, Textarea } from "@/components/editorial";
 
 export function AddExpenseForm() {
@@ -27,7 +23,7 @@ export function AddExpenseForm() {
     resolver: zodResolver(expenseSchema),
     defaultValues: {
       currency: "USD",
-      category: "Other",
+      category: ExpenseCategory.Other,
       dueDate: new Date().toISOString().slice(0, 10),
       recurrenceFrequency: "",
     },
@@ -44,10 +40,17 @@ export function AddExpenseForm() {
         category: data.category,
         dueDate: new Date(data.dueDate).toISOString(),
         recurrenceFrequency: data.recurrenceFrequency || undefined,
-        recurrenceStartDate: data.recurrenceFrequency ? new Date(data.dueDate).toISOString() : undefined,
+        recurrenceStartDate: data.recurrenceFrequency
+          ? new Date(data.dueDate).toISOString()
+          : undefined,
         description: data.description || undefined,
       },
-      { onSuccess: () => { reset(); router.push("/expenses"); } }
+      {
+        onSuccess: () => {
+          reset();
+          router.push("/expenses");
+        },
+      },
     );
   };
 
@@ -56,7 +59,7 @@ export function AddExpenseForm() {
   const currencySymbol = currencySymbols[currency] ?? currency;
 
   return (
-    <div className="bg-paper p-10 shadow-stamp border-ink">
+    <div className="border-ink bg-paper p-10 shadow-stamp">
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col gap-[14px]"
@@ -65,11 +68,13 @@ export function AddExpenseForm() {
       >
         {create.isError && (
           <Alert variant="danger" role="alert">
-            {create.error instanceof ApiError ? create.error.message : ERROR.DEFAULT}
+            {getErrorMessage(create.error)}
           </Alert>
         )}
         {create.isSuccess && (
-          <Alert variant="success" role="status">Expense saved — redirecting…</Alert>
+          <Alert variant="success" role="status">
+            Expense saved — redirecting…
+          </Alert>
         )}
 
         <Input
@@ -99,11 +104,7 @@ export function AddExpenseForm() {
               Enter the amount in {currency}. Use decimals for cents, e.g. 12.99.
             </p>
           </div>
-          <SelectField
-            label="Currency"
-            aria-describedby="currency-hint"
-            {...register("currency")}
-          >
+          <SelectField label="Currency" aria-describedby="currency-hint" {...register("currency")}>
             <option value="USD">USD — US Dollar</option>
             <option value="EUR">EUR — Euro</option>
             <option value="GBP">GBP — British Pound</option>
@@ -116,8 +117,10 @@ export function AddExpenseForm() {
 
         <div className="form-grid-2">
           <SelectField label="Category" {...register("category")}>
-            {BILL_CATEGORIES.map((c) => (
-              <option key={c} value={c}>{c}</option>
+            {EXPENSE_CATEGORY_OPTIONS.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
             ))}
           </SelectField>
           <Input
@@ -128,7 +131,8 @@ export function AddExpenseForm() {
             {...register("dueDate")}
           />
           <p id="due-date-hint" className="sr-only">
-            For recurring expenses this is the day-of-month it recurs. For one-time expenses it is the payment date.
+            For recurring expenses this is the day-of-month it recurs. For one-time expenses it is
+            the payment date.
           </p>
         </div>
 
@@ -138,12 +142,15 @@ export function AddExpenseForm() {
           {...register("recurrenceFrequency")}
         >
           <option value="">One-time (no recurrence)</option>
-          {FREQUENCIES.map((f) => (
-            <option key={f} value={f}>{f.charAt(0) + f.slice(1).toLowerCase()}</option>
+          {EXPENSE_FREQUENCY_OPTIONS.map((f) => (
+            <option key={f} value={f}>
+              {f.charAt(0) + f.slice(1).toLowerCase()}
+            </option>
           ))}
         </SelectField>
         <p id="recurrence-hint" className="sr-only">
-          Choose a frequency to make this a recurring expense. Leave as one-time if it only happens once.
+          Choose a frequency to make this a recurring expense. Leave as one-time if it only happens
+          once.
         </p>
 
         <Textarea
@@ -155,7 +162,7 @@ export function AddExpenseForm() {
           {...register("description")}
         />
 
-        <div className="flex gap-4 mt-2">
+        <div className="mt-2 flex gap-4">
           <Btn
             type="button"
             variant="secondary"

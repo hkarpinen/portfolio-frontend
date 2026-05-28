@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCommunityMembership, useJoinCommunity } from "@/hooks/use-community";
 import { Icon } from "@/components/editorial/icon";
-import { ApiError } from "@/lib/api-client";
+import { getErrorMessage } from "@/lib/error-messages";
 
 interface CommunityActionsProps {
   communityId: string;
@@ -26,10 +26,7 @@ interface CommunityActionsProps {
 function AnonActions() {
   const pathname = usePathname();
   return (
-    <Link
-      href={`/login?from=${encodeURIComponent(pathname)}`}
-      className="ed-tab-aux text-red"
-    >
+    <Link href={`/login?from=${encodeURIComponent(pathname)}`} className="ed-tab-aux text-red">
       Join community <span aria-hidden="true">→</span>
     </Link>
   );
@@ -53,15 +50,15 @@ function AuthedActions({ communityId, slug }: { communityId: string; slug: strin
     return (
       <>
         {joinMutation.isError && (
-          <span className="text-xs text-red font-mono uppercase tracking-wide self-center">
-            {joinMutation.error instanceof ApiError ? joinMutation.error.message : "Failed to join"}
+          <span className="self-center font-mono text-xs uppercase tracking-wide text-red">
+            {getErrorMessage(joinMutation.error, "Failed to join")}
           </span>
         )}
         <button
           type="button"
           onClick={() => joinMutation.mutate()}
           disabled={joinMutation.isPending}
-          className="ed-tab-aux text-red cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed bg-transparent border-0"
+          className="ed-tab-aux cursor-pointer border-0 bg-transparent text-red disabled:cursor-not-allowed disabled:opacity-60"
         >
           {joinMutation.isPending ? "Joining…" : "Join community"} <span aria-hidden="true">→</span>
         </button>
@@ -84,7 +81,7 @@ function AuthedActions({ communityId, slug }: { communityId: string; slug: strin
         </>
       )}
       {!canManage && (
-        <span className="ed-tab-aux text-ink-3 cursor-default">
+        <span className="ed-tab-aux cursor-default text-ink-3">
           <Icon name="check" size={13} strokeWidth={2} aria-hidden /> Joined
         </span>
       )}

@@ -1,22 +1,32 @@
 import { api } from "@/lib/api-client";
-import { serverFetch } from "@/lib/server-api-client";
-import type {
-  HouseholdExpense,
-  HouseholdExpenseListResponse,
-  HouseholdExpenseDetailResponse,
-  ExpenseSplit,
-  MemberBalanceListResponse,
-} from "@/types/finance";
+import { parsedServerFetch } from "@/lib/server-api-client";
+import {
+  HouseholdExpenseSchema,
+  HouseholdExpenseListResponseSchema,
+  HouseholdExpenseDetailResponseSchema,
+  ExpenseSplitSchema,
+} from "@/types/household-expense";
+import { MemberBalanceListResponseSchema } from "@/types/membership";
 
 export const fetchHouseholdExpenses = (householdId: string) =>
-  api.get<HouseholdExpenseListResponse>(`/api/finance/groups/${householdId}/expenses`);
+  api.parsed.get(
+    `/api/finance/groups/${householdId}/expenses`,
+    HouseholdExpenseListResponseSchema,
+  );
 
 /** Server-side (RSC) version — forwards cookie so callerId is known and callerIsPaid is populated. */
 export const fetchHouseholdExpensesServer = (householdId: string, cookieHeader: string) =>
-  serverFetch<HouseholdExpenseListResponse>(`/api/finance/groups/${householdId}/expenses`, cookieHeader);
+  parsedServerFetch(
+    `/api/finance/groups/${householdId}/expenses`,
+    HouseholdExpenseListResponseSchema,
+    cookieHeader,
+  );
 
 export const fetchHouseholdExpenseDetail = (householdId: string, householdExpenseId: string) =>
-  api.get<HouseholdExpenseDetailResponse>(`/api/finance/groups/${householdId}/expenses/${householdExpenseId}/detail`);
+  api.parsed.get(
+    `/api/finance/groups/${householdId}/expenses/${householdExpenseId}/detail`,
+    HouseholdExpenseDetailResponseSchema,
+  );
 
 export const updateHouseholdExpense = (
   householdId: string,
@@ -29,30 +39,55 @@ export const updateHouseholdExpense = (
     dueDate: string;
     description?: string;
     recurrenceFrequency?: string;
-  }
-) => api.put<HouseholdExpense>(`/api/finance/groups/${householdId}/expenses/${householdExpenseId}`, { expenseId: householdExpenseId, ...body });
+  },
+) =>
+  api.parsed.put(
+    `/api/finance/groups/${householdId}/expenses/${householdExpenseId}`,
+    HouseholdExpenseSchema,
+    { expenseId: householdExpenseId, ...body },
+  );
 
 export const deleteHouseholdExpense = (householdId: string, householdExpenseId: string) =>
   api.delete(`/api/finance/groups/${householdId}/expenses/${householdExpenseId}`);
 
-export const payHouseholdExpense = (householdId: string, householdExpenseId: string, occurrenceDate: string) =>
-  api.post(`/api/finance/groups/${householdId}/expenses/${householdExpenseId}/payments`, { occurrenceDate });
+export const payHouseholdExpense = (
+  householdId: string,
+  householdExpenseId: string,
+  occurrenceDate: string,
+) =>
+  api.post(`/api/finance/groups/${householdId}/expenses/${householdExpenseId}/payments`, {
+    occurrenceDate,
+  });
 
-export const unpayHouseholdExpense = (householdId: string, householdExpenseId: string, occurrenceDate: string) =>
-  api.delete(`/api/finance/groups/${householdId}/expenses/${householdExpenseId}/payments`, { occurrenceDate });
+export const unpayHouseholdExpense = (
+  householdId: string,
+  householdExpenseId: string,
+  occurrenceDate: string,
+) =>
+  api.delete(`/api/finance/groups/${householdId}/expenses/${householdExpenseId}/payments`, {
+    occurrenceDate,
+  });
 
 export const addExpenseSplit = (
   householdId: string,
   householdExpenseId: string,
-  body: { membershipId: string; amount: number; currency: string }
-) => api.post<ExpenseSplit>(`/api/finance/groups/${householdId}/expenses/${householdExpenseId}/splits`, body);
+  body: { membershipId: string; amount: number; currency: string },
+) =>
+  api.parsed.post(
+    `/api/finance/groups/${householdId}/expenses/${householdExpenseId}/splits`,
+    ExpenseSplitSchema,
+    body,
+  );
 
 export const removeSplit = (householdId: string, householdExpenseId: string, splitId: string) =>
   api.delete(`/api/finance/groups/${householdId}/expenses/${householdExpenseId}/splits/${splitId}`);
 
 /** Per-other-member balances within a household, from the caller's POV. */
 export const fetchHouseholdBalances = (householdId: string) =>
-  api.get<MemberBalanceListResponse>(`/api/finance/groups/${householdId}/balances`);
+  api.parsed.get(
+    `/api/finance/groups/${householdId}/balances`,
+    MemberBalanceListResponseSchema,
+  );
 
 export const createHouseholdExpense = (
   householdId: string,
@@ -64,5 +99,10 @@ export const createHouseholdExpense = (
     dueDate: string;
     description?: string;
     recurrenceFrequency?: string;
-  }
-) => api.post<HouseholdExpense>(`/api/finance/groups/${householdId}/expenses`, body);
+  },
+) =>
+  api.parsed.post(
+    `/api/finance/groups/${householdId}/expenses`,
+    HouseholdExpenseSchema,
+    body,
+  );

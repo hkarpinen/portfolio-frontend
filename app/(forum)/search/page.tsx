@@ -7,7 +7,7 @@ import { timeAgo } from "@/lib/utils";
 import { Icon } from "@/components/editorial/icon";
 import type { SearchResult } from "@/types/forum";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export default function SearchPage() {
   const [input, setInput] = useState("");
@@ -26,16 +26,21 @@ export default function SearchPage() {
   return (
     <div className="page-enter flex flex-col gap-12">
       <div>
-        <h1 className="font-serif font-bold text-4xl leading-none tracking-snug text-ink m-0">
+        <h1 className="m-0 font-serif text-4xl font-bold leading-none tracking-snug text-ink">
           Search
         </h1>
-        <p className="text-ink-3 mt-2 text-md">Find threads and communities</p>
+        <p className="mt-2 text-md text-ink-3">Find threads and communities</p>
       </div>
 
       {/* Search input */}
       <div className="relative">
-        <label htmlFor="forum-search" className="sr-only">Search threads and communities</label>
-        <span aria-hidden="true" className="absolute left-[14px] top-[50%] -translate-y-1/2 pointer-events-none shrink-0 text-ink-3 inline-flex">
+        <label htmlFor="forum-search" className="sr-only">
+          Search threads and communities
+        </label>
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute left-[14px] top-[50%] inline-flex shrink-0 -translate-y-1/2 text-ink-3"
+        >
           <Icon name="search" size={16} strokeWidth={2} />
         </span>
         <input
@@ -46,23 +51,27 @@ export default function SearchPage() {
           autoFocus
           aria-busy={loading}
           placeholder="Search threads and communities…"
-          className={`w-full py-6 px-8 pl-20 bg-paper text-ink text-md outline-none shadow-card border-ink box-border ${loading ? "pr-11" : "pr-4"}`}
+          className={`box-border w-full border-ink bg-paper px-8 py-6 pl-20 text-md text-ink shadow-card outline-none ${loading ? "pr-11" : "pr-4"}`}
         />
         {loading && (
-          <div aria-hidden="true" className="absolute right-[14px] top-[50%] w-8 h-8 rounded-full -translate-y-1/2 border-2 border-ink-4 border-t-red animate-spin" />
+          <div
+            aria-hidden="true"
+            className="absolute right-[14px] top-[50%] h-8 w-8 -translate-y-1/2 animate-spin rounded-full border-2 border-ink-4 border-t-red"
+          />
         )}
       </div>
 
       {/* Live region announces result count to screen readers */}
       <div aria-live="polite" aria-atomic="true" className="sr-only">
         {loading && "Searching…"}
-        {!loading && query && results.length > 0 && `${results.length} result${results.length !== 1 ? "s" : ""} for ${query}`}
+        {!loading &&
+          query &&
+          results.length > 0 &&
+          `${results.length} result${results.length !== 1 ? "s" : ""} for ${query}`}
         {!loading && query && results.length === 0 && `No results for ${query}`}
       </div>
 
-      {!input.trim() && (
-        <p className="text-base text-ink-3">Start typing to search…</p>
-      )}
+      {!input.trim() && <p className="text-base text-ink-3">Start typing to search…</p>}
 
       {query && !loading && results.length > 0 && (
         <p className="text-base text-ink-3" aria-hidden="true">
@@ -71,24 +80,35 @@ export default function SearchPage() {
       )}
 
       {query && !loading && results.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-24 px-12 bg-paper shadow-card gap-4 border-ink" role="status">
-          <div aria-hidden="true" className="w-[56px] h-[56px] bg-red-soft flex items-center justify-center">
+        <div
+          className="flex flex-col items-center justify-center gap-4 border-ink bg-paper px-12 py-24 shadow-card"
+          role="status"
+        >
+          <div
+            aria-hidden="true"
+            className="flex h-[56px] w-[56px] items-center justify-center bg-red-soft"
+          >
             <Icon name="search" size={24} strokeWidth={1.75} />
           </div>
-          <p className="font-serif font-bold text-md text-ink">No results</p>
+          <p className="font-serif text-md font-bold text-ink">No results</p>
           <p className="text-base text-ink-3">Nothing found for &ldquo;{query}&rdquo;</p>
         </div>
       )}
 
       {results.length > 0 && (
-        <div className="bg-paper overflow-hidden shadow-stamp border-ink">
+        <div className="overflow-hidden border-ink bg-paper shadow-stamp">
           {results.map((result, i) => {
             const href =
               result.itemType === "community"
                 ? `/forum/g/${result.slug}`
                 : `/forum/g/${result.communitySlug}/threads/${result.itemId}`;
             return (
-              <SearchResultRow key={result.itemId} result={result} href={href} isLast={i === results.length - 1} />
+              <SearchResultRow
+                key={result.itemId}
+                result={result}
+                href={href}
+                isLast={i === results.length - 1}
+              />
             );
           })}
         </div>
@@ -97,33 +117,35 @@ export default function SearchPage() {
   );
 }
 
-function SearchResultRow({ result, href, isLast }: { result: SearchResult; href: string; isLast: boolean }) {
+function SearchResultRow({
+  result,
+  href,
+  isLast,
+}: {
+  result: SearchResult;
+  href: string;
+  isLast: boolean;
+}) {
   const isCommunity = result.itemType === "community";
 
   return (
     <Link
       href={href}
-      className={`flex items-start gap-6 py-[14px] px-[18px] no-underline hover:bg-paper-2 transition-colors${isLast ? "" : " border-ink-b"}`}
+      className={`flex items-start gap-6 px-[18px] py-[14px] no-underline hover:bg-paper-2 transition-colors${isLast ? "" : "border-ink-b"}`}
     >
       <span
-        className={`shrink-0 mt-1 text-sm font-mono py-1 px-4 tracking-[0.04em] uppercase ${isCommunity ? "bg-red-soft text-red" : "bg-paper-3 text-ink-2"}`}
+        className={`mt-1 shrink-0 px-4 py-1 font-mono text-sm uppercase tracking-[0.04em] ${isCommunity ? "bg-red-soft text-red" : "bg-paper-3 text-ink-2"}`}
       >
         {result.itemType}
       </span>
-      <div className="flex-1 min-w-0">
-        <p className="font-serif font-semibold text-md text-ink m-0 leading-snug">
-          {result.title}
-        </p>
+      <div className="min-w-0 flex-1">
+        <p className="m-0 font-serif text-md font-semibold leading-snug text-ink">{result.title}</p>
         {result.snippet && (
-          <p className="text-base text-ink-3 mt-[6px] line-clamp-2">
-            {result.snippet}
-          </p>
+          <p className="mt-[6px] line-clamp-2 text-base text-ink-3">{result.snippet}</p>
         )}
-        <div className="flex items-center gap-4 mt-[6px] flex-wrap">
+        <div className="mt-[6px] flex flex-wrap items-center gap-4">
           {!isCommunity && result.communityName && (
-            <span className="text-sm font-mono text-ink-3">
-              f/{result.communityName}
-            </span>
+            <span className="font-mono text-sm text-ink-3">f/{result.communityName}</span>
           )}
           {result.createdAt && (
             <span className="text-sm text-ink-4">{timeAgo(result.createdAt)}</span>
@@ -133,4 +155,3 @@ function SearchResultRow({ result, href, isLast }: { result: SearchResult; href:
     </Link>
   );
 }
-

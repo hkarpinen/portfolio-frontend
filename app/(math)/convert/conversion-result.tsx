@@ -24,7 +24,12 @@ interface ConversionResultProps {
   isError: boolean;
 }
 
-export function ConversionResult({ result, isLoading, isFetching, isError }: ConversionResultProps) {
+export function ConversionResult({
+  result,
+  isLoading,
+  isFetching,
+  isError,
+}: ConversionResultProps) {
   return (
     <>
       {isLoading && isFetching && (
@@ -39,33 +44,39 @@ export function ConversionResult({ result, isLoading, isFetching, isError }: Con
       )}
 
       {result && (
-        <div className="bg-paper shadow-stamp border-ink">
+        <div className="border-ink bg-paper shadow-stamp">
           <div className="p-[16px_24px_0]">
             <p className="ed-kicker" style={{ letterSpacing: "0.3em" }}>
               {result.category} · result
             </p>
           </div>
 
-          <div
-            className="flex items-end justify-between gap-6 flex-wrap p-[8px_24px_20px] border-ink-b"
-          >
-            <div className="flex items-baseline gap-3 flex-wrap">
+          <div className="border-ink-b flex flex-wrap items-end justify-between gap-6 p-[8px_24px_20px]">
+            <div className="flex flex-wrap items-baseline gap-3">
               <span
                 className="font-serif italic text-red"
-                style={{ fontSize: "clamp(3rem, 6vw, 5rem)", letterSpacing: "-0.03em", lineHeight: 0.9 }}
+                style={{
+                  fontSize: "clamp(3rem, 6vw, 5rem)",
+                  letterSpacing: "-0.03em",
+                  lineHeight: 0.9,
+                }}
                 /* fontSize is clamp() — responsive runtime value, no Tailwind equivalent */
               >
                 {formatNumber(result.outputValue)}
               </span>
               <span
                 className="font-serif text-ink-2"
-                style={{ fontSize: "clamp(1.25rem, 2.5vw, 2rem)", letterSpacing: "-0.01em", lineHeight: 1 }}
+                style={{
+                  fontSize: "clamp(1.25rem, 2.5vw, 2rem)",
+                  letterSpacing: "-0.01em",
+                  lineHeight: 1,
+                }}
                 /* fontSize is clamp() — responsive runtime value, no Tailwind equivalent */
               >
                 {result.to}
               </span>
             </div>
-            <p className="font-mono text-ink-3 text-xs tracking-[0.08em] leading-[1.5] text-right">
+            <p className="text-right font-mono text-xs leading-[1.5] tracking-[0.08em] text-ink-3">
               {formatNumber(result.inputValue)} {result.from}
               <br />
               <span className="text-ink-4">converted to {result.to}</span>
@@ -74,10 +85,10 @@ export function ConversionResult({ result, isLoading, isFetching, isError }: Con
 
           <div className="grid grid-cols-4">
             {[
-              { label: "Input",  value: formatNumber(result.inputValue) },
+              { label: "Input", value: formatNumber(result.inputValue) },
               { label: "Output", value: formatNumber(result.outputValue), italic: true },
-              { label: "From",   value: result.from },
-              { label: "To",     value: result.to, italic: true },
+              { label: "From", value: result.from },
+              { label: "To", value: result.to, italic: true },
             ].map((s, i, arr) => (
               <div key={s.label} className={i < arr.length - 1 ? "border-ink-r" : ""}>
                 <StatCard label={s.label} value={s.value} italic={s.italic} />

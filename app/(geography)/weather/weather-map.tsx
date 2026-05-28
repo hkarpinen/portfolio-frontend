@@ -7,18 +7,18 @@ import type { GeoCoordinates } from "@/types/geography";
 type LayerKey = "clouds" | "precipitation" | "pressure" | "wind" | "temp" | "cycling";
 
 const LAYERS: { key: LayerKey; label: string; attribution: string }[] = [
-  { key: "clouds",        label: "Clouds",       attribution: "OpenWeatherMap" },
-  { key: "precipitation", label: "Precip.",      attribution: "OpenWeatherMap" },
-  { key: "pressure",      label: "Pressure",     attribution: "OpenWeatherMap" },
-  { key: "wind",          label: "Wind",         attribution: "OpenWeatherMap" },
-  { key: "temp",          label: "Temperature",  attribution: "OpenWeatherMap" },
-  { key: "cycling",       label: "Cycling",      attribution: "CyclOSM" },
+  { key: "clouds", label: "Clouds", attribution: "OpenWeatherMap" },
+  { key: "precipitation", label: "Precip.", attribution: "OpenWeatherMap" },
+  { key: "pressure", label: "Pressure", attribution: "OpenWeatherMap" },
+  { key: "wind", label: "Wind", attribution: "OpenWeatherMap" },
+  { key: "temp", label: "Temperature", attribution: "OpenWeatherMap" },
+  { key: "cycling", label: "Cycling", attribution: "CyclOSM" },
 ];
 
 export function WeatherMap({ coords }: { coords: GeoCoordinates }) {
-  const mapRef      = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<any>(null);
-  const overlayRef  = useRef<any>(null);
+  const overlayRef = useRef<any>(null);
   const [activeLayer, setActiveLayer] = useState<LayerKey | null>(null);
 
   useEffect(() => {
@@ -43,7 +43,7 @@ export function WeatherMap({ coords }: { coords: GeoCoordinates }) {
       mapInstance.current?.remove();
       mapInstance.current = null;
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -77,9 +77,9 @@ export function WeatherMap({ coords }: { coords: GeoCoordinates }) {
         <div
           role="group"
           aria-label="Map overlay layers"
-          className="flex flex-wrap items-center border-ink-b p-[10px_14px] bg-paper-2 gap-[10px]"
+          className="border-ink-b flex flex-wrap items-center gap-[10px] bg-paper-2 p-[10px_14px]"
         >
-          <span className="ed-label-muted uppercase shrink-0 tracking-[0.22em]" aria-hidden="true">
+          <span className="ed-label-muted shrink-0 uppercase tracking-[0.22em]" aria-hidden="true">
             Overlay
           </span>
           <div className="flex flex-wrap gap-[6px]">
@@ -92,9 +92,13 @@ export function WeatherMap({ coords }: { coords: GeoCoordinates }) {
                   onClick={() => toggle(l.key)}
                   aria-pressed={on}
                   aria-label={`${on ? "Hide" : "Show"} ${l.label} overlay`}
-                  className={`ed-label-muted font-mono uppercase transition-colors tracking-[0.18em] p-[3px_9px] border-ink cursor-pointer min-h-[36px]${on ? " bg-ink text-paper" : " bg-transparent text-ink-2"}`}
+                  className={`ed-label-muted cursor-pointer border-ink p-[3px_9px] font-mono uppercase tracking-[0.18em] transition-colors min-h-[36px]${on ? "bg-ink text-paper" : "bg-transparent text-ink-2"}`}
                 >
-                  {on && <span aria-hidden="true" className="text-red mr-1">▸</span>}
+                  {on && (
+                    <span aria-hidden="true" className="mr-1 text-red">
+                      ▸
+                    </span>
+                  )}
                   {l.label}
                 </button>
               );

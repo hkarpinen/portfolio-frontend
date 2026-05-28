@@ -23,18 +23,16 @@ function StepRow({ state, label }: { state: StepState; label: string }) {
       <span
         aria-hidden="true"
         className={
-          "w-5 h-5 flex items-center justify-center border-[1.5px] shrink-0 " +
+          "flex h-5 w-5 shrink-0 items-center justify-center border-[1.5px] " +
           (state === "done"
-            ? "bg-green-soft border-green text-green"
+            ? "border-green bg-green-soft text-green"
             : state === "active"
-            ? "border-red text-red"
-            : "border-ink-4 text-transparent")
+              ? "border-red text-red"
+              : "border-ink-4 text-transparent")
         }
       >
         {state === "done" && <Icon name="check" size={13} strokeWidth={2.5} />}
-        {state === "active" && (
-          <span className="w-2 h-2 bg-red animate-pulse" aria-hidden="true" />
-        )}
+        {state === "active" && <span className="h-2 w-2 animate-pulse bg-red" aria-hidden="true" />}
       </span>
       <span className={"ed-label-muted " + (state === "pending" ? "opacity-60" : "")}>
         {label}
@@ -82,7 +80,7 @@ export default function DemoPage() {
     }
 
     run();
-  }, [router]);
+  }, [router, executeRecaptcha]);
 
   const seeding = status === "seeding";
 
@@ -93,14 +91,20 @@ export default function DemoPage() {
           {status === "error" ? (
             <div role="alert">
               <p className="ed-kicker mb-3">Demo</p>
-              <h1 className="ed-h1 mb-4">Couldn&apos;t start the <em>demo.</em></h1>
+              <h1 className="ed-h1 mb-4">
+                Couldn&apos;t start the <em>demo.</em>
+              </h1>
               <p className="ed-deck mb-8">{errorMessage}</p>
-              <Btn href="/" variant="secondary" size="lg">Back to home</Btn>
+              <Btn href="/" variant="secondary" size="lg">
+                Back to home
+              </Btn>
             </div>
           ) : (
             <>
               <p className="ed-kicker mb-3">Spinning up your demo</p>
-              <h1 className="ed-h1 mb-3">You&apos;re <em>in.</em></h1>
+              <h1 className="ed-h1 mb-3">
+                You&apos;re <em>in.</em>
+              </h1>
               <p className="ed-deck mb-8">
                 Provisioning a sandboxed household with seeded data. About three seconds.
               </p>
@@ -111,25 +115,33 @@ export default function DemoPage() {
                 aria-live="polite"
                 aria-atomic="true"
                 aria-label="Demo setup progress"
-                className="flex flex-col gap-3 text-left max-w-[320px] mx-auto mb-8"
+                className="mx-auto mb-8 flex max-w-[320px] flex-col gap-3 text-left"
               >
-                <ul className="flex flex-col gap-3 list-none" aria-label="Setup steps">
+                <ul className="flex list-none flex-col gap-3" aria-label="Setup steps">
                   <StepRow state={seeding ? "done" : "active"} label="reCAPTCHA cleared" />
                   <StepRow state={seeding ? "done" : "pending"} label="Sandbox account created" />
-                  <StepRow state={seeding ? "active" : "pending"} label="Demo household seeded · 3 roommates" />
+                  <StepRow
+                    state={seeding ? "active" : "pending"}
+                    label="Demo household seeded · 3 roommates"
+                  />
                   <StepRow state="pending" label="Redirecting to dashboard" />
                 </ul>
               </div>
 
               <p className="ed-meta mb-6">
-                This is a sandboxed environment — data resets nightly and is not suitable for real data.
+                This is a sandboxed environment — data resets nightly and is not suitable for real
+                data.
               </p>
 
-              <Btn href="/household" variant="primary" size="lg" fullWidth>Skip to dashboard</Btn>
+              <Btn href="/household" variant="primary" size="lg" fullWidth>
+                Skip to dashboard
+              </Btn>
 
               <p className="ed-hint mt-6">
                 Like what you see?{" "}
-                <Link href="/register" className="text-red font-semibold">Create a free account →</Link>
+                <Link href="/register" className="font-semibold text-red">
+                  Create a free account →
+                </Link>
               </p>
             </>
           )}

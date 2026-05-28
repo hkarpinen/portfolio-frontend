@@ -32,19 +32,10 @@ interface LedeStatProps {
   italic?: boolean;
 }
 
-export function LedeStat({
-  label,
-  value,
-  negative,
-  deck,
-  aside,
-  italic,
-}: LedeStatProps) {
-  const numeralClass = [
-    "ed-lede-numeral",
-    negative ? "is-negative" : "",
-    italic ? "italic" : "",
-  ].filter(Boolean).join(" ");
+export function LedeStat({ label, value, negative, deck, aside, italic }: LedeStatProps) {
+  const numeralClass = ["ed-lede-numeral", negative ? "is-negative" : "", italic ? "italic" : ""]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <section className="ed-lede" aria-label={label}>

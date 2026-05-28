@@ -23,20 +23,19 @@ const statusLabel: Record<Connection["status"], string> = {
 
 function AccountRow({ account }: { account: LinkedAccountResponse }) {
   const balance =
-    account.currentBalance != null
-      ? formatCurrency(account.currentBalance, account.currency)
-      : "—";
+    account.currentBalance != null ? formatCurrency(account.currentBalance, account.currency) : "—";
   return (
-    <div className="flex justify-between items-center p-[8px_0] border-t border-ink">
+    <div className="flex items-center justify-between border-t border-ink p-[8px_0]">
       <div className="flex items-center gap-4">
-        <span className="text-base text-ink-2 font-medium">
-          {account.name}{account.mask ? ` ····${account.mask}` : ""}
+        <span className="text-base font-medium text-ink-2">
+          {account.name}
+          {account.mask ? ` ····${account.mask}` : ""}
         </span>
         {account.subtype && (
-          <span className="text-sm text-ink-3 bg-paper-2 py-[2px] px-[7px]">{account.subtype}</span>
+          <span className="bg-paper-2 px-[7px] py-[2px] text-sm text-ink-3">{account.subtype}</span>
         )}
       </div>
-      <span className="text-base text-ink-3 tabular-nums">{balance}</span>
+      <span className="text-base tabular-nums text-ink-3">{balance}</span>
     </div>
   );
 }
@@ -48,36 +47,46 @@ export function ConnectionCard({ item }: { item: Connection }) {
   const unlink = useUnlinkPlaidItem();
 
   const lastSync = item.lastSyncedAt
-    ? new Date(item.lastSyncedAt).toLocaleString(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })
+    ? new Date(item.lastSyncedAt).toLocaleString(undefined, {
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+      })
     : null;
 
   const isSyncing = sync.isPending && sync.variables === item.connectionId;
   const isUnlinking = unlink.isPending && unlink.variables === item.connectionId;
 
   return (
-    <div className={`bg-paper overflow-hidden border-ink transition-opacity duration-200${isUnlinking ? " opacity-50" : " opacity-100"}`}>
-      <div className="py-8 px-10 flex items-center gap-[14px]">
-        <div className="w-[42px] h-[42px] bg-paper-2 flex items-center justify-center shrink-0">
+    <div
+      className={`overflow-hidden border-ink bg-paper transition-opacity duration-200${isUnlinking ? "opacity-50" : "opacity-100"}`}
+    >
+      <div className="flex items-center gap-[14px] px-10 py-8">
+        <div className="flex h-[42px] w-[42px] shrink-0 items-center justify-center bg-paper-2">
           <Icon name="bank" size={20} strokeWidth={1.75} />
         </div>
 
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-4 flex-wrap">
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-4">
             <span className="text-md font-semibold text-ink">{item.institutionName}</span>
             <span
-              className="text-sm font-semibold py-1 px-4"
-              style={{ color: statusColor[item.status], background: `color-mix(in oklch, ${statusColor[item.status]} 15%, transparent)` }} /* dynamic per-status color */
+              className="px-4 py-1 text-sm font-semibold"
+              style={{
+                color: statusColor[item.status],
+                background: `color-mix(in oklch, ${statusColor[item.status]} 15%, transparent)`,
+              }} /* dynamic per-status color */
             >
               {statusLabel[item.status]}
             </span>
           </div>
-          <p className="text-base text-ink-3 mt-[3px]">
+          <p className="mt-[3px] text-base text-ink-3">
             {item.accounts.length} account{item.accounts.length !== 1 ? "s" : ""}
             {lastSync ? ` · Synced ${lastSync}` : " · Never synced"}
           </p>
         </div>
 
-        <div className="flex items-center gap-3 shrink-0">
+        <div className="flex shrink-0 items-center gap-3">
           <Btn
             variant="ghost"
             size="sm"
@@ -91,17 +100,16 @@ export function ConnectionCard({ item }: { item: Connection }) {
 
           {confirming ? (
             <>
-              <Btn
-                variant="ghost"
-                size="sm"
-                onClick={() => setConfirming(false)}
-              >
+              <Btn variant="ghost" size="sm" onClick={() => setConfirming(false)}>
                 Cancel
               </Btn>
               <Btn
                 variant="danger"
                 size="sm"
-                onClick={() => { unlink.mutate(item.connectionId); setConfirming(false); }}
+                onClick={() => {
+                  unlink.mutate(item.connectionId);
+                  setConfirming(false);
+                }}
                 className="whitespace-nowrap"
               >
                 Confirm remove
@@ -121,7 +129,7 @@ export function ConnectionCard({ item }: { item: Connection }) {
           <button
             type="button"
             onClick={() => setExpanded((v) => !v)}
-            className={`bg-transparent py-3 px-2 cursor-pointer text-ink-3 text-md leading-none border-none transition-transform duration-200${expanded ? " rotate-180" : ""}`}
+            className={`cursor-pointer border-none bg-transparent px-2 py-3 text-md leading-none text-ink-3 transition-transform duration-200${expanded ? "rotate-180" : ""}`}
             aria-label={expanded ? "Collapse accounts" : "Expand accounts"}
           >
             ▾
@@ -131,7 +139,9 @@ export function ConnectionCard({ item }: { item: Connection }) {
 
       {expanded && item.accounts.length > 0 && (
         <div className="p-[0_20px_16px]">
-          {item.accounts.map((a) => <AccountRow key={a.accountId} account={a} />)}
+          {item.accounts.map((a) => (
+            <AccountRow key={a.accountId} account={a} />
+          ))}
         </div>
       )}
     </div>

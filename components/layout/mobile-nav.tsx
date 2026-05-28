@@ -12,24 +12,29 @@ import { Icon, type IconName } from "@/components/editorial/icon";
 type Cell = { label: string; href: string; icon: IconName; activeIfStartsWith?: string[] };
 
 const CELLS: Cell[] = [
-  { label: "Home",    href: "/",                 icon: "home",      },
-  { label: "House",   href: "/household",        icon: "household", activeIfStartsWith: ["/household"] },
-  { label: "Finance", href: "/expenses",         icon: "expenses",  activeIfStartsWith: ["/expenses", "/income"] },
-  { label: "Forum",   href: "/forum",            icon: "forum",     activeIfStartsWith: ["/forum"] },
-  { label: "Me",      href: "/settings/profile", icon: "about",     activeIfStartsWith: ["/settings"] },
+  { label: "Home", href: "/", icon: "home" },
+  { label: "House", href: "/household", icon: "household", activeIfStartsWith: ["/household"] },
+  {
+    label: "Finance",
+    href: "/expenses",
+    icon: "expenses",
+    activeIfStartsWith: ["/expenses", "/income"],
+  },
+  { label: "Forum", href: "/forum", icon: "forum", activeIfStartsWith: ["/forum"] },
+  { label: "Me", href: "/settings/profile", icon: "about", activeIfStartsWith: ["/settings"] },
 ];
 
 export function MobileNav({ pathname }: { pathname: string }) {
   return (
     <nav aria-label="Mobile navigation" className="ed-mobile-nav mobile-only">
       <ul className="ed-mobile-nav-list">
-        {CELLS.map(c => {
+        {CELLS.map((c) => {
           const active =
             c.href === "/"
               ? pathname === "/"
               : c.activeIfStartsWith
-              ? c.activeIfStartsWith.some(p => pathname.startsWith(p))
-              : pathname.startsWith(c.href);
+                ? c.activeIfStartsWith.some((p) => pathname.startsWith(p))
+                : pathname.startsWith(c.href);
           return (
             <li key={c.href}>
               <Link

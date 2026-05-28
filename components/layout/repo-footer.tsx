@@ -6,7 +6,10 @@ const GithubIcon = () => (
 
 export function RepoFooter({ repo, label }: { repo: string; label: string }) {
   return (
-    <footer className="mt-16 pt-3 flex justify-end" style={{ borderTop: "1px solid var(--paper-3)" }}>
+    <footer
+      className="mt-16 flex justify-end pt-3"
+      style={{ borderTop: "1px solid var(--paper-3)" }}
+    >
       <a
         href={`https://github.com/hkarpinen/${repo}`}
         target="_blank"

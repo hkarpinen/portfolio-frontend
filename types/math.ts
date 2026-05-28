@@ -1,14 +1,18 @@
+import { z } from "zod";
+
 // Mirrors Math.Application.Dtos
 
-export interface ConversionResultDto {
-  from: string;
-  to: string;
-  inputValue: number;
-  outputValue: number;
-  category: string;
-}
+export const ConversionResultDtoSchema = z.object({
+  from: z.string(),
+  to: z.string(),
+  inputValue: z.number(),
+  outputValue: z.number(),
+  category: z.string(),
+});
+export type ConversionResultDto = z.infer<typeof ConversionResultDtoSchema>;
 
-export interface UnitCategoryDto {
-  category: string;
-  units: string[];
-}
+export const UnitCategoryDtoSchema = z.object({
+  category: z.string(),
+  units: z.array(z.string()),
+});
+export type UnitCategoryDto = z.infer<typeof UnitCategoryDtoSchema>;

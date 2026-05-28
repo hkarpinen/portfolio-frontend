@@ -1,0 +1,27 @@
+# Build artifacts
+.next/
+out/
+build/
+dist/
+coverage/
+
+# Dependencies
+node_modules/
+
+# Lockfiles (npm formats these itself)
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# Generated / minified
+*.min.js
+*.min.css
+next-env.d.ts
+
+# Public assets
+public/
+
+# Editor / OS
+.DS_Store
+.vscode/
+.idea/

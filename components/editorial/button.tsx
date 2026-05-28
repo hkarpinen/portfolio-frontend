@@ -37,12 +37,12 @@ interface BtnProps {
 }
 
 const VARIANT_CLASS: Record<BtnVariant, string> = {
-  primary:   "ed-btn-primary",
+  primary: "ed-btn-primary",
   secondary: "ed-btn-secondary",
-  ghost:     "ed-btn-ghost",
-  danger:    "ed-btn-danger",
-  outline:   "ed-btn-outline",
-  success:   "ed-btn-success",
+  ghost: "ed-btn-ghost",
+  danger: "ed-btn-danger",
+  outline: "ed-btn-outline",
+  success: "ed-btn-success",
 };
 
 const SIZE_CLASS: Record<BtnSize, string> = {

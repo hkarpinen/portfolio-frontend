@@ -10,4 +10,6 @@
   cursor: pointer;
   transition: background 110ms;
 }
-.deleteBtn:hover { background: var(--danger-s); }
+.deleteBtn:hover {
+  background: var(--danger-s);
+}

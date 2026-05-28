@@ -5,10 +5,11 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createCommentSchema, CreateCommentInput } from "@/schemas/forum";
+import type { CreateCommentInput } from "@/schemas/forum";
+import { createCommentSchema } from "@/schemas/forum";
 import { useCreateComment } from "@/hooks/use-forum";
 import { useIsDemo } from "@/hooks/use-demo";
-import { ApiError } from "@/lib/api-client";
+import { getErrorMessage } from "@/lib/error-messages";
 import { parseMarkdown } from "@/lib/markdown";
 import { Alert, Btn, Textarea } from "@/components/editorial";
 
@@ -39,11 +40,11 @@ export function CommentForm({ threadId, isAuthed }: CommentFormProps) {
       <p className="text-base text-ink-3">
         <Link
           href={`/login?from=${encodeURIComponent(pathname)}`}
-          className="text-red no-underline font-medium"
+          className="font-medium text-red no-underline"
         >
           Sign in
-        </Link>
-        {" "}to leave a comment.
+        </Link>{" "}
+        to leave a comment.
       </p>
     );
   }
@@ -52,22 +53,27 @@ export function CommentForm({ threadId, isAuthed }: CommentFormProps) {
     return (
       <p className="text-base text-ink-3">
         Commenting is not available in the demo.{" "}
-        <a href="/register" className="text-red no-underline font-medium">Create a free account</a>
-        {" "}to join the conversation.
+        <a href="/register" className="font-medium text-red no-underline">
+          Create a free account
+        </a>{" "}
+        to join the conversation.
       </p>
     );
   }
 
   function onSubmit(data: CreateCommentInput) {
-    createComment.mutate({ content: data.content }, {
-      onSuccess: () => {
-        reset();
-        setPreviewing(false);
-        setSubmitted(true);
-        setTimeout(() => setSubmitted(false), 3000);
-        router.refresh();
+    createComment.mutate(
+      { content: data.content },
+      {
+        onSuccess: () => {
+          reset();
+          setPreviewing(false);
+          setSubmitted(true);
+          setTimeout(() => setSubmitted(false), 3000);
+          router.refresh();
+        },
       },
-    });
+    );
   }
 
   async function togglePreview() {
@@ -85,20 +91,25 @@ export function CommentForm({ threadId, isAuthed }: CommentFormProps) {
   const contentReg = register("content");
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5" aria-label="Reply to thread">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="flex flex-col gap-5"
+      aria-label="Reply to thread"
+    >
       {createComment.isError && (
         <Alert variant="danger">
-          {createComment.error instanceof ApiError ? createComment.error.message : "Failed to post comment. Are you logged in?"}
+          {getErrorMessage(createComment.error, "Failed to post comment. Are you logged in?")}
         </Alert>
       )}
       {submitted && <Alert variant="success">Reply posted!</Alert>}
 
       {previewing ? (
         <div
-          className="prose prose-slate max-w-none text-md text-ink-2 leading-[1.7] min-h-[120px] p-5 border border-rule-soft bg-paper-2"
+          className="prose prose-slate min-h-[120px] max-w-none border border-rule-soft bg-paper-2 p-5 text-md leading-[1.7] text-ink-2"
           aria-label="Reply preview"
           dangerouslySetInnerHTML={{
-            __html: previewHtml.trim() || `<p class="text-ink-3 italic">Nothing to preview yet.</p>`,
+            __html:
+              previewHtml.trim() || `<p class="text-ink-3 italic">Nothing to preview yet.</p>`,
           }}
         />
       ) : (
@@ -111,7 +122,7 @@ export function CommentForm({ threadId, isAuthed }: CommentFormProps) {
         />
       )}
 
-      <div className="flex gap-3 justify-between items-center flex-wrap">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <Btn type="button" variant="secondary" size="sm" onClick={togglePreview}>
           {previewing ? "Edit" : "Preview"}
         </Btn>

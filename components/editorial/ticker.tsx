@@ -1,4 +1,7 @@
 import React from "react";
+import type { TickerItem } from "@/types/ticker";
+
+export type { TickerItem };
 
 /**
  * <Ticker> — animated horizontal data strip (editorial)
@@ -8,18 +11,11 @@ import React from "react";
  * `prefers-reduced-motion`. Pure decoration over live data — no a11y noise.
  *
  * All visual rules live in /app/globals.css under `.ed-ticker*`.
+ *
+ * The TickerItem shape lives in @/types/ticker so lib/-layer copy helpers
+ * (lib/finance/editorial-copy etc.) can produce payloads without depending
+ * on components/. Re-exported here for the existing import surface.
  */
-
-export interface TickerItem {
-  /** Small red lead-in word (optional). e.g. "NEXT DUE". */
-  kicker?: string;
-  /** Primary label of the item. e.g. "Electric". */
-  label: string;
-  /** Right-side value, set in tabular nums. e.g. "$98 Fri". */
-  value?: string;
-  /** Direction tints the value: up→green, down→red. */
-  direction?: "up" | "down" | "flat";
-}
 
 interface TickerProps {
   items: TickerItem[];
@@ -34,9 +30,11 @@ function Row({ items }: { items: TickerItem[] }) {
     <>
       {items.map((it, i) => {
         const tone =
-          it.direction === "up" ? "ed-ticker-up"
-          : it.direction === "down" ? "ed-ticker-down"
-          : "ed-ticker-value";
+          it.direction === "up"
+            ? "ed-ticker-up"
+            : it.direction === "down"
+              ? "ed-ticker-down"
+              : "ed-ticker-value";
         return (
           <span key={i} className="ed-ticker-item">
             {it.kicker && <span className="ed-ticker-kicker">{it.kicker}</span>}
@@ -49,25 +47,13 @@ function Row({ items }: { items: TickerItem[] }) {
   );
 }
 
-export function Ticker({
-  items,
-  speedSeconds = 70,
-  ariaLabel = "Live ticker",
-}: TickerProps) {
+export function Ticker({ items, speedSeconds = 70, ariaLabel = "Live ticker" }: TickerProps) {
   if (items.length === 0) return null;
   // The CSS animates the track. Duration is forwarded as a style so callers
   // can tune speed per-page without a new utility class per value.
   return (
-    <div
-      className="ed-ticker"
-      role="region"
-      aria-label={ariaLabel}
-      aria-live="off"
-    >
-      <div
-        className="ed-ticker-track"
-        style={{ animationDuration: `${speedSeconds}s` }}
-      >
+    <div className="ed-ticker" role="region" aria-label={ariaLabel} aria-live="off">
+      <div className="ed-ticker-track" style={{ animationDuration: `${speedSeconds}s` }}>
         <Row items={items} />
         <Row items={items} />
       </div>

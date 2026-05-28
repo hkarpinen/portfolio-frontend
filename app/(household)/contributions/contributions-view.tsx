@@ -1,21 +1,28 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import type { ContributionPeriodSummary } from "@/types/finance";
-import { aggregateByYear, aggregateByQuarter, toMonthlyPeriods, sortPeriods } from "@/lib/contributions";
+import type { ContributionPeriod } from "@/types/contributions";
+import {
+  aggregateByYear,
+  aggregateByQuarter,
+  toMonthlyPeriods,
+  sortPeriods,
+} from "@/lib/contributions";
 import { PeriodCard, GranularityButton } from "./period-card";
 
 type GranularityTab = "monthly" | "quarterly" | "yearly";
 
-export function BudgetView({ months: initialMonths }: { months: ContributionPeriodSummary[] }) {
+export function BudgetView({ months: initialMonths }: { months: ContributionPeriod[] }) {
   const [granularity, setGranularity] = useState<GranularityTab>("monthly");
   const months = initialMonths;
   const currentRef = useRef<HTMLDivElement>(null);
 
   const rawPeriods =
-    granularity === "yearly"      ? aggregateByYear(months)
-    : granularity === "quarterly" ? aggregateByQuarter(months)
-    : toMonthlyPeriods(months);
+    granularity === "yearly"
+      ? aggregateByYear(months)
+      : granularity === "quarterly"
+        ? aggregateByQuarter(months)
+        : toMonthlyPeriods(months);
 
   const periods = sortPeriods(rawPeriods);
 
@@ -42,7 +49,12 @@ export function BudgetView({ months: initialMonths }: { months: ContributionPeri
 
       <div key={granularity} className="flex flex-col gap-[14px]">
         {periods.map((p) => (
-          <PeriodCard key={p.label} p={p} cardRef={p.isCurrent ? currentRef : undefined} granularity={granularity} />
+          <PeriodCard
+            key={p.label}
+            p={p}
+            cardRef={p.isCurrent ? currentRef : undefined}
+            granularity={granularity}
+          />
         ))}
       </div>
     </div>

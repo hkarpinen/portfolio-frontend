@@ -2,14 +2,14 @@
 
 import { useState, useMemo } from "react";
 import { useParams } from "next/navigation";
-import { useHouseholdContributions } from "@/hooks/use-household-expenses";
+import { useHouseholdContributions } from "@/hooks/use-expenses";
 import { useHousehold } from "@/hooks/use-household";
 import { EmptyState } from "@/components/editorial/empty-state";
 import { Icon } from "@/components/editorial/icon";
 import { EditorialPageHead } from "@/components/editorial/editorial-page-head";
 import { DepartmentHead } from "@/components/editorial/department-head";
 import { contributionsHeadline } from "@/lib/household/editorial-copy";
-import type { HouseholdMonthlyContributions } from "@/types/finance";
+import type { HouseholdMonthlyContributions } from "@/types/contributions";
 import { formatCurrency } from "@/lib/formatting";
 
 const fmtCurrency = (amount: number | undefined, currency: string) =>
@@ -17,7 +17,7 @@ const fmtCurrency = (amount: number | undefined, currency: string) =>
 
 /** Compute the minimal settlement transactions from net member balances. */
 function computeSettlements(
-  month: HouseholdMonthlyContributions
+  month: HouseholdMonthlyContributions,
 ): { from: string; to: string; amount: number }[] {
   // Build net balance per member: positive = owed money, negative = owes money
   const nets = (month.members ?? []).map((m) => ({
@@ -55,7 +55,7 @@ export default function HouseholdContributionsPage() {
 
   const periodOptions = useMemo(
     () => (months ?? []).map((m) => ({ label: m.periodLabel, value: m.periodStart })),
-    [months]
+    [months],
   );
 
   const [selectedPeriod, setSelectedPeriod] = useState<string>("");
@@ -68,7 +68,11 @@ export default function HouseholdContributionsPage() {
   // Unsettled = sum of all surplus credits (which equals sum of all debts).
   const unsettledTotal = settlements.reduce((s, x) => s + x.amount, 0);
   const headlineLabel = month?.periodLabel ?? "This month";
-  const headline = contributionsHeadline({ currency: cur, unsettled: unsettledTotal, monthLabel: headlineLabel });
+  const headline = contributionsHeadline({
+    currency: cur,
+    unsettled: unsettledTotal,
+    monthLabel: headlineLabel,
+  });
 
   return (
     <div className="page-enter flex flex-col gap-6">
@@ -90,15 +94,17 @@ export default function HouseholdContributionsPage() {
       ) : (
         <div className="flex flex-col gap-8">
           {/* Month selector */}
-          <div className="flex items-center justify-end gap-3 -mt-2">
+          <div className="-mt-2 flex items-center justify-end gap-3">
             <select
               value={activePeriod}
               onChange={(e) => setSelectedPeriod(e.target.value)}
-              className="h-9 px-3 font-mono text-xs tracking-[0.08em] uppercase bg-paper text-ink border border-[var(--ink)] cursor-pointer"
+              className="h-9 cursor-pointer border border-[var(--ink)] bg-paper px-3 font-mono text-xs uppercase tracking-[0.08em] text-ink"
               aria-label="Select month"
             >
               {periodOptions.map((o) => (
-                <option key={o.value} value={o.value}>{o.label}</option>
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
               ))}
             </select>
           </div>
@@ -113,13 +119,24 @@ export default function HouseholdContributionsPage() {
               />
 
               <div className="overflow-x-auto">
-                <table className="w-full border-collapse" aria-label={`Member contributions for ${month?.periodLabel ?? "this period"}`}>
+                <table
+                  className="w-full border-collapse"
+                  aria-label={`Member contributions for ${month?.periodLabel ?? "this period"}`}
+                >
                   <thead>
                     <tr className="border-b border-[var(--ink)]">
-                      <th scope="col" className="text-left ed-kicker pb-[10px] pr-6 font-normal">Member</th>
-                      <th scope="col" className="text-right ed-kicker pb-[10px] pr-6 font-normal">Paid</th>
-                      <th scope="col" className="text-right ed-kicker pb-[10px] pr-6 font-normal">Owed</th>
-                      <th scope="col" className="text-right ed-kicker pb-[10px] font-normal">Net (+ surplus / − owed)</th>
+                      <th scope="col" className="ed-kicker pb-[10px] pr-6 text-left font-normal">
+                        Member
+                      </th>
+                      <th scope="col" className="ed-kicker pb-[10px] pr-6 text-right font-normal">
+                        Paid
+                      </th>
+                      <th scope="col" className="ed-kicker pb-[10px] pr-6 text-right font-normal">
+                        Owed
+                      </th>
+                      <th scope="col" className="ed-kicker pb-[10px] text-right font-normal">
+                        Net (+ surplus / − owed)
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -127,26 +144,28 @@ export default function HouseholdContributionsPage() {
                       const net = (m.totalPaid ?? 0) - (m.totalDue ?? 0);
                       const netAbs = fmtCurrency(Math.abs(net), cur);
                       const netSign = net >= 0 ? "+" : "−";
-                      const netLabel = net >= 0
-                        ? `${netAbs} surplus (overpaid)`
-                        : `${netAbs} owed (underpaid)`;
+                      const netLabel =
+                        net >= 0 ? `${netAbs} surplus (overpaid)` : `${netAbs} owed (underpaid)`;
                       return (
                         <tr key={m.userId} className="border-b border-rule-soft">
-                          <td className="py-[14px] pr-6 font-serif italic text-ink text-[1.0625rem]">
+                          <td className="py-[14px] pr-6 font-serif text-[1.0625rem] italic text-ink">
                             {m.displayName || `Member ${m.userId.slice(0, 6)}…`}
                           </td>
-                          <td className="py-[14px] pr-6 text-right font-mono text-sm text-ink whitespace-nowrap">
+                          <td className="whitespace-nowrap py-[14px] pr-6 text-right font-mono text-sm text-ink">
                             {fmtCurrency(m.totalPaid, cur)}
                           </td>
-                          <td className="py-[14px] pr-6 text-right font-mono text-sm text-ink whitespace-nowrap">
+                          <td className="whitespace-nowrap py-[14px] pr-6 text-right font-mono text-sm text-ink">
                             {fmtCurrency(m.totalDue, cur)}
                           </td>
                           <td
-                            className={`py-[14px] text-right font-mono text-sm whitespace-nowrap ${net >= 0 ? "text-green" : "text-red"}`}
+                            className={`whitespace-nowrap py-[14px] text-right font-mono text-sm ${net >= 0 ? "text-green" : "text-red"}`}
                             aria-label={netLabel}
                           >
                             {/* Sign (+ or −) provides non-color indicator alongside color */}
-                            <span aria-hidden>{netSign}{netAbs}</span>
+                            <span aria-hidden>
+                              {netSign}
+                              {netAbs}
+                            </span>
                           </td>
                         </tr>
                       );
@@ -170,12 +189,12 @@ export default function HouseholdContributionsPage() {
                 {settlements.map((s, i) => (
                   <div
                     key={i}
-                    className="flex items-center justify-between gap-4 px-6 py-4 border-b border-rule-soft last:border-b-0"
+                    className="flex items-center justify-between gap-4 border-b border-rule-soft px-6 py-4 last:border-b-0"
                   >
-                    <span className="font-serif italic text-ink text-base">
+                    <span className="font-serif text-base italic text-ink">
                       {s.from} → {s.to}
                     </span>
-                    <span className="font-mono text-sm text-ink whitespace-nowrap">
+                    <span className="whitespace-nowrap font-mono text-sm text-ink">
                       {fmtCurrency(s.amount, cur)}
                     </span>
                   </div>
@@ -184,7 +203,7 @@ export default function HouseholdContributionsPage() {
               {/* TODO(handoff8): SETTLE UP CTA — wire to a settle-up endpoint when available */}
               <div>
                 <button
-                  className="font-mono text-sm tracking-[0.1em] uppercase text-ink bg-paper border border-[var(--ink)] px-5 h-11 cursor-pointer hover:bg-ink hover:text-paper transition-colors"
+                  className="h-11 cursor-pointer border border-[var(--ink)] bg-paper px-5 font-mono text-sm uppercase tracking-[0.1em] text-ink transition-colors hover:bg-ink hover:text-paper"
                   disabled
                   title="Settle-up endpoint not yet available"
                 >
@@ -195,7 +214,9 @@ export default function HouseholdContributionsPage() {
           )}
 
           {settlements.length === 0 && month && (month.members ?? []).length > 0 && (
-            <p className="ed-empty-dispatch">All contributions <em>balanced</em> — no settlement needed</p>
+            <p className="ed-empty-dispatch">
+              All contributions <em>balanced</em> — no settlement needed
+            </p>
           )}
         </div>
       )}

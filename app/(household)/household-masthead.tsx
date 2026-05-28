@@ -39,22 +39,26 @@ const HOUSEHOLD_TABS: TabDef[] = [
     match: (p, id) => p === `/household/${id}` || p.startsWith(`/household/${id}/expenses`),
   },
   {
-    key: "contributions", label: "Contributions",
+    key: "contributions",
+    label: "Contributions",
     href: (id) => `/household/${id}/contributions`,
     match: (p, id) => p.startsWith(`/household/${id}/contributions`),
   },
   {
-    key: "calendar", label: "Calendar",
+    key: "calendar",
+    label: "Calendar",
     href: (id) => `/household/${id}/calendar`,
     match: (p, id) => p.startsWith(`/household/${id}/calendar`),
   },
   {
-    key: "chores", label: "Chores",
+    key: "chores",
+    label: "Chores",
     href: (id) => `/household/${id}/chores`,
     match: (p, id) => p.startsWith(`/household/${id}/chores`),
   },
   {
-    key: "settings", label: "Settings",
+    key: "settings",
+    label: "Settings",
     href: (id) => `/household/${id}/settings`,
     match: (p, id) => p.startsWith(`/household/${id}/settings`),
   },
@@ -87,22 +91,34 @@ function actionForTab(householdId: string, activeTab: HouseholdTab | null): Reac
   switch (activeTab) {
     case "expenses":
       return (
-        <Btn href={`/household/${householdId}/expenses/new`} variant="primary" size="sm"
-             iconLeft={<Icon name="plus" size={12} strokeWidth={2.5} />}>
+        <Btn
+          href={`/household/${householdId}/expenses/new`}
+          variant="primary"
+          size="sm"
+          iconLeft={<Icon name="plus" size={12} strokeWidth={2.5} />}
+        >
           Add expense
         </Btn>
       );
     case "calendar":
       return (
-        <Btn href={`/household/${householdId}/calendar/new`} variant="primary" size="sm"
-             iconLeft={<Icon name="plus" size={12} strokeWidth={2.5} />}>
+        <Btn
+          href={`/household/${householdId}/calendar/new`}
+          variant="primary"
+          size="sm"
+          iconLeft={<Icon name="plus" size={12} strokeWidth={2.5} />}
+        >
           Add event
         </Btn>
       );
     case "chores":
       return (
-        <Btn href={`/household/${householdId}/chores/new`} variant="primary" size="sm"
-             iconLeft={<Icon name="plus" size={12} strokeWidth={2.5} />}>
+        <Btn
+          href={`/household/${householdId}/chores/new`}
+          variant="primary"
+          size="sm"
+          iconLeft={<Icon name="plus" size={12} strokeWidth={2.5} />}
+        >
           Add chore
         </Btn>
       );
@@ -114,7 +130,13 @@ function actionForTab(householdId: string, activeTab: HouseholdTab | null): Reac
 
 /** Live-fetched household name for the desk label. Falls back to a static
  *  label while the request is in flight. */
-function HouseholdDetailMasthead({ householdId, pathname }: { householdId: string; pathname: string }) {
+function HouseholdDetailMasthead({
+  householdId,
+  pathname,
+}: {
+  householdId: string;
+  pathname: string;
+}) {
   const { data: household } = useHousehold(householdId);
   const desk = household?.name ? `Household · ${household.name}` : "Household Desk";
   const activeTab = HOUSEHOLD_TABS.find((t) => t.match(pathname, householdId))?.key ?? null;

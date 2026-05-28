@@ -20,9 +20,7 @@ const VIEW_TABS = ["threads", "rules", "members"] as const;
 type ViewTab = (typeof VIEW_TABS)[number];
 
 function parseTab(raw: string | undefined): ViewTab {
-  return (VIEW_TABS as readonly string[]).includes(raw ?? "")
-    ? (raw as ViewTab)
-    : "threads";
+  return (VIEW_TABS as readonly string[]).includes(raw ?? "") ? (raw as ViewTab) : "threads";
 }
 
 export default async function CommunityPage({
@@ -75,9 +73,8 @@ export default async function CommunityPage({
         <nav aria-label="Community sections" className="ed-tabs-list flex-1">
           {VIEW_TABS.map((tab) => {
             const isActive = tab === activeTab;
-            const href = tab === "threads"
-              ? `/forum/g/${params.slug}`
-              : `/forum/g/${params.slug}?tab=${tab}`;
+            const href =
+              tab === "threads" ? `/forum/g/${params.slug}` : `/forum/g/${params.slug}?tab=${tab}`;
             return (
               <Link
                 key={tab}
@@ -133,14 +130,18 @@ export default async function CommunityPage({
             title="Community <em>rules</em>"
             deck="Moderators set the ground rules here."
           />
-          {/* TODO(handoff8): render community.rules markdown when the backend exposes a rules field
-              on CommunityDetailResponse. For now show a placeholder. */}
-          <EmptyState
-            glyph={<Icon name="shield" size={24} strokeWidth={1.5} />}
-            title="No rules yet"
-            body="Moderators set the ground rules for this community in Settings."
-            cta={{ label: "Open settings", href: `/forum/g/${params.slug}/settings` }}
-          />
+          {community.rules?.trim() ? (
+            <div className="whitespace-pre-wrap border-ink bg-paper p-12 text-base leading-relaxed text-ink-2 shadow-stamp">
+              {community.rules}
+            </div>
+          ) : (
+            <EmptyState
+              glyph={<Icon name="shield" size={24} strokeWidth={1.5} />}
+              title="No rules yet"
+              body="Moderators set the ground rules for this community in Settings."
+              cta={{ label: "Open settings", href: `/forum/g/${params.slug}/settings` }}
+            />
+          )}
         </section>
       )}
 

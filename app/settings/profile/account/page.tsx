@@ -1,14 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
-import { useQueryClient } from "@tanstack/react-query";
-import { api, ApiError } from "@/lib/api-client";
-import { ERROR } from "@/lib/error-messages";
-import { identityKeys } from "@/lib/query-keys";
+import { useMe, useUpdateMe } from "@/hooks/use-identity";
+import { getErrorMessage } from "@/lib/error-messages";
 import { Btn, Alert, Input, Textarea } from "@/components/editorial";
 import { ProfileTabs } from "../profile-tabs";
 import { cardClassName } from "../../settings-ui";
@@ -27,44 +25,40 @@ type IdentityForm = z.infer<typeof identitySchema>;
 
 export default function AccountSettingsPage() {
   const router = useRouter();
-  const queryClient = useQueryClient();
-  const [loading, setLoading] = useState(true);
-  const [identitySaved, setIdentitySaved] = useState(false);
-  const [identityError, setIdentityError] = useState<string | null>(null);
+  const { data: me, isLoading: loading } = useMe();
+  const updateMe = useUpdateMe();
 
   const identityForm = useForm<IdentityForm>({ resolver: zodResolver(identitySchema) });
 
+  // Seed the form when `me` resolves. Handle/bio/location/pronouns aren't on
+  // the canonical Me type yet (TODO(handoff8)) — read them off `me` defensively.
   useEffect(() => {
-    api.get<{ displayName?: string; avatarUrl?: string | null; handle?: string; bio?: string; location?: string; pronouns?: string }>("/api/identity/me")
-      .then((identity) => {
-        identityForm.reset({
-          displayName: identity.displayName ?? "",
-          avatarUrl: identity.avatarUrl ?? null,
-          handle: identity.handle ?? "",
-          bio: identity.bio ?? "",
-          location: identity.location ?? "",
-          pronouns: identity.pronouns ?? "",
-        });
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, [identityForm]);
+    if (!me) return;
+    const extra = me as typeof me & {
+      handle?: string;
+      bio?: string;
+      location?: string;
+      pronouns?: string;
+    };
+    identityForm.reset({
+      displayName: me.displayName ?? "",
+      avatarUrl: me.avatarUrl ?? null,
+      handle: extra.handle ?? "",
+      bio: extra.bio ?? "",
+      location: extra.location ?? "",
+      pronouns: extra.pronouns ?? "",
+    });
+  }, [me, identityForm]);
 
-  const onIdentitySubmit = async (data: IdentityForm) => {
-    setIdentityError(null);
-    setIdentitySaved(false);
-    try {
-      await api.put("/api/identity/me", {
+  const onIdentitySubmit = (data: IdentityForm) => {
+    updateMe.mutate(
+      {
         displayName: data.displayName,
         avatarUrl: data.avatarUrl,
         // TODO(handoff8): wire handle/bio/location/pronouns to /api/identity/me once backend exposes those fields
-      });
-      setIdentitySaved(true);
-      queryClient.invalidateQueries({ queryKey: identityKeys.me() });
-      router.refresh();
-    } catch (err) {
-      setIdentityError(err instanceof ApiError ? err.message : ERROR.DEFAULT);
-    }
+      },
+      { onSuccess: () => router.refresh() },
+    );
   };
 
   return (
@@ -72,17 +66,22 @@ export default function AccountSettingsPage() {
       <ProfileTabs active="Account" />
 
       {loading ? (
-        <div className={`text-center py-24 px-10 border-ink ${cardClassName}`}>
-          <p className="text-ink-3 text-md">Loading...</p>
+        <div className={`border-ink px-10 py-24 text-center ${cardClassName}`}>
+          <p className="text-md text-ink-3">Loading...</p>
         </div>
       ) : (
         <div className="sidebar-grid gap-10">
           <div className={`border-ink ${cardClassName}`}>
             <p className="ed-label-muted mb-8">Profile</p>
-            <form onSubmit={identityForm.handleSubmit(onIdentitySubmit)} className="flex flex-col gap-8">
+            <form
+              onSubmit={identityForm.handleSubmit(onIdentitySubmit)}
+              className="flex flex-col gap-8"
+            >
               <div aria-live="polite" aria-atomic="true">
-                {identityError && <Alert variant="danger">{identityError}</Alert>}
-                {identitySaved && <Alert variant="success">Profile updated.</Alert>}
+                {updateMe.isError && (
+                  <Alert variant="danger">{getErrorMessage(updateMe.error)}</Alert>
+                )}
+                {updateMe.isSuccess && <Alert variant="success">Profile updated.</Alert>}
               </div>
 
               {/* Row: Display Name + Handle */}
@@ -130,8 +129,8 @@ export default function AccountSettingsPage() {
                 />
               </div>
 
-              <Btn variant="primary" fullWidth type="submit" disabled={identityForm.formState.isSubmitting}>
-                {identityForm.formState.isSubmitting ? "Saving…" : "Save Changes"}
+              <Btn variant="primary" fullWidth type="submit" disabled={updateMe.isPending}>
+                {updateMe.isPending ? "Saving…" : "Save Changes"}
               </Btn>
             </form>
           </div>

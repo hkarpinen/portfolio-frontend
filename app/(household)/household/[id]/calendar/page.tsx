@@ -11,8 +11,18 @@ import { CalendarGrid } from "./calendar-grid";
 import { calendarHeadline } from "@/lib/household/editorial-copy";
 
 const MONTHS = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ];
 
 export default function CalendarPage({ params }: { params: { id: string } }) {
@@ -21,26 +31,24 @@ export default function CalendarPage({ params }: { params: { id: string } }) {
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
 
-  const from = useMemo(
-    () => new Date(year, month, 1).toISOString(),
-    [year, month]
-  );
-  const to = useMemo(
-    () => new Date(year, month + 1, 0, 23, 59, 59).toISOString(),
-    [year, month]
-  );
+  const from = useMemo(() => new Date(year, month, 1).toISOString(), [year, month]);
+  const to = useMemo(() => new Date(year, month + 1, 0, 23, 59, 59).toISOString(), [year, month]);
 
   const eventsQuery = useCalendarEvents(householdId, from, to);
   const deleteEvent = useDeleteCalendarEvent(householdId);
   const events = eventsQuery.data ?? [];
 
   function prevMonth() {
-    if (month === 0) { setYear(y => y - 1); setMonth(11); }
-    else setMonth(m => m - 1);
+    if (month === 0) {
+      setYear((y) => y - 1);
+      setMonth(11);
+    } else setMonth((m) => m - 1);
   }
   function nextMonth() {
-    if (month === 11) { setYear(y => y + 1); setMonth(0); }
-    else setMonth(m => m + 1);
+    if (month === 11) {
+      setYear((y) => y + 1);
+      setMonth(0);
+    } else setMonth((m) => m + 1);
   }
   function goToday() {
     setYear(today.getFullYear());
@@ -58,15 +66,21 @@ export default function CalendarPage({ params }: { params: { id: string } }) {
         deck="Birthdays, bills, deadlines, gatherings — anything the household needs to put on a date."
       />
 
-      <div className="flex items-center justify-end gap-2 -mt-2">
-        <Btn variant="secondary" size="sm" onClick={prevMonth} aria-label="Previous month">←</Btn>
-        <Btn variant="secondary" size="sm" onClick={goToday}>Today</Btn>
-        <Btn variant="secondary" size="sm" onClick={nextMonth} aria-label="Next month">→</Btn>
+      <div className="-mt-2 flex items-center justify-end gap-2">
+        <Btn variant="secondary" size="sm" onClick={prevMonth} aria-label="Previous month">
+          ←
+        </Btn>
+        <Btn variant="secondary" size="sm" onClick={goToday}>
+          Today
+        </Btn>
+        <Btn variant="secondary" size="sm" onClick={nextMonth} aria-label="Next month">
+          →
+        </Btn>
       </div>
 
       {/* Calendar grid */}
       {eventsQuery.isLoading ? (
-        <p className="text-center py-12 ed-label-muted">Loading…</p>
+        <p className="ed-label-muted py-12 text-center">Loading…</p>
       ) : (
         <CalendarGrid
           year={year}
@@ -85,7 +99,9 @@ export default function CalendarPage({ params }: { params: { id: string } }) {
           title="Posted <em>this month</em>"
         />
         {events.length === 0 ? (
-          <EmptyDispatch>No events <em>filed</em> for {monthName}</EmptyDispatch>
+          <EmptyDispatch>
+            No events <em>filed</em> for {monthName}
+          </EmptyDispatch>
         ) : (
           <ol className="flex flex-col">
             {events
@@ -94,11 +110,11 @@ export default function CalendarPage({ params }: { params: { id: string } }) {
               .map((ev) => (
                 <li
                   key={ev.id}
-                  className="flex justify-between items-center py-3 gap-6 border-b border-rule-soft last:border-b-0"
+                  className="flex items-center justify-between gap-6 border-b border-rule-soft py-3 last:border-b-0"
                 >
                   <div>
                     <p className="font-serif text-md">{ev.title}</p>
-                    <p className="font-mono text-sm text-ink-3 mt-1">
+                    <p className="mt-1 font-mono text-sm text-ink-3">
                       {new Date(ev.startsAt).toLocaleDateString("en-US", {
                         weekday: "short",
                         month: "short",
@@ -116,7 +132,7 @@ export default function CalendarPage({ params }: { params: { id: string } }) {
                     onClick={() => deleteEvent.mutate(ev.id)}
                     disabled={deleteEvent.isPending}
                     aria-label={`Delete event: ${ev.title}`}
-                    className="bg-transparent cursor-pointer text-ink-3 hover:text-red font-mono text-sm border-none transition-colors"
+                    className="cursor-pointer border-none bg-transparent font-mono text-sm text-ink-3 transition-colors hover:text-red"
                   >
                     <Icon name="x" size={12} strokeWidth={2.5} aria-hidden />
                   </button>

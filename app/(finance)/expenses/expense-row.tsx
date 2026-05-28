@@ -4,12 +4,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useUpdateExpense, usePayExpense, useUnpayExpense } from "@/hooks/use-expenses";
 import { formatCurrency, formatAmount } from "@/lib/formatting";
-import { BILL_CATEGORIES, FREQUENCIES, expenseSchema, type ExpenseFormData } from "./_expense-form-shared";
-import { ApiError } from "@/lib/api-client";
-import { ERROR } from "@/lib/error-messages";
+import { EXPENSE_FREQUENCY_OPTIONS, expenseSchema } from "./_expense-form-shared";
+import type { ExpenseFormData } from "./_expense-form-shared";
+import { getErrorMessage } from "@/lib/error-messages";
 import { Alert, Btn, Input, SelectField, Textarea, Icon } from "@/components/editorial";
 import { DeleteIconButton } from "@/components/editorial/delete-icon-button";
-import type { Expense } from "@/types/finance";
+import { EXPENSE_CATEGORY_OPTIONS, type Expense } from "@/types/expense";
 
 export const CATEGORY_COLORS: Record<string, string> = {
   Housing: "var(--red)",
@@ -30,16 +30,19 @@ export const CATEGORY_ICONS: Record<string, string> = {
   Rent: "M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10",
   Utilities: "M13 2L3 14h9l-1 8 10-12h-9l1-8z",
   Groceries: "M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4zM3 6h18M16 10a4 4 0 0 1-8 0",
-  Transportation: "M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v5a2 2 0 0 1-2 2h-3m-9 0a2 2 0 1 0 4 0 2 2 0 0 0-4 0m9 0a2 2 0 1 0 4 0 2 2 0 0 0-4 0",
-  Entertainment: "M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z",
+  Transportation:
+    "M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v5a2 2 0 0 1-2 2h-3m-9 0a2 2 0 1 0 4 0 2 2 0 0 0-4 0m9 0a2 2 0 1 0 4 0 2 2 0 0 0-4 0",
+  Entertainment:
+    "M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z",
   Healthcare: "M22 12h-4l-3 9L9 3l-3 9H2",
   Insurance: "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z",
   Subscriptions: "M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8",
-  Internet: "M5 12.55a11 11 0 0 1 14.08 0M1.42 9a16 16 0 0 1 21.16 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01",
-  Phone: "M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z",
+  Internet:
+    "M5 12.55a11 11 0 0 1 14.08 0M1.42 9a16 16 0 0 1 21.16 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01",
+  Phone:
+    "M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z",
   Other: "M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2zm0 6v4m0 4h.01",
 };
-
 
 interface ExpenseRowProps {
   expense: Expense;
@@ -53,14 +56,25 @@ interface ExpenseRowProps {
 function ordinal(n: number): string {
   if (n >= 11 && n <= 13) return "th";
   switch (n % 10) {
-    case 1: return "st";
-    case 2: return "nd";
-    case 3: return "rd";
-    default: return "th";
+    case 1:
+      return "st";
+    case 2:
+      return "nd";
+    case 3:
+      return "rd";
+    default:
+      return "th";
   }
 }
 
-export function ExpenseRow({ expense, isEditing, onEditToggle, onEditDone, onDelete, isDeleting }: ExpenseRowProps) {
+export function ExpenseRow({
+  expense,
+  isEditing,
+  onEditToggle,
+  onEditDone,
+  onDelete,
+  isDeleting,
+}: ExpenseRowProps) {
   const due = new Date(expense.dueDate);
   const isOverdue = due < new Date() && !expense.isPaid;
   const updateBill = useUpdateExpense();
@@ -77,7 +91,11 @@ export function ExpenseRow({ expense, isEditing, onEditToggle, onEditDone, onDel
     }
   };
 
-  const { register, handleSubmit, formState: { errors } } = useForm<ExpenseFormData>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ExpenseFormData>({
     resolver: zodResolver(expenseSchema),
     values: {
       title: expense.title,
@@ -85,7 +103,8 @@ export function ExpenseRow({ expense, isEditing, onEditToggle, onEditDone, onDel
       currency: expense.currency,
       category: expense.category as ExpenseFormData["category"],
       dueDate: expense.dueDate ? new Date(expense.dueDate).toISOString().slice(0, 10) : "",
-      recurrenceFrequency: (expense.recurrenceFrequency ?? "") as ExpenseFormData["recurrenceFrequency"],
+      recurrenceFrequency: (expense.recurrenceFrequency ??
+        "") as ExpenseFormData["recurrenceFrequency"],
       description: expense.description ?? "",
     },
   });
@@ -104,7 +123,7 @@ export function ExpenseRow({ expense, isEditing, onEditToggle, onEditDone, onDel
           description: data.description || undefined,
         },
       },
-      { onSuccess: onEditDone }
+      { onSuccess: onEditDone },
     );
   };
 
@@ -116,23 +135,22 @@ export function ExpenseRow({ expense, isEditing, onEditToggle, onEditDone, onDel
   const amountLabel = formatCurrency(expense.amount, expense.currency ?? "USD");
 
   return (
-    <div className="ed-module-card" aria-label={`${expense.title}, ${amountLabel}${expense.isPaid ? ", paid" : isOverdue ? ", overdue" : ""}`}>
+    <div
+      className="ed-module-card"
+      aria-label={`${expense.title}, ${amountLabel}${expense.isPaid ? ", paid" : isOverdue ? ", overdue" : ""}`}
+    >
       {/* Top row: title + amount */}
       <div className="flex items-start justify-between gap-4">
-        <div className="flex-1 min-w-0">
-          <p className="font-serif font-bold text-lg text-ink leading-tight">
+        <div className="min-w-0 flex-1">
+          <p className="font-serif text-lg font-bold leading-tight text-ink">
             {expense.title}
-            {expense.isPaid && (
-              <span className="sr-only"> (paid)</span>
-            )}
+            {expense.isPaid && <span className="sr-only"> (paid)</span>}
           </p>
-          {expense.description && (
-            <p className="ed-hint mt-1">{expense.description}</p>
-          )}
+          {expense.description && <p className="ed-hint mt-1">{expense.description}</p>}
         </div>
-        <div className="text-right shrink-0">
+        <div className="shrink-0 text-right">
           <p
-            className={`font-serif font-bold text-lg italic tabular-nums ${isOverdue ? "text-red" : expense.isPaid ? "text-ink-3" : "text-ink"}`}
+            className={`font-serif text-lg font-bold italic tabular-nums ${isOverdue ? "text-red" : expense.isPaid ? "text-ink-3" : "text-ink"}`}
             aria-label={amountLabel}
           >
             ${formatAmount(expense.amount)}
@@ -153,7 +171,10 @@ export function ExpenseRow({ expense, isEditing, onEditToggle, onEditDone, onDel
       {/* Bottom row: frequency + category + actions */}
       <div className="ed-module-card-foot">
         <div className="flex items-center gap-4">
-          <p className="ed-label-muted">{freqLabel} · {dayLabel}{ordinal(dayLabel)}</p>
+          <p className="ed-label-muted">
+            {freqLabel} · {dayLabel}
+            {ordinal(dayLabel)}
+          </p>
           {expense.category && (
             <span className="ed-label-muted">{expense.category.toUpperCase()}</span>
           )}
@@ -164,7 +185,9 @@ export function ExpenseRow({ expense, isEditing, onEditToggle, onEditDone, onDel
             disabled={isPayPending}
             title={expense.isPaid ? "Mark as unpaid" : "Mark as paid"}
             className={`ed-icon-btn ${expense.isPaid ? "text-green" : "text-ink-3"}`}
-            aria-label={expense.isPaid ? `Mark ${expense.title} as unpaid` : `Mark ${expense.title} as paid`}
+            aria-label={
+              expense.isPaid ? `Mark ${expense.title} as unpaid` : `Mark ${expense.title} as paid`
+            }
             aria-pressed={expense.isPaid}
           >
             <Icon name="check" size={13} strokeWidth={expense.isPaid ? 2.5 : 1.5} />
@@ -177,17 +200,25 @@ export function ExpenseRow({ expense, isEditing, onEditToggle, onEditDone, onDel
           >
             <Icon name="edit" size={13} strokeWidth={2} />
           </button>
-          <DeleteIconButton onClick={onDelete} disabled={isDeleting} label={`Remove ${expense.title}`} />
+          <DeleteIconButton
+            onClick={onDelete}
+            disabled={isDeleting}
+            label={`Remove ${expense.title}`}
+          />
         </div>
       </div>
 
       {/* Inline edit form */}
       {isEditing && (
-        <div className="py-[16px] px-[18px] bg-paper-2 border-t border-ink" role="region" aria-label={`Edit ${expense.title}`}>
+        <div
+          className="border-t border-ink bg-paper-2 px-[18px] py-[16px]"
+          role="region"
+          aria-label={`Edit ${expense.title}`}
+        >
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5" noValidate>
             {updateBill.isError && (
               <Alert variant="danger" role="alert">
-                {updateBill.error instanceof ApiError ? updateBill.error.message : ERROR.DEFAULT}
+                {getErrorMessage(updateBill.error)}
               </Alert>
             )}
             <div className="form-grid-2 gap-4">
@@ -210,19 +241,29 @@ export function ExpenseRow({ expense, isEditing, onEditToggle, onEditDone, onDel
                 <option value="CAD">CAD — Canadian Dollar</option>
               </SelectField>
               <SelectField label="Category" {...register("category")}>
-                {BILL_CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+                {EXPENSE_CATEGORY_OPTIONS.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
               </SelectField>
               <Input type="date" label="Due date" {...register("dueDate")} />
               <SelectField label="Recurrence" {...register("recurrenceFrequency")}>
                 <option value="">One-time</option>
-                {FREQUENCIES.map((f) => <option key={f} value={f}>{f}</option>)}
+                {EXPENSE_FREQUENCY_OPTIONS.map((f) => (
+                  <option key={f} value={f}>
+                    {f}
+                  </option>
+                ))}
               </SelectField>
               <div className="col-span-full">
                 <Textarea label="Notes" rows={2} {...register("description")} />
               </div>
             </div>
-            <div className="flex gap-4 justify-end">
-              <Btn type="button" variant="secondary" size="xs" onClick={onEditToggle}>Cancel</Btn>
+            <div className="flex justify-end gap-4">
+              <Btn type="button" variant="secondary" size="xs" onClick={onEditToggle}>
+                Cancel
+              </Btn>
               <Btn type="submit" variant="primary" size="xs" disabled={updateBill.isPending}>
                 {updateBill.isPending ? "Saving…" : "Save changes"}
               </Btn>

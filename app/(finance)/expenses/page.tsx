@@ -5,13 +5,10 @@ import type { HouseholdSummaryDto } from "@/lib/api/households";
 import { fetchIncomeServer } from "@/lib/api/income";
 import { EditorialPageHead } from "@/components/editorial/editorial-page-head";
 import { ExpensesClient } from "./expenses-client";
-import {
-  currentMonthName,
-  expensesHeadline,
-  expensesDeck,
-} from "@/lib/finance/editorial-copy";
+import { currentMonthName, expensesHeadline, expensesDeck } from "@/lib/finance/editorial-copy";
 import { toMonthlyAmount } from "@/lib/utils";
-import type { Expense, IncomeSource } from "@/types/finance";
+import type { Expense } from "@/types/expense";
+import type { IncomeSource } from "@/types/income";
 
 export const dynamic = "force-dynamic";
 
@@ -62,8 +59,12 @@ export default async function ExpensesPage() {
   const personalDue = currentPeriod?.personalBillsDue ?? 0;
   const totalOut = sharedDue + personalDue;
   const disposable = monthlyNet - totalOut;
-  const recurringCount = (currentPeriod?.personalBills ?? []).filter((b) => b.recurrenceFrequency).length;
-  const oneTimeCount = (currentPeriod?.personalBills ?? []).filter((b) => !b.recurrenceFrequency).length;
+  const recurringCount = (currentPeriod?.personalBills ?? []).filter(
+    (b) => b.recurrenceFrequency,
+  ).length;
+  const oneTimeCount = (currentPeriod?.personalBills ?? []).filter(
+    (b) => !b.recurrenceFrequency,
+  ).length;
   const sharedBillCount = new Set((currentPeriod?.contributions ?? []).map((c) => c.billId)).size;
 
   const headline = expensesHeadline({ disposable, income: monthlyGross, monthName });
@@ -77,11 +78,7 @@ export default async function ExpensesPage() {
 
   return (
     <div className="page-enter flex flex-col gap-6">
-      <EditorialPageHead
-        kicker={`${monthName} edition`}
-        title={headline}
-        deck={deck}
-      />
+      <EditorialPageHead kicker={`${monthName} edition`} title={headline} deck={deck} />
 
       <ExpensesClient
         initialMonths={initialMonths}

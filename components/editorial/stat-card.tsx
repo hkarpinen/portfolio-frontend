@@ -24,8 +24,8 @@ export function StatCard({ label, value, sub, trend, trendDir, italic }: StatCar
     trendDir === "up"
       ? "ed-stat-sub-up"
       : trendDir === "down"
-      ? "ed-stat-sub-down"
-      : "ed-stat-sub-flat";
+        ? "ed-stat-sub-down"
+        : "ed-stat-sub-flat";
   return (
     <div className="ed-stat">
       <p className="ed-label-muted ed-stat-label">{label}</p>
@@ -58,8 +58,7 @@ interface LedgerStripProps {
 
 export function LedgerStrip({ label, cells, columns }: LedgerStripProps) {
   const cols = columns ?? (cells.length as 2 | 3 | 4);
-  const colClass =
-    cols === 2 ? "ed-ledger-2" : cols === 3 ? "ed-ledger-3" : "ed-ledger-4";
+  const colClass = cols === 2 ? "ed-ledger-2" : cols === 3 ? "ed-ledger-3" : "ed-ledger-4";
   const cls = ["ed-ledger", colClass, label ? "ed-ledger-with-label" : ""]
     .filter(Boolean)
     .join(" ");

@@ -14,15 +14,13 @@ import {
   type Connection,
   type RecurringSuggestion,
 } from "@/lib/api/plaid";
-import { financeKeys } from "@/lib/query-keys";
+import { financeKeys, connectionKeys } from "@/lib/query-keys";
 
-export const connectionKeys = {
-  all: ["plaid"] as const,
-  items: () => [...connectionKeys.all, "items"] as const,
-  recurring: () => [...connectionKeys.all, "recurring"] as const,
-};
+// Re-export so existing call sites that imported these from the hook file
+// continue to compile. The canonical home is now @/lib/query-keys.
+export { connectionKeys };
 
-// Keep legacy alias
+/** @deprecated Use connectionKeys */
 export const plaidKeys = connectionKeys;
 
 function loadPlaidLink(): Promise<PlaidLinkGlobal> {
@@ -48,7 +46,10 @@ interface PlaidLinkGlobal {
 
 interface PlaidLinkConfig {
   token: string;
-  onSuccess: (publicToken: string, metadata: { institution?: { institution_id: string; name: string } | null }) => void;
+  onSuccess: (
+    publicToken: string,
+    metadata: { institution?: { institution_id: string; name: string } | null },
+  ) => void;
   onExit?: (err: unknown, metadata: unknown) => void;
 }
 
@@ -105,7 +106,7 @@ export function usePlaidLink() {
 export function useConnectedAccounts() {
   return useQuery({
     queryKey: connectionKeys.items(),
-    queryFn: () => listConnections().then(r => r.connections as Connection[]),
+    queryFn: () => listConnections().then((r) => r.connections as Connection[]),
   });
 }
 
@@ -138,7 +139,7 @@ export function useUnlinkPlaidItem() {
 export function useBankSyncSuggestions() {
   return useQuery({
     queryKey: connectionKeys.recurring(),
-    queryFn: () => listSuggestions().then(r => r.suggestions as RecurringSuggestion[]),
+    queryFn: () => listSuggestions().then((r) => r.suggestions as RecurringSuggestion[]),
   });
 }
 
@@ -158,11 +159,15 @@ export function useAcceptSuggestion() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: acceptSuggestion,
+    // Accepting a bank-sync suggestion creates a real expense or income
+    // record on the backend, so the finance caches need to repopulate. Going
+    // through `financeKeys` keeps this invariant: change the key shape in
+    // one place and every consumer follows.
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: connectionKeys.recurring() });
-      queryClient.invalidateQueries({ queryKey: ["finance", "expenses"] });
-      queryClient.invalidateQueries({ queryKey: ["finance", "income"] });
-      queryClient.invalidateQueries({ queryKey: ["finance", "overview"] });
+      queryClient.invalidateQueries({ queryKey: financeKeys.expenses() });
+      queryClient.invalidateQueries({ queryKey: financeKeys.income() });
+      queryClient.invalidateQueries({ queryKey: financeKeys.overview() });
     },
   });
 }

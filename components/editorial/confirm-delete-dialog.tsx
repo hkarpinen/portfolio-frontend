@@ -41,9 +41,9 @@ export function ConfirmDeleteDialog({
 
   return (
     <Modal open={open} onOpenChange={onOpenChange} title={title}>
-      {body && <p className="text-base text-ink-2 mb-4">{body}</p>}
+      {body && <p className="mb-4 text-base text-ink-2">{body}</p>}
       {requireText && (
-        <label className="block mb-4">
+        <label className="mb-4 block">
           <span className="ed-label">{requireText.label}</span>
           <input
             className="ed-input mt-1"
@@ -53,7 +53,7 @@ export function ConfirmDeleteDialog({
           />
         </label>
       )}
-      <div className="flex gap-2 justify-end">
+      <div className="flex justify-end gap-2">
         <Btn variant="ghost" onClick={() => onOpenChange(false)} disabled={isPending}>
           Cancel
         </Btn>

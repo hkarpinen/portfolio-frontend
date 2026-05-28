@@ -27,7 +27,7 @@ export function EditorialTabs({ tabs, active, onChange, children, ariaLabel }: E
   return (
     <RadixTabs.Root value={active} onValueChange={onChange}>
       <RadixTabs.List aria-label={ariaLabel || "Section navigation"} className="ed-tabs-list">
-        {tabs.map(tab => (
+        {tabs.map((tab) => (
           <RadixTabs.Trigger key={tab.id} value={tab.id} className="ed-tab">
             <span className="inline-flex items-center gap-2">
               {tab.icon}

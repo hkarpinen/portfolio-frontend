@@ -1,25 +1,26 @@
+import { z } from "zod";
 import { api } from "@/lib/api-client";
 
-export interface CalendarEventDto {
-  id: string;
-  householdId: string;
-  title: string;
-  description?: string;
-  startsAt: string;
-  endsAt?: string;
-  allDay: boolean;
-  createdByUserId: string;
-  createdAt: string;
-  updatedAt?: string;
-}
+export const CalendarEventDtoSchema = z.object({
+  id: z.string(),
+  householdId: z.string(),
+  title: z.string(),
+  description: z.string().optional(),
+  startsAt: z.string(),
+  endsAt: z.string().optional(),
+  allDay: z.boolean(),
+  createdByUserId: z.string(),
+  createdAt: z.string(),
+  updatedAt: z.string().optional(),
+});
+export type CalendarEventDto = z.infer<typeof CalendarEventDtoSchema>;
 
-export const fetchCalendarEvents = (
-  householdId: string,
-  from: string,
-  to: string
-) =>
-  api.get<CalendarEventDto[]>(
-    `/api/households/${householdId}/calendar?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`
+const CreatedIdSchema = z.object({ id: z.string() });
+
+export const fetchCalendarEvents = (householdId: string, from: string, to: string) =>
+  api.parsed.get(
+    `/api/households/${householdId}/calendar?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`,
+    z.array(CalendarEventDtoSchema),
   );
 
 export const createCalendarEvent = (
@@ -30,9 +31,8 @@ export const createCalendarEvent = (
     startsAt: string;
     endsAt?: string;
     allDay: boolean;
-  }
-) =>
-  api.post<{ id: string }>(`/api/households/${householdId}/calendar`, body);
+  },
+) => api.parsed.post(`/api/households/${householdId}/calendar`, CreatedIdSchema, body);
 
 export const updateCalendarEvent = (
   householdId: string,
@@ -43,9 +43,8 @@ export const updateCalendarEvent = (
     startsAt: string;
     endsAt?: string;
     allDay: boolean;
-  }
-) =>
-  api.put(`/api/households/${householdId}/calendar/${eventId}`, body);
+  },
+) => api.put(`/api/households/${householdId}/calendar/${eventId}`, body);
 
 export const deleteCalendarEvent = (householdId: string, eventId: string) =>
   api.delete(`/api/households/${householdId}/calendar/${eventId}`);

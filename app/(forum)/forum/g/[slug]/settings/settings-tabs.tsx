@@ -4,6 +4,7 @@ import * as RadixTabs from "@radix-ui/react-tabs";
 import { CommunitySettingsForm } from "./settings-form";
 import { CommunityMembersTab } from "./members-tab";
 import { tabTriggerBody } from "@/lib/tab-styles";
+import type { CommunityVisibility } from "@/types/forum";
 
 interface Props {
   communityId: string;
@@ -12,9 +13,9 @@ interface Props {
   initialName: string;
   initialDescription: string;
   initialImageUrl: string;
-  initialVisibility: string;
+  initialVisibility: CommunityVisibility;
+  initialRules: string;
 }
-
 
 export function SettingsTabs({
   communityId,
@@ -24,11 +25,12 @@ export function SettingsTabs({
   initialDescription,
   initialImageUrl,
   initialVisibility,
+  initialRules,
 }: Props) {
   return (
     <RadixTabs.Root defaultValue="general">
       {/* Tab bar */}
-      <RadixTabs.List className="flex border-ink-b">
+      <RadixTabs.List className="border-ink-b flex">
         <RadixTabs.Trigger value="general" style={tabTriggerBody}>
           General
         </RadixTabs.Trigger>
@@ -37,7 +39,7 @@ export function SettingsTabs({
         </RadixTabs.Trigger>
       </RadixTabs.List>
 
-      <div className="bg-paper p-12 shadow-stamp border-ink">
+      <div className="border-ink bg-paper p-12 shadow-stamp">
         <RadixTabs.Content value="general">
           <CommunitySettingsForm
             communityId={communityId}
@@ -47,6 +49,7 @@ export function SettingsTabs({
             initialDescription={initialDescription}
             initialImageUrl={initialImageUrl}
             initialVisibility={initialVisibility}
+            initialRules={initialRules}
           />
         </RadixTabs.Content>
         <RadixTabs.Content value="members">

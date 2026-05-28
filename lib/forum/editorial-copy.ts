@@ -27,8 +27,14 @@ export function communityHeadline({ slug }: { slug: string }): string {
 }
 
 export function communityDeck({
-  description, memberCount, threadCount,
-}: { description?: string; memberCount: number; threadCount: number }): string {
+  description,
+  memberCount,
+  threadCount,
+}: {
+  description?: string;
+  memberCount: number;
+  threadCount: number;
+}): string {
   const counts = `${num(memberCount)} member${memberCount === 1 ? "" : "s"} · ${num(threadCount)} thread${threadCount === 1 ? "" : "s"} posted`;
   if (description && description.trim()) {
     return `${description.trim()} — ${counts}.`;

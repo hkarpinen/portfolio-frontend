@@ -3,14 +3,16 @@
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useNotificationsContext, NotificationsProvider } from "@/components/layout/notifications-provider";
+import {
+  useNotificationsContext,
+  NotificationsProvider,
+} from "@/components/layout/notifications-provider";
 import { NotificationsToaster } from "@/components/layout/notifications-toaster";
 import { Sidebar } from "./sidebar-nav";
 import { TopBarStack } from "./top-bar";
 import { MobileNav } from "./mobile-nav";
 import { PageBreadcrumbs } from "./page-breadcrumbs";
 import { logout } from "@/lib/api/identity";
-
 
 /**
  * <AppShell> — main app chrome (redesign)
@@ -103,7 +105,9 @@ function AppShellInner({ children, displayName, avatarUrl, role, subnav, topBand
 
   return (
     <div className="ed-app-shell">
-      <a href="#main" className="skip-link">Skip to content</a>
+      <a href="#main" className="skip-link">
+        Skip to content
+      </a>
 
       <DemoBanner />
 
@@ -119,7 +123,7 @@ function AppShellInner({ children, displayName, avatarUrl, role, subnav, topBand
       />
 
       <div className="ed-app-body">
-        <div className="hidden min-[900px]:block h-full">
+        <div className="hidden h-full min-[900px]:block">
           <Sidebar
             displayName={displayName}
             avatarUrl={avatarUrl}

@@ -21,9 +21,7 @@ export function PullQuote({ children, attribution }: PullQuoteProps) {
   return (
     <figure className="ed-pull">
       <blockquote className="ed-pull-body">{children}</blockquote>
-      {attribution && (
-        <figcaption className="ed-pull-attr">{attribution}</figcaption>
-      )}
+      {attribution && <figcaption className="ed-pull-attr">{attribution}</figcaption>}
     </figure>
   );
 }

@@ -10,7 +10,10 @@ import {
   fetchNetPayBreakdown,
 } from "@/lib/api/income";
 import { financeKeys } from "@/lib/query-keys";
-import type { IncomeListResponse, TaxWithholdingProfile, PayrollDeduction } from "@/types/finance";
+import { invalidatePersonalIncome } from "@/lib/cache-invalidation";
+import type { IncomeListResponse } from "@/types/income";
+import type { TaxWithholdingProfile } from "@/types/tax";
+import type { PayrollDeduction } from "@/types/deductions";
 
 export function useIncome(initialData?: IncomeListResponse) {
   return useQuery({
@@ -25,10 +28,7 @@ export function useCreateIncomeSource() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: createIncomeSource,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: financeKeys.income() });
-      queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions() });
-    },
+    onSuccess: () => invalidatePersonalIncome(queryClient),
   });
 }
 
@@ -36,34 +36,35 @@ export function useDeleteIncomeSource() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (incomeId: string) => deleteIncomeSource(incomeId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: financeKeys.income() });
-      queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions() });
-    },
+    onSuccess: () => invalidatePersonalIncome(queryClient),
   });
 }
 
 export function useUpdateIncomeSource() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ incomeId, body }: { incomeId: string; body: Parameters<typeof updateIncomeSource>[1] }) =>
-      updateIncomeSource(incomeId, body),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: financeKeys.income() });
-      queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions() });
-    },
+    mutationFn: ({
+      incomeId,
+      body,
+    }: {
+      incomeId: string;
+      body: Parameters<typeof updateIncomeSource>[1];
+    }) => updateIncomeSource(incomeId, body),
+    onSuccess: () => invalidatePersonalIncome(queryClient),
   });
 }
 
 export function useSetTaxProfile() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ incomeId, taxProfile }: { incomeId: string; taxProfile: TaxWithholdingProfile | null }) =>
-      setTaxProfile(incomeId, taxProfile),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: financeKeys.income() });
-      queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions() });
-    },
+    mutationFn: ({
+      incomeId,
+      taxProfile,
+    }: {
+      incomeId: string;
+      taxProfile: TaxWithholdingProfile | null;
+    }) => setTaxProfile(incomeId, taxProfile),
+    onSuccess: () => invalidatePersonalIncome(queryClient),
   });
 }
 
@@ -72,10 +73,7 @@ export function useAddDeduction() {
   return useMutation({
     mutationFn: ({ incomeId, deduction }: { incomeId: string; deduction: PayrollDeduction }) =>
       addDeduction(incomeId, deduction),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: financeKeys.income() });
-      queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions() });
-    },
+    onSuccess: () => invalidatePersonalIncome(queryClient),
   });
 }
 
@@ -84,16 +82,13 @@ export function useRemoveDeduction() {
   return useMutation({
     mutationFn: ({ incomeId, type, label }: { incomeId: string; type: string; label: string }) =>
       removeDeduction(incomeId, type, label),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: financeKeys.income() });
-      queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions() });
-    },
+    onSuccess: () => invalidatePersonalIncome(queryClient),
   });
 }
 
 export function useNetPayBreakdown(incomeId: string, year?: number, month?: number) {
   return useQuery({
-    queryKey: ["netPayBreakdown", incomeId, year, month],
+    queryKey: financeKeys.netPayBreakdown(incomeId, year, month),
     queryFn: () => fetchNetPayBreakdown(incomeId, year, month),
     enabled: !!incomeId,
     staleTime: 1000 * 60 * 5,

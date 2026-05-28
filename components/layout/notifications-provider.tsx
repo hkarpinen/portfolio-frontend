@@ -37,16 +37,8 @@ export function useNotificationsContext(): NotificationsContextValue {
  * that the SSE stream opens/closes reactively — without needing a hard
  * refresh — whenever the user logs in or out via client-side navigation.
  */
-export function NotificationsProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export function NotificationsProvider({ children }: { children: React.ReactNode }) {
   const { data: me } = useMe();
   const value = useNotifications({ connect: !!me });
-  return (
-    <NotificationsContext.Provider value={value}>
-      {children}
-    </NotificationsContext.Provider>
-  );
+  return <NotificationsContext.Provider value={value}>{children}</NotificationsContext.Provider>;
 }

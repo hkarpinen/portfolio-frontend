@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { api, ApiError } from "@/lib/api-client";
+import { useUploadAvatar } from "@/hooks/use-identity";
+import { getErrorMessage } from "@/lib/error-messages";
 import { ImageUpload } from "@/components/editorial";
 
 interface AvatarUploadProps {
@@ -12,25 +12,15 @@ interface AvatarUploadProps {
 
 export function AvatarUpload({ value, onChange }: AvatarUploadProps) {
   const router = useRouter();
-  const [uploading, setUploading] = useState(false);
-  const [avatarError, setAvatarError] = useState<string | null>(null);
+  const upload = useUploadAvatar();
 
+  // ImageUpload's API requires a Promise<string> back — it threads the resolved
+  // URL into its own internal state. mutateAsync (rather than mutate) is what
+  // makes that contract honourable from a useMutation.
   const handleUpload = async (file: File): Promise<string> => {
-    setAvatarError(null);
-    setUploading(true);
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-      const result = await api.upload<{ avatarUrl: string }>("/api/identity/me/avatar", formData);
-      router.refresh();
-      return result.avatarUrl;
-    } catch (err) {
-      const msg = err instanceof ApiError ? err.message : "Upload failed. Please try again.";
-      setAvatarError(msg);
-      throw err;
-    } finally {
-      setUploading(false);
-    }
+    const result = await upload.mutateAsync(file);
+    router.refresh();
+    return result.avatarUrl;
   };
 
   return (
@@ -38,8 +28,8 @@ export function AvatarUpload({ value, onChange }: AvatarUploadProps) {
       value={value}
       onChange={onChange}
       onUpload={handleUpload}
-      uploading={uploading}
-      error={avatarError}
+      uploading={upload.isPending}
+      error={upload.isError ? getErrorMessage(upload.error, "Upload failed. Please try again.") : null}
       shape="circle"
       size={160}
     />

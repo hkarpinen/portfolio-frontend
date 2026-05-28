@@ -21,11 +21,7 @@ const FORUM_RULES = [
   "Search before posting",
 ];
 
-export default async function ForumFeedPage({
-  searchParams,
-}: {
-  searchParams: { tab?: string };
-}) {
+export default async function ForumFeedPage({ searchParams }: { searchParams: { tab?: string } }) {
   const tab = searchParams.tab ?? "feed";
 
   const sortMap: Record<string, string> = {
@@ -39,7 +35,9 @@ export default async function ForumFeedPage({
   // sidebar (filtered server-side by membership). Previously this needed a
   // third call to /memberships + a client-side intersect.
   const [threadsPage, communitiesPage, myCommunitiesPage] = await Promise.all([
-    tab !== "communities" ? fetchThreadsServer({ sort: sortMap[tab] ?? "new", pageSize: 30 }) : Promise.resolve(null),
+    tab !== "communities"
+      ? fetchThreadsServer({ sort: sortMap[tab] ?? "new", pageSize: 30 })
+      : Promise.resolve(null),
     fetchCommunitiesServer(cookieHeader, 1, 10),
     fetchCommunitiesServer(cookieHeader, 1, 20, /* mine */ true),
   ]);
@@ -49,26 +47,24 @@ export default async function ForumFeedPage({
   const myCommunities: CommunitySummaryResponse[] = myCommunitiesPage?.items ?? [];
 
   const tabItems = [
-    { queryValue: "feed",        label: "Feed",        href: "/forum?tab=feed" },
-    { queryValue: "hot",         label: "Hot",         href: "/forum?tab=hot" },
+    { queryValue: "feed", label: "Feed", href: "/forum?tab=feed" },
+    { queryValue: "hot", label: "Hot", href: "/forum?tab=hot" },
     { queryValue: "communities", label: "Communities", href: "/forum?tab=communities" },
   ];
 
   return (
-    <div className="page-enter flex flex-col gap-12" >
+    <div className="page-enter flex flex-col gap-12">
       {/* Header */}
-      <div className="flex items-center justify-between flex-wrap gap-6">
+      <div className="flex flex-wrap items-center justify-between gap-6">
         <div>
-          <h1 className="font-serif font-extrabold text-2xl tracking-[-0.025em] text-ink m-0">
+          <h1 className="m-0 font-serif text-2xl font-extrabold tracking-[-0.025em] text-ink">
             Forum
           </h1>
-          <p className="text-ink-3 mt-2 text-base">
-            Discussions, communities, and ideas
-          </p>
+          <p className="mt-2 text-base text-ink-3">Discussions, communities, and ideas</p>
         </div>
         <Link
           href="/forum/new"
-          className="bg-red text-white py-4 px-8 text-base font-semibold no-underline"
+          className="bg-red px-8 py-4 text-base font-semibold text-white no-underline"
         >
           + New Community
         </Link>
@@ -76,57 +72,68 @@ export default async function ForumFeedPage({
 
       {/* Tabs */}
       <Suspense fallback={<nav className="ed-tabs-list" role="tablist" aria-label="Feed sort" />}>
-        <LinkTabs
-          items={tabItems}
-          activeValue={tab}
-          aria-label="Feed sort"
-        />
+        <LinkTabs items={tabItems} activeValue={tab} aria-label="Feed sort" />
       </Suspense>
 
       {/* Two-column layout */}
-      <div className="sidebar-grid gap-12" >
+      <div className="sidebar-grid gap-12">
         {/* Main content */}
         <div className="flex flex-col gap-4">
           {tab === "communities" ? (
             <>
               {communities.length === 0 ? (
-                <div className="bg-paper py-24 px-12 text-center flex flex-col items-center gap-6 border-ink">
-                  <div aria-hidden="true" className="w-[56px] h-[56px] bg-red-soft flex items-center justify-center">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
+                <div className="flex flex-col items-center gap-6 border-ink bg-paper px-12 py-24 text-center">
+                  <div
+                    aria-hidden="true"
+                    className="flex h-[56px] w-[56px] items-center justify-center bg-red-soft"
+                  >
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="var(--ink)"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                      <circle cx="9" cy="7" r="4" />
+                      <path d="M23 21v-2a4 4 0 00-3-3.87" />
+                      <path d="M16 3.13a4 4 0 010 7.75" />
                     </svg>
                   </div>
-                  <p className="font-serif font-bold text-md text-ink">No communities yet</p>
+                  <p className="font-serif text-md font-bold text-ink">No communities yet</p>
                   <p className="text-base text-ink-3">Be the first to create one</p>
-                  <Link href="/forum/new" className="bg-red text-white py-4 px-10 text-base font-semibold no-underline">
+                  <Link
+                    href="/forum/new"
+                    className="bg-red px-10 py-4 text-base font-semibold text-white no-underline"
+                  >
                     Create Community
                   </Link>
                 </div>
               ) : (
                 /* gridTemplateColumns is responsive — repeat(auto-fill) has no static Tailwind equivalent */
-                <div className="grid gap-6" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))" }}>
+                <div
+                  className="grid gap-6"
+                  style={{ gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))" }}
+                >
                   {communities.map((c) => (
                     <Link
                       key={c.communityId}
                       href={`/forum/g/${c.slug ?? c.name}`}
                       className="no-underline"
                     >
-                      <div className="card-hover bg-paper p-8 shadow-card cursor-pointer border-ink">
-                        <div className="flex items-center gap-5 mb-4">
-                          <UserInitials name={c.name} size="lg" className="w-[36px] h-[36px]" />
+                      <div className="card-hover cursor-pointer border-ink bg-paper p-8 shadow-card">
+                        <div className="mb-4 flex items-center gap-5">
+                          <UserInitials name={c.name} size="lg" className="h-[36px] w-[36px]" />
                           <div>
-                            <p className="font-serif font-bold text-md text-ink">
-                              {c.name}
-                            </p>
-                            <p className="text-sm text-ink-3">
-                              {c.description ?? ""}
-                            </p>
+                            <p className="font-serif text-md font-bold text-ink">{c.name}</p>
+                            <p className="text-sm text-ink-3">{c.description ?? ""}</p>
                           </div>
                         </div>
                         {c.description && (
-                          <p className="text-base text-ink-2 line-clamp-2">
-                            {c.description}
-                          </p>
+                          <p className="line-clamp-2 text-base text-ink-2">{c.description}</p>
                         )}
                       </div>
                     </Link>
@@ -135,22 +142,24 @@ export default async function ForumFeedPage({
               )}
             </>
           ) : threads.length === 0 ? (
-            <div className="bg-paper py-24 px-12 text-center flex flex-col items-center gap-6 border-ink">
-              <div className="w-[56px] h-[56px] bg-red-soft flex items-center justify-center">
-                <span className="text-ink"><Icon name="forum" size={24} strokeWidth={2} /></span>
+            <div className="flex flex-col items-center gap-6 border-ink bg-paper px-12 py-24 text-center">
+              <div className="flex h-[56px] w-[56px] items-center justify-center bg-red-soft">
+                <span className="text-ink">
+                  <Icon name="forum" size={24} strokeWidth={2} />
+                </span>
               </div>
-              <p className="font-serif font-bold text-md text-ink">No threads yet</p>
+              <p className="font-serif text-md font-bold text-ink">No threads yet</p>
               <p className="text-base text-ink-3">Join a community and start a discussion</p>
             </div>
           ) : (
-            <ol className="list-none m-0 p-0 flex flex-col gap-4" aria-label="Forum threads">
+            <ol className="m-0 flex list-none flex-col gap-4 p-0" aria-label="Forum threads">
               {threads.map((thread) => {
                 const communityHref = `/forum/g/${thread.communitySlug ?? thread.communityId}`;
                 const threadHref = `${communityHref}/threads/${thread.threadId}`;
                 return (
                   <li key={thread.threadId}>
                     <article
-                      className="bg-paper py-[14px] px-[16px] shadow-card flex gap-6 items-start border-ink"
+                      className="flex items-start gap-6 border-ink bg-paper px-[16px] py-[14px] shadow-card"
                       aria-label={thread.title}
                     >
                       {/* Vote column */}
@@ -162,42 +171,46 @@ export default async function ForumFeedPage({
                       />
 
                       {/* Thread content */}
-                      <div className="flex-1 min-w-0">
+                      <div className="min-w-0 flex-1">
                         {/* Meta row */}
-                        <div className="flex items-center gap-3 flex-wrap mb-2">
+                        <div className="mb-2 flex flex-wrap items-center gap-3">
                           {thread.communityName && (
                             <>
-                              <Link href={communityHref} className="text-sm text-red font-medium no-underline hover:underline">
+                              <Link
+                                href={communityHref}
+                                className="text-sm font-medium text-red no-underline hover:underline"
+                              >
                                 g/{thread.communityName}
                               </Link>
-                              <span aria-hidden="true" className="text-sm text-ink-3">·</span>
+                              <span aria-hidden="true" className="text-sm text-ink-3">
+                                ·
+                              </span>
                             </>
                           )}
                           <span className="text-sm text-ink-3">
                             {thread.authorDisplayName ?? "Anonymous"}
                           </span>
-                          <span aria-hidden="true" className="text-sm text-ink-3">·</span>
+                          <span aria-hidden="true" className="text-sm text-ink-3">
+                            ·
+                          </span>
                           <time dateTime={thread.createdAt} className="text-sm text-ink-3">
                             {timeAgo(thread.createdAt)}
                           </time>
                         </div>
 
                         {/* Title */}
-                        <h3 className="font-serif font-bold text-md text-ink leading-[1.4] mb-4 m-0">
-                          <Link
-                            href={threadHref}
-                            className="row-hover no-underline text-ink"
-                          >
+                        <h3 className="m-0 mb-4 font-serif text-md font-bold leading-[1.4] text-ink">
+                          <Link href={threadHref} className="row-hover text-ink no-underline">
                             {thread.title}
                           </Link>
                         </h3>
 
                         {/* Actions row */}
-                        <div className="flex gap-2 items-center">
+                        <div className="flex items-center gap-2">
                           <Link
                             href={threadHref}
                             aria-label={`${thread.commentCount ?? 0} comments on "${thread.title}"`}
-                            className="row-hover flex items-center gap-2 py-2 px-5 text-base text-ink-3 no-underline font-medium"
+                            className="row-hover flex items-center gap-2 px-5 py-2 text-base font-medium text-ink-3 no-underline"
                           >
                             <Icon name="forum" size={13} strokeWidth={2} aria-hidden />
                             <span aria-hidden="true">{thread.commentCount ?? 0} comments</span>
@@ -220,46 +233,39 @@ export default async function ForumFeedPage({
         {/* Sidebar */}
         <aside className="flex flex-col gap-8" aria-label="Forum sidebar">
           {/* Your communities */}
-          <nav aria-label="Your communities" className="bg-paper p-8 shadow-stamp border-ink">
-            <h2 className="text-sm font-bold text-ink-3 uppercase tracking-[0.1em] mb-6">
+          <nav aria-label="Your communities" className="border-ink bg-paper p-8 shadow-stamp">
+            <h2 className="mb-6 text-sm font-bold uppercase tracking-[0.1em] text-ink-3">
               Your Communities
             </h2>
             {myCommunities.length === 0 ? (
-              <p className="text-base text-ink-3">
-                Join communities to see them here.
-              </p>
+              <p className="text-base text-ink-3">Join communities to see them here.</p>
             ) : (
               <div className="flex flex-col gap-3">
                 {myCommunities.map((c) => (
                   <Link
                     key={c.communityId}
                     href={`/forum/g/${c.slug ?? c.name}`}
-                    className="row-hover flex items-center gap-4 no-underline py-3 px-4"
+                    className="row-hover flex items-center gap-4 px-4 py-3 no-underline"
                   >
                     <UserInitials name={c.name} size="lg" />
-                    <span className="text-base text-ink-2 font-medium">
-                      {c.name}
-                    </span>
+                    <span className="text-base font-medium text-ink-2">{c.name}</span>
                   </Link>
                 ))}
               </div>
             )}
-            <Link
-              href="/forum"
-              className="block text-base text-red no-underline mt-6"
-            >
+            <Link href="/forum" className="mt-6 block text-base text-red no-underline">
               Browse all communities →
             </Link>
           </nav>
 
           {/* Forum rules */}
-          <div className="bg-paper p-8 shadow-stamp border-ink">
-            <h2 className="text-sm font-bold text-ink-3 uppercase tracking-[0.1em] mb-6">
+          <div className="border-ink bg-paper p-8 shadow-stamp">
+            <h2 className="mb-6 text-sm font-bold uppercase tracking-[0.1em] text-ink-3">
               Forum Rules
             </h2>
-            <ol className="p-[0_0_0_16px] m-0 flex flex-col gap-3">
+            <ol className="m-0 flex flex-col gap-3 p-[0_0_0_16px]">
               {FORUM_RULES.map((rule) => (
-                <li key={rule} className="text-base text-ink-2 leading-[1.5]">
+                <li key={rule} className="text-base leading-[1.5] text-ink-2">
                   {rule}
                 </li>
               ))}
@@ -269,7 +275,7 @@ export default async function ForumFeedPage({
           {/* Create community CTA */}
           <Link
             href="/forum/new"
-            className="flex items-center justify-center gap-3 bg-red-soft py-5 px-8 text-base font-semibold text-red no-underline [border:1.5px_solid_var(--red)] transition-[background] duration-[110ms]"
+            className="flex items-center justify-center gap-3 bg-red-soft px-8 py-5 text-base font-semibold text-red no-underline transition-[background] duration-[110ms] [border:1.5px_solid_var(--red)]"
           >
             <Icon name="plus" size={13} strokeWidth={2.5} aria-hidden />
             Create a Community

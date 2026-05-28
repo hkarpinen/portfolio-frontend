@@ -6,17 +6,21 @@ import { SectionHeader } from "@/components/editorial/section-header";
 import { StatCard } from "@/components/editorial/stat-card";
 import { WeatherMap } from "./weather-map";
 import { LocationSearch } from "./location-search";
-import type { GeoCoordinates, WeatherUnit } from "@/types/geography";
+import { WeatherUnit, type GeoCoordinates } from "@/types/geography";
 
-function celsiusToFahrenheit(c: number) { return c * 9 / 5 + 32; }
-function msToMph(ms: number) { return ms * 2.237; }
+function celsiusToFahrenheit(c: number) {
+  return (c * 9) / 5 + 32;
+}
+function msToMph(ms: number) {
+  return ms * 2.237;
+}
 
 function formatTemp(celsius: number, unit: WeatherUnit) {
-  const value = unit === "imperial" ? celsiusToFahrenheit(celsius) : celsius;
-  return `${Math.round(value)}°${unit === "imperial" ? "F" : "C"}`;
+  const value = unit === WeatherUnit.Imperial ? celsiusToFahrenheit(celsius) : celsius;
+  return `${Math.round(value)}°${unit === WeatherUnit.Imperial ? "F" : "C"}`;
 }
 function formatWind(ms: number, unit: WeatherUnit) {
-  return unit === "imperial" ? `${msToMph(ms).toFixed(1)} mph` : `${ms.toFixed(1)} m/s`;
+  return unit === WeatherUnit.Imperial ? `${msToMph(ms).toFixed(1)} mph` : `${ms.toFixed(1)} m/s`;
 }
 function formatVisibility(meters: number) {
   return meters >= 1000 ? `${(meters / 1000).toFixed(1)} km` : `${meters} m`;
@@ -24,10 +28,10 @@ function formatVisibility(meters: number) {
 
 export function WeatherClient() {
   const [searchInput, setSearchInput] = useState("");
-  const [city,        setCity]        = useState<string | null>(null);
-  const [unit,        setUnit]        = useState<WeatherUnit>("imperial");
-  const [coords,      setCoords]      = useState<GeoCoordinates | null>(null);
-  const [geoError,    setGeoError]    = useState<string | null>(null);
+  const [city, setCity] = useState<string | null>(null);
+  const [unit, setUnit] = useState<WeatherUnit>(WeatherUnit.Imperial);
+  const [coords, setCoords] = useState<GeoCoordinates | null>(null);
+  const [geoError, setGeoError] = useState<string | null>(null);
 
   const { data: weather, isLoading, isError } = useWeather(city);
 
@@ -71,31 +75,36 @@ export function WeatherClient() {
 
       {/* Live region for loading / error announcements */}
       <div role="status" aria-live="polite" aria-atomic="true">
-        {isLoading && (
-          <p className="ed-label-muted tracking-[0.18em]">Fetching conditions…</p>
-        )}
+        {isLoading && <p className="ed-label-muted tracking-[0.18em]">Fetching conditions…</p>}
         {isError && (
-          <p className="ed-kicker tracking-[0.18em]">
-            City not found — try a different search.
-          </p>
+          <p className="ed-kicker tracking-[0.18em]">City not found — try a different search.</p>
         )}
       </div>
 
       {weather && (
-        <div className="bg-paper shadow-stamp border-ink">
-          <div className="flex items-start justify-between gap-6 flex-wrap p-5 px-6 border-ink-b">
+        <div className="border-ink bg-paper shadow-stamp">
+          <div className="border-ink-b flex flex-wrap items-start justify-between gap-6 p-5 px-6">
             <div className="flex flex-col gap-1">
               <p className="ed-kicker">Currently in</p>
-              <h2 className="ed-h2">{weather.city}<span className="text-ink-3">, {weather.country}</span></h2>
+              <h2 className="ed-h2">
+                {weather.city}
+                <span className="text-ink-3">, {weather.country}</span>
+              </h2>
               <p className="ed-meta mt-1">
-                {Math.abs(weather.latitude).toFixed(2)}°{weather.latitude >= 0 ? "N" : "S"} · {Math.abs(weather.longitude).toFixed(2)}°{weather.longitude >= 0 ? "E" : "W"}
+                {Math.abs(weather.latitude).toFixed(2)}°{weather.latitude >= 0 ? "N" : "S"} ·{" "}
+                {Math.abs(weather.longitude).toFixed(2)}°{weather.longitude >= 0 ? "E" : "W"}
               </p>
               <p className="ed-hint mt-1 capitalize">{weather.description}</p>
             </div>
             <div className="flex items-center gap-2">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={`https://openweathermap.org/img/wn/${weather.iconCode}@2x.png`} alt={weather.description} width={56} height={56} />
-              <p className="font-serif text-ink text-5xl tracking-[-0.03em] leading-none">
+              <img
+                src={`https://openweathermap.org/img/wn/${weather.iconCode}@2x.png`}
+                alt={weather.description}
+                width={56}
+                height={56}
+              />
+              <p className="font-serif text-5xl leading-none tracking-[-0.03em] text-ink">
                 {formatTemp(weather.temperatureCelsius, unit)}
               </p>
             </div>
@@ -104,9 +113,9 @@ export function WeatherClient() {
           <div className="grid grid-cols-3 min-[900px]:grid-cols-5">
             {[
               { label: "Feels like", value: formatTemp(weather.feelsLikeCelsius, unit) },
-              { label: "Humidity",   value: `${weather.humidity}%`,                     italic: true },
-              { label: "Wind",       value: formatWind(weather.windSpeedMs, unit) },
-              { label: "Pressure",   value: `${weather.pressure} hPa`,                  italic: true },
+              { label: "Humidity", value: `${weather.humidity}%`, italic: true },
+              { label: "Wind", value: formatWind(weather.windSpeedMs, unit) },
+              { label: "Pressure", value: `${weather.pressure} hPa`, italic: true },
               { label: "Visibility", value: formatVisibility(weather.visibilityMeters) },
             ].map((s, i, arr) => (
               <div key={s.label} className={i < arr.length - 1 ? "border-ink-r" : ""}>
@@ -118,12 +127,14 @@ export function WeatherClient() {
       )}
 
       {geoError && !coords && (
-        <p className="ed-label-muted" role="note">{geoError}</p>
+        <p className="ed-label-muted" role="note">
+          {geoError}
+        </p>
       )}
       {!coords && !geoError && (
         /* Map placeholder shown while geolocation is pending */
         <div
-          className="bg-paper-2 border-ink-dashed flex items-center justify-center"
+          className="border-ink-dashed flex items-center justify-center bg-paper-2"
           style={{ minHeight: 280 }}
           aria-hidden="true"
         >

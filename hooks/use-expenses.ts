@@ -7,8 +7,35 @@ import {
   payExpense,
   unpayExpense,
 } from "@/lib/api/expenses";
+import {
+  fetchHouseholdExpenses,
+  fetchHouseholdExpenseDetail,
+  fetchHouseholdBalances,
+  deleteHouseholdExpense,
+  payHouseholdExpense,
+  unpayHouseholdExpense,
+  addExpenseSplit,
+  removeSplit,
+  createHouseholdExpense,
+  updateHouseholdExpense,
+} from "@/lib/api/household-expenses";
+import { fetchHouseholdIncome } from "@/lib/api/income";
+import { fetchHouseholdContributions } from "@/lib/api/households";
 import { financeKeys } from "@/lib/query-keys";
-import type { ExpensePage } from "@/types/finance";
+import {
+  invalidatePersonalExpenses,
+  invalidateHouseholdExpenseList,
+  invalidateHouseholdExpenseDetail,
+  invalidateContributionSplit,
+} from "@/lib/cache-invalidation";
+import type { ExpensePage } from "@/types/expense";
+import type {
+  HouseholdExpenseListResponse,
+  HouseholdExpenseDetailResponse,
+  ExpenseSplit,
+} from "@/types/household-expense";
+
+// ─── Personal expenses ────────────────────────────────────────────────────────
 
 export function useExpenses(initialData?: ExpensePage) {
   return useQuery({
@@ -23,10 +50,7 @@ export function useCreateExpense() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: createExpense,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: financeKeys.expenses() });
-      queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions() });
-    },
+    onSuccess: () => invalidatePersonalExpenses(queryClient),
   });
 }
 
@@ -35,10 +59,7 @@ export function useUpdateExpense() {
   return useMutation({
     mutationFn: ({ id, body }: { id: string; body: Parameters<typeof updateExpense>[1] }) =>
       updateExpense(id, body),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: financeKeys.expenses() });
-      queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions() });
-    },
+    onSuccess: () => invalidatePersonalExpenses(queryClient),
   });
 }
 
@@ -46,10 +67,7 @@ export function useDeleteExpense() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => deleteExpense(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: financeKeys.expenses() });
-      queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions() });
-    },
+    onSuccess: () => invalidatePersonalExpenses(queryClient),
   });
 }
 
@@ -58,10 +76,7 @@ export function usePayExpense() {
   return useMutation({
     mutationFn: ({ id, occurrenceDate }: { id: string; occurrenceDate: string }) =>
       payExpense(id, occurrenceDate),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: financeKeys.expenses() });
-      queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions() });
-    },
+    onSuccess: () => invalidatePersonalExpenses(queryClient),
   });
 }
 
@@ -70,32 +85,16 @@ export function useUnpayExpense() {
   return useMutation({
     mutationFn: ({ id, occurrenceDate }: { id: string; occurrenceDate: string }) =>
       unpayExpense(id, occurrenceDate),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: financeKeys.expenses() });
-      queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions() });
-    },
+    onSuccess: () => invalidatePersonalExpenses(queryClient),
   });
 }
 
+// ─── Household shared expenses ────────────────────────────────────────────────
 
-// ─── Household Expenses ───────────────────────────────────────────────────────
-// Merged from use-household-expenses.ts
-import {
-  fetchHouseholdExpenses,
-  fetchHouseholdExpenseDetail,
-  deleteHouseholdExpense,
-  payHouseholdExpense,
-  unpayHouseholdExpense,
-  addExpenseSplit,
-  removeSplit,
-  createHouseholdExpense,
-  updateHouseholdExpense,
-} from "@/lib/api/household-expenses";
-import { fetchHouseholdIncome } from "@/lib/api/income";
-import { fetchHouseholdContributions } from "@/lib/api/households";
-import type { HouseholdExpenseListResponse, HouseholdExpenseDetailResponse, ExpenseSplit } from "@/types/finance";
-
-export function useHouseholdExpenses(householdId: string, initialData?: HouseholdExpenseListResponse) {
+export function useHouseholdExpenses(
+  householdId: string,
+  initialData?: HouseholdExpenseListResponse,
+) {
   return useQuery({
     queryKey: financeKeys.householdExpenses(householdId),
     queryFn: () => fetchHouseholdExpenses(householdId),
@@ -132,15 +131,25 @@ export function useHouseholdContributions(id: string) {
   });
 }
 
+/**
+ * Per-other-member balances for one household, from the caller's POV.
+ * Used by the YOU'RE OWED / YOU OWE badge on the household list and detail.
+ */
+export function useHouseholdBalances(householdId: string) {
+  return useQuery({
+    queryKey: financeKeys.householdBalances(householdId),
+    queryFn: () => fetchHouseholdBalances(householdId),
+    staleTime: 60_000,
+    enabled: !!householdId,
+  });
+}
+
 export function useCreateHouseholdExpense(householdId: string) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (body: Parameters<typeof createHouseholdExpense>[1]) => createHouseholdExpense(householdId, body),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: financeKeys.householdExpenses(householdId) });
-      queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions(householdId) });
-      queryClient.invalidateQueries({ queryKey: financeKeys.householdDashboard(householdId) });
-    },
+    mutationFn: (body: Parameters<typeof createHouseholdExpense>[1]) =>
+      createHouseholdExpense(householdId, body),
+    onSuccess: () => invalidateHouseholdExpenseList(queryClient, householdId),
   });
 }
 
@@ -149,31 +158,27 @@ export function useUpdateHouseholdExpense(householdId: string, householdExpenseI
   return useMutation({
     mutationFn: (body: Parameters<typeof updateHouseholdExpense>[2]) =>
       updateHouseholdExpense(householdId, householdExpenseId, body),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: financeKeys.householdExpenseDetail(householdId, householdExpenseId) });
-      queryClient.invalidateQueries({ queryKey: financeKeys.householdExpenses(householdId) });
-      queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions(householdId) });
-    },
+    onSuccess: () =>
+      invalidateHouseholdExpenseDetail(queryClient, householdId, householdExpenseId),
   });
 }
 
 export function useDeleteHouseholdExpense(householdId: string) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (householdExpenseId: string) => deleteHouseholdExpense(householdId, householdExpenseId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: financeKeys.householdExpenses(householdId) });
-      queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions(householdId) });
-      queryClient.invalidateQueries({ queryKey: financeKeys.householdDashboard(householdId) });
-    },
+    mutationFn: (householdExpenseId: string) =>
+      deleteHouseholdExpense(householdId, householdExpenseId),
+    onSuccess: () => invalidateHouseholdExpenseList(queryClient, householdId),
   });
 }
 
 export function usePayHouseholdExpense(householdId: string, householdExpenseId: string) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (occurrenceDate: string) => payHouseholdExpense(householdId, householdExpenseId, occurrenceDate),
+    mutationFn: (occurrenceDate: string) =>
+      payHouseholdExpense(householdId, householdExpenseId, occurrenceDate),
     onSuccess: (_data, occurrenceDate) => {
+      // Optimistic patch the list cache so the row paints "paid" immediately.
       queryClient.setQueryData(
         financeKeys.householdExpenses(householdId),
         (old: HouseholdExpenseListResponse | undefined) =>
@@ -183,14 +188,12 @@ export function usePayHouseholdExpense(householdId: string, householdExpenseId: 
                 items: old.items.map((b) =>
                   b.expenseId === householdExpenseId
                     ? { ...b, callerIsPaid: true, currentOccurrenceDate: occurrenceDate }
-                    : b
+                    : b,
                 ),
               }
-            : old
+            : old,
       );
-      queryClient.invalidateQueries({ queryKey: financeKeys.householdExpenseDetail(householdId, householdExpenseId) });
-      queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions(householdId) });
-      queryClient.invalidateQueries({ queryKey: financeKeys.householdDashboard(householdId) });
+      invalidateHouseholdExpenseDetail(queryClient, householdId, householdExpenseId);
     },
   });
 }
@@ -198,7 +201,8 @@ export function usePayHouseholdExpense(householdId: string, householdExpenseId: 
 export function useUnpayHouseholdExpense(householdId: string, householdExpenseId: string) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (occurrenceDate: string) => unpayHouseholdExpense(householdId, householdExpenseId, occurrenceDate),
+    mutationFn: (occurrenceDate: string) =>
+      unpayHouseholdExpense(householdId, householdExpenseId, occurrenceDate),
     onSuccess: () => {
       queryClient.setQueryData(
         financeKeys.householdExpenses(householdId),
@@ -207,14 +211,12 @@ export function useUnpayHouseholdExpense(householdId: string, householdExpenseId
             ? {
                 ...old,
                 items: old.items.map((b) =>
-                  b.expenseId === householdExpenseId ? { ...b, callerIsPaid: false } : b
+                  b.expenseId === householdExpenseId ? { ...b, callerIsPaid: false } : b,
                 ),
               }
-            : old
+            : old,
       );
-      queryClient.invalidateQueries({ queryKey: financeKeys.householdExpenseDetail(householdId, householdExpenseId) });
-      queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions(householdId) });
-      queryClient.invalidateQueries({ queryKey: financeKeys.householdDashboard(householdId) });
+      invalidateHouseholdExpenseDetail(queryClient, householdId, householdExpenseId);
     },
   });
 }
@@ -225,11 +227,14 @@ export function useAddExpenseSplit(householdId: string, householdExpenseId: stri
     mutationFn: (body: { membershipId: string; amount: number; currency: string }) =>
       addExpenseSplit(householdId, householdExpenseId, body),
     onSuccess: (newSplit: ExpenseSplit) => {
+      // Optimistic append on the detail cache; full invalidation rebuilds the
+      // balances + dashboard projections that depend on the split set.
       queryClient.setQueryData(
         financeKeys.householdExpenseDetail(householdId, householdExpenseId),
         (old: HouseholdExpenseDetailResponse | undefined) =>
-          old ? { ...old, splits: [...old.splits, newSplit] } : old
+          old ? { ...old, splits: [...old.splits, newSplit] } : old,
       );
+      invalidateHouseholdExpenseDetail(queryClient, householdId, householdExpenseId);
     },
   });
 }
@@ -242,34 +247,45 @@ export function useRemoveExpenseSplit(householdId: string, householdExpenseId: s
       queryClient.setQueryData(
         financeKeys.householdExpenseDetail(householdId, householdExpenseId),
         (old: HouseholdExpenseDetailResponse | undefined) =>
-          old ? { ...old, splits: old.splits.filter((s) => s.splitId !== splitId) } : old
+          old ? { ...old, splits: old.splits.filter((s) => s.splitId !== splitId) } : old,
       );
+      invalidateHouseholdExpenseDetail(queryClient, householdId, householdExpenseId);
     },
   });
 }
 
+/**
+ * Unbound version of usePayHouseholdExpense for the budget view, where
+ * householdId + billId vary per row.
+ */
 export function usePayContributionSplit() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ householdId, billId, occurrenceDate }: { householdId: string; billId: string; occurrenceDate: string }) =>
-      payHouseholdExpense(householdId, billId, occurrenceDate),
-    onSuccess: (_data, { householdId }) => {
-      queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions(householdId) });
-      queryClient.invalidateQueries({ queryKey: financeKeys.householdExpenses(householdId) });
-      queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions() });
-    },
+    mutationFn: ({
+      householdId,
+      billId,
+      occurrenceDate,
+    }: {
+      householdId: string;
+      billId: string;
+      occurrenceDate: string;
+    }) => payHouseholdExpense(householdId, billId, occurrenceDate),
+    onSuccess: (_data, { householdId }) => invalidateContributionSplit(queryClient, householdId),
   });
 }
 
 export function useUnpayContributionSplit() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ householdId, billId, occurrenceDate }: { householdId: string; billId: string; occurrenceDate: string }) =>
-      unpayHouseholdExpense(householdId, billId, occurrenceDate),
-    onSuccess: (_data, { householdId }) => {
-      queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions(householdId) });
-      queryClient.invalidateQueries({ queryKey: financeKeys.householdExpenses(householdId) });
-      queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions() });
-    },
+    mutationFn: ({
+      householdId,
+      billId,
+      occurrenceDate,
+    }: {
+      householdId: string;
+      billId: string;
+      occurrenceDate: string;
+    }) => unpayHouseholdExpense(householdId, billId, occurrenceDate),
+    onSuccess: (_data, { householdId }) => invalidateContributionSplit(queryClient, householdId),
   });
 }

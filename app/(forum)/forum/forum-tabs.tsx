@@ -8,14 +8,12 @@ import { JoinButton } from "./join-button";
 import { Icon } from "@/components/editorial/icon";
 import type { CommunitySummaryResponse, ThreadSummaryResponse } from "@/types/forum";
 
-
 interface ForumTabsProps {
   communities: CommunitySummaryResponse[];
   feedThreads: ThreadSummaryResponse[];
   hotThreads: ThreadSummaryResponse[];
   communitySlugMap: Record<string, string>; // communityId -> slug
 }
-
 
 export function ForumTabs({
   communities,
@@ -28,17 +26,9 @@ export function ForumTabs({
       {/* Tab bar */}
       <RadixTabs.List className="ed-tabs-list">
         {(["Feed", "Hot", "Communities"] as const).map((label) => (
-          <RadixTabs.Trigger
-            key={label}
-            value={label}
-            className="ed-tab"
-          >
+          <RadixTabs.Trigger key={label} value={label} className="ed-tab">
             {label}
-            {label === "Communities" && (
-              <span className="ed-tab-count">
-                {communities.length}
-              </span>
-            )}
+            {label === "Communities" && <span className="ed-tab-count">{communities.length}</span>}
           </RadixTabs.Trigger>
         ))}
       </RadixTabs.List>
@@ -47,13 +37,15 @@ export function ForumTabs({
       <RadixTabs.Content value="Communities">
         <div className="flex flex-col gap-5">
           {communities.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-32 px-12 bg-paper gap-6 border-ink">
-              <div className="w-[56px] h-[56px] bg-red-soft flex items-center justify-center">
+            <div className="flex flex-col items-center justify-center gap-6 border-ink bg-paper px-12 py-32">
+              <div className="flex h-[56px] w-[56px] items-center justify-center bg-red-soft">
                 <Icon name="community" size={24} strokeWidth={1.5} />
               </div>
-              <p className="font-serif font-bold text-md text-ink">No communities yet</p>
+              <p className="font-serif text-md font-bold text-ink">No communities yet</p>
               <p className="text-base text-ink-3">Be the first to create one</p>
-              <Link href="/forum/new" className="text-base font-semibold text-red no-underline">Create the first one →</Link>
+              <Link href="/forum/new" className="text-base font-semibold text-red no-underline">
+                Create the first one →
+              </Link>
             </div>
           ) : (
             communities.map((community) => (
@@ -63,23 +55,25 @@ export function ForumTabs({
                 className="no-underline"
               >
                 <div
-                  className="community-card py-[16px] px-[18px] bg-paper flex items-center gap-6 border-ink"
-                  style={{transition: "transform 200ms var(--ease-spring), box-shadow 200ms" }}
+                  className="community-card flex items-center gap-6 border-ink bg-paper px-[18px] py-[16px]"
+                  style={{ transition: "transform 200ms var(--ease-spring), box-shadow 200ms" }}
                 >
                   <CommunityAvatar community={community} size={44} />
-                  <div className="flex-1 min-w-0">
-                    <p className="font-serif font-bold text-md text-ink m-0 overflow-hidden text-ellipsis whitespace-nowrap">
+                  <div className="min-w-0 flex-1">
+                    <p className="m-0 overflow-hidden text-ellipsis whitespace-nowrap font-serif text-md font-bold text-ink">
                       {community.name}
                     </p>
                     {community.description && (
-                      <p className="text-base text-ink-2 mt-1 leading-[1.4] line-clamp-1">
+                      <p className="mt-1 line-clamp-1 text-base leading-[1.4] text-ink-2">
                         {community.description}
                       </p>
                     )}
                   </div>
-                  <div className="text-right shrink-0">
-                    <p className="text-base font-bold text-ink m-0">{community.memberCount.toLocaleString()}</p>
-                    <p className="text-sm text-ink-3 mt-1">members</p>
+                  <div className="shrink-0 text-right">
+                    <p className="m-0 text-base font-bold text-ink">
+                      {community.memberCount.toLocaleString()}
+                    </p>
+                    <p className="mt-1 text-sm text-ink-3">members</p>
                   </div>
                   <JoinButton communityId={community.communityId} />
                 </div>
@@ -93,11 +87,11 @@ export function ForumTabs({
       <RadixTabs.Content value="Feed">
         <div className="flex flex-col gap-5">
           {feedThreads.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-32 px-12 bg-paper gap-6 border-ink">
-              <div className="w-[56px] h-[56px] bg-red-soft flex items-center justify-center">
+            <div className="flex flex-col items-center justify-center gap-6 border-ink bg-paper px-12 py-32">
+              <div className="flex h-[56px] w-[56px] items-center justify-center bg-red-soft">
                 <Icon name="feed" size={24} strokeWidth={1.5} />
               </div>
-              <p className="font-serif font-bold text-md text-ink">No threads yet</p>
+              <p className="font-serif text-md font-bold text-ink">No threads yet</p>
               <p className="text-base text-ink-3">Join a community to see threads here</p>
             </div>
           ) : (
@@ -117,11 +111,11 @@ export function ForumTabs({
       <RadixTabs.Content value="Hot">
         <div className="flex flex-col gap-5">
           {hotThreads.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-32 px-12 bg-paper gap-6 border-ink">
-              <div className="w-[56px] h-[56px] bg-red-soft flex items-center justify-center">
+            <div className="flex flex-col items-center justify-center gap-6 border-ink bg-paper px-12 py-32">
+              <div className="flex h-[56px] w-[56px] items-center justify-center bg-red-soft">
                 <Icon name="trendUp" size={24} strokeWidth={1.5} />
               </div>
-              <p className="font-serif font-bold text-md text-ink">Nothing trending yet</p>
+              <p className="font-serif text-md font-bold text-ink">Nothing trending yet</p>
               <p className="text-base text-ink-3">Hot threads will appear here</p>
             </div>
           ) : (
@@ -136,8 +130,6 @@ export function ForumTabs({
           )}
         </div>
       </RadixTabs.Content>
-
     </RadixTabs.Root>
   );
 }
-

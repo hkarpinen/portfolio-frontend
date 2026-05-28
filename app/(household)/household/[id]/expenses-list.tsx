@@ -2,11 +2,16 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useHouseholdExpenses, useDeleteHouseholdExpense, usePayHouseholdExpense, useUnpayHouseholdExpense } from "@/hooks/use-expenses";
+import {
+  useHouseholdExpenses,
+  useDeleteHouseholdExpense,
+  usePayHouseholdExpense,
+  useUnpayHouseholdExpense,
+} from "@/hooks/use-expenses";
 import { EmptyState } from "@/components/editorial/empty-state";
 import { Icon } from "@/components/editorial/icon";
 import { ConfirmDeleteDialog } from "@/components/editorial/confirm-delete-dialog";
-import type { HouseholdExpense, HouseholdExpenseListResponse } from "@/types/finance";
+import type { HouseholdExpense, HouseholdExpenseListResponse } from "@/types/household-expense";
 import { formatCurrency, formatShortDate } from "@/lib/formatting";
 
 function StatusCell({ expense, householdId }: { expense: HouseholdExpense; householdId: string }) {
@@ -28,8 +33,8 @@ function StatusCell({ expense, householdId }: { expense: HouseholdExpense; house
         onClick={handleClick}
         disabled={isPending}
         aria-label={`${expense.title}: marked as paid. Click to undo.`}
-        aria-pressed={true}
-        className="inline-flex items-center gap-[5px] font-mono text-xs tracking-[0.08em] text-ink-3 cursor-pointer border-none bg-transparent p-0 disabled:opacity-50"
+        aria-pressed
+        className="inline-flex cursor-pointer items-center gap-[5px] border-none bg-transparent p-0 font-mono text-xs tracking-[0.08em] text-ink-3 disabled:opacity-50"
       >
         <Icon name="check" size={11} strokeWidth={2.5} aria-hidden />
         <span>PAID</span>
@@ -43,7 +48,7 @@ function StatusCell({ expense, householdId }: { expense: HouseholdExpense; house
       disabled={isPending}
       aria-label={`${expense.title}: open, not yet paid. Click to mark as paid.`}
       aria-pressed={false}
-      className="inline-flex items-center font-mono text-xs tracking-[0.08em] text-red cursor-pointer bg-transparent disabled:opacity-50"
+      className="inline-flex cursor-pointer items-center bg-transparent font-mono text-xs tracking-[0.08em] text-red disabled:opacity-50"
       style={{ border: "1px solid var(--red)", padding: "3px 8px" }}
     >
       <span>OPEN</span>
@@ -72,38 +77,36 @@ function ExpenseRow({
   const detailHref = `/household/${householdId}/expenses/${expense.expenseId}`;
 
   return (
-    <tr className="border-b border-rule-soft group">
+    <tr className="group border-b border-rule-soft">
       <td className="py-[14px] pr-6">
         <Link
           href={detailHref}
-          className="font-serif italic text-ink text-[1.0625rem] no-underline hover:text-red focus:text-red"
+          className="font-serif text-[1.0625rem] italic text-ink no-underline hover:text-red focus:text-red"
         >
           {expense.title}
         </Link>
       </td>
-      <td className="py-[14px] pr-6 font-mono text-xs tracking-[0.08em] uppercase text-ink-3 whitespace-nowrap">
-        {expense.category ? expense.category : (
-          <span aria-label="No category">—</span>
-        )}
+      <td className="whitespace-nowrap py-[14px] pr-6 font-mono text-xs uppercase tracking-[0.08em] text-ink-3">
+        {expense.category ? expense.category : <span aria-label="No category">—</span>}
       </td>
-      <td className="py-[14px] pr-6 font-mono text-xs tracking-[0.04em] text-ink-3 whitespace-nowrap">
+      <td className="whitespace-nowrap py-[14px] pr-6 font-mono text-xs tracking-[0.04em] text-ink-3">
         {formattedDate}
       </td>
       {/* TODO(handoff8): wire to payer — HouseholdExpense has no payerId yet; show "—" until API returns it */}
-      <td className="py-[14px] pr-6 font-mono text-xs tracking-[0.04em] text-ink-3 whitespace-nowrap">
+      <td className="whitespace-nowrap py-[14px] pr-6 font-mono text-xs tracking-[0.04em] text-ink-3">
         <span aria-label="Payer not yet available">—</span>
       </td>
-      <td className="py-[14px] pr-6 text-right font-serif font-bold text-ink text-[1.0625rem] whitespace-nowrap">
+      <td className="whitespace-nowrap py-[14px] pr-6 text-right font-serif text-[1.0625rem] font-bold text-ink">
         {formatCurrency(Number(expense.amount), expense.currency)}
       </td>
-      <td className="py-[14px] whitespace-nowrap">
+      <td className="whitespace-nowrap py-[14px]">
         <div className="flex items-center gap-3">
           <StatusCell expense={expense} householdId={householdId} />
           {canManage && (
             <>
               <Link
                 href={`${detailHref}?edit=1`}
-                className="inline-flex items-center justify-center w-7 h-7 text-ink-3 hover:text-red focus:text-red no-underline"
+                className="inline-flex h-7 w-7 items-center justify-center text-ink-3 no-underline hover:text-red focus:text-red"
                 aria-label={`Edit expense: ${expense.title}`}
                 title="Edit"
               >
@@ -112,7 +115,7 @@ function ExpenseRow({
               <button
                 onClick={() => onDeleteClick(expense.expenseId)}
                 disabled={isDeleting}
-                className="inline-flex items-center justify-center w-7 h-7 text-ink-3 hover:text-red focus:text-red cursor-pointer border-none bg-transparent p-0 disabled:opacity-50"
+                className="inline-flex h-7 w-7 cursor-pointer items-center justify-center border-none bg-transparent p-0 text-ink-3 hover:text-red focus:text-red disabled:opacity-50"
                 aria-label={`Delete expense: ${expense.title}`}
                 title="Delete"
               >
@@ -167,12 +170,24 @@ export function ExpensesList({
         <table className="w-full border-collapse" aria-label="Shared expenses">
           <thead>
             <tr className="border-b border-[var(--ink)]">
-              <th scope="col" className="text-left ed-kicker pb-[10px] pr-6 font-normal">Expense</th>
-              <th scope="col" className="text-left ed-kicker pb-[10px] pr-6 font-normal">Category</th>
-              <th scope="col" className="text-left ed-kicker pb-[10px] pr-6 font-normal">Date</th>
-              <th scope="col" className="text-left ed-kicker pb-[10px] pr-6 font-normal">Payer</th>
-              <th scope="col" className="text-right ed-kicker pb-[10px] pr-6 font-normal">Amount</th>
-              <th scope="col" className="text-left ed-kicker pb-[10px] font-normal">Status</th>
+              <th scope="col" className="ed-kicker pb-[10px] pr-6 text-left font-normal">
+                Expense
+              </th>
+              <th scope="col" className="ed-kicker pb-[10px] pr-6 text-left font-normal">
+                Category
+              </th>
+              <th scope="col" className="ed-kicker pb-[10px] pr-6 text-left font-normal">
+                Date
+              </th>
+              <th scope="col" className="ed-kicker pb-[10px] pr-6 text-left font-normal">
+                Payer
+              </th>
+              <th scope="col" className="ed-kicker pb-[10px] pr-6 text-right font-normal">
+                Amount
+              </th>
+              <th scope="col" className="ed-kicker pb-[10px] text-left font-normal">
+                Status
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -183,7 +198,9 @@ export function ExpensesList({
                 householdId={householdId}
                 canManage={canManage}
                 onDeleteClick={(id) => setDeleteTargetId(id)}
-                isDeleting={deleteMutation.isPending && deleteMutation.variables === expense.expenseId}
+                isDeleting={
+                  deleteMutation.isPending && deleteMutation.variables === expense.expenseId
+                }
               />
             ))}
           </tbody>
@@ -192,7 +209,9 @@ export function ExpensesList({
 
       <ConfirmDeleteDialog
         open={deleteTargetId !== null}
-        onOpenChange={(isOpen) => { if (!isOpen) setDeleteTargetId(null); }}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) setDeleteTargetId(null);
+        }}
         title={`Delete "${targetExpense?.title ?? "expense"}"?`}
         body="This expense will be permanently removed from the household."
         isPending={deleteMutation.isPending}

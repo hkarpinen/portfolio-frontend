@@ -3,15 +3,17 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { ApiError } from "@/lib/api-client";
-import { ERROR } from "@/lib/error-messages";
+import { getErrorMessage } from "@/lib/error-messages";
 import { Alert, Input, Textarea, SelectField, Btn } from "@/components/editorial";
 import { useUpdateHouseholdExpense } from "@/hooks/use-expenses";
-import type { HouseholdExpenseDetailResponse } from "@/types/finance";
+import type { HouseholdExpenseDetailResponse } from "@/types/household-expense";
 
 const editBillSchema = z.object({
   title: z.string().min(1, "Title is required"),
-  amount: z.string().min(1).refine((v) => !isNaN(Number(v)) && Number(v) > 0, "Must be positive"),
+  amount: z
+    .string()
+    .min(1)
+    .refine((v) => !isNaN(Number(v)) && Number(v) > 0, "Must be positive"),
   currency: z.string().min(1),
   category: z.string().min(1),
   dueDate: z.string().min(1),
@@ -21,8 +23,20 @@ const editBillSchema = z.object({
 
 type EditBillData = z.infer<typeof editBillSchema>;
 
-const CATEGORIES = ["Rent","Utilities","Groceries","Transportation","Entertainment","Healthcare","Insurance","Subscriptions","Internet","Phone","Other"];
-const FREQUENCIES = ["Daily","Weekly","Biweekly","Monthly","Quarterly","Yearly"];
+const CATEGORIES = [
+  "Rent",
+  "Utilities",
+  "Groceries",
+  "Transportation",
+  "Entertainment",
+  "Healthcare",
+  "Insurance",
+  "Subscriptions",
+  "Internet",
+  "Phone",
+  "Other",
+];
+const FREQUENCIES = ["Daily", "Weekly", "Biweekly", "Monthly", "Quarterly", "Yearly"];
 
 interface ExpenseEditFormProps {
   expense: HouseholdExpenseDetailResponse["expense"];
@@ -31,7 +45,12 @@ interface ExpenseEditFormProps {
   onClose: () => void;
 }
 
-export function ExpenseEditForm({ expense, householdId, expenseId, onClose }: ExpenseEditFormProps) {
+export function ExpenseEditForm({
+  expense,
+  householdId,
+  expenseId,
+  onClose,
+}: ExpenseEditFormProps) {
   const updateExpenseMutation = useUpdateHouseholdExpense(householdId, expenseId);
 
   const {
@@ -62,32 +81,46 @@ export function ExpenseEditForm({ expense, householdId, expenseId, onClose }: Ex
         recurrenceFrequency: data.recurrenceFrequency || undefined,
         description: data.description || undefined,
       },
-      { onSuccess: onClose }
+      { onSuccess: onClose },
     );
   };
 
   return (
-    <div className="bg-paper p-12 border-ink">
-      <h2 className="font-serif font-bold text-md text-ink mb-8">Edit Expense</h2>
+    <div className="border-ink bg-paper p-12">
+      <h2 className="mb-8 font-serif text-md font-bold text-ink">Edit Expense</h2>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
         {updateExpenseMutation.isError && (
           <Alert variant="danger">
-            {updateExpenseMutation.error instanceof ApiError ? updateExpenseMutation.error.message : ERROR.DEFAULT}
+            {getErrorMessage(updateExpenseMutation.error)}
           </Alert>
         )}
         <div className="form-grid-2">
           <div className="col-span-full">
             <Input label="Title" {...register("title")} error={errors.title?.message} />
           </div>
-          <Input label="Amount" type="number" step="0.01" {...register("amount")} error={errors.amount?.message} />
+          <Input
+            label="Amount"
+            type="number"
+            step="0.01"
+            {...register("amount")}
+            error={errors.amount?.message}
+          />
           <Input label="Currency" {...register("currency")} placeholder="USD" />
           <SelectField label="Category" {...register("category")}>
-            {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+            {CATEGORIES.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
           </SelectField>
           <Input label="Due Date" type="date" {...register("dueDate")} />
           <SelectField label="Recurrence" {...register("recurrenceFrequency")}>
             <option value="">None</option>
-            {FREQUENCIES.map((f) => <option key={f} value={f}>{f}</option>)}
+            {FREQUENCIES.map((f) => (
+              <option key={f} value={f}>
+                {f}
+              </option>
+            ))}
           </SelectField>
           <div className="col-span-full">
             <Textarea label="Description" {...register("description")} rows={2} />

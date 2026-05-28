@@ -8,6 +8,19 @@ import {
   banUser,
   changeUserRole,
   logout as logoutRequest,
+  login as loginRequest,
+  register as registerRequest,
+  confirmEmail as confirmEmailRequest,
+  resetPassword as resetPasswordRequest,
+  enable2FA as enable2FARequest,
+  confirm2FA as confirm2FARequest,
+  verify2FA as verify2FARequest,
+  updateMe as updateMeRequest,
+  updatePassword as updatePasswordRequest,
+  uploadAvatar as uploadAvatarRequest,
+  type LoginPayload,
+  type RegisterPayload,
+  type UpdateMePayload,
 } from "@/lib/api/identity";
 import { identityKeys } from "@/lib/query-keys";
 
@@ -15,7 +28,7 @@ export function useMe() {
   return useQuery({
     queryKey: identityKeys.me(),
     queryFn: fetchMe,
-    staleTime: 5 * 60 * 1000,           // 5 min — “me” changes rarely
+    staleTime: 5 * 60 * 1000, // 5 min — “me” changes rarely
     // Don't keep retrying when the user simply isn't signed in. A 401 from
     // /api/identity/me is the canonical "anonymous" signal.
     retry: (failureCount, err) => {
@@ -68,9 +81,133 @@ export function useBanUser() {
 export function useChangeUserRole() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ userId, role }: { userId: string; role: string }) => changeUserRole(userId, role),
+    mutationFn: ({ userId, role }: { userId: string; role: string }) =>
+      changeUserRole(userId, role),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: identityKeys.all });
+    },
+  });
+}
+
+// ─── Auth-flow mutations ──────────────────────────────────────────────────────
+//
+// Each hook owns *only* cache invalidation. Navigation (router.push / refresh)
+// stays in the calling component's `mutate(data, { onSuccess })` so the hooks
+// don't pull next/navigation into every consumer's mental model.
+
+/**
+ * Sign in. On success, invalidate `me` so the next render sees the
+ * authenticated identity.
+ */
+export function useLogin() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: LoginPayload) => loginRequest(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: identityKeys.me() });
+    },
+  });
+}
+
+export function useRegister() {
+  return useMutation({
+    mutationFn: (payload: RegisterPayload) => registerRequest(payload),
+  });
+}
+
+/**
+ * Confirm a registration token. Successful confirmation does NOT sign the user
+ * in — they still hit the login screen — so no cache changes are needed.
+ */
+export function useConfirmEmail() {
+  return useMutation({
+    mutationFn: ({ userId, token }: { userId: string; token: string }) =>
+      confirmEmailRequest(userId, token),
+  });
+}
+
+export function useResetPassword() {
+  return useMutation({
+    mutationFn: ({
+      userId,
+      token,
+      newPassword,
+    }: {
+      userId: string;
+      token: string;
+      newPassword: string;
+    }) => resetPasswordRequest(userId, token, newPassword),
+  });
+}
+
+/**
+ * Verify a 2FA code at sign-in. On success, invalidate `me` so the next render
+ * reflects the now-fully-authenticated session.
+ */
+export function useVerify2FA() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (code: string) => verify2FARequest(code),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: identityKeys.me() });
+    },
+  });
+}
+
+/** Initiate 2FA setup — returns the QR-code URL the component renders. */
+export function useEnable2FA() {
+  return useMutation({
+    mutationFn: () => enable2FARequest(),
+  });
+}
+
+/** Confirm the TOTP code during 2FA setup. Invalidates `me` so the UI reflects
+ * `twoFactorEnabled = true` without a manual refetch. */
+export function useConfirm2FA() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (code: string) => confirm2FARequest(code),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: identityKeys.me() });
+    },
+  });
+}
+
+// ─── Profile / credential updates ─────────────────────────────────────────────
+
+export function useUpdateMe() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: UpdateMePayload) => updateMeRequest(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: identityKeys.me() });
+    },
+  });
+}
+
+export function useUpdatePassword() {
+  return useMutation({
+    mutationFn: ({
+      currentPassword,
+      newPassword,
+    }: {
+      currentPassword: string;
+      newPassword: string;
+    }) => updatePasswordRequest(currentPassword, newPassword),
+  });
+}
+
+/**
+ * Upload a new avatar. The mutation resolves with the new URL; consumers
+ * typically chain `mutateAsync(file)` and feed the URL into a form-state
+ * setter (the ImageUpload component needs the URL synchronously).
+ */
+export function useUploadAvatar() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (file: File) => uploadAvatarRequest(file),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: identityKeys.me() });
     },
   });
 }

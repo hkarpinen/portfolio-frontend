@@ -1,4 +1,5 @@
-import type { ContributionItem, PersonalBillItem, ContributionPeriodSummary } from "@/types/finance";
+import type { ContributionItem, ContributionPeriod } from "@/types/contributions";
+import type { PersonalBillItem } from "@/types/expense";
 
 export interface AggregatedPeriod {
   label: string;
@@ -18,17 +19,28 @@ export interface AggregatedPeriod {
 const nowKey = () => new Date().toISOString().slice(0, 7);
 
 export function emptyBucket(label: string, periodStart: string): AggregatedPeriod {
-  return { label, periodStart, totalDue: 0, totalPaid: 0, personalBillsDue: 0,
-           projectedNetIncome: 0, net: 0, contributions: [], personalBills: [], isCurrent: false,
-           disposableIncome: null, disposableIncomeSource: null };
+  return {
+    label,
+    periodStart,
+    totalDue: 0,
+    totalPaid: 0,
+    personalBillsDue: 0,
+    projectedNetIncome: 0,
+    net: 0,
+    contributions: [],
+    personalBills: [],
+    isCurrent: false,
+    disposableIncome: null,
+    disposableIncomeSource: null,
+  };
 }
 
-export function mergeBucket(b: AggregatedPeriod, m: ContributionPeriodSummary, nk: string) {
-  b.totalDue            += m.totalDue;
-  b.totalPaid           += m.totalPaid;
-  b.personalBillsDue    += m.personalBillsDue ?? 0;
-  b.projectedNetIncome  += m.projectedNetIncome ?? m.projectedIncome;
-  b.net                 += m.disposableIncome ?? (m.projectedNetIncome - m.totalDue - (m.personalBillsDue ?? 0));
+export function mergeBucket(b: AggregatedPeriod, m: ContributionPeriod, nk: string) {
+  b.totalDue += m.totalDue;
+  b.totalPaid += m.totalPaid;
+  b.personalBillsDue += m.personalBillsDue ?? 0;
+  b.projectedNetIncome += m.projectedNetIncome ?? m.projectedIncome;
+  b.net += m.disposableIncome ?? m.projectedNetIncome - m.totalDue - (m.personalBillsDue ?? 0);
   b.contributions.push(...m.contributions);
   b.personalBills.push(...(m.personalBills ?? []));
   if (m.periodStart.slice(0, 7) === nk) b.isCurrent = true;
@@ -39,7 +51,7 @@ export function mergeBucket(b: AggregatedPeriod, m: ContributionPeriodSummary, n
   }
 }
 
-export function aggregateByYear(months: ContributionPeriodSummary[]): AggregatedPeriod[] {
+export function aggregateByYear(months: ContributionPeriod[]): AggregatedPeriod[] {
   const map = new Map<number, AggregatedPeriod>();
   const nk = nowKey();
   for (const m of months) {
@@ -50,7 +62,7 @@ export function aggregateByYear(months: ContributionPeriodSummary[]): Aggregated
   return [...map.entries()].sort((a, b) => a[0] - b[0]).map(([, v]) => v);
 }
 
-export function aggregateByQuarter(months: ContributionPeriodSummary[]): AggregatedPeriod[] {
+export function aggregateByQuarter(months: ContributionPeriod[]): AggregatedPeriod[] {
   const map = new Map<string, AggregatedPeriod>();
   const nk = nowKey();
   for (const m of months) {
@@ -58,27 +70,31 @@ export function aggregateByQuarter(months: ContributionPeriodSummary[]): Aggrega
     const y = d.getUTCFullYear();
     const q = Math.floor(d.getUTCMonth() / 3) + 1;
     const key = `${y}-Q${q}`;
-    if (!map.has(key)) map.set(key, emptyBucket(`Q${q} ${y}`, `${y}-${String((q - 1) * 3 + 1).padStart(2, "0")}-01`));
+    if (!map.has(key))
+      map.set(
+        key,
+        emptyBucket(`Q${q} ${y}`, `${y}-${String((q - 1) * 3 + 1).padStart(2, "0")}-01`),
+      );
     mergeBucket(map.get(key)!, m, nk);
   }
   return [...map.values()];
 }
 
-export function toMonthlyPeriods(months: ContributionPeriodSummary[]): AggregatedPeriod[] {
+export function toMonthlyPeriods(months: ContributionPeriod[]): AggregatedPeriod[] {
   const nk = nowKey();
   return months.map((m) => ({
-    label:                   m.periodLabel,
-    periodStart:             m.periodStart,
-    totalDue:                m.totalDue,
-    totalPaid:               m.totalPaid,
-    personalBillsDue:        m.personalBillsDue ?? 0,
-    projectedNetIncome:      m.projectedNetIncome ?? m.projectedIncome,
-    net:                     m.disposableIncome ?? (m.projectedNetIncome - m.totalDue - (m.personalBillsDue ?? 0)),
-    contributions:           m.contributions,
-    personalBills:           m.personalBills ?? [],
-    isCurrent:               m.periodStart.slice(0, 7) === nk,
-    disposableIncome:        m.disposableIncome ?? null,
-    disposableIncomeSource:  m.disposableIncomeSource ?? null,
+    label: m.periodLabel,
+    periodStart: m.periodStart,
+    totalDue: m.totalDue,
+    totalPaid: m.totalPaid,
+    personalBillsDue: m.personalBillsDue ?? 0,
+    projectedNetIncome: m.projectedNetIncome ?? m.projectedIncome,
+    net: m.disposableIncome ?? m.projectedNetIncome - m.totalDue - (m.personalBillsDue ?? 0),
+    contributions: m.contributions,
+    personalBills: m.personalBills ?? [],
+    isCurrent: m.periodStart.slice(0, 7) === nk,
+    disposableIncome: m.disposableIncome ?? null,
+    disposableIncomeSource: m.disposableIncomeSource ?? null,
   }));
 }
 

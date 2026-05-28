@@ -16,6 +16,7 @@ import { Btn } from "@/components/editorial/button";
 import { EmptyState } from "@/components/editorial/empty-state";
 import { Icon } from "@/components/editorial/icon";
 import { timeAgo } from "@/lib/utils";
+import { notificationKeys } from "@/lib/query-keys";
 import { notificationsHeadline, notificationsDeck } from "@/lib/notifications/editorial-copy";
 
 type Filter = "all" | "mentions" | "household" | "forum";
@@ -23,15 +24,30 @@ type Filter = "all" | "mentions" | "household" | "forum";
 function categoryOf(eventType: string): Filter | "other" {
   const t = (eventType ?? "").toLowerCase();
   if (t.includes("mention")) return "mentions";
-  if (t.includes("household") || t.includes("expense") || t.includes("chore") || t.includes("settle") || t.includes("calendar")) return "household";
-  if (t.includes("forum") || t.includes("thread") || t.includes("comment") || t.includes("reply") || t.includes("community") || t.includes("vote")) return "forum";
+  if (
+    t.includes("household") ||
+    t.includes("expense") ||
+    t.includes("chore") ||
+    t.includes("settle") ||
+    t.includes("calendar")
+  )
+    return "household";
+  if (
+    t.includes("forum") ||
+    t.includes("thread") ||
+    t.includes("comment") ||
+    t.includes("reply") ||
+    t.includes("community") ||
+    t.includes("vote")
+  )
+    return "forum";
   return "other";
 }
 
 function Row({ n, onRead }: { n: NotificationItem; onRead: (id: string) => void }) {
   const unreadDot = (
     <span
-      className={`mt-[7px] w-2 h-2 shrink-0 rounded-full ${n.isRead ? "border border-ink-4" : "bg-red"}`}
+      className={`mt-[7px] h-2 w-2 shrink-0 rounded-full ${n.isRead ? "border border-ink-4" : "bg-red"}`}
       aria-label={n.isRead ? undefined : "Unread"}
       title={n.isRead ? undefined : "Unread"}
     />
@@ -40,8 +56,10 @@ function Row({ n, onRead }: { n: NotificationItem; onRead: (id: string) => void 
   const body = (
     <>
       {unreadDot}
-      <div className="flex-1 min-w-0">
-        <p className={`font-body text-md leading-snug ${n.isRead ? "text-ink-2" : "text-ink font-medium"}`}>
+      <div className="min-w-0 flex-1">
+        <p
+          className={`font-body text-md leading-snug ${n.isRead ? "text-ink-2" : "font-medium text-ink"}`}
+        >
           {n.title}
           {n.message ? <span className="text-ink-3"> {n.message}</span> : null}
         </p>
@@ -57,7 +75,7 @@ function Row({ n, onRead }: { n: NotificationItem; onRead: (id: string) => void 
       <Link
         href={n.deepLink}
         onClick={() => !n.isRead && onRead(n.eventId)}
-        className={`${cls} no-underline group`}
+        className={`${cls} group no-underline`}
         aria-label={`${n.isRead ? "" : "Unread: "}${n.title}${n.message ? ` — ${n.message}` : ""}`}
       >
         {body}
@@ -76,7 +94,7 @@ export default function NotificationsInboxPage() {
   const [filter, setFilter] = useState<Filter>("all");
 
   const { data, isLoading } = useQuery({
-    queryKey: ["notifications", "inbox"],
+    queryKey: notificationKeys.inbox(),
     queryFn: fetchNotifications,
   });
 
@@ -90,19 +108,20 @@ export default function NotificationsInboxPage() {
     forum: items.filter((n) => categoryOf(n.eventType) === "forum").length,
   };
 
-  const visible = filter === "all" ? items : items.filter((n) => categoryOf(n.eventType) === filter);
+  const visible =
+    filter === "all" ? items : items.filter((n) => categoryOf(n.eventType) === filter);
 
   function markRead(id: string) {
     markNotificationRead(id);
-    qc.setQueryData<{ items: NotificationItem[] }>(["notifications", "inbox"], (old) =>
-      old ? { items: old.items.map((n) => (n.eventId === id ? { ...n, isRead: true } : n)) } : old
+    qc.setQueryData<{ items: NotificationItem[] }>(notificationKeys.inbox(), (old) =>
+      old ? { items: old.items.map((n) => (n.eventId === id ? { ...n, isRead: true } : n)) } : old,
     );
   }
 
   async function markAll() {
     await markAllNotificationsRead();
-    qc.setQueryData<{ items: NotificationItem[] }>(["notifications", "inbox"], (old) =>
-      old ? { items: old.items.map((n) => ({ ...n, isRead: true })) } : old
+    qc.setQueryData<{ items: NotificationItem[] }>(notificationKeys.inbox(), (old) =>
+      old ? { items: old.items.map((n) => ({ ...n, isRead: true })) } : old,
     );
   }
 
@@ -123,13 +142,15 @@ export default function NotificationsInboxPage() {
         deck={notificationsDeck({ unread })}
       />
 
-      <div className="flex justify-end -mt-2">
+      <div className="-mt-2 flex justify-end">
         <Btn
           variant="secondary"
           size="sm"
           onClick={markAll}
           disabled={unread === 0}
-          aria-label={unread > 0 ? `Mark all ${unread} notifications as read` : "All notifications are read"}
+          aria-label={
+            unread > 0 ? `Mark all ${unread} notifications as read` : "All notifications are read"
+          }
         >
           Mark all read
         </Btn>
@@ -167,7 +188,9 @@ export default function NotificationsInboxPage() {
               body="Replies, mentions, and household activity will show up here."
             />
           ) : (
-            <EmptyDispatch>Nothing in <em>{activeTab?.label ?? "this filter"}</em> right now</EmptyDispatch>
+            <EmptyDispatch>
+              Nothing in <em>{activeTab?.label ?? "this filter"}</em> right now
+            </EmptyDispatch>
           )
         ) : (
           <div className="flex flex-col">

@@ -40,26 +40,26 @@ types/             Shared API types
 
 ## Environment variables
 
-| Variable | Description |
-|---|---|
-| `NEXT_PUBLIC_API_URL` | Public API base URL (browser) |
-| `INTERNAL_API_URL` | Internal API base URL (SSR) |
+| Variable                         | Description                    |
+| -------------------------------- | ------------------------------ |
+| `NEXT_PUBLIC_API_URL`            | Public API base URL (browser)  |
+| `INTERNAL_API_URL`               | Internal API base URL (SSR)    |
 | `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` | reCAPTCHA v2 site key (public) |
 
 ## CI/CD
 
 Two workflows run on push to `main`:
 
-| Workflow | File | What it does |
-|---|---|---|
-| **Build & Publish** | `.github/workflows/docker-publish.yml` | Builds the Next.js Docker image, pushes to `ghcr.io/hkarpinen/portfolio-frontend:latest` |
-| **Deploy** | `.github/workflows/deploy.yml` | Triggers after Build & Publish succeeds; SSHes into the server, pulls the new image, and restarts only the `frontend` container |
+| Workflow            | File                                   | What it does                                                                                                                    |
+| ------------------- | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| **Build & Publish** | `.github/workflows/docker-publish.yml` | Builds the Next.js Docker image, pushes to `ghcr.io/hkarpinen/portfolio-frontend:latest`                                        |
+| **Deploy**          | `.github/workflows/deploy.yml`         | Triggers after Build & Publish succeeds; SSHes into the server, pulls the new image, and restarts only the `frontend` container |
 
 ### Required GitHub Actions secrets
 
-| Secret | Description |
-|---|---|
-| `DEPLOY_HOST` | VPS IP address or hostname |
-| `DEPLOY_USER` | SSH user on the server |
-| `DEPLOY_KEY` | Private SSH key for that user |
+| Secret        | Description                                        |
+| ------------- | -------------------------------------------------- |
+| `DEPLOY_HOST` | VPS IP address or hostname                         |
+| `DEPLOY_USER` | SSH user on the server                             |
+| `DEPLOY_KEY`  | Private SSH key for that user                      |
 | `DEPLOY_PATH` | Absolute path to the infra directory on the server |

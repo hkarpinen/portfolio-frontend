@@ -4,17 +4,23 @@ import { fetchCommunityBySlugServer } from "@/lib/api/communities";
 import { getCookieHeader } from "@/lib/server-cookies";
 import { SectionHeader } from "@/components/editorial/section-header";
 import { SettingsTabs } from "./settings-tabs";
-import type { CommunityDetailResponse } from "@/types/forum";
+import { CommunityVisibility, type CommunityDetailResponse } from "@/types/forum";
+import { parseEnum } from "@/lib/parse-enum";
 
 export const dynamic = "force-dynamic";
 
 export default async function CommunitySettingsPage({ params }: { params: { slug: string } }) {
-  const community: CommunityDetailResponse | null = await fetchCommunityBySlugServer(params.slug, await getCookieHeader());
+  const community: CommunityDetailResponse | null = await fetchCommunityBySlugServer(
+    params.slug,
+    await getCookieHeader(),
+  );
   if (!community) notFound();
 
   return (
-    <div className="page-enter max-w-[680px] flex flex-col gap-8">
-      <Link href={`/forum/g/${params.slug}`} className="ed-label-muted no-underline hover:text-red">← g/{params.slug}</Link>
+    <div className="page-enter flex max-w-[680px] flex-col gap-8">
+      <Link href={`/forum/g/${params.slug}`} className="ed-label-muted no-underline hover:text-red">
+        ← g/{params.slug}
+      </Link>
 
       <SectionHeader
         kicker="Community · Settings"
@@ -29,7 +35,8 @@ export default async function CommunitySettingsPage({ params }: { params: { slug
         initialName={community.name}
         initialDescription={community.description ?? ""}
         initialImageUrl={community.imageUrl ?? ""}
-        initialVisibility={community.visibility ?? ""}
+        initialVisibility={parseEnum(CommunityVisibility, community.visibility, CommunityVisibility.Public)}
+        initialRules={community.rules ?? ""}
       />
     </div>
   );

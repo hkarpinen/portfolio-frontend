@@ -6,7 +6,9 @@ import { Icon } from "@/components/editorial/icon";
 export default function ModLogPage({ params }: { params: { slug: string } }) {
   return (
     <div className="page-enter flex flex-col gap-8">
-      <Link href={`/forum/g/${params.slug}`} className="ed-label-muted no-underline hover:text-red">← g/{params.slug}</Link>
+      <Link href={`/forum/g/${params.slug}`} className="ed-label-muted no-underline hover:text-red">
+        ← g/{params.slug}
+      </Link>
 
       <SectionHeader
         kicker="Moderation · Log"

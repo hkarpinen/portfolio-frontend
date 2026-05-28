@@ -6,7 +6,9 @@ import { SectionHeader } from "@/components/editorial/section-header";
 export default function ModQueuePage({ params }: { params: { slug: string } }) {
   return (
     <div className="page-enter flex flex-col gap-8">
-      <Link href={`/forum/g/${params.slug}`} className="ed-label-muted no-underline hover:text-red">← g/{params.slug}</Link>
+      <Link href={`/forum/g/${params.slug}`} className="ed-label-muted no-underline hover:text-red">
+        ← g/{params.slug}
+      </Link>
 
       <SectionHeader
         kicker="Mod queue"

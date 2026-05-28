@@ -1,24 +1,30 @@
+import { z } from "zod";
 import { api } from "@/lib/api-client";
 
-export type RecurrenceFrequency = "Daily" | "Weekly" | "BiWeekly" | "Monthly";
+export const RecurrenceFrequencySchema = z.enum(["Daily", "Weekly", "BiWeekly", "Monthly"]);
+export type RecurrenceFrequency = z.infer<typeof RecurrenceFrequencySchema>;
 
-export interface ChoreDto {
-  id: string;
-  householdId: string;
-  title: string;
-  description?: string;
-  assignedToUserId?: string;
-  dueDate?: string;
-  recurrenceFrequency?: RecurrenceFrequency;
-  createdByUserId: string;
-  createdAt: string;
-  completedAt?: string;
-  isActive: boolean;
-}
+export const ChoreDtoSchema = z.object({
+  id: z.string(),
+  householdId: z.string(),
+  title: z.string(),
+  description: z.string().optional(),
+  assignedToUserId: z.string().optional(),
+  dueDate: z.string().optional(),
+  recurrenceFrequency: RecurrenceFrequencySchema.optional(),
+  createdByUserId: z.string(),
+  createdAt: z.string(),
+  completedAt: z.string().optional(),
+  isActive: z.boolean(),
+});
+export type ChoreDto = z.infer<typeof ChoreDtoSchema>;
+
+const CreatedIdSchema = z.object({ id: z.string() });
 
 export const fetchChores = (householdId: string, activeOnly = true) =>
-  api.get<ChoreDto[]>(
-    `/api/households/${householdId}/chores?activeOnly=${activeOnly}`
+  api.parsed.get(
+    `/api/households/${householdId}/chores?activeOnly=${activeOnly}`,
+    z.array(ChoreDtoSchema),
   );
 
 export const createChore = (
@@ -28,14 +34,10 @@ export const createChore = (
     description?: string;
     dueDate?: string;
     recurrenceFrequency?: RecurrenceFrequency;
-  }
-) => api.post<{ id: string }>(`/api/households/${householdId}/chores`, body);
+  },
+) => api.parsed.post(`/api/households/${householdId}/chores`, CreatedIdSchema, body);
 
-export const assignChore = (
-  householdId: string,
-  choreId: string,
-  assignToUserId: string
-) =>
+export const assignChore = (householdId: string, choreId: string, assignToUserId: string) =>
   api.post(`/api/households/${householdId}/chores/${choreId}/assign`, {
     assignToUserId,
   });

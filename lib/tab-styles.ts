@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 
 export const tabTriggerBase: React.CSSProperties = {
   padding: "10px 16px",

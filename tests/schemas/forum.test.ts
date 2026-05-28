@@ -1,9 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  createCommunitySchema,
-  createThreadSchema,
-  createCommentSchema,
-} from "@/schemas/forum";
+import { createCommunitySchema, createThreadSchema, createCommentSchema } from "@/schemas/forum";
 
 describe("createCommunitySchema", () => {
   const valid = { name: "Developers", description: "A community for devs" };
@@ -50,9 +46,7 @@ describe("createThreadSchema", () => {
   });
 
   it("fails with title longer than 200 characters", () => {
-    expect(
-      createThreadSchema.safeParse({ ...valid, title: "a".repeat(201) }).success
-    ).toBe(false);
+    expect(createThreadSchema.safeParse({ ...valid, title: "a".repeat(201) }).success).toBe(false);
   });
 
   it("fails with empty content", () => {

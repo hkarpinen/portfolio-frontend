@@ -2,14 +2,9 @@ import { LedeStat } from "@/components/editorial/lede-stat";
 import { PullQuote } from "@/components/editorial/pull-quote";
 import { expensesPullQuote } from "@/lib/finance/editorial-copy";
 import { toMonthlyAmount } from "@/lib/utils";
-import type { ContributionPeriodSummary, IncomeSource, PayrollDeduction } from "@/types/finance";
-
-const TAX_TYPES = new Set([
-  "FederalIncomeTax",
-  "StateIncomeTax",
-  "SocialSecurity",
-  "Medicare",
-]);
+import type { ContributionPeriod } from "@/types/contributions";
+import type { IncomeSource } from "@/types/income";
+import type { PayrollDeduction } from "@/types/deductions";
 
 /** Mirrors income/page.tsx so the two pages can't disagree about
  *  what the user earns per month. */
@@ -32,8 +27,7 @@ function computeIncomeMonthly(sources: IncomeSource[]) {
 }
 
 const fmt0 = (n: number) => `$${Math.abs(Math.round(n)).toLocaleString("en-US")}`;
-const fmtSigned0 = (n: number) =>
-  Math.round(n) === 0 ? "$0" : `${n < 0 ? "−" : "+"}${fmt0(n)}`;
+const fmtSigned0 = (n: number) => (Math.round(n) === 0 ? "$0" : `${n < 0 ? "−" : "+"}${fmt0(n)}`);
 
 /**
  * FinancialSummary — top-of-page editorial figure block.
@@ -48,7 +42,7 @@ export function FinancialSummary({
   incomeSources,
   monthName,
 }: {
-  initialMonths: ContributionPeriodSummary[];
+  initialMonths: ContributionPeriod[];
   incomeSources: IncomeSource[];
   monthName: string;
 }) {
@@ -83,7 +77,9 @@ export function FinancialSummary({
     .filter((b) => b.recurrenceFrequency)
     .reduce((sum, b) => sum + b.amount, 0);
   const monthlyRecurringTotal = personalRecurringTotal + sharedBillsDue;
-  const personalRecurringCount = (current?.personalBills ?? []).filter((b) => b.recurrenceFrequency).length;
+  const personalRecurringCount = (current?.personalBills ?? []).filter(
+    (b) => b.recurrenceFrequency,
+  ).length;
   const sharedBillIds = new Set((current?.contributions ?? []).map((c) => c.billId));
 
   const quote = expensesPullQuote({ disposable, monthName });
@@ -95,9 +91,10 @@ export function FinancialSummary({
   const recurringSub = current
     ? `${personalRecurringCount} personal · ${sharedBillIds.size} shared`
     : undefined;
-  const oneTimeSub = oneTimeBills.length > 0
-    ? `${oneTimeBills.length} expense${oneTimeBills.length === 1 ? "" : "s"}`
-    : undefined;
+  const oneTimeSub =
+    oneTimeBills.length > 0
+      ? `${oneTimeBills.length} expense${oneTimeBills.length === 1 ? "" : "s"}`
+      : undefined;
 
   return (
     <div className="flex flex-col gap-8">
@@ -111,10 +108,10 @@ export function FinancialSummary({
             : "No income on file — add a source on the Income desk to see this month's read."
         }
         aside={[
-          { label: "In · take-home",  value: fmt0(netIncome) },
-          { label: "Out · total",     value: fmt0(totalOut) },
-          { label: "Recurring",       value: fmt0(monthlyRecurringTotal), sub: recurringSub },
-          { label: "One-time",        value: fmt0(oneTimeTotal), sub: oneTimeSub },
+          { label: "In · take-home", value: fmt0(netIncome) },
+          { label: "Out · total", value: fmt0(totalOut) },
+          { label: "Recurring", value: fmt0(monthlyRecurringTotal), sub: recurringSub },
+          { label: "One-time", value: fmt0(oneTimeTotal), sub: oneTimeSub },
         ]}
       />
 

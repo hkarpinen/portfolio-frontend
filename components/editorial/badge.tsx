@@ -22,8 +22,8 @@ const VARIANT_CLASS: Record<BadgeVariant, string> = {
   primary: "ed-badge-primary",
   success: "ed-badge-success",
   warning: "ed-badge-warning",
-  danger:  "ed-badge-danger",
-  violet:  "ed-badge-violet",
+  danger: "ed-badge-danger",
+  violet: "ed-badge-violet",
 };
 
 const SIZE_CLASS: Record<BadgeSize, string> = {

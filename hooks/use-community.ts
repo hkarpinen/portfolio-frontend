@@ -72,8 +72,7 @@ export function useCreateCommunity() {
 export function useUpdateCommunity(communityId: string) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (body: Parameters<typeof updateCommunity>[1]) =>
-      updateCommunity(communityId, body),
+    mutationFn: (body: Parameters<typeof updateCommunity>[1]) => updateCommunity(communityId, body),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: forumKeys.communities() });
     },
@@ -108,14 +107,16 @@ export function useJoinCommunity(communityId: string) {
       queryClient.setQueryData(
         forumKeys.communityMembership(communityId),
         (old: CommunityMembership | null | undefined) =>
-          old ? { ...old, isMember: true } : { isMember: true }
+          old ? { ...old, isMember: true } : { isMember: true },
       );
       queryClient.setQueryData(
         forumKeys.memberships(),
         (old: { items: Array<{ communityId?: string }> } | undefined) =>
           old
-            ? { items: [...old.items.filter(m => m.communityId !== communityId), { communityId }] }
-            : { items: [{ communityId }] }
+            ? {
+                items: [...old.items.filter((m) => m.communityId !== communityId), { communityId }],
+              }
+            : { items: [{ communityId }] },
       );
     },
   });

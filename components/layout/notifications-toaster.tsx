@@ -39,23 +39,25 @@ export function NotificationsToaster() {
               removeToast(n.id);
             }
           }}
-          className="py-[12px] px-[14px] shadow-stamp" style={{ ...typeStyles[n.type] }}
+          className="px-[14px] py-[12px] shadow-stamp"
+          style={{ ...typeStyles[n.type] }}
         >
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1">
               {n.title && (
-                <Toast.Title className="text-md font-semibold font-serif mb-1 block">
+                <Toast.Title className="mb-1 block font-serif text-md font-semibold">
                   {n.title}
                 </Toast.Title>
               )}
-              <Toast.Description className="text-md leading-[1.4]">
-                {n.message}
-              </Toast.Description>
+              <Toast.Description className="text-md leading-[1.4]">{n.message}</Toast.Description>
               {n.deepLink && (
                 <Toast.Action altText="View" asChild>
                   <Link
                     href={n.deepLink}
-                    onClick={() => { markRead(n.id); removeToast(n.id); }}
+                    onClick={() => {
+                      markRead(n.id);
+                      removeToast(n.id);
+                    }}
                     className="mt-2 inline-block text-sm font-medium text-red underline"
                   >
                     View
@@ -64,20 +66,14 @@ export function NotificationsToaster() {
               )}
             </div>
             <Toast.Close asChild>
-              <button
-                type="button"
-                aria-label="Dismiss"
-                className={styles.dismissBtn}
-              >
+              <button type="button" aria-label="Dismiss" className={styles.dismissBtn}>
                 <Icon name="x" size={12} strokeWidth={2.5} />
               </button>
             </Toast.Close>
           </div>
         </Toast.Root>
       ))}
-      <Toast.Viewport
-        className="fixed bottom-[20px] right-[20px] flex flex-col gap-4 w-[320px] max-w-[calc(100vw - 32px)] z-notifications list-none p-0 m-0 outline-none"
-      />
+      <Toast.Viewport className="max-w-[calc(100vw - 32px)] fixed bottom-[20px] right-[20px] z-notifications m-0 flex w-[320px] list-none flex-col gap-4 p-0 outline-none" />
     </Toast.Provider>
   );
 }

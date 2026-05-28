@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { serverFetch } from "@/lib/server-api-client";
-import type { Household, MembershipResponse } from "@/types/finance";
+import type { Household } from "@/types/household";
+import type { MembershipResponse } from "@/types/membership";
 import type { Me as UserProfile } from "@/types/identity";
 import { EditorialPageHead } from "@/components/editorial/editorial-page-head";
 import { SettingsForm } from "./settings-form";
@@ -30,7 +31,7 @@ export default async function HouseholdSettingsPage({ params }: Props) {
   ]);
 
   if (!household) {
-    return <div className="p-16 text-red text-base">Household not found.</div>;
+    return <div className="p-16 text-base text-red">Household not found.</div>;
   }
 
   const members = (Array.isArray(membersRaw) ? membersRaw : []) as MembershipResponse[];
@@ -46,7 +47,12 @@ export default async function HouseholdSettingsPage({ params }: Props) {
 
   return (
     <div className="page-enter flex flex-col gap-6">
-      <Link href={`/household/${params.id}`} className="ed-label-muted no-underline hover:text-red self-start">← Back to household</Link>
+      <Link
+        href={`/household/${params.id}`}
+        className="ed-label-muted self-start no-underline hover:text-red"
+      >
+        ← Back to household
+      </Link>
 
       <EditorialPageHead
         kicker="Household · Settings"
@@ -55,17 +61,17 @@ export default async function HouseholdSettingsPage({ params }: Props) {
       />
 
       {/* 2-column settings layout: left nav + right content */}
-      <div className="flex gap-10 items-start">
+      <div className="flex items-start gap-10">
         {/* Left sidebar nav */}
         <nav
           aria-label="Settings sections"
-          className="shrink-0 hidden sm:flex flex-col gap-1 w-[180px] sticky top-8"
+          className="sticky top-8 hidden w-[180px] shrink-0 flex-col gap-1 sm:flex"
         >
           {NAV_SECTIONS.map((s) => (
             <a
               key={s.id}
               href={`#settings-${s.id}`}
-              className="font-mono text-xs tracking-[0.1em] uppercase text-ink-3 hover:text-red no-underline py-2 pr-3 pl-3 border-l-2 border-transparent hover:border-red transition-colors"
+              className="border-l-2 border-transparent py-2 pl-3 pr-3 font-mono text-xs uppercase tracking-[0.1em] text-ink-3 no-underline transition-colors hover:border-red hover:text-red"
             >
               {s.label}
             </a>
@@ -73,19 +79,23 @@ export default async function HouseholdSettingsPage({ params }: Props) {
         </nav>
 
         {/* Right content pane */}
-        <div className="flex-1 min-w-0 flex flex-col gap-10">
+        <div className="flex min-w-0 flex-1 flex-col gap-10">
           {/* General */}
-          <section id="settings-general" className="flex flex-col gap-4 scroll-mt-8">
+          <section id="settings-general" className="flex scroll-mt-8 flex-col gap-4">
             <h2 className="ed-h3">General</h2>
             {isPrivileged && <SettingsForm household={household} />}
             {!isPrivileged && (
-              <p className="ed-label-muted">Only admins and the owner can edit household settings.</p>
+              <p className="ed-label-muted">
+                Only admins and the owner can edit household settings.
+              </p>
             )}
           </section>
 
           {/* Members & roles */}
-          <section id="settings-members" className="flex flex-col gap-4 scroll-mt-8">
-            <h2 className="ed-h3">Members &amp; <em>roles</em></h2>
+          <section id="settings-members" className="flex scroll-mt-8 flex-col gap-4">
+            <h2 className="ed-h3">
+              Members &amp; <em>roles</em>
+            </h2>
             <MemberActions
               householdId={params.id}
               members={members}
@@ -97,14 +107,16 @@ export default async function HouseholdSettingsPage({ params }: Props) {
 
           {/* Invite codes */}
           {isPrivileged && (
-            <section id="settings-invites" className="flex flex-col gap-4 scroll-mt-8">
-              <h2 className="ed-h3">Invite <em>codes</em></h2>
+            <section id="settings-invites" className="flex scroll-mt-8 flex-col gap-4">
+              <h2 className="ed-h3">
+                Invite <em>codes</em>
+              </h2>
               <InviteSection householdId={params.id} />
             </section>
           )}
 
           {/* Danger zone */}
-          <section id="settings-danger" className="flex flex-col gap-4 scroll-mt-8">
+          <section id="settings-danger" className="flex scroll-mt-8 flex-col gap-4">
             <h2 className="ed-h3 text-red">Danger zone</h2>
             {canLeave && myMembership && (
               <LeaveHousehold householdId={params.id} membershipId={myMembership.membershipId} />

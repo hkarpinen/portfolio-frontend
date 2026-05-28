@@ -43,25 +43,32 @@ export function CalendarGrid({ year, month, events, onDelete, deleting }: Calend
   const selectedEvent = selected ? events.find((e) => e.id === selected) : null;
 
   const MONTHS_LONG = [
-    "January","February","March","April","May","June",
-    "July","August","September","October","November","December",
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ];
 
   return (
     <div>
       {/* Calendar grid — role=grid for keyboard navigation context */}
-      <div
-        role="grid"
-        aria-label={`${MONTHS_LONG[month]} ${year} calendar`}
-      >
+      <div role="grid" aria-label={`${MONTHS_LONG[month]} ${year} calendar`}>
         {/* Day headers — role=row + columnheader */}
-        <div role="row" className="grid grid-cols-7 border-t border-b border-ink">
+        <div role="row" className="grid grid-cols-7 border-b border-t border-ink">
           {DAYS.map((d) => (
             <div
               key={d}
               role="columnheader"
               aria-label={d}
-              className="p-[8px_0] text-center font-mono text-sm tracking-[0.08em] uppercase text-ink-3 border-r border-ink-4"
+              className="border-r border-ink-4 p-[8px_0] text-center font-mono text-sm uppercase tracking-[0.08em] text-ink-3"
             >
               <span aria-hidden>{d}</span>
             </div>
@@ -77,7 +84,7 @@ export function CalendarGrid({ year, month, events, onDelete, deleting }: Calend
                   key={`empty-${idx}`}
                   role="gridcell"
                   aria-label="No date"
-                  className={`min-h-[80px] bg-paper-2${(idx + 1) % 7 !== 0 ? " border-r border-ink-4" : ""}${idx < cells.length - 7 ? " border-b border-ink-4" : ""}`}
+                  className={`min-h-[80px] bg-paper-2${(idx + 1) % 7 !== 0 ? "border-r border-ink-4" : ""}${idx < cells.length - 7 ? "border-b border-ink-4" : ""}`}
                 />
               );
             }
@@ -90,12 +97,12 @@ export function CalendarGrid({ year, month, events, onDelete, deleting }: Calend
                 key={day}
                 role="gridcell"
                 aria-label={dateLabel}
-                className={`min-h-[80px] p-3 bg-paper align-top${(idx + 1) % 7 !== 0 ? " border-r border-ink-4" : ""}${idx < cells.length - 7 ? " border-b border-ink-4" : ""}`}
+                className={`min-h-[80px] bg-paper p-3 align-top${(idx + 1) % 7 !== 0 ? "border-r border-ink-4" : ""}${idx < cells.length - 7 ? "border-b border-ink-4" : ""}`}
               >
                 {/* bg/color/weight are data-driven (isToday); red per design */}
                 <span
                   aria-hidden
-                  className={`inline-block w-6 h-6 leading-6 text-center font-mono text-base${isToday ? " bg-red text-paper font-bold" : " bg-none text-ink font-normal"}`}
+                  className={`inline-block h-6 w-6 text-center font-mono leading-6 text-base${isToday ? "bg-red font-bold text-paper" : "bg-none font-normal text-ink"}`}
                 >
                   {day}
                 </span>
@@ -105,13 +112,13 @@ export function CalendarGrid({ year, month, events, onDelete, deleting }: Calend
                     onClick={() => setSelected(ev.id === selected ? null : ev.id)}
                     aria-expanded={selected === ev.id}
                     aria-label={`${ev.title}${ev.allDay ? ", all day" : ""} — click to ${selected === ev.id ? "close" : "view"} details`}
-                    className={`block w-full text-left mt-[3px] py-[2px] px-2 font-mono text-[0.66rem] tracking-[0.06em] uppercase cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap border border-red${selected === ev.id ? " bg-ink text-paper" : " bg-red-soft text-ink"}`}
+                    className={`mt-[3px] block w-full cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap border px-2 py-[2px] text-left font-mono text-[0.66rem] uppercase tracking-[0.06em] border-red${selected === ev.id ? "bg-ink text-paper" : "bg-red-soft text-ink"}`}
                   >
                     <span aria-hidden>{ev.title}</span>
                   </button>
                 ))}
                 {dayEvents.length > 3 && (
-                  <p className="font-mono text-[0.66rem] tracking-[0.04em] text-ink-3 mt-[2px] pl-2">
+                  <p className="mt-[2px] pl-2 font-mono text-[0.66rem] tracking-[0.04em] text-ink-3">
                     +{dayEvents.length - 3} more
                   </p>
                 )}
@@ -124,26 +131,43 @@ export function CalendarGrid({ year, month, events, onDelete, deleting }: Calend
       {/* Selected event detail — aria-live so screen readers catch the expansion */}
       <div aria-live="polite" aria-atomic="true">
         {selectedEvent && (
-          <div className="mt-8 py-8 px-10 shadow-card bg-paper border border-ink" role="region" aria-label={`Event detail: ${selectedEvent.title}`}>
-            <div className="flex justify-between items-start gap-6">
+          <div
+            className="mt-8 border border-ink bg-paper px-10 py-8 shadow-card"
+            role="region"
+            aria-label={`Event detail: ${selectedEvent.title}`}
+          >
+            <div className="flex items-start justify-between gap-6">
               <div>
                 <p className="font-serif text-xl leading-[1.15]">{selectedEvent.title}</p>
                 {selectedEvent.description && (
-                  <p className="text-base text-ink-3 mt-2">{selectedEvent.description}</p>
+                  <p className="mt-2 text-base text-ink-3">{selectedEvent.description}</p>
                 )}
-                <p className="font-mono text-sm text-ink-3 mt-4 tracking-[0.05em]">
+                <p className="mt-4 font-mono text-sm tracking-[0.05em] text-ink-3">
                   {selectedEvent.allDay
                     ? "All day"
-                    : new Date(selectedEvent.startsAt).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}
+                    : new Date(selectedEvent.startsAt).toLocaleTimeString("en-US", {
+                        hour: "numeric",
+                        minute: "2-digit",
+                      })}
                   {selectedEvent.endsAt && !selectedEvent.allDay && (
-                    <> {" → "} {new Date(selectedEvent.endsAt).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}</>
+                    <>
+                      {" "}
+                      {" → "}{" "}
+                      {new Date(selectedEvent.endsAt).toLocaleTimeString("en-US", {
+                        hour: "numeric",
+                        minute: "2-digit",
+                      })}
+                    </>
                   )}
                 </p>
               </div>
               <Btn
                 variant="secondary"
                 size="sm"
-                onClick={() => { onDelete(selectedEvent.id); setSelected(null); }}
+                onClick={() => {
+                  onDelete(selectedEvent.id);
+                  setSelected(null);
+                }}
                 disabled={deleting}
                 aria-label={`Delete event: ${selectedEvent.title}`}
               >

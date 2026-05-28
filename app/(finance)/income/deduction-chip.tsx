@@ -1,52 +1,69 @@
 "use client";
 
 import { useState } from "react";
-import type { PayrollDeduction } from "@/types/finance";
+import type { PayrollDeduction } from "@/types/deductions";
 import { formatAmount } from "@/lib/formatting";
 import { TYPE_CONFIGS } from "./deduction-config";
 import { Icon } from "@/components/editorial/icon";
 import { Btn } from "@/components/editorial/button";
 
-export function DeductionChip({ d, onRemove, removeDisabled }: {
+export function DeductionChip({
+  d,
+  onRemove,
+  removeDisabled,
+}: {
   d: PayrollDeduction;
   onRemove: (type: string, label: string) => void;
   removeDisabled: boolean;
 }) {
   const [expanded, setExpanded] = useState(false);
-  const cfg = TYPE_CONFIGS[d.type as string];
+  const cfg = TYPE_CONFIGS[d.type];
 
   return (
-    <div className="bg-paper-2 overflow-hidden border-ink">
+    <div className="overflow-hidden border-ink bg-paper-2">
       <div
-        className="flex items-center justify-between py-[11px] px-[14px] cursor-pointer"
+        className="flex cursor-pointer items-center justify-between px-[14px] py-[11px]"
         onClick={() => setExpanded((v) => !v)}
       >
-        <div className="flex items-center gap-[7px] min-w-0">
-          <span className="text-base font-semibold text-ink whitespace-nowrap overflow-hidden text-ellipsis">
+        <div className="flex min-w-0 items-center gap-[7px]">
+          <span className="overflow-hidden text-ellipsis whitespace-nowrap text-base font-semibold text-ink">
             {d.label}
           </span>
           {d.isTaxExempt && (
-            <span className="shrink-0 text-sm font-semibold py-[1px] px-[6px] bg-red-soft text-red">Pre-tax</span>
+            <span className="shrink-0 bg-red-soft px-[6px] py-[1px] text-sm font-semibold text-red">
+              Pre-tax
+            </span>
           )}
           {d.isEmployerSponsored && (
-            <span className="shrink-0 text-sm font-semibold py-[1px] px-[6px] bg-green-soft text-green">Employer</span>
+            <span className="shrink-0 bg-green-soft px-[6px] py-[1px] text-sm font-semibold text-green">
+              Employer
+            </span>
           )}
         </div>
-        <div className="flex items-center gap-3 shrink-0">
+        <div className="flex shrink-0 items-center gap-3">
           <span className="text-base font-semibold text-ink-2">
             {d.method === "PercentOfGross" ? `${d.value}%` : `$${formatAmount(d.value)}`}
           </span>
-          <span className={`inline-flex text-ink-3 transition-transform duration-200${expanded ? " rotate-180" : ""}`}>
+          <span
+            className={`inline-flex text-ink-3 transition-transform duration-200${expanded ? "rotate-180" : ""}`}
+          >
             <Icon name="chevDown" size={12} strokeWidth={2.5} />
           </span>
         </div>
       </div>
 
       {expanded && (
-        <div className="p-[0_14px_12px] flex flex-col gap-5 border-t border-ink">
+        <div className="flex flex-col gap-5 border-t border-ink p-[0_14px_12px]">
           <div className="flex flex-wrap gap-3 pt-5">
             <DetailPill label="Type" value={cfg?.label ?? d.type} />
-            <DetailPill label="Amount" value={d.method === "PercentOfGross" ? `${d.value}% of gross` : `$${formatAmount(d.value)} fixed`} />
+            <DetailPill
+              label="Amount"
+              value={
+                d.method === "PercentOfGross"
+                  ? `${d.value}% of gross`
+                  : `$${formatAmount(d.value)} fixed`
+              }
+            />
             <DetailPill label="Frequency" value={d.frequency ?? "Monthly"} />
             {cfg?.hint ? <DetailPill label="Tax treatment" value={cfg.hint} /> : null}
           </div>
@@ -67,8 +84,9 @@ export function DeductionChip({ d, onRemove, removeDisabled }: {
 
 export function DetailPill({ label, value }: { label: string; value: string }) {
   return (
-    <div className="py-[3px] px-[10px] bg-paper-3 text-sm font-mono text-ink-2 border-ink">
-      <span className="text-ink-3">{label}: </span>{value}
+    <div className="border-ink bg-paper-3 px-[10px] py-[3px] font-mono text-sm text-ink-2">
+      <span className="text-ink-3">{label}: </span>
+      {value}
     </div>
   );
 }

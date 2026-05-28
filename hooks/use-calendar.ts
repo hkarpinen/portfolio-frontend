@@ -6,6 +6,7 @@ import {
   deleteCalendarEvent,
 } from "@/lib/api/calendar";
 import { financeKeys } from "@/lib/query-keys";
+import { invalidateHouseholdCalendar } from "@/lib/cache-invalidation";
 
 export function useCalendarEvents(householdId: string, from: string, to: string) {
   return useQuery({
@@ -26,14 +27,7 @@ export function useCreateCalendarEvent(householdId: string) {
       endsAt?: string;
       allDay: boolean;
     }) => createCalendarEvent(householdId, body),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        predicate: (q) =>
-          Array.isArray(q.queryKey) &&
-          q.queryKey.includes(householdId) &&
-          q.queryKey.includes("calendar"),
-      });
-    },
+    onSuccess: () => invalidateHouseholdCalendar(queryClient, householdId),
   });
 }
 
@@ -51,14 +45,7 @@ export function useUpdateCalendarEvent(householdId: string) {
       endsAt?: string;
       allDay: boolean;
     }) => updateCalendarEvent(householdId, eventId, body),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        predicate: (q) =>
-          Array.isArray(q.queryKey) &&
-          q.queryKey.includes(householdId) &&
-          q.queryKey.includes("calendar"),
-      });
-    },
+    onSuccess: () => invalidateHouseholdCalendar(queryClient, householdId),
   });
 }
 
@@ -66,13 +53,6 @@ export function useDeleteCalendarEvent(householdId: string) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (eventId: string) => deleteCalendarEvent(householdId, eventId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        predicate: (q) =>
-          Array.isArray(q.queryKey) &&
-          q.queryKey.includes(householdId) &&
-          q.queryKey.includes("calendar"),
-      });
-    },
+    onSuccess: () => invalidateHouseholdCalendar(queryClient, householdId),
   });
 }

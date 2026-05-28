@@ -4,11 +4,15 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useCreateChore } from "@/hooks/use-chores";
-import { useHousehold, useHouseholdMembers } from "@/hooks/use-household";
-import type { RecurrenceFrequency } from "@/lib/api/chores";
+import { useHousehold } from "@/hooks/use-household";
+import { getErrorMessage } from "@/lib/error-messages";
 import { Btn, Input, Textarea, SelectField, Icon, SectionHeader } from "@/components/editorial";
+import { parseUnion } from "@/lib/parse-enum";
 
-const FREQ_OPTIONS: { value: RecurrenceFrequency | ""; label: string }[] = [
+const FREQ_VALUES = ["", "Daily", "Weekly", "BiWeekly", "Monthly"] as const;
+type FreqValue = (typeof FREQ_VALUES)[number]; // RecurrenceFrequency | ""
+
+const FREQ_OPTIONS: { value: FreqValue; label: string }[] = [
   { value: "", label: "None (one-off)" },
   { value: "Daily", label: "Daily" },
   { value: "Weekly", label: "Weekly" },
@@ -23,35 +27,31 @@ export default function NewChorePage({ params }: { params: { id: string } }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [dueDate, setDueDate] = useState("");
-  const [freq, setFreq] = useState<RecurrenceFrequency | "">("");
-  const [error, setError] = useState<string | null>(null);
+  const [freq, setFreq] = useState<FreqValue>("");
 
   const { data: household } = useHousehold(householdId);
   const createChore = useCreateChore(householdId);
 
-  async function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError(null);
-    if (!title.trim()) {
-      setError("Title is required.");
-      return;
-    }
-    try {
-      await createChore.mutateAsync({
+    if (!title.trim()) return; // submit is disabled below; defensive guard
+    createChore.mutate(
+      {
         title: title.trim(),
         description: description.trim() || undefined,
         dueDate: dueDate ? new Date(dueDate + "T00:00:00Z").toISOString() : undefined,
         recurrenceFrequency: freq || undefined,
-      });
-      router.push(`/household/${householdId}/chores`);
-    } catch (err: any) {
-      setError(err?.message ?? "Failed to create chore.");
-    }
+      },
+      { onSuccess: () => router.push(`/household/${householdId}/chores`) },
+    );
   }
 
   return (
-    <div className="page-enter max-w-[640px] flex flex-col gap-8">
-      <Link href={`/household/${householdId}/chores`} className="ed-label-muted no-underline hover:text-red">
+    <div className="page-enter flex max-w-[640px] flex-col gap-8">
+      <Link
+        href={`/household/${householdId}/chores`}
+        className="ed-label-muted no-underline hover:text-red"
+      >
         ← {household?.name ? `${household.name} · Chores` : "Chores"}
       </Link>
 
@@ -74,7 +74,7 @@ export default function NewChorePage({ params }: { params: { id: string } }) {
           placeholder="Optional notes…"
         />
 
-        <div className="grid gap-8 grid-cols-2">
+        <div className="grid grid-cols-2 gap-8">
           <Input
             label="Due Date"
             type="date"
@@ -85,7 +85,7 @@ export default function NewChorePage({ params }: { params: { id: string } }) {
             label="Repeats"
             className="cursor-pointer"
             value={freq}
-            onChange={(e) => setFreq(e.target.value as RecurrenceFrequency | "")}
+            onChange={(e) => setFreq(parseUnion(FREQ_VALUES, e.target.value, ""))}
           >
             {FREQ_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>
@@ -95,9 +95,9 @@ export default function NewChorePage({ params }: { params: { id: string } }) {
           </SelectField>
         </div>
 
-        {error && (
-          <p role="alert" className="text-base text-red font-mono">
-            {error}
+        {createChore.isError && (
+          <p role="alert" className="font-mono text-base text-red">
+            {getErrorMessage(createChore.error, "Failed to create chore.")}
           </p>
         )}
 
@@ -106,12 +106,14 @@ export default function NewChorePage({ params }: { params: { id: string } }) {
             type="submit"
             variant="primary"
             size="lg"
-            disabled={createChore.isPending}
+            disabled={createChore.isPending || !title.trim()}
             iconRight={<Icon name="arrowRight" size={16} />}
           >
             {createChore.isPending ? "Saving…" : "Create chore"}
           </Btn>
-          <Btn href={`/household/${householdId}/chores`} variant="secondary" size="lg">Cancel</Btn>
+          <Btn href={`/household/${householdId}/chores`} variant="secondary" size="lg">
+            Cancel
+          </Btn>
         </div>
       </form>
     </div>

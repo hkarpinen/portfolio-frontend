@@ -8,7 +8,6 @@ import { formatShortDate } from "@/lib/formatting";
 import { UserInitials } from "@/components/editorial/user-initials";
 import { Btn } from "@/components/editorial";
 
-
 interface CommunityCardProps {
   communityId: string;
   slug: string;
@@ -37,7 +36,17 @@ function ActivityAvatar({ avatarUrl, name }: { avatarUrl?: string; name?: string
   return <UserInitials name={name} avatarUrl={avatarUrl} size="sm" />;
 }
 
-export function CommunityCard({ communityId, slug, name, description, imageUrl, memberCount, threadCount, commentCount, latestActivity }: CommunityCardProps) {
+export function CommunityCard({
+  communityId,
+  slug,
+  name,
+  description,
+  imageUrl,
+  memberCount,
+  threadCount,
+  commentCount,
+  latestActivity,
+}: CommunityCardProps) {
   const { data: membership } = useCommunityMembership(communityId);
   const joinMutation = useJoinCommunity(communityId);
 
@@ -62,26 +71,36 @@ export function CommunityCard({ communityId, slug, name, description, imageUrl, 
     : null;
 
   return (
-    <div
-      className="bg-paper p-10 shadow-card transition-[box-shadow,transform] duration-[180ms] ease-out hover:shadow-stamp border-ink"
-    >
+    <div className="border-ink bg-paper p-10 shadow-card transition-[box-shadow,transform] duration-[180ms] ease-out hover:shadow-stamp">
       <div className="flex items-start justify-between gap-8">
-        <Link href={`/forum/g/${slug}`} className="flex-1 min-w-0 flex items-center gap-6 no-underline">
-          <UserInitials name={name} avatarUrl={imageUrl} size="lg" className="w-24 h-24 text-lg border-ink" />
+        <Link
+          href={`/forum/g/${slug}`}
+          className="flex min-w-0 flex-1 items-center gap-6 no-underline"
+        >
+          <UserInitials
+            name={name}
+            avatarUrl={imageUrl}
+            size="lg"
+            className="h-24 w-24 border-ink text-lg"
+          />
           <div className="min-w-0">
-            <h2 className="font-serif font-semibold text-xl text-ink m-0">{name}</h2>
-            {description && (
-              <p className="text-base text-ink-2 mt-1 line-clamp-2">{description}</p>
-            )}
-            <div className="flex gap-8 mt-2">
+            <h2 className="m-0 font-serif text-xl font-semibold text-ink">{name}</h2>
+            {description && <p className="mt-1 line-clamp-2 text-base text-ink-2">{description}</p>}
+            <div className="mt-2 flex gap-8">
               {memberCount !== undefined && memberCount > 0 && (
-                <span className="text-sm font-medium text-ink-3">{memberCount.toLocaleString()} {memberCount === 1 ? "member" : "members"}</span>
+                <span className="text-sm font-medium text-ink-3">
+                  {memberCount.toLocaleString()} {memberCount === 1 ? "member" : "members"}
+                </span>
               )}
               {threadCount !== undefined && threadCount > 0 && (
-                <span className="text-sm font-medium text-ink-3">{threadCount.toLocaleString()} {threadCount === 1 ? "thread" : "threads"}</span>
+                <span className="text-sm font-medium text-ink-3">
+                  {threadCount.toLocaleString()} {threadCount === 1 ? "thread" : "threads"}
+                </span>
               )}
               {commentCount !== undefined && commentCount > 0 && (
-                <span className="text-sm font-medium text-ink-3">{commentCount.toLocaleString()} {commentCount === 1 ? "reply" : "replies"}</span>
+                <span className="text-sm font-medium text-ink-3">
+                  {commentCount.toLocaleString()} {commentCount === 1 ? "reply" : "replies"}
+                </span>
               )}
             </div>
           </div>
@@ -89,9 +108,9 @@ export function CommunityCard({ communityId, slug, name, description, imageUrl, 
 
         <div className="shrink-0">
           {joined === null ? (
-            <div  className="skeleton w-32 h-[28px] bg-paper-3" />
+            <div className="skeleton h-[28px] w-32 bg-paper-3" />
           ) : joined ? (
-            <span className="text-sm font-medium text-ink-3 py-1 px-4 bg-paper-3 border-ink">
+            <span className="border-ink bg-paper-3 px-4 py-1 text-sm font-medium text-ink-3">
               Joined
             </span>
           ) : (
@@ -109,30 +128,33 @@ export function CommunityCard({ communityId, slug, name, description, imageUrl, 
       </div>
 
       {latestActivity && (
-        <Link
-          href={`/forum/g/${slug}/threads/${latestActivity.threadId}`}
-          className="no-underline"
-        >
-          <div className="mt-6 pt-5 flex items-center gap-4 min-w-0 border-ink-t">
+        <Link href={`/forum/g/${slug}/threads/${latestActivity.threadId}`} className="no-underline">
+          <div className="border-ink-t mt-6 flex min-w-0 items-center gap-4 pt-5">
             <ActivityAvatar
-              avatarUrl={hasReply ? latestActivity.latestReplyAuthorAvatarUrl : latestActivity.authorAvatarUrl}
-              name={hasReply ? latestActivity.latestReplyAuthorDisplayName : latestActivity.authorDisplayName}
+              avatarUrl={
+                hasReply
+                  ? latestActivity.latestReplyAuthorAvatarUrl
+                  : latestActivity.authorAvatarUrl
+              }
+              name={
+                hasReply
+                  ? latestActivity.latestReplyAuthorDisplayName
+                  : latestActivity.authorDisplayName
+              }
             />
             <div className="min-w-0 flex-1">
-              <p className="text-base text-ink-2 m-0 overflow-hidden text-ellipsis whitespace-nowrap">
+              <p className="m-0 overflow-hidden text-ellipsis whitespace-nowrap text-base text-ink-2">
                 <span className="font-medium text-ink">
-                  {hasReply ? latestActivity.latestReplyAuthorDisplayName ?? "Someone" : latestActivity.authorDisplayName ?? "Someone"}
-                </span>
-                {" "}
-                {hasReply ? "replied in" : "posted"}
-                {" "}
+                  {hasReply
+                    ? (latestActivity.latestReplyAuthorDisplayName ?? "Someone")
+                    : (latestActivity.authorDisplayName ?? "Someone")}
+                </span>{" "}
+                {hasReply ? "replied in" : "posted"}{" "}
                 <span className="font-medium text-red">{latestActivity.threadTitle}</span>
               </p>
             </div>
             {activityTime && (
-              <span className="text-sm text-ink-3 shrink-0">
-                {formatRelative(activityTime)}
-              </span>
+              <span className="shrink-0 text-sm text-ink-3">{formatRelative(activityTime)}</span>
             )}
           </div>
         </Link>

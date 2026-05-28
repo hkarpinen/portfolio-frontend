@@ -1,71 +1,104 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { api, ApiError } from "@/lib/api-client";
+import { useConfirmEmail } from "@/hooks/use-identity";
+import { getErrorMessage } from "@/lib/error-messages";
 import { Btn, Icon } from "@/components/editorial";
 
 function ConfirmEmailContent() {
   const searchParams = useSearchParams();
-  const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
-  const [message, setMessage] = useState("");
-
+  const confirm = useConfirmEmail();
   const token = searchParams.get("token");
   const userId = searchParams.get("userId");
 
+  // Fire the mutation once when the page mounts with valid params. The four
+  // render states (loading / success / error / missing-params) derive directly
+  // from the mutation status — no parallel useState needed.
   useEffect(() => {
-    if (!token || !userId) {
-      setStatus("error");
-      setMessage("Missing token or userId in the confirmation link.");
-      return;
+    if (token && userId) {
+      confirm.mutate({ userId, token });
     }
-
-    api.post("/api/identity/confirm-email", { userId, token })
-      .then(() => {
-        setStatus("success");
-        setMessage("Your email has been confirmed. You can now sign in.");
-      })
-      .catch((err) => {
-        setStatus("error");
-        setMessage(err instanceof ApiError ? err.message : "Network error. Please try again.");
-      });
+    // We intentionally fire once per (userId, token) pair, not on every
+    // identity change of `confirm`.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token, userId]);
+
+  const missingParams = !token || !userId;
+  const status: "loading" | "success" | "error" = missingParams
+    ? "error"
+    : confirm.isSuccess
+      ? "success"
+      : confirm.isError
+        ? "error"
+        : "loading";
+  const message = missingParams
+    ? "Missing token or userId in the confirmation link."
+    : confirm.isError
+      ? getErrorMessage(confirm.error, "Network error. Please try again.")
+      : "Your email has been confirmed. You can now sign in.";
 
   return (
     <div className="ed-auth-card text-center">
       {status === "loading" && (
         <>
           {/* Spinner: composite border + animation combo has no single Tailwind equivalent — kept inline */}
-          <div role="status" aria-label="Confirming your email, please wait" className="w-[56px] h-[56px] mx-auto mb-10" style={{ border: "2px solid var(--ink-4)", borderTopColor: "var(--ink)", animation: "spin 0.8s linear infinite" }} />
-          <p className="ed-label-muted" aria-live="polite">Confirming your email…</p>
+          <div
+            role="status"
+            aria-label="Confirming your email, please wait"
+            className="mx-auto mb-10 h-[56px] w-[56px]"
+            style={{
+              border: "2px solid var(--ink-4)",
+              borderTopColor: "var(--ink)",
+              animation: "spin 0.8s linear infinite",
+            }}
+          />
+          <p className="ed-label-muted" aria-live="polite">
+            Confirming your email…
+          </p>
         </>
       )}
 
       {status === "success" && (
         <>
-          <div className="w-[56px] h-[56px] bg-green-soft flex items-center justify-center mx-auto mb-10 border border-green">
-            <span className="text-green"><Icon name="check" size={24} strokeWidth={2} /></span>
+          <div className="mx-auto mb-10 flex h-[56px] w-[56px] items-center justify-center border border-green bg-green-soft">
+            <span className="text-green">
+              <Icon name="check" size={24} strokeWidth={2} />
+            </span>
           </div>
-          <h1 className="ed-h1 mb-4">Email confirmed<span className="text-red">.</span></h1>
-          <p className="text-base text-ink-3 leading-[1.6] mb-[28px]">{message}</p>
-          <Btn href="/login" variant="primary">Sign in</Btn>
+          <h1 className="ed-h1 mb-4">
+            Email confirmed<span className="text-red">.</span>
+          </h1>
+          <p className="mb-[28px] text-base leading-[1.6] text-ink-3">{message}</p>
+          <Btn href="/login" variant="primary">
+            Sign in
+          </Btn>
         </>
       )}
 
       {status === "error" && (
         <>
-          <div className="w-[56px] h-[56px] bg-red-soft flex items-center justify-center mx-auto mb-10 border border-red">
-            <span className="text-red"><Icon name="x" size={24} strokeWidth={2} /></span>
+          <div className="mx-auto mb-10 flex h-[56px] w-[56px] items-center justify-center border border-red bg-red-soft">
+            <span className="text-red">
+              <Icon name="x" size={24} strokeWidth={2} />
+            </span>
           </div>
           <p className="ed-kicker mb-2 text-red">Confirmation failed</p>
-          <h1 className="ed-h1 mb-4">Link expired <em>or</em> invalid.</h1>
-          <p className="text-base text-ink-3 leading-[1.6] mb-4">{message}</p>
+          <h1 className="ed-h1 mb-4">
+            Link expired <em>or</em> invalid.
+          </h1>
+          <p className="mb-4 text-base leading-[1.6] text-ink-3">{message}</p>
           <p className="ed-label-muted mb-8 leading-relaxed">
-            Confirmation links expire after 24 hours. Sign in to request a new one, or register again if you haven&apos;t yet.
+            Confirmation links expire after 24 hours. Sign in to request a new one, or register
+            again if you haven&apos;t yet.
           </p>
-          <div className="flex gap-4 justify-center flex-wrap">
-            <Btn href="/login" variant="primary">Sign in to resend</Btn>
-            <Btn href="/register" variant="secondary">Register again</Btn>
+          <div className="flex flex-wrap justify-center gap-4">
+            <Btn href="/login" variant="primary">
+              Sign in to resend
+            </Btn>
+            <Btn href="/register" variant="secondary">
+              Register again
+            </Btn>
           </div>
         </>
       )}
@@ -79,7 +112,14 @@ export default function ConfirmEmailPage() {
       fallback={
         <div className="ed-auth-card text-center">
           {/* Spinner: composite border + animation combo has no single Tailwind equivalent — kept inline */}
-          <div className="w-[48px] h-[48px] mx-auto" style={{ border: "2px solid var(--ink-4)", borderTopColor: "var(--ink)", animation: "spin 0.8s linear infinite" }} />
+          <div
+            className="mx-auto h-[48px] w-[48px]"
+            style={{
+              border: "2px solid var(--ink-4)",
+              borderTopColor: "var(--ink)",
+              animation: "spin 0.8s linear infinite",
+            }}
+          />
         </div>
       }
     >

@@ -9,4 +9,6 @@
   flex-shrink: 0;
   transition: opacity 110ms;
 }
-.dismissBtn:hover { opacity: 1; }
+.dismissBtn:hover {
+  opacity: 1;
+}

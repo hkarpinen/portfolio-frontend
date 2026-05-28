@@ -27,16 +27,22 @@ interface ReportButtonProps {
  * to the moderation endpoint. Submission is fire-and-forget so a flaky network
  * never blocks the UI.
  */
-export function ReportButton({ kind, targetId, triggerClassName, triggerLabel = "Report" }: ReportButtonProps) {
+export function ReportButton({
+  kind,
+  targetId,
+  triggerClassName,
+  triggerLabel = "Report",
+}: ReportButtonProps) {
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState(REPORT_REASONS[0]);
   const [details, setDetails] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  const endpoint = kind === "thread"
-    ? `/api/forum/threads/${targetId}/report`
-    : `/api/forum/comments/${targetId}/report`;
+  const endpoint =
+    kind === "thread"
+      ? `/api/forum/threads/${targetId}/report`
+      : `/api/forum/comments/${targetId}/report`;
 
   const close = useCallback(() => {
     setOpen(false);
@@ -68,7 +74,10 @@ export function ReportButton({ kind, targetId, triggerClassName, triggerLabel = 
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className={triggerClassName ?? "font-mono text-xs uppercase tracking-[0.12em] text-ink-3 hover:text-red cursor-pointer bg-transparent border-0 p-0"}
+        className={
+          triggerClassName ??
+          "cursor-pointer border-0 bg-transparent p-0 font-mono text-xs uppercase tracking-[0.12em] text-ink-3 hover:text-red"
+        }
         aria-label={`Report ${kind}`}
       >
         {triggerLabel}
@@ -76,21 +85,29 @@ export function ReportButton({ kind, targetId, triggerClassName, triggerLabel = 
 
       <Modal
         open={open}
-        onOpenChange={(o) => { if (!o) close(); }}
+        onOpenChange={(o) => {
+          if (!o) close();
+        }}
         title={submitted ? "Report submitted" : `Report ${kind}`}
         actions={
           submitted ? (
-            <Btn variant="primary" onClick={close}>Close</Btn>
+            <Btn variant="primary" onClick={close}>
+              Close
+            </Btn>
           ) : (
-            <div className="flex gap-4 justify-end">
-              <Btn variant="secondary" onClick={close}>Cancel</Btn>
-              <Btn variant="danger" loading={submitting} onClick={submit}>Submit report</Btn>
+            <div className="flex justify-end gap-4">
+              <Btn variant="secondary" onClick={close}>
+                Cancel
+              </Btn>
+              <Btn variant="danger" loading={submitting} onClick={submit}>
+                Submit report
+              </Btn>
             </div>
           )
         }
       >
         {submitted ? (
-          <p className="text-md text-ink-2 text-center p-[8px_0]">
+          <p className="p-[8px_0] text-center text-md text-ink-2">
             Thanks for the report. Our moderators will review it shortly.
           </p>
         ) : (
@@ -102,7 +119,9 @@ export function ReportButton({ kind, targetId, triggerClassName, triggerLabel = 
               onChange={(e) => setReason(e.target.value)}
             >
               {REPORT_REASONS.map((r) => (
-                <option key={r} value={r}>{r}</option>
+                <option key={r} value={r}>
+                  {r}
+                </option>
               ))}
             </SelectField>
             <div>
@@ -115,7 +134,7 @@ export function ReportButton({ kind, targetId, triggerClassName, triggerLabel = 
                 rows={3}
                 maxLength={500}
               />
-              <p className="text-sm text-ink-3 text-right mt-1" aria-live="polite">
+              <p className="mt-1 text-right text-sm text-ink-3" aria-live="polite">
                 {details.length}/500
               </p>
             </div>

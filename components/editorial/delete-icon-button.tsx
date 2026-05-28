@@ -8,12 +8,7 @@ interface DeleteIconButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEle
 
 export function DeleteIconButton({ label, className, ...props }: DeleteIconButtonProps) {
   return (
-    <button
-      type="button"
-      aria-label={label}
-      className={cn(styles.btn, className)}
-      {...props}
-    >
+    <button type="button" aria-label={label} className={cn(styles.btn, className)} {...props}>
       <Icon name="trash" size={14} strokeWidth={2} />
     </button>
   );

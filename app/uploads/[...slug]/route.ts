@@ -1,15 +1,14 @@
 import { createReadStream, existsSync, statSync } from "fs";
 import path from "path";
 import { Readable } from "stream";
-import { NextRequest, NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 
 // In dev, uploads are bind-mounted from infra/uploads/ into the backend
 // containers and written there. UPLOADS_DIR points at that local folder so
 // Next.js can serve them without nginx.
 // In prod this route is never reached — nginx serves /uploads/* directly.
-const UPLOADS_DIR =
-  process.env.UPLOADS_DIR ??
-  path.resolve(process.cwd(), "../infra/uploads");
+const UPLOADS_DIR = process.env.UPLOADS_DIR ?? path.resolve(process.cwd(), "../infra/uploads");
 
 const MIME: Record<string, string> = {
   ".jpg": "image/jpeg",
@@ -19,10 +18,7 @@ const MIME: Record<string, string> = {
   ".webp": "image/webp",
 };
 
-export async function GET(
-  _req: NextRequest,
-  { params }: { params: Promise<{ slug: string[] }> }
-) {
+export async function GET(_req: NextRequest, { params }: { params: Promise<{ slug: string[] }> }) {
   const { slug } = await params;
   const relative = slug.join("/");
 

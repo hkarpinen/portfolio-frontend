@@ -1,2 +1,9 @@
-.link { transition: border-color 110ms, box-shadow 110ms; }
-.link:hover { border-color: var(--border-2) !important; box-shadow: var(--shadow-md); }
+.link {
+  transition:
+    border-color 110ms,
+    box-shadow 110ms;
+}
+.link:hover {
+  border-color: var(--border-2) !important;
+  box-shadow: var(--shadow-md);
+}

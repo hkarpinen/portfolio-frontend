@@ -11,20 +11,26 @@ interface AlertProps {
 }
 
 const VARIANT_COLOR: Record<AlertVariant, string> = {
-  info:    "var(--ink)",
+  info: "var(--ink)",
   warning: "var(--red)",
-  danger:  "var(--red)",
+  danger: "var(--red)",
   success: "var(--green)",
 };
 
 const VARIANT_LABEL: Record<AlertVariant, string> = {
-  info:    "— Notice —",
+  info: "— Notice —",
   warning: "— Warning —",
-  danger:  "— Danger —",
+  danger: "— Danger —",
   success: "— Note —",
 };
 
-export function Alert({ variant = "info", title, children, role, "aria-live": ariaLive }: AlertProps) {
+export function Alert({
+  variant = "info",
+  title,
+  children,
+  role,
+  "aria-live": ariaLive,
+}: AlertProps) {
   const color = VARIANT_COLOR[variant];
   return (
     <div

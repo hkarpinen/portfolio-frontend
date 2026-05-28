@@ -1,10 +1,12 @@
+import { z } from "zod";
 import { api } from "@/lib/api-client";
-import type { ConversionResultDto, UnitCategoryDto } from "@/types/math";
+import { ConversionResultDtoSchema, UnitCategoryDtoSchema } from "@/types/math";
 
 export const fetchConversion = (from: string, to: string, value: number) =>
-  api.get<ConversionResultDto>(
-    `/api/math/convert?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&value=${value}`
+  api.parsed.get(
+    `/api/math/convert?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&value=${value}`,
+    ConversionResultDtoSchema,
   );
 
 export const fetchUnits = () =>
-  api.get<UnitCategoryDto[]>("/api/math/convert/units");
+  api.parsed.get("/api/math/convert/units", z.array(UnitCategoryDtoSchema));

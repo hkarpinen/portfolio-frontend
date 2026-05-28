@@ -1,4 +1,12 @@
+import type { Metadata } from "next";
 import { requireRole } from "@/lib/auth/session";
+
+/** Admin-only routes — never indexed. We `notFound()` non-admins on the
+ *  server (see below) so search engines that probe these URLs get 404,
+ *  but explicit noindex is belt-and-suspenders. */
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 /**
  * Admin-only routes. The parent `(portfolio)/layout.tsx` already calls

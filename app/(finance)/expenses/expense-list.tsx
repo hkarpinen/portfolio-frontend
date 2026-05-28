@@ -4,8 +4,7 @@ import { useState } from "react";
 import { useDeleteExpense, useExpenses } from "@/hooks/use-expenses";
 import { EmptyState } from "@/components/editorial/empty-state";
 import { Icon } from "@/components/editorial/icon";
-import type { ExpensePage } from "@/types/finance";
-import type { Expense } from "@/types/finance";
+import type { ExpensePage, Expense } from "@/types/expense";
 import { ExpenseRow } from "./expense-row";
 
 export { CATEGORY_COLORS, CATEGORY_ICONS } from "./expense-row";
@@ -14,9 +13,7 @@ export function ExpenseList({ initialData }: { initialData: ExpensePage }) {
   const { data } = useExpenses(initialData);
   // This list backs the "Personal recurring" section — drop one-time entries
   // so they don't double up with the One time this month table below.
-  const expenses: Expense[] = (data?.items ?? []).filter(
-    (e) => !!e.recurrenceFrequency,
-  );
+  const expenses: Expense[] = (data?.items ?? []).filter((e) => !!e.recurrenceFrequency);
   const deleteExpense = useDeleteExpense();
   const [editingId, setEditingId] = useState<string | null>(null);
 
@@ -33,12 +30,7 @@ export function ExpenseList({ initialData }: { initialData: ExpensePage }) {
 
   return (
     <>
-      <div
-        aria-live="polite"
-        aria-atomic="false"
-        className="sr-only"
-        role="status"
-      >
+      <div aria-live="polite" aria-atomic="false" className="sr-only" role="status">
         {deleteExpense.isPending ? "Removing expense…" : ""}
       </div>
       <div className="ed-modules-grid">
@@ -47,7 +39,9 @@ export function ExpenseList({ initialData }: { initialData: ExpensePage }) {
             key={expense.expenseId}
             expense={expense}
             isEditing={editingId === expense.expenseId}
-            onEditToggle={() => setEditingId(editingId === expense.expenseId ? null : expense.expenseId)}
+            onEditToggle={() =>
+              setEditingId(editingId === expense.expenseId ? null : expense.expenseId)
+            }
             onEditDone={() => setEditingId(null)}
             onDelete={() => deleteExpense.mutate(expense.expenseId)}
             isDeleting={deleteExpense.isPending}

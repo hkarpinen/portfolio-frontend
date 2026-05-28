@@ -13,10 +13,10 @@ import { useIsDemo } from "@/hooks/use-demo";
 
 // Indent rail colors by depth — accent fades as nesting deepens.
 const RAIL_COLORS = [
-  "var(--red)",        // depth 1
-  "var(--accent-v)",   // depth 2
-  "var(--border-2)",   // depth 3
-  "var(--ink-3)",      // depth 4+
+  "var(--red)", // depth 1
+  "var(--accent-v)", // depth 2
+  "var(--border-2)", // depth 3
+  "var(--ink-3)", // depth 4+
 ];
 function railColor(depth: number) {
   return RAIL_COLORS[Math.min(depth - 1, RAIL_COLORS.length - 1)];
@@ -52,19 +52,22 @@ function CommentNode({
         marginLeft: depth > 0 ? "10px" : "0",
       }}
     >
-      <div className="pt-6 pb-5">
+      <div className="pb-5 pt-6">
         {/* Author row — avatar + @handle · time · N votes */}
-        <div className="flex items-center gap-4 mb-3 flex-wrap">
+        <div className="mb-3 flex flex-wrap items-center gap-4">
           {comment.authorAvatarUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={comment.authorAvatarUrl}
               alt=""
               aria-hidden="true"
-              className="w-12 h-12 object-cover shrink-0 border-ink"
+              className="h-12 w-12 shrink-0 border-ink object-cover"
             />
           ) : (
-            <span aria-hidden="true" className="w-12 h-12 bg-paper-3 text-ink-2 flex items-center justify-center text-sm font-bold shrink-0 border-ink">
+            <span
+              aria-hidden="true"
+              className="flex h-12 w-12 shrink-0 items-center justify-center border-ink bg-paper-3 text-sm font-bold text-ink-2"
+            >
               {initials}
             </span>
           )}
@@ -74,21 +77,34 @@ function CommentNode({
                 href={`/profile/${comment.authorId}`}
                 aria-label={`View profile of ${authorName}`}
                 className={styles.authorLink}
-              >{handle}</Link>
-            ) : handle}
+              >
+                {handle}
+              </Link>
+            ) : (
+              handle
+            )}
           </span>
-          <span aria-hidden="true" className="font-mono text-xs text-ink-4">·</span>
-          <time dateTime={comment.createdAt} className="font-mono text-xs uppercase tracking-[0.12em] text-ink-3">
+          <span aria-hidden="true" className="font-mono text-xs text-ink-4">
+            ·
+          </span>
+          <time
+            dateTime={comment.createdAt}
+            className="font-mono text-xs uppercase tracking-[0.12em] text-ink-3"
+          >
             {timeAgo(comment.createdAt)}
           </time>
-          <span aria-hidden="true" className="font-mono text-xs text-ink-4">·</span>
+          <span aria-hidden="true" className="font-mono text-xs text-ink-4">
+            ·
+          </span>
           <span className="font-mono text-xs uppercase tracking-[0.12em] text-ink-3">
             {comment.voteScore ?? 0} {(comment.voteScore ?? 0) === 1 ? "vote" : "votes"}
           </span>
         </div>
 
         {/* Content */}
-        <p className="text-md text-ink-2 leading-[1.65] whitespace-pre-wrap mb-4">{comment.content}</p>
+        <p className="mb-4 whitespace-pre-wrap text-md leading-[1.65] text-ink-2">
+          {comment.content}
+        </p>
 
         {/* Action footer: vote · reply · report */}
         <div className="flex items-center gap-5">
@@ -100,31 +116,34 @@ function CommentNode({
             orientation="row"
             size={10}
           />
-          {depth < 3 && (
-            isDemo ? (
+          {depth < 3 &&
+            (isDemo ? (
               <span className="font-mono text-xs uppercase tracking-[0.12em] text-ink-3">
-                Demo — <a href="/register" className="text-red no-underline font-medium normal-case">sign up</a> to reply
+                Demo —{" "}
+                <a href="/register" className="font-medium normal-case text-red no-underline">
+                  sign up
+                </a>{" "}
+                to reply
               </span>
             ) : isAuthed ? (
               <button
                 type="button"
-                onClick={() => setReplying(r => !r)}
+                onClick={() => setReplying((r) => !r)}
                 aria-expanded={replying}
                 aria-label={replying ? `Cancel reply to ${authorName}` : `Reply to ${authorName}`}
                 data-replying={replying ? "true" : undefined}
-                className="font-mono text-xs uppercase tracking-[0.12em] text-ink-3 hover:text-ink cursor-pointer bg-transparent border-0 p-0"
+                className="cursor-pointer border-0 bg-transparent p-0 font-mono text-xs uppercase tracking-[0.12em] text-ink-3 hover:text-ink"
               >
                 {replying ? "Cancel" : "Reply"}
               </button>
             ) : (
               <Link
                 href={`/login?from=${encodeURIComponent(pathname)}`}
-                className="font-mono text-xs uppercase tracking-[0.12em] text-ink-3 hover:text-ink no-underline"
+                className="font-mono text-xs uppercase tracking-[0.12em] text-ink-3 no-underline hover:text-ink"
               >
                 Sign in to reply
               </Link>
-            )
-          )}
+            ))}
           <ReportButton kind="comment" targetId={comment.commentId} />
         </div>
 
@@ -170,9 +189,7 @@ export function CommentTree({
   isAuthed: boolean;
 }) {
   if (comments.length === 0) {
-    return (
-      <p className="text-base text-ink-3 italic py-6">No comments yet — be the first!</p>
-    );
+    return <p className="py-6 text-base italic text-ink-3">No comments yet — be the first!</p>;
   }
   return (
     <div role="list" aria-label="Thread comments">

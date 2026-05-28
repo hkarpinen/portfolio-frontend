@@ -1,5 +1,5 @@
 "use client";
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { EmptyState } from "@/components/editorial/empty-state";
 import type { EmptyStateProps } from "./empty-state";
 

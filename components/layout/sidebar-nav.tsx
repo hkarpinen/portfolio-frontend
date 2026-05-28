@@ -15,30 +15,75 @@ import { getInitials } from "@/lib/utils";
 
 // ── Nav config ────────────────────────────────────────────────────────────────
 export const NAV_PORTFOLIO = [
-  { label: "About",   desc: "Portfolio",   href: "/about",   icon: "about" as const, exactMatch: false },
-  { label: "Contact", desc: "Say hello",   href: "/contact", icon: "mail" as const,  exactMatch: false },
+  { label: "About", desc: "Portfolio", href: "/about", icon: "about" as const, exactMatch: false },
+  {
+    label: "Contact",
+    desc: "Say hello",
+    href: "/contact",
+    icon: "mail" as const,
+    exactMatch: false,
+  },
 ];
 
 export const NAV_ACCOUNT = [
-  { label: "Household", desc: "Household & Chores", href: "/household", icon: "household" as const, exactMatch: false, extraPaths: ["/dashboard"] },
-  { label: "Finance",   desc: "Expenses & Income",  href: "/expenses",  icon: "expenses" as const,  exactMatch: false, extraPaths: ["/income"] },
-  { label: "Forum",     desc: "Community",          href: "/forum",     icon: "forum" as const,     exactMatch: false },
+  {
+    label: "Household",
+    desc: "Household & Chores",
+    href: "/household",
+    icon: "household" as const,
+    exactMatch: false,
+    extraPaths: ["/dashboard"],
+  },
+  {
+    label: "Finance",
+    desc: "Expenses & Income",
+    href: "/expenses",
+    icon: "expenses" as const,
+    exactMatch: false,
+    extraPaths: ["/income"],
+  },
+  { label: "Forum", desc: "Community", href: "/forum", icon: "forum" as const, exactMatch: false },
 ];
 
 export const NAV_UTILITIES = [
-  { label: "Weather",       desc: "Live conditions",    href: "/weather",          icon: "weather" as const,   exactMatch: false },
-  { label: "Convert",       desc: "Unit conversion",    href: "/convert",          icon: "math" as const,      exactMatch: false },
-  { label: "Notifications", desc: "Your inbox",         href: "/notifications",    icon: "bell" as const,      exactMatch: false },
-  { label: "Settings",      desc: "Profile & account",  href: "/settings/profile", icon: "settings" as const,  exactMatch: false, extraPaths: ["/settings"] },
+  {
+    label: "Weather",
+    desc: "Live conditions",
+    href: "/weather",
+    icon: "weather" as const,
+    exactMatch: false,
+  },
+  {
+    label: "Convert",
+    desc: "Unit conversion",
+    href: "/convert",
+    icon: "math" as const,
+    exactMatch: false,
+  },
+  {
+    label: "Notifications",
+    desc: "Your inbox",
+    href: "/notifications",
+    icon: "bell" as const,
+    exactMatch: false,
+  },
+  {
+    label: "Settings",
+    desc: "Profile & account",
+    href: "/settings/profile",
+    icon: "settings" as const,
+    exactMatch: false,
+    extraPaths: ["/settings"],
+  },
 ];
 
 /** @deprecated Use NAV_PORTFOLIO / NAV_ACCOUNT / NAV_UTILITIES */
 export const NAV_ITEMS = NAV_PORTFOLIO;
-export const NAV_OFFICE = NAV_UTILITIES.filter(i => i.label === "Settings");
+export const NAV_OFFICE = NAV_UTILITIES.filter((i) => i.label === "Settings");
 
 export function isActive(href: string, pathname: string, exact: boolean, extraPaths?: string[]) {
   if (exact ? pathname === href : pathname.startsWith(href)) return true;
-  return extraPaths?.some(p => pathname.startsWith(p)) ?? false;
+  return extraPaths?.some((p) => pathname.startsWith(p)) ?? false;
 }
 
 // ── Avatar ────────────────────────────────────────────────────────────────────
@@ -74,9 +119,24 @@ export function Avatar({
 }
 
 // ── NavItem ───────────────────────────────────────────────────────────────────
-type NavItemData = { label: string; desc: string; href: string; icon: IconName; exactMatch: boolean; extraPaths?: string[] };
+type NavItemData = {
+  label: string;
+  desc: string;
+  href: string;
+  icon: IconName;
+  exactMatch: boolean;
+  extraPaths?: string[];
+};
 
-function NavItem({ item, pathname, collapsed }: { item: NavItemData; pathname: string; collapsed: boolean }) {
+function NavItem({
+  item,
+  pathname,
+  collapsed,
+}: {
+  item: NavItemData;
+  pathname: string;
+  collapsed: boolean;
+}) {
   const active = isActive(item.href, pathname, item.exactMatch, item.extraPaths);
 
   const link = (
@@ -134,23 +194,29 @@ export function Sidebar({
         {/* Nav */}
         <nav aria-label="Sections" className="ed-sidebar-nav">
           <p className="ed-sidebar-group-h">Portfolio</p>
-          {NAV_PORTFOLIO.map(item => (
+          {NAV_PORTFOLIO.map((item) => (
             <NavItem key={item.href} item={item} pathname={pathname} collapsed={false} />
           ))}
 
           <p className="ed-sidebar-group-h">Account</p>
-          {NAV_ACCOUNT.map(item => (
+          {NAV_ACCOUNT.map((item) => (
             <NavItem key={item.href} item={item} pathname={pathname} collapsed={false} />
           ))}
 
           <p className="ed-sidebar-group-h">Utilities</p>
-          {NAV_UTILITIES.map(item => (
+          {NAV_UTILITIES.map((item) => (
             <NavItem key={item.href} item={item} pathname={pathname} collapsed={false} />
           ))}
 
           {role === "Admin" && (
             <NavItem
-              item={{ label: "Admin", desc: "Moderation", href: "/admin", icon: "shield" as IconName, exactMatch: false }}
+              item={{
+                label: "Admin",
+                desc: "Moderation",
+                href: "/admin",
+                icon: "shield" as IconName,
+                exactMatch: false,
+              }}
               pathname={pathname}
               collapsed={false}
             />
@@ -164,11 +230,7 @@ export function Sidebar({
               <Avatar name={displayName} url={avatarUrl} size="md" />
               <div className="ed-sidebar-foot-who">
                 <span className="ed-sidebar-foot-name">{displayName}</span>
-                <button
-                  onClick={logout}
-                  aria-label="Sign out"
-                  className="ed-sidebar-foot-signout"
-                >
+                <button onClick={logout} aria-label="Sign out" className="ed-sidebar-foot-signout">
                   Sign out ↗
                 </button>
               </div>

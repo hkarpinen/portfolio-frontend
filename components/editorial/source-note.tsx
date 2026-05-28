@@ -52,7 +52,11 @@ export function SourceNote({ source, syncedAt, meta = [] }: SourceNoteProps) {
     <p className="ed-source-note">
       {parts.map((part, i) => (
         <React.Fragment key={i}>
-          {i > 0 && <span className="ed-source-note-sep" aria-hidden="true">·</span>}
+          {i > 0 && (
+            <span className="ed-source-note-sep" aria-hidden="true">
+              ·
+            </span>
+          )}
           {part}
         </React.Fragment>
       ))}

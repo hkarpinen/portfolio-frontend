@@ -39,7 +39,14 @@ export function SectionHeader({
                 {(item.href || item.onClick) && !last ? (
                   <a
                     href={item.href}
-                    onClick={item.onClick ? (e => { e.preventDefault(); item.onClick!(); }) : undefined}
+                    onClick={
+                      item.onClick
+                        ? (e) => {
+                            e.preventDefault();
+                            item.onClick!();
+                          }
+                        : undefined
+                    }
                     className="ed-breadcrumb-link"
                   >
                     {item.label}
@@ -56,7 +63,7 @@ export function SectionHeader({
       )}
 
       <div className="ed-section-head-row">
-        <div className="flex-1 min-w-0">
+        <div className="min-w-0 flex-1">
           <h1
             id={id}
             className="ed-h1"
@@ -64,13 +71,9 @@ export function SectionHeader({
             // Source: page-code only; never user-input.
             dangerouslySetInnerHTML={{ __html: title }}
           />
-          {subtitle && <p className="ed-deck max-w-[60ch] mt-3">{subtitle}</p>}
+          {subtitle && <p className="ed-deck mt-3 max-w-[60ch]">{subtitle}</p>}
         </div>
-        {action && (
-          <div className="flex items-center gap-3 shrink-0 flex-wrap">
-            {action}
-          </div>
-        )}
+        {action && <div className="flex shrink-0 flex-wrap items-center gap-3">{action}</div>}
       </div>
     </header>
   );

@@ -56,7 +56,9 @@ export function TopBarStack({
       )}
 
       <Link href="/" aria-label="The Stack & Gazette — home" className="ed-topbar-brand">
-        <span className="ed-topbar-brand-mark" aria-hidden="true">SG</span>
+        <span className="ed-topbar-brand-mark" aria-hidden="true">
+          SG
+        </span>
         <span className="ed-topbar-brand-copy">
           <span className="ed-topbar-brand-name">
             The Stack <em>&amp;</em> Gazette
@@ -69,9 +71,13 @@ export function TopBarStack({
 
       <div className="ed-topbar-actions">
         {displayName === null && (
-          <div className="hidden sm:flex items-center gap-2">
-            <Link href="/login" className="ed-topbar-pill">Sign in</Link>
-            <Link href="/register" className="ed-topbar-pill ed-topbar-pill-primary">Create account</Link>
+          <div className="hidden items-center gap-2 sm:flex">
+            <Link href="/login" className="ed-topbar-pill">
+              Sign in
+            </Link>
+            <Link href="/register" className="ed-topbar-pill ed-topbar-pill-primary">
+              Create account
+            </Link>
           </div>
         )}
 
@@ -88,14 +94,12 @@ export function TopBarStack({
                 </button>
               </Popover.Trigger>
               <Popover.Portal>
-                <Popover.Content
-                  align="end"
-                  sideOffset={8}
-                  className="ed-popover"
-                >
+                <Popover.Content align="end" sideOffset={8} className="ed-popover">
                   <div className="ed-popover-head">
                     <span className="ed-label">Notifications</span>
-                    {unread > 0 && <span className="ed-badge ed-badge-sm ed-badge-danger">{unread} new</span>}
+                    {unread > 0 && (
+                      <span className="ed-badge ed-badge-sm ed-badge-danger">{unread} new</span>
+                    )}
                   </div>
                   <div className="ed-popover-body">
                     {notifications.length === 0 ? (
@@ -104,7 +108,12 @@ export function TopBarStack({
                       notifications.map((n) => (
                         <div key={n.id} className="ed-popover-item">
                           <p className="ed-meta ed-popover-item-kicker">
-                            {n.type === "success" ? "Update" : n.type === "error" ? "Error" : "Notice"} · just now
+                            {n.type === "success"
+                              ? "Update"
+                              : n.type === "error"
+                                ? "Error"
+                                : "Notice"}{" "}
+                            · just now
                           </p>
                           {n.title && <p className="ed-h4 ed-popover-item-title">{n.title}</p>}
                           <p className="ed-popover-item-msg">{n.message}</p>
@@ -112,14 +121,20 @@ export function TopBarStack({
                             {n.deepLink && (
                               <Link
                                 href={n.deepLink}
-                                onClick={() => { markRead(n.id); removeNotification(n.id); }}
+                                onClick={() => {
+                                  markRead(n.id);
+                                  removeNotification(n.id);
+                                }}
                                 className="ed-popover-item-link"
                               >
                                 View →
                               </Link>
                             )}
                             <button
-                              onClick={() => { markRead(n.id); removeNotification(n.id); }}
+                              onClick={() => {
+                                markRead(n.id);
+                                removeNotification(n.id);
+                              }}
                               className="ed-popover-item-dismiss"
                             >
                               Dismiss
@@ -134,7 +149,7 @@ export function TopBarStack({
                       <button
                         onClick={() => {
                           markAllRead();
-                          notifications.forEach(n => removeNotification(n.id));
+                          notifications.forEach((n) => removeNotification(n.id));
                         }}
                         className="ed-btn ed-btn-secondary ed-btn-sm ed-btn-block"
                       >

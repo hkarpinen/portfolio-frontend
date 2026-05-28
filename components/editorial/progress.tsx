@@ -10,7 +10,8 @@ interface ProgressBarProps {
 
 export function ProgressBar({ value, max = 100, color = "ink", height = 6 }: ProgressBarProps) {
   const pct = Math.min(100, (value / max) * 100);
-  const fillColor = color === "red" ? "var(--red)" : color === "green" ? "var(--green)" : "var(--ink)";
+  const fillColor =
+    color === "red" ? "var(--red)" : color === "green" ? "var(--green)" : "var(--ink)";
 
   return (
     <RadixProgress.Root

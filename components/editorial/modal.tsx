@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import { Btn } from "./button";
 import { Icon } from "./icon";
 
 interface ModalProps {
@@ -13,7 +12,14 @@ interface ModalProps {
   maxWidth?: number | string;
 }
 
-export function Modal({ open, onOpenChange, title, children, actions, maxWidth = 540 }: ModalProps) {
+export function Modal({
+  open,
+  onOpenChange,
+  title,
+  children,
+  actions,
+  maxWidth = 540,
+}: ModalProps) {
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
@@ -22,7 +28,7 @@ export function Modal({ open, onOpenChange, title, children, actions, maxWidth =
           style={{ background: "var(--overlay)", animation: "fadeIn 150ms" }}
         >
           <Dialog.Content
-            className="bg-paper w-full flex flex-col"
+            className="flex w-full flex-col bg-paper"
             style={{
               maxWidth,
               border: "2px solid var(--ink)",
@@ -34,11 +40,11 @@ export function Modal({ open, onOpenChange, title, children, actions, maxWidth =
           >
             {/* Header */}
             <div
-              className="flex items-center justify-between px-[22px] py-[16px] shrink-0"
+              className="flex shrink-0 items-center justify-between px-[22px] py-[16px]"
               style={{ borderBottom: "1.5px solid var(--ink)" }}
             >
               <Dialog.Title
-                className="font-serif italic font-normal text-ink"
+                className="font-serif font-normal italic text-ink"
                 style={{ fontSize: "1.5rem", lineHeight: 1 }}
               >
                 {title}
@@ -46,10 +52,14 @@ export function Modal({ open, onOpenChange, title, children, actions, maxWidth =
               <Dialog.Close asChild>
                 <button
                   aria-label="Close"
-                  className="bg-transparent border-none cursor-pointer text-ink-3 flex items-center justify-center"
+                  className="flex cursor-pointer items-center justify-center border-none bg-transparent text-ink-3"
                   style={{ width: 28, height: 28, transition: "color 110ms" }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = "var(--ink)"; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = "var(--ink-3)"; }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLElement).style.color = "var(--ink)";
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLElement).style.color = "var(--ink-3)";
+                  }}
                 >
                   <Icon name="x" size={14} strokeWidth={2} />
                 </button>
@@ -57,14 +67,12 @@ export function Modal({ open, onOpenChange, title, children, actions, maxWidth =
             </div>
 
             {/* Body */}
-            <div className="p-[20px_22px] overflow-y-auto flex-1">
-              {children}
-            </div>
+            <div className="flex-1 overflow-y-auto p-[20px_22px]">{children}</div>
 
             {/* Actions */}
             {actions && (
               <div
-                className="px-[22px] py-[14px] flex items-center justify-end gap-[10px] shrink-0"
+                className="flex shrink-0 items-center justify-end gap-[10px] px-[22px] py-[14px]"
                 style={{ borderTop: "1.5px solid var(--ink)" }}
               >
                 {actions}

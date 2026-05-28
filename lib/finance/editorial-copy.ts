@@ -8,11 +8,21 @@
  * (SectionHeader, DepartmentHead). Source: page code only, never user input.
  */
 
-import type { TickerItem } from "@/components/editorial/ticker";
+import type { TickerItem } from "@/types/ticker";
 
 const MONTHS = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ];
 
 function fmt0(n: number): string {
@@ -55,7 +65,11 @@ export interface ExpensesDeckInput {
 }
 
 export function expensesDeck({
-  income, totalOut, recurringCount, oneTimeCount, sharedBillCount,
+  income,
+  totalOut,
+  recurringCount,
+  oneTimeCount,
+  sharedBillCount,
 }: ExpensesDeckInput): string {
   if (income <= 0) {
     return "Add an income source on the Income desk to file this month's read.";
@@ -72,13 +86,17 @@ export function expensesDeck({
 }
 
 export interface ExpensesPullQuote {
-  body: string;       // may contain <em>
+  body: string; // may contain <em>
   attribution: string;
 }
 
 export function expensesPullQuote({
-  disposable, monthName,
-}: { disposable: number; monthName: string }): ExpensesPullQuote | null {
+  disposable,
+  monthName,
+}: {
+  disposable: number;
+  monthName: string;
+}): ExpensesPullQuote | null {
   // Only run the callout when the data actually has something to say. The
   // ±100 threshold keeps it off "neutral" months that would feel forced.
   if (Math.abs(disposable) < 100) return null;
@@ -97,16 +115,32 @@ export function expensesPullQuote({
 // ── Income page ──────────────────────────────────────────────────────────────
 
 export function incomeHeadline({
-  sourcesCount, monthlyNet,
-}: { sourcesCount: number; monthlyNet: number }): string {
+  sourcesCount,
+  monthlyNet,
+}: {
+  sourcesCount: number;
+  monthlyNet: number;
+}): string {
   if (sourcesCount === 0) return `<em>No</em> income on file`;
-  const word = sourcesCount === 1 ? "One" : sourcesCount === 2 ? "Two" : sourcesCount === 3 ? "Three" : sourcesCount === 4 ? "Four" : `${sourcesCount}`;
+  const word =
+    sourcesCount === 1
+      ? "One"
+      : sourcesCount === 2
+        ? "Two"
+        : sourcesCount === 3
+          ? "Three"
+          : sourcesCount === 4
+            ? "Four"
+            : `${sourcesCount}`;
   const stream = sourcesCount === 1 ? "stream" : "streams";
   return `${word} ${stream}, <em>${fmt0(monthlyNet)}</em> net monthly`;
 }
 
 export function incomeDeck({
-  sourcesCount, monthlyGross, monthlyNet, totalTaxWithheld,
+  sourcesCount,
+  monthlyGross,
+  monthlyNet,
+  totalTaxWithheld,
 }: {
   sourcesCount: number;
   monthlyGross: number;
@@ -127,11 +161,15 @@ export function incomeDeck({
 export interface UpcomingBill {
   title: string;
   amount: number;
-  dueDate: string;     // ISO
+  dueDate: string; // ISO
 }
 
 export function buildExpensesTicker({
-  disposable, totalOut, income, upcoming, monthName,
+  disposable,
+  totalOut,
+  income,
+  upcoming,
+  monthName,
 }: {
   disposable: number;
   totalOut: number;
@@ -140,7 +178,12 @@ export function buildExpensesTicker({
   monthName: string;
 }): TickerItem[] {
   const items: TickerItem[] = [
-    { kicker: "MONTH", label: monthName, value: fmtSigned0(disposable), direction: disposable < 0 ? "down" : "up" },
+    {
+      kicker: "MONTH",
+      label: monthName,
+      value: fmtSigned0(disposable),
+      direction: disposable < 0 ? "down" : "up",
+    },
     { kicker: "OUT", label: "Total", value: fmt0(totalOut), direction: "flat" },
     { kicker: "IN", label: "Earned", value: fmt0(income), direction: "flat" },
   ];
@@ -159,7 +202,11 @@ export function buildExpensesTicker({
 }
 
 export function buildIncomeTicker({
-  monthlyGross, monthlyNet, totalTaxWithheld, annualGross, sourcesCount,
+  monthlyGross,
+  monthlyNet,
+  totalTaxWithheld,
+  annualGross,
+  sourcesCount,
 }: {
   monthlyGross: number;
   monthlyNet: number;
@@ -170,8 +217,18 @@ export function buildIncomeTicker({
   return [
     { kicker: "NET", label: "Monthly", value: fmt0(monthlyNet), direction: "up" },
     { kicker: "GROSS", label: "Monthly", value: fmt0(monthlyGross), direction: "flat" },
-    { kicker: "TAX", label: "Withheld", value: fmt0(totalTaxWithheld), direction: totalTaxWithheld > 0 ? "down" : "flat" },
+    {
+      kicker: "TAX",
+      label: "Withheld",
+      value: fmt0(totalTaxWithheld),
+      direction: totalTaxWithheld > 0 ? "down" : "flat",
+    },
     { kicker: "ANNUAL", label: "Gross", value: fmt0(annualGross), direction: "flat" },
-    { kicker: "SOURCES", label: sourcesCount === 1 ? "On file" : "On file", value: String(sourcesCount), direction: "flat" },
+    {
+      kicker: "SOURCES",
+      label: sourcesCount === 1 ? "On file" : "On file",
+      value: String(sourcesCount),
+      direction: "flat",
+    },
   ];
 }

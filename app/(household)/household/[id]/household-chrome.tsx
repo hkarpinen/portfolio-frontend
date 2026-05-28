@@ -22,13 +22,17 @@ function getInitials(name?: string): string {
   return name.slice(0, 2).toUpperCase();
 }
 
-function MemberAvatarChips({ members }: { members: { membershipId: string; displayName?: string; userId: string }[] }) {
+function MemberAvatarChips({
+  members,
+}: {
+  members: { membershipId: string; displayName?: string; userId: string }[];
+}) {
   const visible = members.slice(0, MAX_VISIBLE_AVATARS);
   const overflow = members.length - MAX_VISIBLE_AVATARS;
 
   return (
     <div
-      className="flex items-center gap-1 mt-2"
+      className="mt-2 flex items-center gap-1"
       role="list"
       aria-label={`${members.length} household member${members.length !== 1 ? "s" : ""}`}
     >
@@ -37,7 +41,7 @@ function MemberAvatarChips({ members }: { members: { membershipId: string; displ
           key={m.membershipId}
           role="listitem"
           aria-label={m.displayName ?? `Member ${m.userId.slice(0, 6)}`}
-          className="w-7 h-7 rounded-full flex items-center justify-center font-mono text-[0.6rem] tracking-[0.04em] uppercase bg-paper-2 text-ink-3 shrink-0"
+          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-paper-2 font-mono text-[0.6rem] uppercase tracking-[0.04em] text-ink-3"
           style={{ border: "1px solid var(--ink-3)" }}
         >
           <span aria-hidden>{getInitials(m.displayName)}</span>
@@ -47,7 +51,7 @@ function MemberAvatarChips({ members }: { members: { membershipId: string; displ
         <span
           role="listitem"
           aria-label={`${overflow} more member${overflow !== 1 ? "s" : ""} not shown`}
-          className="w-7 h-7 rounded-full flex items-center justify-center font-mono text-[0.6rem] tracking-[0.04em] bg-paper-2 text-ink-3 shrink-0"
+          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-paper-2 font-mono text-[0.6rem] tracking-[0.04em] text-ink-3"
           style={{ border: "1px solid var(--ink-3)" }}
         >
           <span aria-hidden>+{overflow}</span>
@@ -80,25 +84,27 @@ export function HouseholdChrome({
 
   return (
     <div className="flex flex-col gap-8">
-      <Link href="/household" className="ed-label-muted no-underline hover:text-red">← All households</Link>
+      <Link href="/household" className="ed-label-muted no-underline hover:text-red">
+        ← All households
+      </Link>
 
       <header className="ed-section-head">
         <p className="ed-kicker">Household</p>
         <div className="ed-section-head-row">
-          <div className="flex-1 min-w-0">
+          <div className="min-w-0 flex-1">
             <h1 className="ed-h1">{household?.name ?? "Household"}</h1>
-            {household && (
-              <p className="ed-label-muted mt-1">
-                {household.currencyCode}
-              </p>
-            )}
+            {household && <p className="ed-label-muted mt-1">{household.currencyCode}</p>}
             {members.length > 0 && (
-              <MemberAvatarChips members={members as { membershipId: string; displayName?: string; userId: string }[]} />
+              <MemberAvatarChips
+                members={
+                  members as { membershipId: string; displayName?: string; userId: string }[]
+                }
+              />
             )}
           </div>
-          <div className="flex flex-col items-end gap-3 shrink-0">
+          <div className="flex shrink-0 flex-col items-end gap-3">
             <HouseholdBalanceBadge householdId={householdId} variant="header" />
-            {action && <div className="flex items-center gap-3 shrink-0 flex-wrap">{action}</div>}
+            {action && <div className="flex shrink-0 flex-wrap items-center gap-3">{action}</div>}
           </div>
         </div>
       </header>

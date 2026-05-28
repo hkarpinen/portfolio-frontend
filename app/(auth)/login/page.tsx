@@ -7,10 +7,6 @@ function getSafeRedirectPath(from?: string): string {
   return from;
 }
 
-export default function LoginPage({
-  searchParams,
-}: {
-  searchParams?: { from?: string };
-}) {
+export default function LoginPage({ searchParams }: { searchParams?: { from?: string } }) {
   return <LoginForm from={getSafeRedirectPath(searchParams?.from)} />;
 }

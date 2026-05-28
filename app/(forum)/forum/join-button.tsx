@@ -15,14 +15,12 @@ export function JoinButton({ communityId }: JoinButtonProps) {
   const joined = membership?.isMember ?? false;
 
   if (isLoading) {
-    return (
-      <div className="w-[58px] h-[30px] bg-paper-3 shrink-0" />
-    );
+    return <div className="h-[30px] w-[58px] shrink-0 bg-paper-3" />;
   }
 
   if (joined) {
     return (
-      <span className="py-[5px] px-[12px] text-base font-semibold text-ink-3 bg-paper-2 shrink-0 border-ink">
+      <span className="shrink-0 border-ink bg-paper-2 px-[12px] py-[5px] text-base font-semibold text-ink-3">
         Joined
       </span>
     );

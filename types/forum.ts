@@ -1,209 +1,296 @@
-export interface CommunityActivitySnapshot {
-  threadId: string;
-  threadTitle: string;
-  threadCreatedAt: string;
-  hotScore: number;
-  authorDisplayName?: string;
-  authorAvatarUrl?: string;
-  latestReplyAt?: string;
-  latestReplyAuthorDisplayName?: string;
-  latestReplyAuthorAvatarUrl?: string;
+import { z } from "zod";
+
+// ── Forum domain enums ───────────────────────────────────────────────────────
+// Mirror forum/src/Domain/ValueObjects/. Per `[[finance-publishes-domain-events-directly]]`,
+// consumers declare matching types in their own namespace.
+
+export enum CommunityRole {
+  Member = "Member",
+  Moderator = "Moderator",
+  Owner = "Owner",
 }
 
-export interface CommunitySummaryResponse {
-  communityId: string;
-  slug: string;
-  name: string;
-  description?: string;
-  imageUrl?: string;
-  color?: string;
-  icon?: string;
-  visibility?: string;
-  ownerId: string;
-  createdAt: string;
-  updatedAt?: string;
-  memberCount: number;
-  threadCount: number;
-  commentCount: number;
-  latestActivity?: CommunityActivitySnapshot;
+export const CommunityRoleSchema = z.nativeEnum(CommunityRole);
+
+export enum CommunityVisibility {
+  Public = "Public",
+  Private = "Private",
+  Restricted = "Restricted",
 }
 
-export interface CommunityDetailResponse extends CommunitySummaryResponse {
-  latestActivity?: CommunityActivitySnapshot;
+export const CommunityVisibilitySchema = z.nativeEnum(CommunityVisibility);
+
+export enum ReportTargetType {
+  Thread = "Thread",
+  Comment = "Comment",
+  User = "User",
 }
 
+export const ReportTargetTypeSchema = z.nativeEnum(ReportTargetType);
+
+export enum ModerationAction {
+  BanUser = "BanUser",
+  UnbanUser = "UnbanUser",
+  DeleteThread = "DeleteThread",
+  DeleteComment = "DeleteComment",
+  LockThread = "LockThread",
+  PinThread = "PinThread",
+  AppointModerator = "AppointModerator",
+  RemoveModerator = "RemoveModerator",
+  ResolveReportApproved = "ResolveReportApproved",
+  ResolveReportRemoved = "ResolveReportRemoved",
+  ResolveReportDismissed = "ResolveReportDismissed",
+}
+
+export const ModerationActionSchema = z.nativeEnum(ModerationAction);
+
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const CommunityActivitySnapshotSchema = z.object({
+  threadId: z.string(),
+  threadTitle: z.string(),
+  threadCreatedAt: z.string(),
+  hotScore: z.number(),
+  authorDisplayName: z.string().optional(),
+  authorAvatarUrl: z.string().optional(),
+  latestReplyAt: z.string().optional(),
+  latestReplyAuthorDisplayName: z.string().optional(),
+  latestReplyAuthorAvatarUrl: z.string().optional(),
+});
+export type CommunityActivitySnapshot = z.infer<typeof CommunityActivitySnapshotSchema>;
+
+export const CommunitySummaryResponseSchema = z.object({
+  communityId: z.string(),
+  slug: z.string(),
+  name: z.string(),
+  description: z.string().optional(),
+  imageUrl: z.string().optional(),
+  color: z.string().optional(),
+  icon: z.string().optional(),
+  visibility: CommunityVisibilitySchema.optional(),
+  ownerId: z.string(),
+  createdAt: z.string(),
+  updatedAt: z.string().optional(),
+  rules: z.string().optional(),
+  memberCount: z.number(),
+  threadCount: z.number(),
+  commentCount: z.number(),
+  latestActivity: CommunityActivitySnapshotSchema.optional(),
+});
+export type CommunitySummaryResponse = z.infer<typeof CommunitySummaryResponseSchema>;
+
+// CommunityDetailResponse currently has the exact same shape as
+// CommunitySummaryResponse (`latestActivity?` was redeclared identically).
+// Kept as a separate alias because consumers branch on the semantic distinction.
+export const CommunityDetailResponseSchema = CommunitySummaryResponseSchema;
+export type CommunityDetailResponse = z.infer<typeof CommunityDetailResponseSchema>;
+
+// `Community` is a looser legacy projection used by older list call sites
+// (memberCount/threadCount/etc. aren't always populated). Kept as a plain
+// interface until those call sites migrate to CommunitySummaryResponse.
 export interface Community {
   communityId: string;
   slug: string;
   name: string;
   description?: string;
   imageUrl?: string;
-  visibility?: string;
+  visibility?: CommunityVisibility;
   ownerId?: string;
   createdAt?: string;
   updatedAt?: string;
   latestActivity?: CommunityActivitySnapshot;
   // Fields not returned by the API — always undefined at runtime:
-  memberCount?: number;   // not in CommunityResponse
-  threadCount?: number;   // not in CommunityResponse
-  privacy?: string;       // use visibility instead
+  memberCount?: number; // not in CommunityResponse
+  threadCount?: number; // not in CommunityResponse
+  privacy?: string; // use visibility instead
   requireFlair?: boolean; // not in CommunityResponse
 }
 
-export interface Thread {
-  threadId: string;
-  title: string;
-  content?: string;
-  authorId?: string;
-  authorDisplayName?: string;
-  authorAvatarUrl?: string;
-  communityId?: string;
-  voteScore?: number;
-  hotScore?: number;
-  createdAt: string;
-  editedAt?: string;
-  isLocked?: boolean;
-  isPinned?: boolean;
-  deletedAt?: string;
+// Thread schemas — the `Thread` interface includes several fields the API
+// does NOT return ("authorUsername", "commentCount", "body", etc.). The
+// schema validates only the wire shape; the extra fields stay on the
+// type-only interface for the older consumers that read them as undefined.
+export const ThreadWireSchema = z.object({
+  threadId: z.string(),
+  title: z.string(),
+  content: z.string().optional(),
+  authorId: z.string().optional(),
+  authorDisplayName: z.string().optional(),
+  authorAvatarUrl: z.string().optional(),
+  communityId: z.string().optional(),
+  voteScore: z.number().optional(),
+  hotScore: z.number().optional(),
+  createdAt: z.string(),
+  editedAt: z.string().optional(),
+  isLocked: z.boolean().optional(),
+  isPinned: z.boolean().optional(),
+  deletedAt: z.string().optional(),
+});
+
+export interface Thread extends z.infer<typeof ThreadWireSchema> {
   // Fields not returned by the API — always undefined at runtime:
-  body?: string;           // use content instead
+  body?: string; // use content instead
   authorUsername?: string; // not in ThreadResponse
-  communityName?: string;  // not in ThreadResponse
-  communitySlug?: string;  // not in ThreadResponse
+  communityName?: string; // not in ThreadResponse
+  communitySlug?: string; // not in ThreadResponse
   flair?: string;
-  commentCount?: number;   // not in ThreadResponse
+  commentCount?: number; // not in ThreadResponse
 }
 
-export interface Comment {
-  commentId: string;
-  threadId: string;
-  parentCommentId?: string;
-  authorId?: string;
-  authorDisplayName?: string;
-  authorAvatarUrl?: string;
-  content: string;
-  voteScore?: number;
-  createdAt: string;
-  editedAt?: string;
-  deletedAt?: string;
+// Comment is recursive (replies are themselves Comments). zod's recursive
+// schemas require a `z.lazy` wrapper.
+const CommentBaseSchema = z.object({
+  commentId: z.string(),
+  threadId: z.string(),
+  parentCommentId: z.string().optional(),
+  authorId: z.string().optional(),
+  authorDisplayName: z.string().optional(),
+  authorAvatarUrl: z.string().optional(),
+  content: z.string(),
+  voteScore: z.number().optional(),
+  createdAt: z.string(),
+  editedAt: z.string().optional(),
+  deletedAt: z.string().optional(),
+});
+
+export interface Comment extends z.infer<typeof CommentBaseSchema> {
   replies?: Comment[];
   // Not in CommentResponse — always undefined at runtime:
   authorUsername?: string;
 }
 
-export interface CommunityMembership {
-  isMember: boolean;
-  role?: string;
-  communityId?: string;
-}
+export const CommentSchema: z.ZodType<Comment> = CommentBaseSchema.extend({
+  replies: z.lazy(() => z.array(CommentSchema)).optional(),
+});
 
-export interface ModQueueItem {
-  reportId: string;
-  type: string;
-  targetId: string;
-  reason?: string;
-  createdAt: string;
-}
+export const CommunityMembershipSchema = z.object({
+  isMember: z.boolean(),
+  role: CommunityRoleSchema.optional(),
+  communityId: z.string().optional(),
+});
+export type CommunityMembership = z.infer<typeof CommunityMembershipSchema>;
 
-export interface ModLogEntry {
-  logId: string;
-  action: string;
-  targetId?: string;
-  modId?: string;
-  modName?: string;
-  createdAt: string;
-}
+export const ModQueueItemSchema = z.object({
+  reportId: z.string(),
+  type: ReportTargetTypeSchema,
+  targetId: z.string(),
+  reason: z.string().optional(),
+  createdAt: z.string(),
+});
+export type ModQueueItem = z.infer<typeof ModQueueItemSchema>;
 
-export interface CommunityMemberItem {
-  membershipId: string;
-  userId: string;
-  displayName?: string;
-  avatarUrl?: string;
-  role: string;
-  joinedAt: string;
-}
+export const ModLogEntrySchema = z.object({
+  logId: z.string(),
+  action: ModerationActionSchema,
+  targetId: z.string().optional(),
+  modId: z.string().optional(),
+  modName: z.string().optional(),
+  createdAt: z.string(),
+});
+export type ModLogEntry = z.infer<typeof ModLogEntrySchema>;
 
-export interface ForumProfile {
-  userId: string;
-  displayName?: string;
-  avatarUrl?: string | null;
-  bio?: string | null;
-  signature?: string | null;
-  createdAt: string;
-  updatedAt?: string | null;
-}
+export const CommunityMemberItemSchema = z.object({
+  membershipId: z.string(),
+  userId: z.string(),
+  displayName: z.string().optional(),
+  avatarUrl: z.string().optional(),
+  role: CommunityRoleSchema,
+  joinedAt: z.string(),
+});
+export type CommunityMemberItem = z.infer<typeof CommunityMemberItemSchema>;
 
-export interface UserCommunityItem {
-  membershipId: string;
-  communityId: string;
-  communityName: string;
-  communitySlug: string;
-  communityImageUrl?: string | null;
-  role: string;
-  joinedAt: string;
-}
+export const ForumProfileSchema = z.object({
+  userId: z.string(),
+  displayName: z.string().optional(),
+  avatarUrl: z.string().nullable().optional(),
+  bio: z.string().nullable().optional(),
+  signature: z.string().nullable().optional(),
+  createdAt: z.string(),
+  updatedAt: z.string().nullable().optional(),
+});
+export type ForumProfile = z.infer<typeof ForumProfileSchema>;
 
-export interface SearchResult {
-  itemId: string;
-  itemType: "thread" | "community";
-  title: string;
-  snippet?: string | null;
-  communityId: string;
-  communitySlug?: string | null;
-  communityName?: string | null;
-  slug?: string | null;
-  createdAt: string;
-  rankScore?: number;
-}
+export const UserCommunityItemSchema = z.object({
+  membershipId: z.string(),
+  communityId: z.string(),
+  communityName: z.string(),
+  communitySlug: z.string(),
+  communityImageUrl: z.string().nullable().optional(),
+  role: CommunityRoleSchema,
+  joinedAt: z.string(),
+});
+export type UserCommunityItem = z.infer<typeof UserCommunityItemSchema>;
 
-export interface ThreadMutationResponse {
-  threadId: string;
-  isLocked: boolean;
-  isPinned: boolean;
-  editedAt?: string;
-  deletedAt?: string;
-}
+export const SearchResultSchema = z.object({
+  itemId: z.string(),
+  itemType: z.enum(["thread", "community"]),
+  title: z.string(),
+  snippet: z.string().nullable().optional(),
+  communityId: z.string(),
+  communitySlug: z.string().nullable().optional(),
+  communityName: z.string().nullable().optional(),
+  slug: z.string().nullable().optional(),
+  createdAt: z.string(),
+  rankScore: z.number().optional(),
+});
+export type SearchResult = z.infer<typeof SearchResultSchema>;
+
+export const ThreadMutationResponseSchema = z.object({
+  threadId: z.string(),
+  isLocked: z.boolean(),
+  isPinned: z.boolean(),
+  editedAt: z.string().optional(),
+  deletedAt: z.string().optional(),
+});
+export type ThreadMutationResponse = z.infer<typeof ThreadMutationResponseSchema>;
 
 /** A thread row returned in list projections — no Content field. */
-export interface ThreadSummaryResponse {
-  threadId: string;
-  communityId: string;
-  communitySlug?: string;
-  communityName?: string;
-  authorId: string;
-  authorDisplayName?: string;
-  authorAvatarUrl?: string;
-  title: string;
-  createdAt: string;
-  hotScore: number;
-  voteScore: number;
-  commentCount?: number;
-  isPinned?: boolean;
-  flair?: string;
-}
+export const ThreadSummaryResponseSchema = z.object({
+  threadId: z.string(),
+  communityId: z.string(),
+  communitySlug: z.string().optional(),
+  communityName: z.string().optional(),
+  authorId: z.string(),
+  authorDisplayName: z.string().optional(),
+  authorAvatarUrl: z.string().optional(),
+  title: z.string(),
+  createdAt: z.string(),
+  hotScore: z.number(),
+  voteScore: z.number(),
+  commentCount: z.number().optional(),
+  isPinned: z.boolean().optional(),
+  flair: z.string().optional(),
+});
+export type ThreadSummaryResponse = z.infer<typeof ThreadSummaryResponseSchema>;
 
-export interface CommunityPage {
-  items: CommunitySummaryResponse[];
-  total?: number;
-}
+// Community/Thread pages use `total` (no Count suffix) rather than `totalCount`,
+// so they don't fit the shared `pagedResponseSchema` helper. Defined inline.
+export const CommunityPageSchema = z.object({
+  items: z.array(CommunitySummaryResponseSchema),
+  total: z.number().optional(),
+});
+export type CommunityPage = z.infer<typeof CommunityPageSchema>;
 
-export interface ThreadPage {
-  items: ThreadSummaryResponse[];
-  total?: number;
-}
+export const ThreadPageSchema = z.object({
+  items: z.array(ThreadSummaryResponseSchema),
+  total: z.number().optional(),
+});
+export type ThreadPage = z.infer<typeof ThreadPageSchema>;
 
-export interface ProfileCommentSummary {
-  commentId: string;
-  threadId: string;
-  threadTitle: string;
-  communitySlug: string;
-  communityName: string;
-  content: string;
-  createdAt: string;
-  voteScore: number;
-}
+export const ProfileCommentSummarySchema = z.object({
+  commentId: z.string(),
+  threadId: z.string(),
+  threadTitle: z.string(),
+  communitySlug: z.string(),
+  communityName: z.string(),
+  content: z.string(),
+  createdAt: z.string(),
+  voteScore: z.number(),
+});
+export type ProfileCommentSummary = z.infer<typeof ProfileCommentSummarySchema>;
 
-export interface ProfileCommentPage {
-  items: ProfileCommentSummary[];
-  totalCount: number;
-}
+export const ProfileCommentPageSchema = z.object({
+  items: z.array(ProfileCommentSummarySchema),
+  totalCount: z.number(),
+});
+export type ProfileCommentPage = z.infer<typeof ProfileCommentPageSchema>;

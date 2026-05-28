@@ -29,9 +29,10 @@ export default function AdminPage() {
     <div className="page-enter flex flex-col gap-6">
       <EditorialPageHead
         kicker="Admin · Identity"
-        title={users.length > 0
-          ? `<em>${users.length}</em> member${users.length === 1 ? "" : "s"} on file`
-          : `<em>No</em> members on file yet`
+        title={
+          users.length > 0
+            ? `<em>${users.length}</em> member${users.length === 1 ? "" : "s"} on file`
+            : `<em>No</em> members on file yet`
         }
         deck="Roster, roles, and ban status across the identity service. Changes take effect immediately."
       />
@@ -41,10 +42,10 @@ export default function AdminPage() {
         value={String(users.length)}
         deck="Total users surfaced for the current page of the admin roster. Lookups, role changes, and bans operate on this set."
         aside={[
-          { label: "Admins",  value: String(users.filter((u) => u.role === "Admin").length) },
+          { label: "Admins", value: String(users.filter((u) => u.role === "Admin").length) },
           { label: "Members", value: String(users.filter((u) => u.role !== "Admin").length) },
-          { label: "Banned",  value: String(users.filter((u) => u.isBanned).length) },
-          { label: "Page",    value: String(page) },
+          { label: "Banned", value: String(users.filter((u) => u.isBanned).length) },
+          { label: "Page", value: String(page) },
         ]}
       />
 
@@ -55,10 +56,17 @@ export default function AdminPage() {
           title="The <em>roster</em>"
           deck="Sortable by signup order. Click a row to inspect or act."
         />
-        <div className="bg-paper overflow-hidden border-ink">
+        <div className="overflow-hidden border-ink bg-paper">
           {isLoading ? (
-            <div className="flex justify-center items-center p-20" role="status" aria-label="Loading users">
-              <div className="w-[28px] h-[28px] border-2 border-ink-4 border-t-ink animate-spin" aria-hidden="true" />
+            <div
+              className="flex items-center justify-center p-20"
+              role="status"
+              aria-label="Loading users"
+            >
+              <div
+                className="h-[28px] w-[28px] animate-spin border-2 border-ink-4 border-t-ink"
+                aria-hidden="true"
+              />
               <span className="sr-only">Loading users…</span>
             </div>
           ) : users.length === 0 ? (
@@ -66,19 +74,31 @@ export default function AdminPage() {
           ) : (
             <table className="w-full" aria-label="Users table">
               <thead>
-                <tr className="bg-paper-2 border-ink-b">
-                  <th scope="col" className="ed-label-muted text-left py-5 px-6">User</th>
-                  <th scope="col" className="ed-label-muted text-left py-5 px-4">Email</th>
-                  <th scope="col" className="ed-label-muted text-left py-5 px-4">Role</th>
-                  <th scope="col" className="ed-label-muted text-left py-5 px-4">Status</th>
-                  <th scope="col" className="ed-label-muted text-left py-5 px-4">Actions</th>
+                <tr className="border-ink-b bg-paper-2">
+                  <th scope="col" className="ed-label-muted px-6 py-5 text-left">
+                    User
+                  </th>
+                  <th scope="col" className="ed-label-muted px-4 py-5 text-left">
+                    Email
+                  </th>
+                  <th scope="col" className="ed-label-muted px-4 py-5 text-left">
+                    Role
+                  </th>
+                  <th scope="col" className="ed-label-muted px-4 py-5 text-left">
+                    Status
+                  </th>
+                  <th scope="col" className="ed-label-muted px-4 py-5 text-left">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {users.map((user, i) => {
                   const isSelf = me?.id === user.id;
                   const isBanning = banUser.isPending && banUser.variables === user.id;
-                  const isChangingRole = changeRole.isPending && (changeRole.variables as { userId: string })?.userId === user.id;
+                  const isChangingRole =
+                    changeRole.isPending &&
+                    (changeRole.variables as { userId: string })?.userId === user.id;
 
                   return (
                     <tr
@@ -90,25 +110,33 @@ export default function AdminPage() {
                       }}
                     >
                       {/* User */}
-                      <td className="py-5 px-6">
-                        <div className="flex items-center gap-3 min-w-0">
-                          <UserInitials name={user.displayName} size="sm" className="w-[28px] h-[28px]" />
-                          <span className="text-base font-medium text-ink overflow-hidden text-ellipsis whitespace-nowrap">
+                      <td className="px-6 py-5">
+                        <div className="flex min-w-0 items-center gap-3">
+                          <UserInitials
+                            name={user.displayName}
+                            size="sm"
+                            className="h-[28px] w-[28px]"
+                          />
+                          <span className="overflow-hidden text-ellipsis whitespace-nowrap text-base font-medium text-ink">
                             {user.displayName}
-                            {isSelf && <span className="text-sm text-red ml-3" aria-label="(this is you)">(you)</span>}
+                            {isSelf && (
+                              <span className="ml-3 text-sm text-red" aria-label="(this is you)">
+                                (you)
+                              </span>
+                            )}
                           </span>
                         </div>
                       </td>
 
                       {/* Email */}
-                      <td className="py-5 px-4">
-                        <span className="text-base text-ink-3 overflow-hidden text-ellipsis whitespace-nowrap block max-w-[180px]">
+                      <td className="px-4 py-5">
+                        <span className="block max-w-[180px] overflow-hidden text-ellipsis whitespace-nowrap text-base text-ink-3">
                           {user.email}
                         </span>
                       </td>
 
                       {/* Role select */}
-                      <td className="py-5 px-4">
+                      <td className="px-4 py-5">
                         <label htmlFor={`role-${user.id}`} className="sr-only">
                           Role for {user.displayName}
                         </label>
@@ -116,8 +144,10 @@ export default function AdminPage() {
                           id={`role-${user.id}`}
                           value={user.role}
                           disabled={isSelf || isChangingRole}
-                          onChange={(e) => changeRole.mutate({ userId: user.id, role: e.target.value })}
-                          className="h-[36px] bg-paper-2 px-2 text-base text-ink outline-none border-ink cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+                          onChange={(e) =>
+                            changeRole.mutate({ userId: user.id, role: e.target.value })
+                          }
+                          className="h-[36px] cursor-pointer border-ink bg-paper-2 px-2 text-base text-ink outline-none disabled:cursor-not-allowed disabled:opacity-50"
                           aria-label={`Change role for ${user.displayName}`}
                         >
                           <option value="Member">Member</option>
@@ -126,9 +156,9 @@ export default function AdminPage() {
                       </td>
 
                       {/* Status */}
-                      <td className="py-5 px-4">
+                      <td className="px-4 py-5">
                         <span
-                          className="py-1 px-3 inline-block text-[0.66rem] font-mono font-600 uppercase tracking-wide"
+                          className="font-600 inline-block px-3 py-1 font-mono text-[0.66rem] uppercase tracking-wide"
                           style={{
                             background: user.isBanned ? "var(--danger-s)" : "var(--success-s)",
                             color: user.isBanned ? "var(--danger)" : "var(--success)",
@@ -140,19 +170,25 @@ export default function AdminPage() {
                       </td>
 
                       {/* Actions */}
-                      <td className="py-5 px-4">
+                      <td className="px-4 py-5">
                         {!isSelf ? (
                           <Btn
                             variant={user.isBanned ? "secondary" : "danger"}
                             size="xs"
                             disabled={isBanning}
                             onClick={() => banUser.mutate(user.id)}
-                            aria-label={user.isBanned ? `Unban ${user.displayName}` : `Ban ${user.displayName}`}
+                            aria-label={
+                              user.isBanned
+                                ? `Unban ${user.displayName}`
+                                : `Ban ${user.displayName}`
+                            }
                           >
                             {isBanning ? "…" : user.isBanned ? "Unban" : "Ban"}
                           </Btn>
                         ) : (
-                          <span className="text-xs text-ink-4 font-mono uppercase tracking-wide">—</span>
+                          <span className="font-mono text-xs uppercase tracking-wide text-ink-4">
+                            —
+                          </span>
                         )}
                       </td>
                     </tr>
@@ -165,7 +201,7 @@ export default function AdminPage() {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <nav className="flex gap-4 justify-center mt-8" aria-label="User list pagination">
+          <nav className="mt-8 flex justify-center gap-4" aria-label="User list pagination">
             <Btn
               variant="secondary"
               disabled={page <= 1}
@@ -174,7 +210,11 @@ export default function AdminPage() {
             >
               ← Prev
             </Btn>
-            <span className="flex items-center text-base text-ink-3" aria-live="polite" aria-atomic="true">
+            <span
+              className="flex items-center text-base text-ink-3"
+              aria-live="polite"
+              aria-atomic="true"
+            >
               Page {page} of {totalPages}
             </span>
             <Btn

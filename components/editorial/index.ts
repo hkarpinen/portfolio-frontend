@@ -33,3 +33,5 @@ export { UserInitials } from "./user-initials";
 export { ConfirmDeleteDialog } from "./confirm-delete-dialog";
 export { VoteControl } from "./vote-control";
 export { LinkTabs, type LinkTabItem } from "./link-tabs";
+export { LoadingSplash } from "./loading-splash";
+export { ErrorSplash } from "./error-splash";

@@ -14,9 +14,14 @@ import {
   transferOwnership,
 } from "@/lib/api/households";
 import { financeKeys } from "@/lib/query-keys";
-import type { ContributionPeriodSummary } from "@/types/finance";
+import {
+  invalidateAllHouseholds,
+  invalidateHouseholdMembers,
+  invalidateHouseholdMetadata,
+} from "@/lib/cache-invalidation";
+import type { ContributionPeriod } from "@/types/contributions";
 
-export function useOverview(initialData?: ContributionPeriodSummary[]) {
+export function useOverview(initialData?: ContributionPeriod[]) {
   return useQuery({
     queryKey: financeKeys.householdContributions(),
     queryFn: () => fetchContributionSummary(),
@@ -56,23 +61,15 @@ export function useCreateHousehold() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: createHousehold,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: financeKeys.households() });
-      queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions() });
-    },
+    onSuccess: () => invalidateAllHouseholds(queryClient),
   });
 }
 
 export function useUpdateHousehold(householdId: string) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (body: Parameters<typeof updateHousehold>[1]) =>
-      updateHousehold(householdId, body),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: financeKeys.households() });
-      queryClient.invalidateQueries({ queryKey: financeKeys.household(householdId) });
-      queryClient.invalidateQueries({ queryKey: financeKeys.householdDetail(householdId) });
-    },
+    mutationFn: (body: Parameters<typeof updateHousehold>[1]) => updateHousehold(householdId, body),
+    onSuccess: () => invalidateHouseholdMetadata(queryClient, householdId),
   });
 }
 
@@ -80,10 +77,7 @@ export function useDeleteHousehold() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (householdId: string) => deleteHousehold(householdId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: financeKeys.households() });
-      queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions() });
-    },
+    onSuccess: () => invalidateAllHouseholds(queryClient),
   });
 }
 
@@ -91,10 +85,7 @@ export function useJoinHousehold() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (invitationCode: string) => joinHousehold(invitationCode),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: financeKeys.households() });
-      queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions() });
-    },
+    onSuccess: () => invalidateAllHouseholds(queryClient),
   });
 }
 
@@ -103,6 +94,8 @@ export function useGenerateInvite(householdId: string) {
   return useMutation({
     mutationFn: (recipientEmail?: string) => generateInvite(householdId, recipientEmail),
     onSuccess: () => {
+      // Invite generation only changes the members list (a code appears on
+      // their row); no projections to refresh.
       queryClient.invalidateQueries({ queryKey: financeKeys.householdMembers(householdId) });
     },
   });
@@ -111,13 +104,8 @@ export function useGenerateInvite(householdId: string) {
 export function useRemoveMember(householdId: string) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (membershipId: string) =>
-      removeMember(householdId, membershipId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: financeKeys.householdMembers(householdId) });
-      queryClient.invalidateQueries({ queryKey: financeKeys.householdContributions(householdId) });
-      queryClient.invalidateQueries({ queryKey: financeKeys.householdDashboard(householdId) });
-    },
+    mutationFn: (membershipId: string) => removeMember(householdId, membershipId),
+    onSuccess: () => invalidateHouseholdMembers(queryClient, householdId),
   });
 }
 
@@ -126,10 +114,7 @@ export function useChangeMemberRole(householdId: string) {
   return useMutation({
     mutationFn: ({ membershipId, role }: { membershipId: string; role: string }) =>
       changeMemberRole(householdId, membershipId, role),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: financeKeys.householdMembers(householdId) });
-      queryClient.invalidateQueries({ queryKey: financeKeys.householdDetail(householdId) });
-    },
+    onSuccess: () => invalidateHouseholdMembers(queryClient, householdId),
   });
 }
 
@@ -137,10 +122,6 @@ export function useTransferOwnership(householdId: string) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (newOwnerId: string) => transferOwnership(householdId, newOwnerId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: financeKeys.households() });
-      queryClient.invalidateQueries({ queryKey: financeKeys.householdDetail(householdId) });
-      queryClient.invalidateQueries({ queryKey: financeKeys.householdMembers(householdId) });
-    },
+    onSuccess: () => invalidateHouseholdMembers(queryClient, householdId),
   });
 }

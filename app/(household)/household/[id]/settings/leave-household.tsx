@@ -23,23 +23,25 @@ export function LeaveHousehold({ householdId, membershipId }: LeaveHouseholdProp
   }
 
   return (
-    <section className="flex flex-col gap-5 bg-paper p-6" style={{ border: "1px solid var(--danger)" }}>
-      <p className="font-mono text-xs tracking-[0.1em] uppercase text-red font-bold">Leave household</p>
+    <section
+      className="flex flex-col gap-5 bg-paper p-6"
+      style={{ border: "1px solid var(--danger)" }}
+    >
+      <p className="font-mono text-xs font-bold uppercase tracking-[0.1em] text-red">
+        Leave household
+      </p>
       <p className="ed-body text-ink-2">
         Leaving will remove you from this household. Your past expense history will remain.
       </p>
-      <Btn
-        variant="danger"
-        size="sm"
-        onClick={() => setOpen(true)}
-        className="self-start"
-      >
+      <Btn variant="danger" size="sm" onClick={() => setOpen(true)} className="self-start">
         Leave household
       </Btn>
 
       {removeMember.isError && (
         <p role="alert" className="ed-hint text-red">
-          {removeMember.error instanceof Error ? removeMember.error.message : "Failed to leave household."}
+          {removeMember.error instanceof Error
+            ? removeMember.error.message
+            : "Failed to leave household."}
         </p>
       )}
 

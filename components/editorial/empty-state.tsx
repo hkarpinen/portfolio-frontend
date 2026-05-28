@@ -29,19 +29,28 @@ export function EmptyState({
 }: EmptyStateProps) {
   return (
     <div className={`ed-empty ${className}`}>
-      {glyph && <div aria-hidden="true" className="ed-empty-glyph">{glyph}</div>}
+      {glyph && (
+        <div aria-hidden="true" className="ed-empty-glyph">
+          {glyph}
+        </div>
+      )}
       {kicker && <p className="ed-kicker mb-3">{kicker}</p>}
       <h2 className="ed-h2 mb-3" dangerouslySetInnerHTML={{ __html: title }} />
-      {body && <p className="ed-deck max-w-[50ch] mb-6">{body}</p>}
+      {body && <p className="ed-deck mb-6 max-w-[50ch]">{body}</p>}
       {(cta || secondaryCta) && (
-        <div className="flex gap-3 flex-wrap justify-center">
+        <div className="flex flex-wrap justify-center gap-3">
           {cta && (
             <Btn href={cta.href} onClick={cta.onClick} variant="primary" size="lg">
               {cta.label}
             </Btn>
           )}
           {secondaryCta && (
-            <Btn href={secondaryCta.href} onClick={secondaryCta.onClick} variant="secondary" size="lg">
+            <Btn
+              href={secondaryCta.href}
+              onClick={secondaryCta.onClick}
+              variant="secondary"
+              size="lg"
+            >
               {secondaryCta.label}
             </Btn>
           )}

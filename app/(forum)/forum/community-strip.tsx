@@ -18,19 +18,22 @@ interface CommunityStripProps {
 export function CommunityStrip({ communities }: CommunityStripProps) {
   return (
     <ul
-      className="grid gap-4 list-none p-0 m-0"
+      className="m-0 grid list-none gap-4 p-0"
       style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}
     >
       {communities.map((c) => {
         const memberCount = c.memberCount ?? 0;
         const memberLabel = `${memberCount.toLocaleString()} member${memberCount === 1 ? "" : "s"}`;
-        const threadLabel = c.threadCount > 0
-          ? ` · ${c.threadCount.toLocaleString()} thread${c.threadCount === 1 ? "" : "s"}`
-          : "";
+        const threadLabel =
+          c.threadCount > 0
+            ? ` · ${c.threadCount.toLocaleString()} thread${c.threadCount === 1 ? "" : "s"}`
+            : "";
 
         return (
           <li key={c.communityId} className="ed-module">
-            <span className="ed-module-kicker" aria-hidden>Community</span>
+            <span className="ed-module-kicker" aria-hidden>
+              Community
+            </span>
             <Link
               href={`/forum/g/${c.slug}`}
               className="ed-module-title no-underline hover:text-red"
@@ -43,7 +46,8 @@ export function CommunityStrip({ communities }: CommunityStripProps) {
               <p className="ed-module-desc italic text-ink-3">No description yet.</p>
             )}
             <p className="ed-module-meta">
-              {memberLabel}{threadLabel}
+              {memberLabel}
+              {threadLabel}
             </p>
             <div className="ed-module-foot">
               <JoinButton communityId={c.communityId} />

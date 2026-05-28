@@ -1,7 +1,7 @@
 "use client";
 
-import { useHouseholdBalances } from "@/hooks/use-household-expenses";
-import type { MemberBalance } from "@/types/finance";
+import { useHouseholdBalances } from "@/hooks/use-expenses";
+import type { MemberBalance } from "@/types/membership";
 
 /**
  * Compact "YOU'RE OWED / YOU OWE / Settled" badge for one household,

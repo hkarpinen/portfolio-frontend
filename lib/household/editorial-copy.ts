@@ -34,7 +34,11 @@ export interface HouseholdDetailHeadlineInput {
 }
 
 export function householdDetailHeadline({
-  householdName, yourShare, monthlyObligations, currency, monthName,
+  householdName,
+  yourShare,
+  monthlyObligations,
+  currency,
+  monthName,
 }: HouseholdDetailHeadlineInput): string {
   const name = householdName ?? "The household";
   if (monthlyObligations === null || monthlyObligations === 0) {
@@ -47,7 +51,11 @@ export function householdDetailHeadline({
 }
 
 export function householdDetailDeck({
-  memberCount, expensesCount, monthlyObligations, yourShare, currency,
+  memberCount,
+  expensesCount,
+  monthlyObligations,
+  yourShare,
+  currency,
 }: {
   memberCount: number;
   expensesCount: number;
@@ -69,7 +77,13 @@ export function householdDetailDeck({
 
 // ── Sub-page headlines (calendar / chores / contributions) ───────────────────
 
-export function calendarHeadline({ count, monthName }: { count: number; monthName: string }): string {
+export function calendarHeadline({
+  count,
+  monthName,
+}: {
+  count: number;
+  monthName: string;
+}): string {
   if (count === 0) return `<em>Nothing</em> on the ${monthName} calendar`;
   return `<em>${count}</em> event${count === 1 ? "" : "s"} on the ${monthName} calendar`;
 }
@@ -81,8 +95,14 @@ export function choresHeadline({ overdue, total }: { overdue: number; total: num
 }
 
 export function contributionsHeadline({
-  currency, unsettled, monthLabel,
-}: { currency: string; unsettled: number; monthLabel: string }): string {
+  currency,
+  unsettled,
+  monthLabel,
+}: {
+  currency: string;
+  unsettled: number;
+  monthLabel: string;
+}): string {
   if (unsettled === 0) return `${monthLabel} is <em>squared up</em>`;
   return `<em>${fmt0(unsettled, currency)}</em> unsettled in ${monthLabel}`;
 }

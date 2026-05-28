@@ -18,7 +18,8 @@ const SORTS: { key: Sort; label: string }[] = [
 ];
 
 export function ForumFeed({
-  initialHot, slugMap,
+  initialHot,
+  slugMap,
 }: {
   /** Server-seeded "hot" sort. Other sorts are fetched lazily on click. */
   initialHot: ThreadSummaryResponse[];
@@ -42,7 +43,9 @@ export function ForumFeed({
     <section aria-labelledby="forum-feed-heading" className="flex flex-col gap-4">
       {/* Sort tabs — same visual language as the community page section tabs */}
       <div className="ed-tabs-row">
-        <h2 id="forum-feed-heading" className="sr-only">Threads</h2>
+        <h2 id="forum-feed-heading" className="sr-only">
+          Threads
+        </h2>
         <nav aria-label="Sort threads" className="ed-tabs-list flex-1" role="tablist">
           {SORTS.map(({ key, label }) => {
             const isActive = key === sort;
@@ -76,7 +79,11 @@ export function ForumFeed({
         className="flex flex-col"
       >
         {(t) => (
-          <ThreadRow key={t.threadId} thread={t} slug={slugMap[t.communityId] ?? t.communitySlug ?? ""} />
+          <ThreadRow
+            key={t.threadId}
+            thread={t}
+            slug={slugMap[t.communityId] ?? t.communitySlug ?? ""}
+          />
         )}
       </ListWithLoadingAndEmpty>
     </section>

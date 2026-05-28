@@ -9,14 +9,9 @@ interface CommunityAvatarProps {
     name: string;
   };
   size?: number;
-  radius?: string;
 }
 
-export function CommunityAvatar({
-  community,
-  size = 44,
-  radius = "var(--r-lg)",
-}: CommunityAvatarProps) {
+export function CommunityAvatar({ community, size = 44 }: CommunityAvatarProps) {
   const img = community.image ?? community.imageUrl;
   if (img) {
     return (
@@ -24,7 +19,8 @@ export function CommunityAvatar({
       <img
         src={img}
         alt=""
-        className="object-cover shrink-0 border-ink" style={{ width: `${size}px`, height: `${size}px`}}
+        className="shrink-0 border-ink object-cover"
+        style={{ width: `${size}px`, height: `${size}px` }}
       />
     );
   }
@@ -35,7 +31,14 @@ export function CommunityAvatar({
 
   return (
     <span
-      className="flex items-center justify-center shrink-0 font-serif italic font-normal border-ink" style={{ width: `${size}px`, height: `${size}px`, background: color ? `${color}1a` : "var(--paper-3)", fontSize: `${fontSize}px`, color: color ?? "var(--ink)" }}
+      className="flex shrink-0 items-center justify-center border-ink font-serif font-normal italic"
+      style={{
+        width: `${size}px`,
+        height: `${size}px`,
+        background: color ? `${color}1a` : "var(--paper-3)",
+        fontSize: `${fontSize}px`,
+        color: color ?? "var(--ink)",
+      }}
     >
       {initial}
     </span>

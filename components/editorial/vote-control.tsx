@@ -77,12 +77,7 @@ export function VoteControl({
         aria-atomic="true"
         aria-label={`${score} votes`}
         style={{
-          color:
-            voted === 1
-              ? "var(--success)"
-              : voted === -1
-                ? "var(--danger)"
-                : "var(--ink-2)",
+          color: voted === 1 ? "var(--success)" : voted === -1 ? "var(--danger)" : "var(--ink-2)",
         }}
       >
         {score}

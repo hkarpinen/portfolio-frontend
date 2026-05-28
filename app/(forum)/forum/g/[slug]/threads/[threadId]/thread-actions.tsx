@@ -28,7 +28,12 @@ const REPORT_REASONS = [
   "Other",
 ];
 
-export function ThreadActions({ threadId, threadUrl, replyTargetId = "reply-input", showReply = true }: ThreadActionsProps) {
+export function ThreadActions({
+  threadId,
+  threadUrl,
+  replyTargetId = "reply-input",
+  showReply = true,
+}: ThreadActionsProps) {
   const [copied, setCopied] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
   const [reason, setReason] = useState(REPORT_REASONS[0]);
@@ -118,11 +123,7 @@ export function ThreadActions({ threadId, threadUrl, replyTargetId = "reply-inpu
           <Icon name="more" size={16} strokeWidth={2} aria-hidden />
         </DropdownMenu.Trigger>
         <DropdownMenu.Portal>
-          <DropdownMenu.Content
-            align="end"
-            sideOffset={6}
-            className="ed-menu"
-          >
+          <DropdownMenu.Content align="end" sideOffset={6} className="ed-menu">
             <DropdownMenu.Item onSelect={handleShare} className="ed-menu-item">
               <Icon name="link" size={14} strokeWidth={2} aria-hidden /> Copy link
             </DropdownMenu.Item>
@@ -141,7 +142,9 @@ export function ThreadActions({ threadId, threadUrl, replyTargetId = "reply-inpu
 
       <Modal
         open={reportOpen}
-        onOpenChange={(o) => { if (!o) handleReportClose(); }}
+        onOpenChange={(o) => {
+          if (!o) handleReportClose();
+        }}
         title={submitted ? "Report submitted" : "Report thread"}
         actions={
           submitted ? (
@@ -149,7 +152,7 @@ export function ThreadActions({ threadId, threadUrl, replyTargetId = "reply-inpu
               Close
             </Btn>
           ) : (
-            <div className="flex gap-4 justify-end">
+            <div className="flex justify-end gap-4">
               <Btn variant="secondary" onClick={handleReportClose}>
                 Cancel
               </Btn>
@@ -162,12 +165,21 @@ export function ThreadActions({ threadId, threadUrl, replyTargetId = "reply-inpu
       >
         {submitted ? (
           <div className="flex flex-col items-center gap-6 p-[8px_0]">
-            <div className="w-24 h-24 bg-red-soft flex items-center justify-center">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="20 6 9 17 4 12"/>
+            <div className="flex h-24 w-24 items-center justify-center bg-red-soft">
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="var(--ink)"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polyline points="20 6 9 17 4 12" />
               </svg>
             </div>
-            <p className="text-md text-ink-2 text-center m-0">
+            <p className="m-0 text-center text-md text-ink-2">
               Thanks for the report. Our moderators will review it shortly.
             </p>
           </div>
@@ -180,7 +192,9 @@ export function ThreadActions({ threadId, threadUrl, replyTargetId = "reply-inpu
               onChange={(e) => setReason(e.target.value)}
             >
               {REPORT_REASONS.map((r) => (
-                <option key={r} value={r}>{r}</option>
+                <option key={r} value={r}>
+                  {r}
+                </option>
               ))}
             </SelectField>
             <div>
@@ -193,7 +207,7 @@ export function ThreadActions({ threadId, threadUrl, replyTargetId = "reply-inpu
                 rows={3}
                 maxLength={500}
               />
-              <p className="text-sm text-ink-3 text-right mt-1" aria-live="polite">
+              <p className="mt-1 text-right text-sm text-ink-3" aria-live="polite">
                 {details.length}/500
               </p>
             </div>

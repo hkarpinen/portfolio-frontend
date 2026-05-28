@@ -1,11 +1,10 @@
 "use client";
 
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { api } from "@/lib/api-client";
-import { useFormSubmit } from "@/hooks/use-form-submit";
+import { useUpdatePassword } from "@/hooks/use-identity";
+import { getErrorMessage } from "@/lib/error-messages";
 import { Btn, Input, Alert, Collapsible } from "@/components/editorial";
 
 const passwordSchema = z
@@ -22,70 +21,65 @@ const passwordSchema = z
 type PasswordFormData = z.infer<typeof passwordSchema>;
 
 export function PasswordSection() {
-  const [passwordSaved, setPasswordSaved] = useState(false);
+  const updatePassword = useUpdatePassword();
 
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<PasswordFormData>({ resolver: zodResolver(passwordSchema) });
 
-  const { submit, serverError, clearError } = useFormSubmit(
-    async (data: PasswordFormData) => {
-      await api.put("/api/identity/password", {
-        currentPassword: data.currentPassword,
-        newPassword: data.newPassword,
-      });
-    },
-    {
-      onSuccess: () => {
-        reset();
-        setPasswordSaved(true);
-      },
-    },
-  );
-
   const onPasswordSubmit = (data: PasswordFormData) => {
-    setPasswordSaved(false);
-    submit(data);
+    updatePassword.mutate(
+      { currentPassword: data.currentPassword, newPassword: data.newPassword },
+      { onSuccess: () => reset() },
+    );
   };
 
   return (
     <Collapsible
       title="Password"
       description="Change your account password"
-      onOpenChange={(open) => { if (!open) { setPasswordSaved(false); clearError(); } }}
+      // Closing the section is the "I'm done seeing the result" signal —
+      // resetting the mutation clears both isError and isSuccess in one shot.
+      onOpenChange={(open) => {
+        if (!open) updatePassword.reset();
+      }}
     >
       <form
         onSubmit={handleSubmit(onPasswordSubmit)}
-        className="flex flex-col gap-[14px] mt-10 pt-10 border-ink-t"
+        className="border-ink-t mt-10 flex flex-col gap-[14px] pt-10"
       >
-        {serverError && <Alert variant="danger">{serverError}</Alert>}
-        {passwordSaved && <Alert variant="success">Password updated successfully!</Alert>}
+        {updatePassword.isError && (
+          <Alert variant="danger">{getErrorMessage(updatePassword.error)}</Alert>
+        )}
+        {updatePassword.isSuccess && (
+          <Alert variant="success">Password updated successfully!</Alert>
+        )}
         <div>
-          <label className="ed-label block mb-[6px]">Current Password</label>
+          <label className="ed-label mb-[6px] block">Current Password</label>
           <Input type="password" {...register("currentPassword")} placeholder="••••••••" />
           {errors.currentPassword && (
-            <p className="text-red text-base mt-2">{errors.currentPassword.message}</p>
+            <p className="mt-2 text-base text-red">{errors.currentPassword.message}</p>
           )}
         </div>
         <div>
-          <label className="ed-label block mb-[6px]">New Password</label>
+          <label className="ed-label mb-[6px] block">New Password</label>
           <Input type="password" {...register("newPassword")} placeholder="••••••••" />
           {errors.newPassword && (
-            <p className="text-red text-base mt-2">{errors.newPassword.message}</p>
+            <p className="mt-2 text-base text-red">{errors.newPassword.message}</p>
           )}
         </div>
         <div>
-          <label className="ed-label block mb-[6px]">Confirm New Password</label>
+          <label className="ed-label mb-[6px] block">Confirm New Password</label>
           <Input type="password" {...register("confirmPassword")} placeholder="••••••••" />
           {errors.confirmPassword && (
-            <p className="text-red text-base mt-2">{errors.confirmPassword.message}</p>
+            <p className="mt-2 text-base text-red">{errors.confirmPassword.message}</p>
           )}
         </div>
-        <Btn variant="primary" fullWidth type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Updating…" : "Update Password"}
+        <Btn variant="primary" fullWidth type="submit" disabled={updatePassword.isPending}>
+          {updatePassword.isPending ? "Updating…" : "Update Password"}
         </Btn>
       </form>
     </Collapsible>

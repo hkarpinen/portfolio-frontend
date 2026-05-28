@@ -34,7 +34,12 @@ function formatDue(iso?: string): { text: string; overdue: boolean; srText: stri
 }
 
 function ChoreRow({
-  chore, members, onComplete, onDeleteClick, completing, deleting,
+  chore,
+  members,
+  onComplete,
+  onDeleteClick,
+  completing,
+  deleting,
 }: {
   chore: ChoreDto;
   members: { userId: string; displayName?: string; username: string }[];
@@ -49,43 +54,56 @@ function ChoreRow({
 
   return (
     <tr className={`border-b border-rule-soft group${due.overdue ? "" : ""}`}>
-      <td className="py-[14px] pr-4 w-[36px]">
+      <td className="w-[36px] py-[14px] pr-4">
         <button
           onClick={() => onComplete(chore.id)}
           disabled={completing || done}
           aria-label={done ? `${chore.title}: completed` : `Mark "${chore.title}" as complete`}
           aria-pressed={done}
-          className={`w-5 h-5 flex items-center justify-center border-[1.5px] border-ink ${done ? "bg-ink text-paper" : "bg-paper text-transparent cursor-pointer"}`}
+          className={`flex h-5 w-5 items-center justify-center border-[1.5px] border-ink ${done ? "bg-ink text-paper" : "cursor-pointer bg-paper text-transparent"}`}
         >
           {done && <Icon name="check" size={12} strokeWidth={2.5} aria-hidden />}
         </button>
       </td>
       <td className="py-[14px] pr-6">
-        <span className={`font-serif italic text-[1.0625rem] ${done ? "line-through text-ink-3" : "text-ink"}`}>
+        <span
+          className={`font-serif text-[1.0625rem] italic ${done ? "text-ink-3 line-through" : "text-ink"}`}
+        >
           {chore.title}
           {done && <span className="sr-only"> (completed)</span>}
         </span>
       </td>
-      <td className="py-[14px] pr-6 ed-label-muted whitespace-nowrap">
+      <td className="ed-label-muted whitespace-nowrap py-[14px] pr-6">
         {assignee ? (assignee.displayName ?? assignee.username) : "Anyone"}
       </td>
-      <td className={`py-[14px] pr-6 font-mono text-xs tracking-[0.04em] whitespace-nowrap ${due.overdue ? "text-red font-semibold" : "text-ink-3"}`}>
+      <td
+        className={`whitespace-nowrap py-[14px] pr-6 font-mono text-xs tracking-[0.04em] ${due.overdue ? "font-semibold text-red" : "text-ink-3"}`}
+      >
         {/* Color alone never conveys overdue — the word "Overdue" is in the sr-text */}
         <span aria-label={due.srText}>
           {due.overdue && <span className="sr-only">Overdue: </span>}
           {due.text}
         </span>
-        {due.overdue && <span aria-hidden className="ml-[5px] font-mono text-[0.65rem] tracking-[0.06em] text-red">OVERDUE</span>}
+        {due.overdue && (
+          <span
+            aria-hidden
+            className="ml-[5px] font-mono text-[0.65rem] tracking-[0.06em] text-red"
+          >
+            OVERDUE
+          </span>
+        )}
       </td>
-      <td className="py-[14px] whitespace-nowrap">
+      <td className="whitespace-nowrap py-[14px]">
         <div className="flex items-center justify-between gap-4">
           <span className="ed-label-muted">
-            {chore.recurrenceFrequency ? FREQ_LABEL[chore.recurrenceFrequency] ?? chore.recurrenceFrequency : "One-off"}
+            {chore.recurrenceFrequency
+              ? (FREQ_LABEL[chore.recurrenceFrequency] ?? chore.recurrenceFrequency)
+              : "One-off"}
           </span>
           <button
             onClick={() => onDeleteClick(chore.id)}
             disabled={deleting}
-            className="opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity font-mono text-xs tracking-[0.08em] text-ink-3 hover:text-red focus:text-red cursor-pointer border-none bg-transparent p-0"
+            className="cursor-pointer border-none bg-transparent p-0 font-mono text-xs tracking-[0.08em] text-ink-3 opacity-0 transition-opacity hover:text-red focus:text-red focus:opacity-100 group-hover:opacity-100"
             aria-label={`Delete chore: ${chore.title}`}
           >
             Delete
@@ -140,60 +158,72 @@ export default function ChoresPage() {
           count={`${chores.length} chore${chores.length === 1 ? "" : "s"}${overdueCount > 0 ? ` · ${overdueCount} overdue` : ""}`}
           title="The <em>chore list</em>"
         />
-        <div className="flex items-center justify-end -mt-2">
+        <div className="-mt-2 flex items-center justify-end">
           <button
             onClick={() => setShowAll((v) => !v)}
-            className="ed-label-muted hover:text-red bg-transparent border-none cursor-pointer p-0"
+            className="ed-label-muted cursor-pointer border-none bg-transparent p-0 hover:text-red"
             aria-pressed={!showAll}
           >
             {showAll ? "Active only" : "Show all"}
           </button>
         </div>
 
-      {choresQuery.isLoading ? (
-        <p className="ed-label-muted" aria-live="polite">Loading chores…</p>
-      ) : chores.length === 0 ? (
-        <EmptyState
-          glyph={<Icon name="check" size={24} strokeWidth={1.5} />}
-          title="No chores yet"
-          body="Add a chore and assign it to a household member."
-          cta={{ label: "+ Add chore", href: `/household/${householdId}/chores/new` }}
-        />
-      ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse" aria-label="Household chores">
-            <thead>
-              <tr className="border-b border-[var(--ink)]">
-                <th scope="col" className="pb-[10px] w-[36px]">
-                  <span className="sr-only">Complete</span>
-                </th>
-                <th scope="col" className="text-left ed-kicker pb-[10px] pr-6 font-normal">Chore</th>
-                <th scope="col" className="text-left ed-kicker pb-[10px] pr-6 font-normal">Assigned to</th>
-                <th scope="col" className="text-left ed-kicker pb-[10px] pr-6 font-normal">Due</th>
-                <th scope="col" className="text-left ed-kicker pb-[10px] font-normal">Repeats</th>
-              </tr>
-            </thead>
-            <tbody>
-              {chores.map((chore) => (
-                <ChoreRow
-                  key={chore.id}
-                  chore={chore}
-                  members={members}
-                  onComplete={(id) => complete.mutate(id)}
-                  onDeleteClick={(id) => setDeleteTarget(id)}
-                  completing={complete.isPending && complete.variables === chore.id}
-                  deleting={del.isPending && del.variables === chore.id}
-                />
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+        {choresQuery.isLoading ? (
+          <p className="ed-label-muted" aria-live="polite">
+            Loading chores…
+          </p>
+        ) : chores.length === 0 ? (
+          <EmptyState
+            glyph={<Icon name="check" size={24} strokeWidth={1.5} />}
+            title="No chores yet"
+            body="Add a chore and assign it to a household member."
+            cta={{ label: "+ Add chore", href: `/household/${householdId}/chores/new` }}
+          />
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse" aria-label="Household chores">
+              <thead>
+                <tr className="border-b border-[var(--ink)]">
+                  <th scope="col" className="w-[36px] pb-[10px]">
+                    <span className="sr-only">Complete</span>
+                  </th>
+                  <th scope="col" className="ed-kicker pb-[10px] pr-6 text-left font-normal">
+                    Chore
+                  </th>
+                  <th scope="col" className="ed-kicker pb-[10px] pr-6 text-left font-normal">
+                    Assigned to
+                  </th>
+                  <th scope="col" className="ed-kicker pb-[10px] pr-6 text-left font-normal">
+                    Due
+                  </th>
+                  <th scope="col" className="ed-kicker pb-[10px] text-left font-normal">
+                    Repeats
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {chores.map((chore) => (
+                  <ChoreRow
+                    key={chore.id}
+                    chore={chore}
+                    members={members}
+                    onComplete={(id) => complete.mutate(id)}
+                    onDeleteClick={(id) => setDeleteTarget(id)}
+                    completing={complete.isPending && complete.variables === chore.id}
+                    deleting={del.isPending && del.variables === chore.id}
+                  />
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </section>
 
       <ConfirmDeleteDialog
         open={deleteTarget !== null}
-        onOpenChange={(isOpen) => { if (!isOpen) setDeleteTarget(null); }}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) setDeleteTarget(null);
+        }}
         title={`Delete "${targetChore?.title ?? "chore"}"?`}
         body="This chore will be permanently removed."
         isPending={del.isPending}

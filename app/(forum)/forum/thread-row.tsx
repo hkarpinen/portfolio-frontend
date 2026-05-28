@@ -18,17 +18,21 @@ export function ThreadRow({
   return (
     <Link
       href={`/forum/g/${slug}/threads/${thread.threadId}`}
-      className="flex gap-6 sm:gap-10 py-6 border-b border-rule-soft last:border-b-0 no-underline group items-start"
+      className="group flex items-start gap-6 border-b border-rule-soft py-6 no-underline last:border-b-0 sm:gap-10"
     >
-      <div className="flex flex-col items-center w-14 shrink-0 pt-0.5">
-        <span className="font-serif italic text-ink text-[1.625rem] leading-none">{thread.voteScore ?? 0}</span>
+      <div className="flex w-14 shrink-0 flex-col items-center pt-0.5">
+        <span className="font-serif text-[1.625rem] italic leading-none text-ink">
+          {thread.voteScore ?? 0}
+        </span>
         <span className="ed-meta mt-1.5">votes</span>
       </div>
-      <div className="flex-1 min-w-0">
-        <p className="ed-meta mb-2.5 flex items-center gap-2 flex-wrap">
+      <div className="min-w-0 flex-1">
+        <p className="ed-meta mb-2.5 flex flex-wrap items-center gap-2">
           {showCommunity && (
             <>
-              <span className="text-red">{thread.communityName ?? thread.communitySlug ?? slug}</span>
+              <span className="text-red">
+                {thread.communityName ?? thread.communitySlug ?? slug}
+              </span>
               <span className="text-ink-4">·</span>
             </>
           )}
@@ -37,11 +41,15 @@ export function ThreadRow({
           <span>{timeAgo(thread.createdAt)}</span>
           {thread.isPinned && <span className="text-red">· Pinned</span>}
         </p>
-        <h3 className="font-serif italic text-ink text-[1.25rem] leading-snug group-hover:text-red">{thread.title}</h3>
+        <h3 className="font-serif text-[1.25rem] italic leading-snug text-ink group-hover:text-red">
+          {thread.title}
+        </h3>
       </div>
-      <div className="shrink-0 text-right pt-0.5">
-        <span className="font-serif italic text-ink text-[1.375rem] leading-none">{thread.commentCount ?? 0}</span>
-        <span className="ed-meta block mt-1.5">replies</span>
+      <div className="shrink-0 pt-0.5 text-right">
+        <span className="font-serif text-[1.375rem] italic leading-none text-ink">
+          {thread.commentCount ?? 0}
+        </span>
+        <span className="ed-meta mt-1.5 block">replies</span>
       </div>
     </Link>
   );

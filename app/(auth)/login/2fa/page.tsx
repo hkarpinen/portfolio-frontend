@@ -2,20 +2,17 @@
 
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
-import { api, ApiError } from "@/lib/api-client";
-import { identityKeys } from "@/lib/query-keys";
+import { useVerify2FA } from "@/hooks/use-identity";
+import { getErrorMessage } from "@/lib/error-messages";
 import { Btn, Alert, Icon } from "@/components/editorial";
 
 const OTP_LENGTH = 6;
 
 export default function TwoFactorPage() {
   const router = useRouter();
-  const queryClient = useQueryClient();
+  const verify = useVerify2FA();
   const [digits, setDigits] = useState<string[]>(Array(OTP_LENGTH).fill(""));
-  const [error, setError] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const code = digits.join("");
@@ -59,32 +56,36 @@ export default function TwoFactorPage() {
     inputRefs.current[focusIndex]?.focus();
   }
 
-  async function onSubmit(e: React.FormEvent) {
+  function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError(null);
-    setIsSubmitting(true);
-    try {
-      await api.post("/api/identity/2fa/verify", { code });
-      queryClient.invalidateQueries({ queryKey: identityKeys.me() });
-      router.push("/forum");
-      router.refresh();
-    } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Invalid code. Please try again.");
-    } finally {
-      setIsSubmitting(false);
-    }
+    verify.mutate(code, {
+      onSuccess: () => {
+        router.push("/forum");
+        router.refresh();
+      },
+    });
   }
 
   return (
     <div className="ed-auth-card">
-      <h1 className="ed-h1">Two-factor <em>code</em></h1>
-      <p className="ed-hint mt-2 mb-2">Open your authenticator app and enter the six-digit code.</p>
+      <h1 className="ed-h1">
+        Two-factor <em>code</em>
+      </h1>
+      <p className="ed-hint mb-2 mt-2">Open your authenticator app and enter the six-digit code.</p>
       <p className="ed-label-muted mb-8 leading-relaxed">
         Codes refresh every 30 seconds — use the current one shown in your app.
       </p>
 
-      <form onSubmit={onSubmit} className="flex flex-col gap-6" aria-label="Two-factor authentication">
-        {error && <Alert variant="danger" role="alert">{error}</Alert>}
+      <form
+        onSubmit={onSubmit}
+        className="flex flex-col gap-6"
+        aria-label="Two-factor authentication"
+      >
+        {verify.isError && (
+          <Alert variant="danger" role="alert">
+            {getErrorMessage(verify.error, "Invalid code. Please try again.")}
+          </Alert>
+        )}
 
         {/* 6-cell OTP input */}
         <fieldset className="w-full min-w-0">
@@ -93,7 +94,9 @@ export default function TwoFactorPage() {
             {digits.map((digit, i) => (
               <input
                 key={i}
-                ref={(el) => { inputRefs.current[i] = el; }}
+                ref={(el) => {
+                  inputRefs.current[i] = el;
+                }}
                 type="text"
                 inputMode="numeric"
                 autoComplete={i === 0 ? "one-time-code" : "off"}
@@ -103,7 +106,7 @@ export default function TwoFactorPage() {
                 onKeyDown={(e) => handleKeyDown(i, e)}
                 onPaste={handlePaste}
                 aria-label={`Digit ${i + 1} of 6`}
-                className="flex-1 min-w-0 text-center font-mono text-xl font-semibold bg-paper border-[1.5px] border-[color:var(--ink)] outline-none py-4 focus:border-[color:var(--red)] transition-colors"
+                className="min-w-0 flex-1 border-[1.5px] border-[color:var(--ink)] bg-paper py-4 text-center font-mono text-xl font-semibold outline-none transition-colors focus:border-[color:var(--red)]"
               />
             ))}
           </div>
@@ -111,19 +114,19 @@ export default function TwoFactorPage() {
 
         <Btn
           type="submit"
-          disabled={isSubmitting || code.length !== OTP_LENGTH}
+          disabled={verify.isPending || code.length !== OTP_LENGTH}
           variant="primary"
           size="lg"
           fullWidth
           iconRight={<Icon name="arrowRight" size={16} />}
         >
-          {isSubmitting ? "Verifying…" : "Verify"}
+          {verify.isPending ? "Verifying…" : "Verify"}
         </Btn>
       </form>
 
-      <div className="mt-8 pt-6 border-t border-[color:var(--rule-soft)] text-center">
+      <div className="mt-8 border-t border-[color:var(--rule-soft)] pt-6 text-center">
         <p className="ed-label-muted mb-2">Can&apos;t access your authenticator?</p>
-        <Link href="/login/recovery" className="text-red font-semibold text-sm hover:underline">
+        <Link href="/login/recovery" className="text-sm font-semibold text-red hover:underline">
           Use a recovery code →
         </Link>
       </div>

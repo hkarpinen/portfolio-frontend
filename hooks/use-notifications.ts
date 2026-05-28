@@ -5,6 +5,7 @@ import {
   fetchNotifications,
   markNotificationRead,
   markAllNotificationsRead,
+  NotificationItemSchema,
   type NotificationItem,
 } from "@/lib/api/notifications";
 
@@ -40,7 +41,10 @@ function severityFor(eventType: string | undefined): NotificationType {
   return "info";
 }
 
-export function useNotifications(options?: { connect?: boolean; initialNotifications?: NotificationItem[] }) {
+export function useNotifications(options?: {
+  connect?: boolean;
+  initialNotifications?: NotificationItem[];
+}) {
   const connect = options?.connect ?? true;
   const initialItems = options?.initialNotifications ?? [];
   const [notifications, setNotifications] = useState<Notification[]>(() =>
@@ -54,7 +58,7 @@ export function useNotifications(options?: { connect?: boolean; initialNotificat
         title: item.title,
         deepLink: item.deepLink,
         isRead: item.isRead,
-      }))
+      })),
   );
   const [toasts, setToasts] = useState<ToastNotification[]>([]);
   const dismissTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
@@ -159,7 +163,9 @@ export function useNotifications(options?: { connect?: boolean; initialNotificat
           });
         }
       })
-      .catch(() => {/* SSE stream will carry new items */});
+      .catch(() => {
+        /* SSE stream will carry new items */
+      });
   }, [connect]);
 
   // Subscribe to the SSE stream for live notifications.
@@ -182,7 +188,18 @@ export function useNotifications(options?: { connect?: boolean; initialNotificat
         retryDelay = RECONNECT_BASE_MS;
 
         try {
-          const parsed = JSON.parse(event.data) as NotificationItem;
+          // SSE payloads come straight off the wire — schema-validate before
+          // touching fields. A malformed event is ignored (the stream will
+          // carry valid ones next), but in dev we surface the issues so
+          // contract drift is debuggable.
+          const result = NotificationItemSchema.safeParse(JSON.parse(event.data));
+          if (!result.success) {
+            if (process.env.NODE_ENV !== "production") {
+              console.error("[SSE] notification failed validation", result.error.issues);
+            }
+            return;
+          }
+          const parsed = result.data;
           const notification = {
             id: parsed.eventId,
             message: parsed.message ?? "",
@@ -194,7 +211,7 @@ export function useNotifications(options?: { connect?: boolean; initialNotificat
           upsertNotificationRef.current(notification);
           addToastRef.current(notification);
         } catch {
-          // Ignore malformed payloads.
+          // JSON.parse failed — ignore the malformed payload.
         }
       };
 
@@ -241,4 +258,3 @@ export function useNotifications(options?: { connect?: boolean; initialNotificat
     markAllRead,
   };
 }
-

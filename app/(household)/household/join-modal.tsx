@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useJoinHousehold } from "@/hooks/use-household";
-import { ApiError } from "@/lib/api-client";
+import { getErrorMessage } from "@/lib/error-messages";
 import { Btn, Modal, Alert, Input } from "@/components/editorial";
 
 interface JoinHouseholdModalProps {
@@ -28,7 +28,9 @@ export function JoinHouseholdModal({ open, onOpenChange }: JoinHouseholdModalPro
 
   const actions = (
     <>
-      <Btn variant="secondary" onClick={() => onOpenChange(false)}>Cancel</Btn>
+      <Btn variant="secondary" onClick={() => onOpenChange(false)}>
+        Cancel
+      </Btn>
       <Btn
         variant="primary"
         onClick={handleJoin}
@@ -49,19 +51,21 @@ export function JoinHouseholdModal({ open, onOpenChange }: JoinHouseholdModalPro
       maxWidth={400}
     >
       <div className="flex flex-col gap-[14px]">
-        <p className="text-base text-ink-2 leading-[1.5]">
+        <p className="text-base leading-[1.5] text-ink-2">
           Enter the invite code shared by a household member to join their household.
         </p>
         {joinMutation.isError && (
           <Alert variant="danger">
-            {joinMutation.error instanceof ApiError ? joinMutation.error.message : "Invalid or expired invite code."}
+            {getErrorMessage(joinMutation.error, "Invalid or expired invite code.")}
           </Alert>
         )}
         <Input
           label="Invite Code"
           value={code}
           onChange={(e) => setCode(e.target.value)}
-          onKeyDown={(e) => { if (e.key === "Enter") handleJoin(); }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") handleJoin();
+          }}
           placeholder="Enter invite code…"
           autoFocus
         />

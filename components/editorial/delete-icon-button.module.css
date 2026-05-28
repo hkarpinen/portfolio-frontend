@@ -10,11 +10,16 @@
   justify-content: center;
   cursor: pointer;
   flex-shrink: 0;
-  transition: background 110ms, color 110ms, border-color 110ms;
+  transition:
+    background 110ms,
+    color 110ms,
+    border-color 110ms;
 }
 .btn:not(:disabled):hover {
   background: var(--danger-s);
   color: var(--danger);
   border-color: var(--danger);
 }
-.btn:disabled { cursor: not-allowed; }
+.btn:disabled {
+  cursor: not-allowed;
+}

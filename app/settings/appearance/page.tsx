@@ -4,27 +4,28 @@ import { cardClassName } from "../settings-ui";
 
 const THEME_OPTIONS = [
   { id: "editorial", label: "Editorial", description: "Cream paper, dark ink. The default." },
-  { id: "dark",      label: "Dark",      description: "Coming soon." },
+  { id: "dark", label: "Dark", description: "Coming soon." },
   { id: "high-contrast", label: "High contrast", description: "Coming soon." },
 ];
 
 const DENSITY_OPTIONS = [
   { id: "comfortable", label: "Comfortable", description: "More breathing room." },
-  { id: "compact",     label: "Compact",     description: "Denser tables and lists." },
+  { id: "compact", label: "Compact", description: "Denser tables and lists." },
 ];
 
 export default function AppearancePage() {
   return (
     <div className="page-enter flex flex-col gap-8">
-
       {/* Theme */}
       <section aria-labelledby="appearance-theme-heading">
         <div className={`border-ink ${cardClassName}`}>
-          <h2 id="appearance-theme-heading" className="ed-label-muted mb-1">Theme</h2>
-          <p className="text-base text-ink-3 mb-6">
+          <h2 id="appearance-theme-heading" className="ed-label-muted mb-1">
+            Theme
+          </h2>
+          <p className="mb-6 text-base text-ink-3">
             Choose how The Stack &amp; Gazette looks to you.
           </p>
-          <fieldset className="border-none p-0 m-0 flex flex-col gap-3">
+          <fieldset className="m-0 flex flex-col gap-3 border-none p-0">
             <legend className="sr-only">Theme</legend>
             {THEME_OPTIONS.map((opt) => {
               const isActive = opt.id === "editorial";
@@ -32,12 +33,12 @@ export default function AppearancePage() {
               return (
                 <label
                   key={opt.id}
-                  className={`flex items-center gap-5 p-[14px_18px] border-ink cursor-pointer transition-colors ${
+                  className={`flex cursor-pointer items-center gap-5 border-ink p-[14px_18px] transition-colors ${
                     isActive
                       ? "bg-ink text-paper"
                       : isDisabled
-                      ? "bg-paper-2 opacity-50 cursor-not-allowed"
-                      : "bg-paper-2 hover:bg-paper-3"
+                        ? "cursor-not-allowed bg-paper-2 opacity-50"
+                        : "bg-paper-2 hover:bg-paper-3"
                   }`}
                 >
                   <input
@@ -46,11 +47,13 @@ export default function AppearancePage() {
                     value={opt.id}
                     defaultChecked={isActive}
                     disabled={isDisabled}
-                    className="accent-[var(--red)] w-4 h-4 shrink-0"
+                    className="h-4 w-4 shrink-0 accent-[var(--red)]"
                     aria-describedby={`theme-desc-${opt.id}`}
                   />
-                  <span className="flex flex-col gap-[2px] min-w-0">
-                    <span className={`text-base font-semibold ${isActive ? "text-paper" : "text-ink"}`}>
+                  <span className="flex min-w-0 flex-col gap-[2px]">
+                    <span
+                      className={`text-base font-semibold ${isActive ? "text-paper" : "text-ink"}`}
+                    >
                       {opt.label}
                     </span>
                     <span
@@ -70,18 +73,20 @@ export default function AppearancePage() {
       {/* Density */}
       <section aria-labelledby="appearance-density-heading">
         <div className={`border-ink ${cardClassName}`}>
-          <h2 id="appearance-density-heading" className="ed-label-muted mb-1">Density</h2>
-          <p className="text-base text-ink-3 mb-6">
+          <h2 id="appearance-density-heading" className="ed-label-muted mb-1">
+            Density
+          </h2>
+          <p className="mb-6 text-base text-ink-3">
             Control how much information is visible at once.
           </p>
-          <fieldset className="border-none p-0 m-0 flex flex-col gap-3">
+          <fieldset className="m-0 flex flex-col gap-3 border-none p-0">
             <legend className="sr-only">Density</legend>
             {DENSITY_OPTIONS.map((opt) => {
               const isActive = opt.id === "comfortable";
               return (
                 <label
                   key={opt.id}
-                  className={`flex items-center gap-5 p-[14px_18px] border-ink cursor-pointer transition-colors ${
+                  className={`flex cursor-pointer items-center gap-5 border-ink p-[14px_18px] transition-colors ${
                     isActive ? "bg-ink text-paper" : "bg-paper-2 hover:bg-paper-3"
                   }`}
                 >
@@ -90,11 +95,13 @@ export default function AppearancePage() {
                     name="density"
                     value={opt.id}
                     defaultChecked={isActive}
-                    className="accent-[var(--red)] w-4 h-4 shrink-0"
+                    className="h-4 w-4 shrink-0 accent-[var(--red)]"
                     aria-describedby={`density-desc-${opt.id}`}
                   />
-                  <span className="flex flex-col gap-[2px] min-w-0">
-                    <span className={`text-base font-semibold ${isActive ? "text-paper" : "text-ink"}`}>
+                  <span className="flex min-w-0 flex-col gap-[2px]">
+                    <span
+                      className={`text-base font-semibold ${isActive ? "text-paper" : "text-ink"}`}
+                    >
                       {opt.label}
                     </span>
                     <span

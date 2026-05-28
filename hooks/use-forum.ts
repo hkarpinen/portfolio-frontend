@@ -12,6 +12,8 @@ import {
   fetchProfileThreads,
   fetchProfileComments,
   fetchProfileMemberships,
+  fetchMyForumProfile,
+  updateMyForumProfile,
 } from "@/lib/api/forum";
 import { forumKeys } from "@/lib/query-keys";
 
@@ -67,7 +69,7 @@ function invalidateVoteTargets(
   queryClient: ReturnType<typeof useQueryClient>,
   router: ReturnType<typeof useRouter>,
   threadId: string,
-  vars: Parameters<typeof castVote>[0]
+  vars: Parameters<typeof castVote>[0],
 ) {
   if (vars.targetType === 0) {
     queryClient.invalidateQueries({ queryKey: forumKeys.thread(vars.targetId) });
@@ -124,5 +126,25 @@ export function useProfileComments(userId: string, page = 1) {
     queryKey: [...forumKeys.profile(userId), "comments", page],
     queryFn: () => fetchProfileComments(userId, page),
     enabled: !!userId,
+  });
+}
+
+// ─── My forum profile (settings page) ─────────────────────────────────────────
+
+export function useMyForumProfile() {
+  return useQuery({
+    queryKey: forumKeys.myProfile(),
+    queryFn: fetchMyForumProfile,
+    staleTime: 60_000,
+  });
+}
+
+export function useUpdateMyForumProfile() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: updateMyForumProfile,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: forumKeys.myProfile() });
+    },
   });
 }

@@ -1,7 +1,8 @@
 import { getCookieHeader } from "@/lib/server-cookies";
 import { IncomeList } from "./income-list";
 import { fetchIncomeServer, fetchNetPaySummaryServer } from "@/lib/api/income";
-import type { IncomeSource, NetPaySummary } from "@/types/finance";
+import type { IncomeSource } from "@/types/income";
+import type { NetPaySummary } from "@/types/tax";
 import { EditorialPageHead } from "@/components/editorial/editorial-page-head";
 import { LedeStat } from "@/components/editorial/lede-stat";
 import { Ticker } from "@/components/editorial/ticker";
@@ -15,7 +16,7 @@ import {
 } from "@/lib/finance/editorial-copy";
 import { formatAmount } from "@/lib/formatting";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 const fmt0 = (n: number) => `$${Math.abs(Math.round(n)).toLocaleString("en-US")}`;
 const fmt2 = (n: number) => `$${formatAmount(n)}`;
@@ -29,7 +30,7 @@ export default async function IncomePage() {
   // the page renders in two parallel calls regardless of how many sources
   // the user has.
   const [incomePage, summary] = await Promise.all([
-    fetchIncomeServer(cookieHeader).then(p => p ?? { items: [] as IncomeSource[] }),
+    fetchIncomeServer(cookieHeader).then((p) => p ?? { items: [] as IncomeSource[] }),
     fetchNetPaySummaryServer(cookieHeader).catch(() => null as NetPaySummary | null),
   ]);
   const sources: IncomeSource[] = incomePage.items ?? [];
@@ -43,7 +44,10 @@ export default async function IncomePage() {
   const monthName = currentMonthName(now);
 
   const ticker = buildIncomeTicker({
-    monthlyGross, monthlyNet, totalTaxWithheld, annualGross,
+    monthlyGross,
+    monthlyNet,
+    totalTaxWithheld,
+    annualGross,
     sourcesCount: sources.length,
   });
 
@@ -52,7 +56,12 @@ export default async function IncomePage() {
       <EditorialPageHead
         kicker={`${monthName} edition`}
         title={incomeHeadline({ sourcesCount: sources.length, monthlyNet })}
-        deck={incomeDeck({ sourcesCount: sources.length, monthlyGross, monthlyNet, totalTaxWithheld })}
+        deck={incomeDeck({
+          sourcesCount: sources.length,
+          monthlyGross,
+          monthlyNet,
+          totalTaxWithheld,
+        })}
       />
 
       <Ticker items={ticker} ariaLabel="Income figures" />
@@ -67,9 +76,13 @@ export default async function IncomePage() {
         }
         aside={[
           { label: "Gross monthly", value: fmt0(monthlyGross), sub: "before deductions" },
-          { label: "Tax withheld",  value: fmt0(totalTaxWithheld), sub: totalTaxWithheld > 0 ? "fed + state + FICA" : undefined },
-          { label: "Annual gross",  value: fmt0(annualGross), sub: "monthly × 12" },
-          { label: "Sources",       value: String(sources.length) },
+          {
+            label: "Tax withheld",
+            value: fmt0(totalTaxWithheld),
+            sub: totalTaxWithheld > 0 ? "fed + state + FICA" : undefined,
+          },
+          { label: "Annual gross", value: fmt0(annualGross), sub: "monthly × 12" },
+          { label: "Sources", value: String(sources.length) },
         ]}
       />
 

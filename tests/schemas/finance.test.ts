@@ -56,7 +56,7 @@ describe("createHouseholdExpenseSchema", () => {
 
   it("fails with title longer than 300 characters", () => {
     expect(
-      createHouseholdExpenseSchema.safeParse({ ...valid, title: "a".repeat(301) }).success
+      createHouseholdExpenseSchema.safeParse({ ...valid, title: "a".repeat(301) }).success,
     ).toBe(false);
   });
 
@@ -71,7 +71,7 @@ describe("createHouseholdExpenseSchema", () => {
 
   it("fails with invalid householdId (not a UUID)", () => {
     expect(
-      createHouseholdExpenseSchema.safeParse({ ...valid, householdId: "not-a-uuid" }).success
+      createHouseholdExpenseSchema.safeParse({ ...valid, householdId: "not-a-uuid" }).success,
     ).toBe(false);
   });
 });
@@ -95,8 +95,6 @@ describe("updateIncomeSchema", () => {
   });
 
   it("fails with invalid UUID", () => {
-    expect(
-      updateIncomeSchema.safeParse({ ...valid, householdId: "bad-id" }).success
-    ).toBe(false);
+    expect(updateIncomeSchema.safeParse({ ...valid, householdId: "bad-id" }).success).toBe(false);
   });
 });

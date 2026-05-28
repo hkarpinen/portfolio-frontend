@@ -1,16 +1,18 @@
 "use client";
 
-import { useCommunityMembers, useAppointModerator, useRemoveModerator } from "@/hooks/use-community";
-import { ApiError } from "@/lib/api-client";
+import {
+  useCommunityMembers,
+  useAppointModerator,
+  useRemoveModerator,
+} from "@/hooks/use-community";
 import { UserInitials } from "@/components/editorial/user-initials";
 import { Btn } from "@/components/editorial";
 
 interface Props {
   communityId: string;
-  currentUserId?: string;
 }
 
-export function CommunityMembersTab({ communityId, currentUserId }: Props) {
+export function CommunityMembersTab({ communityId }: Props) {
   const { data: members, isLoading } = useCommunityMembers(communityId);
   const appointModerator = useAppointModerator(communityId);
   const removeModerator = useRemoveModerator(communityId);
@@ -18,17 +20,13 @@ export function CommunityMembersTab({ communityId, currentUserId }: Props) {
   if (isLoading) {
     return (
       <div className="flex justify-center p-20">
-        <div className="w-[28px] h-[28px] border-2 border-ink-4 border-t-ink animate-spin" />
+        <div className="h-[28px] w-[28px] animate-spin border-2 border-ink-4 border-t-ink" />
       </div>
     );
   }
 
   if (!members?.length) {
-    return (
-      <p className="text-base text-ink-3 text-center p-[32px_0]">
-        No members found.
-      </p>
-    );
+    return <p className="p-[32px_0] text-center text-base text-ink-3">No members found.</p>;
   }
 
   const roleBadge = (role: string) => {
@@ -40,7 +38,7 @@ export function CommunityMembersTab({ communityId, currentUserId }: Props) {
     const [fg, bg] = colors[role] ?? ["var(--text-3)", "var(--paper-3)"];
     return (
       /* background/color are runtime values from role lookup — kept as inline style */
-      <span className="py-1 px-4 text-sm font-semibold" style={{ background: bg, color: fg }}>
+      <span className="px-4 py-1 text-sm font-semibold" style={{ background: bg, color: fg }}>
         {role}
       </span>
     );
@@ -58,7 +56,7 @@ export function CommunityMembersTab({ communityId, currentUserId }: Props) {
         return (
           <div
             key={m.membershipId}
-            className={`flex items-center justify-between py-[10px] px-[14px] bg-paper-2 border-ink transition-opacity duration-150${isPending ? " opacity-50" : ""}`}
+            className={`flex items-center justify-between border-ink bg-paper-2 px-[14px] py-[10px] transition-opacity duration-150${isPending ? "opacity-50" : ""}`}
           >
             <div className="flex items-center gap-5">
               <UserInitials name={m.displayName} size="lg" />
@@ -67,14 +65,18 @@ export function CommunityMembersTab({ communityId, currentUserId }: Props) {
                   {m.displayName ?? `${m.userId.slice(0, 8)}…`}
                 </p>
                 <p className="text-sm text-ink-3">
-                  Joined {new Date(m.joinedAt).toLocaleDateString(undefined, { month: "short", year: "numeric" })}
+                  Joined{" "}
+                  {new Date(m.joinedAt).toLocaleDateString(undefined, {
+                    month: "short",
+                    year: "numeric",
+                  })}
                 </p>
               </div>
             </div>
             <div className="flex items-center gap-4">
               {roleBadge(m.role)}
-              {!isOwner && (
-                isModerator ? (
+              {!isOwner &&
+                (isModerator ? (
                   <Btn
                     variant="danger"
                     size="sm"
@@ -94,8 +96,7 @@ export function CommunityMembersTab({ communityId, currentUserId }: Props) {
                   >
                     Make Mod
                   </Btn>
-                )
-              )}
+                ))}
             </div>
           </div>
         );

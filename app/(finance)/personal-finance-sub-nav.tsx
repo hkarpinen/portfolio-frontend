@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 
 const TABS = [
   { label: "Expenses", href: "/expenses" },
-  { label: "Income",   href: "/income" },
+  { label: "Income", href: "/income" },
 ] as const;
 
 /**
@@ -23,7 +23,7 @@ export function PersonalFinanceSubNav() {
     <nav
       role="tablist"
       aria-label="Personal finance"
-      className="ed-tabs-list max-w-[var(--content-max)] mx-auto w-full mb-8"
+      className="ed-tabs-list mx-auto mb-8 w-full max-w-[var(--content-max)]"
     >
       {TABS.map((tab) => {
         const active = pathname.startsWith(tab.href);

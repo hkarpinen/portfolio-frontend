@@ -7,9 +7,12 @@ import {
   emptyBucket,
   mergeBucket,
 } from "@/lib/contributions";
-import type { ContributionPeriodSummary } from "@/types/finance";
+import type { ContributionPeriod } from "@/types/contributions";
 
-function makePeriod(periodStart: string, overrides: Partial<ContributionPeriodSummary> = {}): ContributionPeriodSummary {
+function makePeriod(
+  periodStart: string,
+  overrides: Partial<ContributionPeriod> = {},
+): ContributionPeriod {
   return {
     periodLabel: periodStart.slice(0, 7),
     periodStart,
@@ -65,7 +68,10 @@ describe("mergeBucket", () => {
 
   it("accumulates disposableIncome when provided", () => {
     const bucket = emptyBucket("2025", "2025-01-01");
-    const period = makePeriod("2025-01-01", { disposableIncome: 500, disposableIncomeSource: "balance" });
+    const period = makePeriod("2025-01-01", {
+      disposableIncome: 500,
+      disposableIncomeSource: "balance",
+    });
 
     mergeBucket(bucket, period, "2099-01");
 
@@ -75,9 +81,19 @@ describe("mergeBucket", () => {
 
   it("appends contributions and personalBills", () => {
     const bucket = emptyBucket("2025", "2025-01-01");
-    const contribution = { splitId: "s1", billId: "b1", groupId: "g1", householdId: "h1",
-      householdName: "Home", billTitle: "Rent", amount: 800, currency: "USD",
-      dueDate: "2025-01-01", isClaimed: false, claimedAt: null };
+    const contribution = {
+      splitId: "s1",
+      billId: "b1",
+      groupId: "g1",
+      householdId: "h1",
+      householdName: "Home",
+      billTitle: "Rent",
+      amount: 800,
+      currency: "USD",
+      dueDate: "2025-01-01",
+      isClaimed: false,
+      claimedAt: null,
+    };
     const period = makePeriod("2025-01-01", { contributions: [contribution] });
 
     mergeBucket(bucket, period, "2099-01");
@@ -109,11 +125,7 @@ describe("aggregateByYear", () => {
   });
 
   it("sorts years ascending", () => {
-    const months = [
-      makePeriod("2025-03-01"),
-      makePeriod("2023-11-01"),
-      makePeriod("2024-07-01"),
-    ];
+    const months = [makePeriod("2025-03-01"), makePeriod("2023-11-01"), makePeriod("2024-07-01")];
 
     const result = aggregateByYear(months);
 
@@ -146,7 +158,9 @@ describe("aggregateByQuarter", () => {
       makePeriod("2025-10-01"),
     ];
 
-    const labels = aggregateByQuarter(months).map((r) => r.label).sort();
+    const labels = aggregateByQuarter(months)
+      .map((r) => r.label)
+      .sort();
 
     expect(labels).toEqual(["Q1 2025", "Q2 2025", "Q3 2025", "Q4 2025"]);
   });
@@ -159,7 +173,12 @@ describe("aggregateByQuarter", () => {
 describe("toMonthlyPeriods", () => {
   it("maps each period to an AggregatedPeriod with matching fields", () => {
     const months = [
-      makePeriod("2025-03-01", { totalDue: 400, totalPaid: 200, projectedNetIncome: 2000, personalBillsDue: 100 }),
+      makePeriod("2025-03-01", {
+        totalDue: 400,
+        totalPaid: 200,
+        projectedNetIncome: 2000,
+        personalBillsDue: 100,
+      }),
     ];
 
     const result = toMonthlyPeriods(months);

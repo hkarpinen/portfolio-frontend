@@ -12,7 +12,7 @@ import { HouseholdBalanceBadge } from "@/components/finance/household-balance-ba
 import { householdsHeadline, householdsDeck } from "@/lib/household/editorial-copy";
 import s from "./page.module.css";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 const ORIENT = [
   { title: "About the project", desc: "What this is and why", href: "/about" },
@@ -21,7 +21,8 @@ const ORIENT = [
 ];
 
 export default async function HouseholdsPage() {
-  const households: HouseholdSummaryDto[] = await listHouseholdsServer(await getCookieHeader()) ?? [];
+  const households: HouseholdSummaryDto[] =
+    (await listHouseholdsServer(await getCookieHeader())) ?? [];
   const count = households.length;
 
   return (
@@ -33,27 +34,35 @@ export default async function HouseholdsPage() {
       />
 
       {count === 0 ? (
-        <div className="flex flex-col items-center text-center gap-6 py-10 px-6">
-          <span className="w-14 h-14 flex items-center justify-center border-[1.5px] border-ink">
+        <div className="flex flex-col items-center gap-6 px-6 py-10 text-center">
+          <span className="flex h-14 w-14 items-center justify-center border-[1.5px] border-ink">
             <Icon name="household" size={24} strokeWidth={1.5} />
           </span>
           <div className="flex flex-wrap items-center justify-center gap-3">
-            <Btn href="/household/new" variant="primary" size="lg">+ New household</Btn>
+            <Btn href="/household/new" variant="primary" size="lg">
+              + New household
+            </Btn>
             <JoinHouseholdButton size="lg" />
           </div>
 
-          <div className="w-full max-w-[760px] mt-8 text-left">
+          <div className="mt-8 w-full max-w-[760px] text-left">
             <DepartmentHead
               kicker="Get oriented"
               title="Or <em>poke around</em> first"
               deck="Three small surfaces to read while you decide whether to spin one up."
             />
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-5">
-              {ORIENT.map(o => (
-                <Link key={o.href} href={o.href} className="ed-card ed-card-muted flex flex-col gap-2 no-underline">
+            <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-3">
+              {ORIENT.map((o) => (
+                <Link
+                  key={o.href}
+                  href={o.href}
+                  className="ed-card ed-card-muted flex flex-col gap-2 no-underline"
+                >
                   <h3 className="ed-h4">{o.title}</h3>
                   <p className="ed-hint">{o.desc}</p>
-                  <span className="ed-about-card-link">Open <Icon name="arrowRight" size={14} /></span>
+                  <span className="ed-about-card-link">
+                    Open <Icon name="arrowRight" size={14} />
+                  </span>
                 </Link>
               ))}
             </div>
@@ -61,8 +70,10 @@ export default async function HouseholdsPage() {
         </div>
       ) : (
         <>
-          <div className="flex justify-end gap-3 -mt-2">
-            <Btn href="/household/new" variant="primary" size="sm">+ New household</Btn>
+          <div className="-mt-2 flex justify-end gap-3">
+            <Btn href="/household/new" variant="primary" size="sm">
+              + New household
+            </Btn>
             <JoinHouseholdButton size="sm" />
           </div>
 
@@ -73,7 +84,10 @@ export default async function HouseholdsPage() {
               title="Your <em>ledger</em>"
               deck="Each tile opens the household's expenses, contributions, calendar, and chores."
             />
-            <div className={`${s.grid} grid gap-4`} style={{ gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))" }}>
+            <div
+              className={`${s.grid} grid gap-4`}
+              style={{ gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))" }}
+            >
               {households.map((h) => {
                 const memberCount = h.memberCount ?? 1;
                 const memberLabel = `${memberCount} member${memberCount !== 1 ? "s" : ""}`;
@@ -84,17 +98,19 @@ export default async function HouseholdsPage() {
                     className="ed-module"
                     aria-label={`Open ${h.name} — ${memberLabel}, ${h.currencyCode}`}
                   >
-                    <span className="ed-module-kicker" aria-hidden>Household</span>
+                    <span className="ed-module-kicker" aria-hidden>
+                      Household
+                    </span>
                     <h3 className="ed-module-title">{h.name}</h3>
-                    {h.description && (
-                      <p className="ed-module-desc">{h.description}</p>
-                    )}
+                    {h.description && <p className="ed-module-desc">{h.description}</p>}
                     <p className="ed-module-meta">
                       {memberLabel} · {h.currencyCode}
                     </p>
                     <div className="ed-module-foot">
                       <HouseholdBalanceBadge householdId={h.id} variant="card" />
-                      <span className="ed-module-arrow" aria-hidden>Open →</span>
+                      <span className="ed-module-arrow" aria-hidden>
+                        Open →
+                      </span>
                     </div>
                   </Link>
                 );
@@ -109,7 +125,9 @@ export default async function HouseholdsPage() {
               title="Recent <em>activity</em>"
               deck="Posts, splits, settlements, and chore completions across your households."
             />
-            <EmptyDispatch>No recent activity <em>filed</em> yet</EmptyDispatch>
+            <EmptyDispatch>
+              No recent activity <em>filed</em> yet
+            </EmptyDispatch>
           </section>
         </>
       )}

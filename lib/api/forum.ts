@@ -1,20 +1,24 @@
+import { z } from "zod";
 import { api } from "@/lib/api-client";
-import { serverFetch } from "@/lib/server-api-client";
-import type {
-  ThreadSummaryResponse,
-  ThreadMutationResponse,
-  Thread,
-  Comment,
-  ThreadPage,
-  ProfileCommentPage,
-  ForumProfile,
-  UserCommunityItem,
-  SearchResult,
+import { parsedServerFetch } from "@/lib/server-api-client";
+import {
+  ThreadMutationResponseSchema,
+  ThreadWireSchema,
+  CommentSchema,
+  ThreadPageSchema,
+  ProfileCommentPageSchema,
+  ForumProfileSchema,
+  UserCommunityItemSchema,
+  SearchResultSchema,
+  type Comment,
+  type Thread,
 } from "@/types/forum";
 
 // ─── Threads ─────────────────────────────────────────────────────────────────
 
-export const fetchThreads = (params: { communityId?: string; sort?: string; page?: number; pageSize?: number } = {}) => {
+export const fetchThreads = (
+  params: { communityId?: string; sort?: string; page?: number; pageSize?: number } = {},
+) => {
   if (params.communityId) {
     const qs = new URLSearchParams({
       page: String(params.page ?? 1),
@@ -22,18 +26,22 @@ export const fetchThreads = (params: { communityId?: string; sort?: string; page
       communityId: params.communityId,
       ...(params.sort ? { sort: params.sort } : {}),
     });
-    return api.get<ThreadPage>(`/api/forum/threads?${qs}`);
+    return api.parsed.get(`/api/forum/threads?${qs}`, ThreadPageSchema);
   }
   const qs = new URLSearchParams({
     page: String(params.page ?? 1),
     pageSize: String(params.pageSize ?? 30),
     ...(params.sort ? { sort: params.sort } : {}),
   });
-  return api.get<ThreadPage>(`/api/forum/threads/feed?${qs}`);
+  return api.parsed.get(`/api/forum/threads/feed?${qs}`, ThreadPageSchema);
 };
 
-export const fetchThread = (threadId: string) =>
-  api.get<Thread>(`/api/forum/threads/${threadId}`);
+// Thread responses carry the additional `Thread`-only convenience fields
+// (body alias, commentCount, etc.) as undefined. The wire schema only checks
+// the API-returned shape; we cast back to `Thread` for downstream type
+// consumers that branch on the optional extras.
+export const fetchThread = (threadId: string): Promise<Thread> =>
+  api.parsed.get(`/api/forum/threads/${threadId}`, ThreadWireSchema) as Promise<Thread>;
 
 export const createThread = (body: {
   communityId?: string;
@@ -42,9 +50,49 @@ export const createThread = (body: {
   body?: string;
   content?: string;
   flair?: string;
-}) => api.post<ThreadMutationResponse>("/api/forum/threads", body);
+}) => api.parsed.post("/api/forum/threads", ThreadMutationResponseSchema, body);
 
 // ─── Comments ────────────────────────────────────────────────────────────────
+
+// The /comments/thread endpoint returns a tree (`rootComments` + children),
+// which our consumers want flattened to a recursive Comment[]. The schema
+// validates the tree shape, then a mapper rebuilds it as the Comment[] the
+// rest of the app already consumes.
+const CommentTreeNodeSchema: z.ZodType<{
+  comment: {
+    commentId: string;
+    threadId: string;
+    authorId?: string;
+    authorDisplayName?: string;
+    authorAvatarUrl?: string;
+    content: string;
+    createdAt: string;
+    editedAt?: string;
+    deletedAt?: string;
+    parentCommentId?: string;
+    voteScore: number;
+  };
+  children: Array<unknown>;
+}> = z.object({
+  comment: z.object({
+    commentId: z.string(),
+    threadId: z.string(),
+    authorId: z.string().optional(),
+    authorDisplayName: z.string().optional(),
+    authorAvatarUrl: z.string().optional(),
+    content: z.string(),
+    createdAt: z.string(),
+    editedAt: z.string().optional(),
+    deletedAt: z.string().optional(),
+    parentCommentId: z.string().optional(),
+    voteScore: z.number(),
+  }),
+  children: z.lazy(() => z.array(CommentTreeNodeSchema)),
+});
+
+const CommentTreeResponseSchema = z.object({
+  rootComments: z.array(CommentTreeNodeSchema),
+});
 
 interface CommentTreeNode {
   comment: {
@@ -79,12 +127,18 @@ function mapTreeNode(node: CommentTreeNode): Comment {
 }
 
 export const fetchComments = async (threadId: string): Promise<{ items: Comment[] }> => {
-  const data = await api.get<{ rootComments: CommentTreeNode[] }>(`/api/forum/comments/thread/${threadId}`);
-  return { items: (data?.rootComments ?? []).map(mapTreeNode) };
+  const data = await api.parsed.get(
+    `/api/forum/comments/thread/${threadId}`,
+    CommentTreeResponseSchema,
+  );
+  return { items: (data?.rootComments ?? []).map((n) => mapTreeNode(n as CommentTreeNode)) };
 };
 
-export const createComment = (body: { threadId: string; content: string; parentCommentId?: string }) =>
-  api.post<Comment>("/api/forum/comments", body);
+export const createComment = (body: {
+  threadId: string;
+  content: string;
+  parentCommentId?: string;
+}) => api.parsed.post("/api/forum/comments", CommentSchema, body);
 
 // ─── Votes ───────────────────────────────────────────────────────────────────
 
@@ -93,27 +147,57 @@ export const castVote = (body: { targetType: 0 | 1; targetId: string; direction:
 
 // ─── Search ──────────────────────────────────────────────────────────────────
 
+const SearchResponseSchema = z.object({
+  items: z.array(SearchResultSchema),
+  totalCount: z.number(),
+});
+
 export const searchForum = (query: string) =>
-  api.get<{ items: SearchResult[]; totalCount: number }>(
-    `/api/forum/search?query=${encodeURIComponent(query)}&scope=All&sort=Relevance`
+  api.parsed.get(
+    `/api/forum/search?query=${encodeURIComponent(query)}&scope=All&sort=Relevance`,
+    SearchResponseSchema,
   );
 
 export const searchThreads = (query: string) =>
-  api.get<ThreadPage>(`/api/forum/threads/search?q=${encodeURIComponent(query)}&page=1&pageSize=20`);
+  api.parsed.get(
+    `/api/forum/threads/search?q=${encodeURIComponent(query)}&page=1&pageSize=20`,
+    ThreadPageSchema,
+  );
 
 // ─── Profiles ────────────────────────────────────────────────────────────────
 
 export const fetchForumProfile = (userId: string) =>
-  api.get<ForumProfile>(`/api/forum/profiles/${userId}`);
+  api.parsed.get(`/api/forum/profiles/${userId}`, ForumProfileSchema);
 
 export const fetchProfileThreads = (userId: string, page = 1, pageSize = 20) =>
-  api.get<ThreadPage>(`/api/forum/profiles/${userId}/threads?page=${page}&pageSize=${pageSize}`);
+  api.parsed.get(
+    `/api/forum/profiles/${userId}/threads?page=${page}&pageSize=${pageSize}`,
+    ThreadPageSchema,
+  );
 
 export const fetchProfileComments = (userId: string, page = 1, pageSize = 20) =>
-  api.get<ProfileCommentPage>(`/api/forum/profiles/${userId}/comments?page=${page}&pageSize=${pageSize}`);
+  api.parsed.get(
+    `/api/forum/profiles/${userId}/comments?page=${page}&pageSize=${pageSize}`,
+    ProfileCommentPageSchema,
+  );
 
 export const fetchProfileMemberships = (userId: string) =>
-  api.get<UserCommunityItem[]>(`/api/forum/profiles/${userId}/memberships`);
+  api.parsed.get(
+    `/api/forum/profiles/${userId}/memberships`,
+    z.array(UserCommunityItemSchema),
+  );
+
+export const MyForumProfileSchema = z.object({
+  bio: z.string().nullable().optional(),
+  signature: z.string().nullable().optional(),
+});
+export type MyForumProfile = z.infer<typeof MyForumProfileSchema>;
+
+export const fetchMyForumProfile = () =>
+  api.parsed.get("/api/forum/profiles/me", MyForumProfileSchema);
+
+export const updateMyForumProfile = (payload: { bio: string | null; signature: string | null }) =>
+  api.put<void>("/api/forum/profiles/me", payload);
 
 // ─── Server-side (RSC) fetchers ──────────────────────────────────────────────
 
@@ -129,7 +213,7 @@ export const fetchThreadsServer = (
       communityId: params.communityId,
       ...(params.sort ? { sort: params.sort } : {}),
     });
-    return serverFetch<ThreadPage>(`/api/forum/threads?${qs}`, cookieHeader);
+    return parsedServerFetch(`/api/forum/threads?${qs}`, ThreadPageSchema, cookieHeader);
   }
 
   // Global feed endpoint
@@ -138,16 +222,27 @@ export const fetchThreadsServer = (
     pageSize: String(params.pageSize ?? 30),
     ...(params.sort ? { sort: params.sort } : {}),
   });
-  return serverFetch<ThreadPage>(`/api/forum/threads/feed?${qs}`, cookieHeader);
+  return parsedServerFetch(`/api/forum/threads/feed?${qs}`, ThreadPageSchema, cookieHeader);
 };
 
-export const fetchThreadServer = (threadId: string, cookieHeader?: string) =>
-  serverFetch<Thread>(`/api/forum/threads/${threadId}`, cookieHeader);
+export const fetchThreadServer = (
+  threadId: string,
+  cookieHeader?: string,
+): Promise<Thread | null> =>
+  parsedServerFetch(
+    `/api/forum/threads/${threadId}`,
+    ThreadWireSchema,
+    cookieHeader,
+  ) as Promise<Thread | null>;
 
-export const fetchCommentsServer = async (threadId: string, cookieHeader?: string): Promise<{ items: Comment[] }> => {
-  const data = await serverFetch<{ rootComments: CommentTreeNode[] }>(
+export const fetchCommentsServer = async (
+  threadId: string,
+  cookieHeader?: string,
+): Promise<{ items: Comment[] }> => {
+  const data = await parsedServerFetch(
     `/api/forum/comments/thread/${threadId}`,
+    CommentTreeResponseSchema,
     cookieHeader,
   );
-  return { items: (data?.rootComments ?? []).map(mapTreeNode) };
+  return { items: (data?.rootComments ?? []).map((n) => mapTreeNode(n as CommentTreeNode)) };
 };

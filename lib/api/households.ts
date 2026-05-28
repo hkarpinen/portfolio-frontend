@@ -1,69 +1,83 @@
+import { z } from "zod";
 import { api } from "@/lib/api-client";
-import { serverFetch } from "@/lib/server-api-client";
-import type {
-  Household,
-  MembershipResponse,
-  HouseholdDetailResponse,
-  UserOverview,
-  HouseholdMonthlyContributions,
-  ContributionPeriodSummary,
-} from "@/types/finance";
+import { parsedServerFetch } from "@/lib/server-api-client";
+import { HouseholdSchema, HouseholdDetailResponseSchema } from "@/types/household";
+import { MembershipResponseSchema } from "@/types/membership";
+import { UserOverviewSchema } from "@/types/user-overview";
+import {
+  HouseholdMonthlyContributionsSchema,
+  ContributionPeriodSchema,
+} from "@/types/contributions";
 
-export interface HouseholdSummaryDto {
-  id: string;
-  name: string;
-  description?: string;
-  currencyCode: string;
-  role: string;
-  joinedAt: string;
-  memberCount: number;
-  createdAt: string;
-}
+// ── Local response shapes ─────────────────────────────────────────────────────
+// These DTOs are co-located with the API helpers (rather than promoted to
+// types/) because they're not consumed outside this file.
 
-export interface HouseholdDetailDto {
-  id: string;
-  name: string;
-  description?: string;
-  ownerId: string;
-  currencyCode: string;
-  createdAt: string;
-  memberCount: number;
-}
+export const HouseholdSummaryDtoSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string().optional(),
+  currencyCode: z.string(),
+  role: z.string(),
+  joinedAt: z.string(),
+  memberCount: z.number(),
+  createdAt: z.string(),
+});
+export type HouseholdSummaryDto = z.infer<typeof HouseholdSummaryDtoSchema>;
 
-export interface MemberDto {
-  membershipId: string;
-  userId: string;
-  username: string;
-  displayName?: string;
-  role: string;
-  joinedAt: string;
-}
+export const HouseholdDetailDtoSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string().optional(),
+  ownerId: z.string(),
+  currencyCode: z.string(),
+  createdAt: z.string(),
+  memberCount: z.number(),
+});
+export type HouseholdDetailDto = z.infer<typeof HouseholdDetailDtoSchema>;
 
-export const fetchOverview = () =>
-  api.get<UserOverview>("/api/finance/overview");
+export const MemberDtoSchema = z.object({
+  membershipId: z.string(),
+  userId: z.string(),
+  username: z.string(),
+  displayName: z.string().optional(),
+  role: z.string(),
+  joinedAt: z.string(),
+});
+export type MemberDto = z.infer<typeof MemberDtoSchema>;
+
+// Small inline shapes for one-off endpoint responses. Not promoted to a
+// named type because they have no other consumers.
+const CreatedIdSchema = z.object({ id: z.string() });
+const HouseholdIdSchema = z.object({ householdId: z.string() });
+const DemoReadySchema = z.object({ ready: z.boolean() });
+
+// ── Endpoints ─────────────────────────────────────────────────────────────────
+
+export const fetchOverview = () => api.parsed.get("/api/finance/overview", UserOverviewSchema);
 
 export const fetchHousehold = (id: string) =>
-  api.get<Household>(`/api/households/${id}`);
+  api.parsed.get(`/api/households/${id}`, HouseholdSchema);
 
 export const fetchHouseholdDetail = (id: string) =>
-  api.get<HouseholdDetailResponse>(`/api/households/${id}`);
+  api.parsed.get(`/api/households/${id}`, HouseholdDetailResponseSchema);
 
 export const fetchHouseholdMembers = (id: string) =>
-  api.get<MembershipResponse[]>(`/api/households/${id}/members`);
+  api.parsed.get(`/api/households/${id}/members`, z.array(MembershipResponseSchema));
 
 export const createHousehold = (body: {
   name: string;
   description?: string;
   currencyCode?: string;
-}) => api.post<{ id: string }>("/api/households", body);
+}) => api.parsed.post("/api/households", CreatedIdSchema, body);
 
 export const updateHousehold = (
   id: string,
-  body: { name: string; description?: string; currencyCode?: string }
-) => api.put<Household>(`/api/households/${id}`, body);
+  body: { name: string; description?: string; currencyCode?: string },
+) => api.parsed.put(`/api/households/${id}`, HouseholdSchema, body);
 
 export const joinHousehold = (invitationCode: string) =>
-  api.post<{ householdId: string }>("/api/households/accept-invitation", { invitationCode });
+  api.parsed.post("/api/households/accept-invitation", HouseholdIdSchema, { invitationCode });
 
 export const removeMember = (householdId: string, membershipId: string) =>
   api.delete(`/api/households/${householdId}/members/${membershipId}`);
@@ -72,46 +86,58 @@ export const changeMemberRole = (householdId: string, membershipId: string, role
   api.put(`/api/households/${householdId}/members/${membershipId}/role`, { role });
 
 export const generateInvite = (householdId: string, recipientEmail?: string) =>
-  api.post(`/api/households/${householdId}/invite`, recipientEmail ? { recipientEmail } : undefined);
+  api.post(
+    `/api/households/${householdId}/invite`,
+    recipientEmail ? { recipientEmail } : undefined,
+  );
 
 export const fetchHouseholdContributions = (householdId: string) =>
-  api.get<HouseholdMonthlyContributions[]>(`/api/finance/groups/${householdId}/contributions`);
+  api.parsed.get(
+    `/api/finance/groups/${householdId}/contributions`,
+    z.array(HouseholdMonthlyContributionsSchema),
+  );
 
 export const deleteHousehold = (householdId: string) =>
   api.delete(`/api/households/${householdId}`);
 
 export const transferOwnership = (householdId: string, newOwnerId: string) =>
-  api.post<Household>(`/api/households/${householdId}/transfer-ownership`, { newOwnerId });
+  api.parsed.post(`/api/households/${householdId}/transfer-ownership`, HouseholdSchema, {
+    newOwnerId,
+  });
 
 export const fetchOverviewServer = (cookieHeader: string) =>
-  serverFetch<UserOverview>("/api/finance/overview", cookieHeader);
+  parsedServerFetch("/api/finance/overview", UserOverviewSchema, cookieHeader);
 
 export const fetchContributionSummary = (months = 13, past = 3) =>
-  api.get<ContributionPeriodSummary[]>(`/api/finance/contribution-summary?months=${months}&past=${past}`);
+  api.parsed.get(
+    `/api/finance/contribution-summary?months=${months}&past=${past}`,
+    z.array(ContributionPeriodSchema),
+  );
 
 export const fetchContributionSummaryServer = (cookieHeader: string, months = 13, past = 3) =>
-  serverFetch<ContributionPeriodSummary[]>(
+  parsedServerFetch(
     `/api/finance/contribution-summary?months=${months}&past=${past}`,
+    z.array(ContributionPeriodSchema),
     cookieHeader,
   );
 
 export const listHouseholdsServer = (cookieHeader: string) =>
-  serverFetch<HouseholdSummaryDto[]>("/api/households", cookieHeader);
+  parsedServerFetch("/api/households", z.array(HouseholdSummaryDtoSchema), cookieHeader);
 
 export const fetchHouseholdDetailServer = (id: string, cookieHeader: string) =>
-  serverFetch<HouseholdDetailResponse>(`/api/households/${id}`, cookieHeader);
+  parsedServerFetch(`/api/households/${id}`, HouseholdDetailResponseSchema, cookieHeader);
 
 export const fetchHouseholdServer = (id: string, cookieHeader: string) =>
-  serverFetch<HouseholdDetailDto>(`/api/households/${id}`, cookieHeader);
+  parsedServerFetch(`/api/households/${id}`, HouseholdDetailDtoSchema, cookieHeader);
 
 export const fetchHouseholdMembersServer = (id: string, cookieHeader: string) =>
-  serverFetch<MemberDto[]>(`/api/households/${id}/members`, cookieHeader);
+  parsedServerFetch(`/api/households/${id}/members`, z.array(MemberDtoSchema), cookieHeader);
 
 export const fetchHouseholdContributionsServer = (householdId: string, cookieHeader: string) =>
-  serverFetch<HouseholdMonthlyContributions[]>(
+  parsedServerFetch(
     `/api/finance/groups/${householdId}/contributions`,
+    z.array(HouseholdMonthlyContributionsSchema),
     cookieHeader,
   );
 
-export const checkDemoReady = () =>
-  api.get<{ ready: boolean }>("/api/households/demo/ready");
+export const checkDemoReady = () => api.parsed.get("/api/households/demo/ready", DemoReadySchema);

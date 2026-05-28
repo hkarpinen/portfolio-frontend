@@ -1,14 +1,13 @@
 "use client";
 
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Btn, Alert, Input, Textarea, SelectField } from "@/components/editorial";
 import { useUpdateHousehold } from "@/hooks/use-household";
-import { useFormSubmit } from "@/hooks/use-form-submit";
+import { getErrorMessage } from "@/lib/error-messages";
 import { useRouter } from "next/navigation";
-import type { Household } from "@/types/finance";
+import type { Household } from "@/types/household";
 
 const SPLIT_METHODS = ["Equal", "ByIncome", "Custom", "Percentage"] as const;
 const CURRENCIES = ["USD", "EUR", "GBP", "CAD", "AUD", "JPY", "CHF", "SEK", "NOK", "DKK"] as const;
@@ -24,10 +23,13 @@ type SettingsForm = z.infer<typeof settingsSchema>;
 
 export function SettingsForm({ household }: { household: Household }) {
   const router = useRouter();
-  const [saveSuccess, setSaveSuccess] = useState(false);
   const updateHouseholdMutation = useUpdateHousehold(household.householdId);
 
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<SettingsForm>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SettingsForm>({
     resolver: zodResolver(settingsSchema),
     defaultValues: {
       name: household.name,
@@ -36,35 +38,25 @@ export function SettingsForm({ household }: { household: Household }) {
     },
   });
 
-  const { submit, serverError } = useFormSubmit(
-    async (data: SettingsForm) => {
-      await updateHouseholdMutation.mutateAsync({
+  const onSave = (data: SettingsForm) => {
+    updateHouseholdMutation.mutate(
+      {
         name: data.name,
         description: data.description || undefined,
         currencyCode: data.currencyCode,
-      });
-    },
-    {
-      onSuccess: () => {
-        setSaveSuccess(true);
-        router.refresh();
       },
-    },
-  );
-
-  const onSave = (data: SettingsForm) => {
-    setSaveSuccess(false);
-    submit(data);
+      { onSuccess: () => router.refresh() },
+    );
   };
 
   return (
-    <section className="border-ink bg-paper-2 p-[24px] shadow-sm flex flex-col gap-[16px]">
-      <p className="text-sm font-bold text-ink-3 uppercase tracking-[0.1em]">
-        Household Details
-      </p>
+    <section className="flex flex-col gap-[16px] border-ink bg-paper-2 p-[24px] shadow-sm">
+      <p className="text-sm font-bold uppercase tracking-[0.1em] text-ink-3">Household Details</p>
       <form onSubmit={handleSubmit(onSave)} className="flex flex-col gap-[14px]">
-        {serverError && <Alert variant="danger">{serverError}</Alert>}
-        {saveSuccess && <Alert variant="success">Changes saved!</Alert>}
+        {updateHouseholdMutation.isError && (
+          <Alert variant="danger">{getErrorMessage(updateHouseholdMutation.error)}</Alert>
+        )}
+        {updateHouseholdMutation.isSuccess && <Alert variant="success">Changes saved!</Alert>}
         <Input label="Name" {...register("name")} error={errors.name?.message} />
         <Textarea
           label="Description"
@@ -73,15 +65,27 @@ export function SettingsForm({ household }: { household: Household }) {
           error={errors.description?.message}
         />
         <div className="form-grid-2">
-          <SelectField label="Currency" {...register("currencyCode")} error={errors.currencyCode?.message}>
-            {CURRENCIES.map((c) => <option key={c} value={c}>{c}</option>)}
+          <SelectField
+            label="Currency"
+            {...register("currencyCode")}
+            error={errors.currencyCode?.message}
+          >
+            {CURRENCIES.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
           </SelectField>
           <SelectField label="Default Split" {...register("defaultSplitMethod")}>
-            {SPLIT_METHODS.map((m) => <option key={m} value={m}>{m}</option>)}
+            {SPLIT_METHODS.map((m) => (
+              <option key={m} value={m}>
+                {m}
+              </option>
+            ))}
           </SelectField>
         </div>
-        <Btn type="submit" disabled={isSubmitting} variant="primary">
-          {isSubmitting ? "Saving…" : "Save Changes"}
+        <Btn type="submit" disabled={updateHouseholdMutation.isPending} variant="primary">
+          {updateHouseholdMutation.isPending ? "Saving…" : "Save Changes"}
         </Btn>
       </form>
     </section>

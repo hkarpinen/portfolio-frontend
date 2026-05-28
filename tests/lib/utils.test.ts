@@ -75,11 +75,11 @@ describe("toMonthlyAmount", () => {
   });
 
   it("converts weekly to monthly (×52÷12)", () => {
-    expect(toMonthlyAmount(1200, "WEEKLY")).toBeCloseTo(1200 * 52 / 12);
+    expect(toMonthlyAmount(1200, "WEEKLY")).toBeCloseTo((1200 * 52) / 12);
   });
 
   it("converts biweekly to monthly (×26÷12)", () => {
-    expect(toMonthlyAmount(1200, "BIWEEKLY")).toBeCloseTo(1200 * 26 / 12);
+    expect(toMonthlyAmount(1200, "BIWEEKLY")).toBeCloseTo((1200 * 26) / 12);
   });
 
   it("converts quarterly to monthly (÷3)", () => {

@@ -11,7 +11,14 @@ interface ToggleProps {
   disabled?: boolean;
 }
 
-export function Toggle({ checked, onCheckedChange, size = "md", id, label, disabled }: ToggleProps) {
+export function Toggle({
+  checked,
+  onCheckedChange,
+  size = "md",
+  id,
+  label,
+  disabled,
+}: ToggleProps) {
   const trackW = size === "md" ? 38 : 30;
   const trackH = size === "md" ? 20 : 16;
   const knobSize = trackH - 4;
@@ -23,7 +30,8 @@ export function Toggle({ checked, onCheckedChange, size = "md", id, label, disab
         checked={checked}
         onCheckedChange={onCheckedChange}
         disabled={disabled}
- className="border-ink" style={{
+        className="border-ink"
+        style={{
           width: trackW,
           height: trackH,
           background: checked ? "var(--ink)" : "var(--paper-3)",
@@ -50,7 +58,7 @@ export function Toggle({ checked, onCheckedChange, size = "md", id, label, disab
       {label && (
         <label
           htmlFor={id}
-          className="font-body cursor-pointer"
+          className="cursor-pointer font-body"
           style={{ fontSize: "0.938rem", color: "var(--ink-2)" }}
         >
           {label}

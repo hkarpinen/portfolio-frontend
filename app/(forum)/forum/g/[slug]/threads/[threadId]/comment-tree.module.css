@@ -9,10 +9,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 110ms, color 110ms;
+  transition:
+    background 110ms,
+    color 110ms;
 }
-.voteBtnUp:not([data-voted]):hover   { background: var(--surface-3); color: var(--success); }
-.voteBtnDown:not([data-voted]):hover { background: var(--surface-3); color: var(--danger); }
+.voteBtnUp:not([data-voted]):hover {
+  background: var(--surface-3);
+  color: var(--success);
+}
+.voteBtnDown:not([data-voted]):hover {
+  background: var(--surface-3);
+  color: var(--danger);
+}
 
 /* Reply form buttons */
 .replySubmit {
@@ -27,8 +35,14 @@
   font-family: var(--ff-body);
   transition: background 110ms;
 }
-.replySubmit:not(:disabled):hover { background: var(--accent-hi); }
-.replySubmit:disabled { background: var(--surface-3); color: var(--text-3); cursor: not-allowed; }
+.replySubmit:not(:disabled):hover {
+  background: var(--accent-hi);
+}
+.replySubmit:disabled {
+  background: var(--surface-3);
+  color: var(--text-3);
+  cursor: not-allowed;
+}
 
 .replyCancel {
   padding: 5px 12px;
@@ -39,13 +53,23 @@
   cursor: pointer;
   font-size: var(--ts-label);
   font-weight: 500;
-  transition: border-color 110ms, color 110ms;
+  transition:
+    border-color 110ms,
+    color 110ms;
 }
-.replyCancel:hover { color: var(--text); border-color: var(--border-2); }
+.replyCancel:hover {
+  color: var(--text);
+  border-color: var(--border-2);
+}
 
 /* Author link */
-.authorLink { color: inherit; text-decoration: none; }
-.authorLink:hover { color: var(--accent); }
+.authorLink {
+  color: inherit;
+  text-decoration: none;
+}
+.authorLink:hover {
+  color: var(--accent);
+}
 
 /* Reply button */
 .replyBtn {
@@ -58,9 +82,14 @@
   padding: 3px 8px;
   border-radius: 6px;
   font-family: var(--ff-body);
-  transition: background 110ms, color 110ms;
+  transition:
+    background 110ms,
+    color 110ms;
   display: flex;
   align-items: center;
   gap: 4px;
 }
-.replyBtn:not([data-replying]):hover { background: var(--surface-3); color: var(--text-2); }
+.replyBtn:not([data-replying]):hover {
+  background: var(--surface-3);
+  color: var(--text-2);
+}

@@ -75,7 +75,15 @@ export function ImageUpload({
       className={`flex flex-col items-center gap-8 border-ink${className ? ` ${className}` : ""}`}
       style={{ background: "var(--paper-2)", padding: "20px", boxShadow: "var(--shadow-stamp)" }}
     >
-      <p style={{ fontSize: "var(--ts-meta)", fontWeight: 700, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
+      <p
+        style={{
+          fontSize: "var(--ts-meta)",
+          fontWeight: 700,
+          color: "var(--text-3)",
+          textTransform: "uppercase",
+          letterSpacing: "0.1em",
+        }}
+      >
         Avatar
       </p>
 
@@ -85,11 +93,28 @@ export function ImageUpload({
           <img
             src={value}
             alt="Uploaded image"
-            style={{ width: size, height: size, objectFit: "cover", border: "2px solid var(--ink)", borderRadius }}
+            style={{
+              width: size,
+              height: size,
+              objectFit: "cover",
+              border: "2px solid var(--ink)",
+              borderRadius,
+            }}
           />
         ) : (
           <div
-            style={{ width: size, height: size, border: "2px solid var(--ink)", borderRadius, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.5rem", color: "var(--ink-3)", background: "var(--paper-3)" }}
+            style={{
+              width: size,
+              height: size,
+              border: "2px solid var(--ink)",
+              borderRadius,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "1.5rem",
+              color: "var(--ink-3)",
+              background: "var(--paper-3)",
+            }}
           >
             ?
           </div>
@@ -113,19 +138,29 @@ export function ImageUpload({
         className="hidden"
       />
 
-      <div className="flex flex-col gap-4 w-full">
-        <Btn variant="secondary" type="button" onClick={() => fileInputRef.current?.click()} disabled={uploading}>
+      <div className="flex w-full flex-col gap-4">
+        <Btn
+          variant="secondary"
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={uploading}
+        >
           {uploading ? "Uploading…" : "Upload photo"}
         </Btn>
         {value && (
-          <Btn variant="secondary" type="button" onClick={() => onChange(null)} disabled={uploading}>
+          <Btn
+            variant="secondary"
+            type="button"
+            onClick={() => onChange(null)}
+            disabled={uploading}
+          >
             Remove
           </Btn>
         )}
       </div>
 
-      {displayError && <p className="text-red text-base text-center">{displayError}</p>}
-      <p className="text-sm text-ink-3 text-center">{hint}</p>
+      {displayError && <p className="text-center text-base text-red">{displayError}</p>}
+      <p className="text-center text-sm text-ink-3">{hint}</p>
     </div>
   );
 }

@@ -1,11 +1,10 @@
-import { getInitials } from "@/lib/utils";
-import { cn } from "@/lib/utils";
+import { getInitials, cn } from "@/lib/utils";
 
 type Size = "sm" | "md" | "lg";
 const SIZE_CLASS: Record<Size, string> = {
-  sm: "w-7 h-7 text-[0.66rem]",   // 14px × 14px (halved scale; verify against design)
-  md: "w-9 h-9 text-xs",          // 18px × 18px
-  lg: "w-12 h-12 text-base",      // 24px × 24px
+  sm: "w-7 h-7 text-[0.66rem]", // 14px × 14px (halved scale; verify against design)
+  md: "w-9 h-9 text-xs", // 18px × 18px
+  lg: "w-12 h-12 text-base", // 24px × 24px
 };
 
 export function UserInitials({
@@ -30,9 +29,5 @@ export function UserInitials({
     return <img src={avatarUrl} alt="" className={cn("object-cover", classes)} />;
   }
 
-  return (
-    <div className={cn("bg-red-soft text-red", classes)}>
-      {getInitials(name ?? "")}
-    </div>
-  );
+  return <div className={cn("bg-red-soft text-red", classes)}>{getInitials(name ?? "")}</div>;
 }

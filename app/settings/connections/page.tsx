@@ -37,15 +37,15 @@ const OAUTH_SERVICES: OAuthService[] = [
 
 function OAuthServiceCard({ service }: { service: OAuthService }) {
   return (
-    <div className="bg-paper border-ink p-[16px_20px] flex items-center gap-6">
-      <div className="flex-1 min-w-0">
+    <div className="flex items-center gap-6 border-ink bg-paper p-[16px_20px]">
+      <div className="min-w-0 flex-1">
         <p className="text-base font-semibold text-ink">
           {service.label}
           {service.connected && service.handle && (
             <span className="ml-2 text-sm font-normal text-ink-3">· {service.handle}</span>
           )}
         </p>
-        <p className="text-sm text-ink-3 mt-[3px]">
+        <p className="mt-[3px] text-sm text-ink-3">
           {service.connected
             ? `Connected · ${service.description}`
             : `Not connected · ${service.description}`}
@@ -56,7 +56,9 @@ function OAuthServiceCard({ service }: { service: OAuthService }) {
           variant="danger"
           size="sm"
           type="button"
-          onClick={() => {/* TODO(handoff8): wire to disconnect endpoint */}}
+          onClick={() => {
+            /* TODO(handoff8): wire to disconnect endpoint */
+          }}
           aria-label={`Disconnect ${service.label}`}
           className="shrink-0 whitespace-nowrap"
         >
@@ -67,7 +69,9 @@ function OAuthServiceCard({ service }: { service: OAuthService }) {
           variant="secondary"
           size="sm"
           type="button"
-          onClick={() => {/* TODO(handoff8): wire to OAuth connect flow */}}
+          onClick={() => {
+            /* TODO(handoff8): wire to OAuth connect flow */
+          }}
           aria-label={`Connect ${service.label}`}
           className="shrink-0 whitespace-nowrap"
         >
@@ -80,27 +84,17 @@ function OAuthServiceCard({ service }: { service: OAuthService }) {
 
 function EmptyState({ onConnect, loading }: { onConnect: () => void; loading: boolean }) {
   return (
-    <div
-      className="text-center py-[52px] px-[24px] bg-paper-2 border border-dashed border-ink-3"
-    >
-      <div className="flex justify-center mb-10">
-        <span className="text-ink"><Icon name="home" size={48} strokeWidth={1.5} /></span>
+    <div className="border border-dashed border-ink-3 bg-paper-2 px-[24px] py-[52px] text-center">
+      <div className="mb-10 flex justify-center">
+        <span className="text-ink">
+          <Icon name="home" size={48} strokeWidth={1.5} />
+        </span>
       </div>
-      <p className="text-md font-semibold text-ink mb-4 font-serif">
-        No bank accounts connected
-      </p>
-      <p
-        className="text-base text-ink-3 mb-6 max-w-[300px] leading-[1.5] mx-auto"
-      >
+      <p className="mb-4 font-serif text-md font-semibold text-ink">No bank accounts connected</p>
+      <p className="mx-auto mb-6 max-w-[300px] text-base leading-[1.5] text-ink-3">
         Connect a bank to automatically track income and expenses from your transaction history.
       </p>
-      <Btn
-        variant="secondary"
-        size="lg"
-        onClick={onConnect}
-        disabled={loading}
-        loading={loading}
-      >
+      <Btn variant="secondary" size="lg" onClick={onConnect} disabled={loading} loading={loading}>
         {loading ? "Opening…" : "Connect a bank account"}
       </Btn>
     </div>
@@ -115,12 +109,14 @@ export default function ConnectionsPage() {
 
   return (
     <div className="flex flex-col gap-10">
-
       {/* ── OAuth connected accounts ─────────────────────────────────────── */}
       <section aria-labelledby="oauth-section-heading">
-        <h2 id="oauth-section-heading" className="text-md font-semibold text-ink mb-2">Connected accounts</h2>
-        <p className="text-base text-ink-2 mb-6">
-          Link social accounts to sign in without a password. Disconnecting removes single sign-on access but does not delete your account.
+        <h2 id="oauth-section-heading" className="mb-2 text-md font-semibold text-ink">
+          Connected accounts
+        </h2>
+        <p className="mb-6 text-base text-ink-2">
+          Link social accounts to sign in without a password. Disconnecting removes single sign-on
+          access but does not delete your account.
         </p>
         <div className="flex flex-col gap-4">
           {OAUTH_SERVICES.map((svc) => (
@@ -131,9 +127,9 @@ export default function ConnectionsPage() {
 
       {/* ── Bank connections ─────────────────────────────────────────────── */}
       <section aria-labelledby="bank-section-heading">
-        <div className="flex items-start justify-between gap-8 mb-6">
+        <div className="mb-6 flex items-start justify-between gap-8">
           <div>
-            <h2 id="bank-section-heading" className="text-md font-semibold text-ink mb-2">
+            <h2 id="bank-section-heading" className="mb-2 text-md font-semibold text-ink">
               Bank connections
             </h2>
             <p className="text-base text-ink-2">
@@ -152,15 +148,15 @@ export default function ConnectionsPage() {
               {linkBank.isExchanging
                 ? "Connecting…"
                 : linkBank.isLaunching
-                ? "Opening…"
-                : "+ Add account"}
+                  ? "Opening…"
+                  : "+ Add account"}
             </Btn>
           )}
         </div>
 
         {linkBank.exchangeError && (
           <p
-            className="text-base text-red mb-8 py-[10px] px-[14px]"
+            className="mb-8 px-[14px] py-[10px] text-base text-red"
             style={{ background: "color-mix(in oklch, var(--danger) 10%, transparent)" }}
           >
             Could not link account — please try again.
@@ -186,7 +182,6 @@ export default function ConnectionsPage() {
           </div>
         )}
       </section>
-
     </div>
   );
 }

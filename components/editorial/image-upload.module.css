@@ -13,8 +13,12 @@
   cursor: pointer;
   border: none;
 }
-.editOverlay:hover   { opacity: 1; }
-.editOverlay:disabled { cursor: not-allowed; }
+.editOverlay:hover {
+  opacity: 1;
+}
+.editOverlay:disabled {
+  cursor: not-allowed;
+}
 
 .circleOverlay {
   border-radius: 9999px;

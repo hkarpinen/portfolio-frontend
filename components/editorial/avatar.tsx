@@ -15,14 +15,14 @@ export function Avatar({ name, url, size = 36, online }: AvatarProps) {
   return (
     <div className="relative shrink-0" style={{ width: size, height: size }}>
       <RadixAvatar.Root
-        className="border-ink bg-paper-3 flex items-center justify-center shrink-0"
+        className="flex shrink-0 items-center justify-center border-ink bg-paper-3"
         style={{ width: size, height: size }}
       >
         {url && (
           <RadixAvatar.Image
             src={url}
             alt={name ?? ""}
-            className="w-full h-full object-cover block"
+            className="block h-full w-full object-cover"
           />
         )}
         <RadixAvatar.Fallback
@@ -60,17 +60,14 @@ export function CommunityAvatar({ name, image, size = 48 }: CommunityAvatarProps
 
   return (
     <div
-      className="shrink-0 flex items-center justify-center border-ink overflow-hidden bg-paper-2"
+      className="flex shrink-0 items-center justify-center overflow-hidden border-ink bg-paper-2"
       style={{ width: size, height: size }}
     >
       {image ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={image} alt={name} className="w-full h-full object-cover" />
+        <img src={image} alt={name} className="h-full w-full object-cover" />
       ) : (
-        <span
-          className="font-serif italic text-ink"
-          style={{ fontSize: size * 0.5 }}
-        >
+        <span className="font-serif italic text-ink" style={{ fontSize: size * 0.5 }}>
           {initial}
         </span>
       )}

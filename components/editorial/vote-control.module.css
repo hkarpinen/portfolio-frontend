@@ -8,7 +8,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 110ms, color 110ms;
+  transition:
+    background 110ms,
+    color 110ms;
   /* min-h-hit / min-w-hit equivalent for touch targets */
   min-width: 28px;
   min-height: 28px;
@@ -29,9 +31,15 @@
   border-radius: 6px;
 }
 
-.voteBtn:not([data-voted]):hover { background: var(--surface-2); }
-.voteBtnUp:not([data-voted]):hover   { color: var(--success); }
-.voteBtnDown:not([data-voted]):hover { color: var(--danger); }
+.voteBtn:not([data-voted]):hover {
+  background: var(--surface-2);
+}
+.voteBtnUp:not([data-voted]):hover {
+  color: var(--success);
+}
+.voteBtnDown:not([data-voted]):hover {
+  color: var(--danger);
+}
 
 .voteBtn[disabled] {
   cursor: not-allowed;

@@ -14,5 +14,9 @@
   cursor: pointer;
   border: none;
 }
-.avatarEditOverlay:hover   { opacity: 1; }
-.avatarEditOverlay:disabled { cursor: not-allowed; }
+.avatarEditOverlay:hover {
+  opacity: 1;
+}
+.avatarEditOverlay:disabled {
+  cursor: not-allowed;
+}

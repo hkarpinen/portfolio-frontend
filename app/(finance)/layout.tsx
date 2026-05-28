@@ -1,7 +1,13 @@
+import type { Metadata } from "next";
 import { AppShellServer } from "@/components/layout/app-shell-server";
 import { requireUser } from "@/lib/auth/session";
 import { RepoFooter } from "@/components/layout/repo-footer";
 import { FinanceMasthead } from "./finance-masthead";
+
+/** Authenticated app — contains user financial data. Never indexed. */
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 /**
  * Finance route group layout.

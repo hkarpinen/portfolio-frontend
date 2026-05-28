@@ -5,7 +5,7 @@ import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import { SERVER_API } from "@/lib/api-url";
 import { getCookieHeader } from "@/lib/server-cookies";
-import type { Me } from "@/types/identity";
+import { MeSchema } from "@/types/identity";
 
 /**
  * Canonical server-side auth/session module.
@@ -57,7 +57,11 @@ export const getSession = cache(async (): Promise<Session | null> => {
     throw new Error(`identity/me failed with status ${res.status}`);
   }
 
-  const me = (await res.json()) as Me;
+  // Schema-validate the identity response instead of casting. This module
+  // doesn't go through parsedServerFetch because it has its own (anonymous,
+  // 500-throws) error policy — but the same MeSchema check applies. A drift
+  // here would otherwise silently degrade every authenticated render.
+  const me = MeSchema.parse(await res.json());
   return {
     userId: me.id,
     email: me.email,

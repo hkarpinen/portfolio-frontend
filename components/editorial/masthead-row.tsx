@@ -34,8 +34,29 @@ interface MastheadRowProps {
   subNav?: React.ReactNode;
 }
 
-const ROMAN = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X",
-  "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX"];
+const ROMAN = [
+  "",
+  "I",
+  "II",
+  "III",
+  "IV",
+  "V",
+  "VI",
+  "VII",
+  "VIII",
+  "IX",
+  "X",
+  "XI",
+  "XII",
+  "XIII",
+  "XIV",
+  "XV",
+  "XVI",
+  "XVII",
+  "XVIII",
+  "XIX",
+  "XX",
+];
 
 function toRoman(n: number): string {
   if (n <= 0) return "I";
@@ -64,14 +85,7 @@ function longDate(d: Date): string {
   });
 }
 
-export function MastheadRow({
-  desk,
-  date,
-  edition,
-  brand,
-  action,
-  subNav,
-}: MastheadRowProps) {
+export function MastheadRow({ desk, date, edition, brand, action, subNav }: MastheadRowProps) {
   // The date defaults to today at render time. For SSR consistency callers
   // that need a stable value should pass it in explicitly.
   const d = date ?? new Date();
@@ -83,23 +97,33 @@ export function MastheadRow({
           {brand && (
             <>
               <span className="ed-masthead-brand">{brand}</span>
-              <span className="ed-masthead-sep" aria-hidden="true">·</span>
+              <span className="ed-masthead-sep" aria-hidden="true">
+                ·
+              </span>
             </>
           )}
           <span className="ed-masthead-desk">{desk}</span>
           {subNav && (
             <>
-              <span className="ed-masthead-sep ed-masthead-sep-tabs" aria-hidden="true">·</span>
+              <span className="ed-masthead-sep ed-masthead-sep-tabs" aria-hidden="true">
+                ·
+              </span>
               <span className="ed-masthead-subnav">{subNav}</span>
             </>
           )}
-          <span className="ed-masthead-sep ed-masthead-sep-date" aria-hidden="true">·</span>
-          <time className="ed-masthead-date" dateTime={d.toISOString().slice(0, 10)}>{longDate(d)}</time>
+          <span className="ed-masthead-sep ed-masthead-sep-date" aria-hidden="true">
+            ·
+          </span>
+          <time className="ed-masthead-date" dateTime={d.toISOString().slice(0, 10)}>
+            {longDate(d)}
+          </time>
         </div>
         <div className="ed-masthead-right">
           {action && <span className="ed-masthead-action">{action}</span>}
           {ed && (
-            <span className="ed-masthead-edition" aria-label={`Edition ${ed}`}>{ed}</span>
+            <span className="ed-masthead-edition" aria-label={`Edition ${ed}`}>
+              {ed}
+            </span>
           )}
         </div>
       </div>

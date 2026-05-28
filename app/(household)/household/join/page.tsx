@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import Link from "next/link";
 import { useJoinHousehold } from "@/hooks/use-household";
-import { ApiError } from "@/lib/api-client";
+import { getErrorMessage } from "@/lib/error-messages";
 import { Btn, Alert, Input, Icon, SectionHeader } from "@/components/editorial";
 
 const joinSchema = z.object({
@@ -18,7 +18,11 @@ type JoinForm = z.infer<typeof joinSchema>;
 export default function JoinHouseholdPage() {
   const router = useRouter();
   const joinHousehold = useJoinHousehold();
-  const { register, handleSubmit, formState: { errors } } = useForm<JoinForm>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<JoinForm>({
     resolver: zodResolver(joinSchema),
   });
 
@@ -32,8 +36,10 @@ export default function JoinHouseholdPage() {
   };
 
   return (
-    <div className="page-enter max-w-[560px] flex flex-col gap-8">
-      <Link href="/household" className="ed-label-muted no-underline hover:text-red">← All households</Link>
+    <div className="page-enter flex max-w-[560px] flex-col gap-8">
+      <Link href="/household" className="ed-label-muted no-underline hover:text-red">
+        ← All households
+      </Link>
 
       <SectionHeader
         kicker="Household · Join"
@@ -44,7 +50,7 @@ export default function JoinHouseholdPage() {
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
         {joinHousehold.isError && (
           <Alert variant="danger">
-            {joinHousehold.error instanceof ApiError ? joinHousehold.error.message : "Invalid invitation code. Make sure you typed it correctly."}
+            {getErrorMessage(joinHousehold.error, "Invalid invitation code. Make sure you typed it correctly.")}
           </Alert>
         )}
 

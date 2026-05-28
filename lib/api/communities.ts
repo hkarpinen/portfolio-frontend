@@ -1,46 +1,70 @@
+import { z } from "zod";
 import { api } from "@/lib/api-client";
-import { serverFetch } from "@/lib/server-api-client";
-import type {
-  CommunitySummaryResponse,
-  CommunityDetailResponse,
-  CommunityMembership,
-  CommunityMemberItem,
-  CommunityPage,
-  UserCommunityItem,
+import { parsedServerFetch } from "@/lib/server-api-client";
+import {
+  CommunityDetailResponseSchema,
+  CommunityMembershipSchema,
+  CommunityMemberItemSchema,
+  CommunityPageSchema,
+  UserCommunityItemSchema,
+  type CommunitySummaryResponse,
 } from "@/types/forum";
+
+// Tiny ad-hoc shapes for two endpoints that don't have a domain home.
+const UploadedImageUrlSchema = z.object({ url: z.string() });
+const MyMembershipsListSchema = z.object({
+  items: z.array(z.object({ communityId: z.string().optional() })),
+});
 
 export const uploadCommunityImage = (file: File) => {
   const formData = new FormData();
   formData.append("file", file);
-  return api.upload<{ url: string }>("/api/forum/media/image", formData);
+  return api.parsed.upload("/api/forum/media/image", UploadedImageUrlSchema, formData);
 };
 
 export const fetchCommunities = (page = 1, pageSize = 20) =>
-  api.get<CommunityPage>(`/api/forum/communities?page=${page}&pageSize=${pageSize}`);
+  api.parsed.get(
+    `/api/forum/communities?page=${page}&pageSize=${pageSize}`,
+    CommunityPageSchema,
+  );
 
 export const fetchCommunityBySlug = (slug: string) =>
-  api.get<CommunityDetailResponse>(`/api/forum/communities/by-slug/${slug}`);
+  api.parsed.get(`/api/forum/communities/by-slug/${slug}`, CommunityDetailResponseSchema);
 
-export const createCommunity = (body: { name: string; description?: string; privacy?: string; imageUrl?: string }) =>
-  api.post<CommunityDetailResponse>("/api/forum/communities", body);
+export const createCommunity = (body: {
+  name: string;
+  description?: string;
+  privacy?: string;
+  imageUrl?: string;
+}) => api.parsed.post("/api/forum/communities", CommunityDetailResponseSchema, body);
 
 export const updateCommunity = (communityId: string, body: Partial<CommunitySummaryResponse>) =>
-  api.put<CommunityDetailResponse>(`/api/forum/communities/${communityId}`, body);
+  api.parsed.put(
+    `/api/forum/communities/${communityId}`,
+    CommunityDetailResponseSchema,
+    body,
+  );
 
 export const deleteCommunity = (communityId: string) =>
   api.delete<void>(`/api/forum/communities/${communityId}`);
 
 export const fetchMembership = (communityId: string) =>
-  api.get<CommunityMembership>(`/api/forum/communities/${communityId}/membership`);
+  api.parsed.get(
+    `/api/forum/communities/${communityId}/membership`,
+    CommunityMembershipSchema,
+  );
 
 export const joinCommunity = (communityId: string) =>
   api.post(`/api/forum/communities/${communityId}/join`);
 
 export const fetchMyMemberships = () =>
-  api.get<{ items: Array<{ communityId?: string }> }>("/api/forum/memberships");
+  api.parsed.get("/api/forum/memberships", MyMembershipsListSchema);
 
 export const fetchCommunityMembers = (communityId: string) =>
-  api.get<CommunityMemberItem[]>(`/api/forum/communities/${communityId}/members`);
+  api.parsed.get(
+    `/api/forum/communities/${communityId}/members`,
+    z.array(CommunityMemberItemSchema),
+  );
 
 export const appointModerator = (membershipId: string) =>
   api.post(`/api/forum/memberships/${membershipId}/moderator`, {});
@@ -57,32 +81,28 @@ export const fetchCommunitiesServer = (
   mine = false,
 ) => {
   const qs = `page=${page}&pageSize=${pageSize}${mine ? "&membership=mine" : ""}`;
-  return serverFetch<CommunityPage>(`/api/forum/communities?${qs}`, cookieHeader);
+  return parsedServerFetch(`/api/forum/communities?${qs}`, CommunityPageSchema, cookieHeader);
 };
 
-export const fetchCommunityBySlugServer = (
-  slug: string,
-  cookieHeader?: string,
-) =>
-  serverFetch<CommunityDetailResponse>(
+export const fetchCommunityBySlugServer = (slug: string, cookieHeader?: string) =>
+  parsedServerFetch(
     `/api/forum/communities/by-slug/${slug}`,
+    CommunityDetailResponseSchema,
     cookieHeader,
   );
 
 export const fetchMyMembershipsServer = (cookieHeader: string) =>
-  serverFetch<{ items: Array<{ communityId?: string }> }>(
-    "/api/forum/memberships",
-    cookieHeader,
-  );
+  parsedServerFetch("/api/forum/memberships", MyMembershipsListSchema, cookieHeader);
 
-export const fetchMembershipServer = (
-  communityId: string,
-  cookieHeader: string,
-) =>
-  serverFetch<CommunityMembership>(
+export const fetchMembershipServer = (communityId: string, cookieHeader: string) =>
+  parsedServerFetch(
     `/api/forum/communities/${communityId}/membership`,
+    CommunityMembershipSchema,
     cookieHeader,
   );
 
 export const fetchProfileMembershipsApi = (userId: string) =>
-  api.get<UserCommunityItem[]>(`/api/forum/profiles/${userId}/memberships`);
+  api.parsed.get(
+    `/api/forum/profiles/${userId}/memberships`,
+    z.array(UserCommunityItemSchema),
+  );

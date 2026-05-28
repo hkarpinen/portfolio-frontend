@@ -6,9 +6,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import Link from "next/link";
 import { useCreateHousehold } from "@/hooks/use-household";
-import { ApiError } from "@/lib/api-client";
-import { ERROR } from "@/lib/error-messages";
-import { Btn, Alert, Input, Textarea, SelectField, Icon, SectionHeader } from "@/components/editorial";
+import { getErrorMessage } from "@/lib/error-messages";
+import {
+  Btn,
+  Alert,
+  Input,
+  Textarea,
+  SelectField,
+  Icon,
+  SectionHeader,
+} from "@/components/editorial";
 
 const schema = z.object({
   name: z.string().min(1, "Name is required").max(100),
@@ -66,21 +73,29 @@ export default function NewHouseholdPage() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<FormData>({ resolver: zodResolver(schema), defaultValues: { currencyCode: "USD", timezone: "America/New_York" } });
+  } = useForm<FormData>({
+    resolver: zodResolver(schema),
+    defaultValues: { currencyCode: "USD", timezone: "America/New_York" },
+  });
 
   const onSubmit = (data: FormData) => {
     // TODO(handoff8): pass timezone to createHousehold when the API accepts it
-    createHousehold.mutate({ name: data.name, description: data.description, currencyCode: data.currencyCode }, {
-      onSuccess: (created) => {
-        router.push(`/household/${created.id}`);
-        router.refresh();
+    createHousehold.mutate(
+      { name: data.name, description: data.description, currencyCode: data.currencyCode },
+      {
+        onSuccess: (created) => {
+          router.push(`/household/${created.id}`);
+          router.refresh();
+        },
       },
-    });
+    );
   };
 
   return (
-    <div className="page-enter max-w-[640px] flex flex-col gap-8">
-      <Link href="/household" className="ed-label-muted no-underline hover:text-red">← All households</Link>
+    <div className="page-enter flex max-w-[640px] flex-col gap-8">
+      <Link href="/household" className="ed-label-muted no-underline hover:text-red">
+        ← All households
+      </Link>
 
       <SectionHeader
         kicker="Household · New"
@@ -91,7 +106,7 @@ export default function NewHouseholdPage() {
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
         {createHousehold.isError && (
           <Alert variant="danger">
-            {createHousehold.error instanceof ApiError ? createHousehold.error.message : ERROR.DEFAULT}
+            {getErrorMessage(createHousehold.error)}
           </Alert>
         )}
 
@@ -110,12 +125,20 @@ export default function NewHouseholdPage() {
           {...register("description")}
         />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           <SelectField label="Currency" {...register("currencyCode")}>
-            {CURRENCIES.map(c => <option key={c} value={c}>{c}</option>)}
+            {CURRENCIES.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
           </SelectField>
           <SelectField label="Timezone" {...register("timezone")}>
-            {TIMEZONES.map(tz => <option key={tz} value={tz}>{tz.replace(/_/g, " ")}</option>)}
+            {TIMEZONES.map((tz) => (
+              <option key={tz} value={tz}>
+                {tz.replace(/_/g, " ")}
+              </option>
+            ))}
           </SelectField>
         </div>
 

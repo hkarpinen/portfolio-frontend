@@ -28,11 +28,11 @@ export function Collapsible({
       <RadixCollapsible.Trigger asChild>
         <button
           type="button"
-          className="group w-full flex items-center justify-between bg-transparent border-none cursor-pointer p-0"
+          className="group flex w-full cursor-pointer items-center justify-between border-none bg-transparent p-0"
         >
           <div>
-            <p className="text-[10px] font-bold text-ink-3 uppercase tracking-widest">{title}</p>
-            {description && <p className="text-sm mt-1 text-ink-2">{description}</p>}
+            <p className="text-[10px] font-bold uppercase tracking-widest text-ink-3">{title}</p>
+            {description && <p className="mt-1 text-sm text-ink-2">{description}</p>}
           </div>
           <span className="text-lg leading-none text-ink-3" aria-hidden>
             <span className="inline group-data-[state=open]:hidden">+</span>

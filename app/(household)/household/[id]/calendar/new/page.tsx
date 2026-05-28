@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useCreateCalendarEvent } from "@/hooks/use-calendar";
+import { getErrorMessage } from "@/lib/error-messages";
 import { Btn, Input, Textarea, Icon, SectionHeader } from "@/components/editorial";
 
 export default function NewCalendarEventPage({ params }: { params: { id: string } }) {
@@ -16,45 +17,43 @@ export default function NewCalendarEventPage({ params }: { params: { id: string 
   const [date, setDate] = useState("");
   const [startTime, setStartTime] = useState("09:00");
   const [endTime, setEndTime] = useState("10:00");
-  const [error, setError] = useState<string | null>(null);
 
   const createEvent = useCreateCalendarEvent(householdId);
 
-  async function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError(null);
-    if (!title.trim()) { setError("Title is required."); return; }
-    if (!date) { setError("Date is required."); return; }
+    // Pre-mutation validation — submit is disabled below if either is missing.
+    if (!title.trim() || !date) return;
 
-    let startsAtIso: string;
-    let endsAtIso: string | undefined;
+    const startsAtIso = allDay
+      ? new Date(date + "T00:00:00Z").toISOString()
+      : new Date(`${date}T${startTime}:00`).toISOString();
+    const endsAtIso = allDay
+      ? undefined
+      : endTime
+        ? new Date(`${date}T${endTime}:00`).toISOString()
+        : undefined;
 
-    if (allDay) {
-      startsAtIso = new Date(date + "T00:00:00Z").toISOString();
-      // No end for all-day single events
-    } else {
-      // Combine date + time inputs → ISO string
-      startsAtIso = new Date(`${date}T${startTime}:00`).toISOString();
-      endsAtIso = endTime ? new Date(`${date}T${endTime}:00`).toISOString() : undefined;
-    }
-
-    try {
-      await createEvent.mutateAsync({
+    createEvent.mutate(
+      {
         title: title.trim(),
         description: description.trim() || undefined,
         startsAt: startsAtIso,
         endsAt: endsAtIso,
         allDay,
-      });
-      router.push(`/household/${householdId}/calendar`);
-    } catch (err: any) {
-      setError(err?.message ?? "Failed to create event.");
-    }
+      },
+      { onSuccess: () => router.push(`/household/${householdId}/calendar`) },
+    );
   }
 
   return (
-    <div className="page-enter max-w-[640px] flex flex-col gap-8">
-      <Link href={`/household/${householdId}/calendar`} className="ed-label-muted no-underline hover:text-red">← Calendar</Link>
+    <div className="page-enter flex max-w-[640px] flex-col gap-8">
+      <Link
+        href={`/household/${householdId}/calendar`}
+        className="ed-label-muted no-underline hover:text-red"
+      >
+        ← Calendar
+      </Link>
 
       <SectionHeader kicker="New event" title="New <em>event</em>" />
 
@@ -76,24 +75,19 @@ export default function NewCalendarEventPage({ params }: { params: { id: string 
         />
 
         {/* Date + All-day row */}
-        <div className="grid grid-cols-2 gap-6 items-end">
-          <Input
-            label="Date"
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-          />
+        <div className="grid grid-cols-2 items-end gap-6">
+          <Input label="Date" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
           <div className="flex items-center gap-3 pb-[9px]">
             <input
               id="allday"
               type="checkbox"
               checked={allDay}
               onChange={(e) => setAllDay(e.target.checked)}
-              className="w-4 h-4 cursor-pointer accent-neutral-900"
+              className="h-4 w-4 cursor-pointer accent-neutral-900"
             />
             <label
               htmlFor="allday"
-              className="font-mono text-xs tracking-[0.1em] uppercase cursor-pointer text-ink-2"
+              className="cursor-pointer font-mono text-xs uppercase tracking-[0.1em] text-ink-2"
             >
               All day
             </label>
@@ -118,8 +112,10 @@ export default function NewCalendarEventPage({ params }: { params: { id: string 
           </div>
         )}
 
-        {error && (
-          <p role="alert" className="text-base text-red font-mono">{error}</p>
+        {createEvent.isError && (
+          <p role="alert" className="font-mono text-base text-red">
+            {getErrorMessage(createEvent.error, "Failed to create event.")}
+          </p>
         )}
 
         <div className="flex gap-3">
@@ -127,12 +123,14 @@ export default function NewCalendarEventPage({ params }: { params: { id: string 
             type="submit"
             variant="primary"
             size="lg"
-            disabled={createEvent.isPending}
+            disabled={createEvent.isPending || !title.trim() || !date}
             iconRight={<Icon name="arrowRight" size={16} />}
           >
             {createEvent.isPending ? "Saving…" : "Create event"}
           </Btn>
-          <Btn href={`/household/${householdId}/calendar`} variant="secondary" size="lg">Cancel</Btn>
+          <Btn href={`/household/${householdId}/calendar`} variant="secondary" size="lg">
+            Cancel
+          </Btn>
         </div>
       </form>
     </div>

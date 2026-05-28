@@ -8,7 +8,7 @@ import { EditorialPageHead } from "@/components/editorial/editorial-page-head";
 import { DepartmentHead } from "@/components/editorial/department-head";
 import { forumHeadline, forumDeck } from "@/lib/forum/editorial-copy";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export default async function CommunitiesPage() {
   // Only seed the default ("hot") sort server-side. The "new" and "top"
@@ -48,7 +48,9 @@ export default async function CommunitiesPage() {
         {communities.length === 0 ? (
           <p className="ed-hint">
             No communities yet.{" "}
-            <Link href="/forum/new" className="text-red no-underline font-semibold">Create the first →</Link>
+            <Link href="/forum/new" className="font-semibold text-red no-underline">
+              Create the first →
+            </Link>
           </p>
         ) : (
           <>
@@ -57,7 +59,7 @@ export default async function CommunitiesPage() {
               <div className="flex justify-end">
                 <Link
                   href="/forum/communities"
-                  className="font-mono text-xs uppercase tracking-wide text-ink-3 hover:text-red no-underline"
+                  className="font-mono text-xs uppercase tracking-wide text-ink-3 no-underline hover:text-red"
                 >
                   Browse all ({communities.length}) <span aria-hidden>→</span>
                 </Link>

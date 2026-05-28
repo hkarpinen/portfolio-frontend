@@ -90,10 +90,16 @@ export function PageBreadcrumbs() {
         {crumbs.map((c, i) => {
           const last = i === crumbs.length - 1;
           return (
-            <li key={i} className="flex items-center gap-2 min-w-0">
-              {i > 0 && <span aria-hidden="true" className="ed-breadcrumb-sep">/</span>}
+            <li key={i} className="flex min-w-0 items-center gap-2">
+              {i > 0 && (
+                <span aria-hidden="true" className="ed-breadcrumb-sep">
+                  /
+                </span>
+              )}
               {c.href && !last ? (
-                <Link href={c.href} className="ed-breadcrumb-link">{c.label}</Link>
+                <Link href={c.href} className="ed-breadcrumb-link">
+                  {c.label}
+                </Link>
               ) : (
                 <span aria-current={last ? "page" : undefined} className="ed-breadcrumb-current">
                   {c.label}

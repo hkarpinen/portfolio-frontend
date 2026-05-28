@@ -10,4 +10,6 @@
   font-family: var(--ff-body);
   transition: background 110ms;
 }
-.btn:hover { background: var(--surface-3); }
+.btn:hover {
+  background: var(--surface-3);
+}

@@ -26,14 +26,7 @@ interface DepartmentHeadProps {
   level?: 2 | 3 | 4;
 }
 
-export function DepartmentHead({
-  kicker,
-  count,
-  title,
-  deck,
-  id,
-  level = 2,
-}: DepartmentHeadProps) {
+export function DepartmentHead({ kicker, count, title, deck, id, level = 2 }: DepartmentHeadProps) {
   const Heading = `h${level}` as "h2" | "h3" | "h4";
   return (
     <header className="ed-dept">

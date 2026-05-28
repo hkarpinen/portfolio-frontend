@@ -17,12 +17,18 @@ export function cn(...inputs: ClassValue[]) {
  */
 export function toMonthlyAmount(amount: number, frequency?: string | null): number {
   switch (frequency?.toUpperCase()) {
-    case "WEEKLY":       return amount * 52 / 12;
-    case "BIWEEKLY":     return amount * 26 / 12;
-    case "QUARTERLY":    return amount / 3;
-    case "SEMIANNUALLY": return amount / 6;
-    case "ANNUALLY":     return amount / 12;
-    default:             return amount; // Monthly or unset
+    case "WEEKLY":
+      return (amount * 52) / 12;
+    case "BIWEEKLY":
+      return (amount * 26) / 12;
+    case "QUARTERLY":
+      return amount / 3;
+    case "SEMIANNUALLY":
+      return amount / 6;
+    case "ANNUALLY":
+      return amount / 12;
+    default:
+      return amount; // Monthly or unset
   }
 }
 
@@ -39,7 +45,15 @@ export function timeAgo(dateStr: string): string {
 
 export function getInitials(name: string | null | undefined): string {
   if (!name) return "?";
-  return name.split(/\s+/).map(p => p[0]).filter(Boolean).slice(0, 2).join("").toUpperCase() || "?";
+  return (
+    name
+      .split(/\s+/)
+      .map((p) => p[0])
+      .filter(Boolean)
+      .slice(0, 2)
+      .join("")
+      .toUpperCase() || "?"
+  );
 }
 
 export function formatDate(dateStr: string): string {
