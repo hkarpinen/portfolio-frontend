@@ -16,7 +16,7 @@ export enum HouseholdRole {
   Owner = "Owner",
 }
 
-export const HouseholdRoleSchema = z.nativeEnum(HouseholdRole);
+export const HouseholdRoleSchema = z.enum(HouseholdRole);
 
 // ── MembershipResponse ────────────────────────────────────────────────────────
 

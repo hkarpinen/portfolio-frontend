@@ -23,7 +23,7 @@ export enum Frequency {
   Annually = "Annually",
 }
 
-export const FrequencySchema = z.nativeEnum(Frequency);
+export const FrequencySchema = z.enum(Frequency);
 
 export const FREQUENCY_LABELS: Record<Frequency, string> = {
   [Frequency.OneTime]: "One-time",

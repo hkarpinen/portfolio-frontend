@@ -13,6 +13,8 @@ import { parseEnum } from "@/lib/parse-enum";
 import { currentMonthName } from "@/lib/finance/editorial-copy";
 import { householdDetailHeadline, householdDetailDeck } from "@/lib/household/editorial-copy";
 import { formatCurrency } from "@/lib/formatting";
+import { idsEqual, pluralize } from "@/lib/utils";
+import { householdMonthFigures } from "./household-detail-derivations";
 
 export const dynamic = "force-dynamic";
 
@@ -41,22 +43,16 @@ export default async function HouseholdPage({ params }: { params: { id: string }
   const initialBillsData: HouseholdExpenseListResponse = billsPage ?? { items: [], totalCount: 0 };
 
   const memberCount = members.length;
-  const isOwner = session?.userId?.toLowerCase() === household.ownerId?.toString().toLowerCase();
-  const myMembership = members.find(
-    (m) => m.userId?.toLowerCase() === session?.userId?.toLowerCase(),
-  );
+  const isOwner = idsEqual(session?.userId, household.ownerId?.toString());
+  const myMembership = members.find((m) => idsEqual(m.userId, session?.userId));
   // Owner/Admin can edit and delete bills inline from the list and from the
   // detail page. Plain members get read access plus their own split.
   const canManage = isOwner || myMembership?.role === "Owner" || myMembership?.role === "Admin";
 
-  const monthlyObligations: number | null =
-    householdExpenses.length > 0
-      ? householdExpenses.reduce((sum, e) => sum + (e.amount ?? 0), 0)
-      : null;
-
-  const yourShare =
-    monthlyObligations !== null && memberCount > 0 ? monthlyObligations / memberCount : null;
-  const yourSharePct = memberCount > 0 ? Math.round(100 / memberCount) : null;
+  const { monthlyObligations, yourShare, yourSharePct } = householdMonthFigures(
+    householdExpenses,
+    memberCount,
+  );
 
   const monthName = currentMonthName(new Date());
   const headline = householdDetailHeadline({
@@ -101,7 +97,7 @@ export default async function HouseholdPage({ params }: { params: { id: string }
               monthlyObligations !== null
                 ? formatCurrency(monthlyObligations, household.currencyCode, { precision: 0 })
                 : "—",
-            sub: `${householdExpenses.length} expense${householdExpenses.length === 1 ? "" : "s"}`,
+            sub: `${householdExpenses.length} ${pluralize("expense", householdExpenses.length)}`,
           },
           { label: "Members", value: String(memberCount), sub: household.currencyCode },
           // TODO(handoff8): wire to contributions endpoint.
@@ -113,7 +109,7 @@ export default async function HouseholdPage({ params }: { params: { id: string }
       <section className="flex flex-col gap-5">
         <DepartmentHead
           kicker="Shared · Expenses"
-          count={`${householdExpenses.length} expense${householdExpenses.length === 1 ? "" : "s"}`}
+          count={`${householdExpenses.length} ${pluralize("expense", householdExpenses.length)}`}
           title="Shared <em>expenses</em>"
           deck="Every bill the household has filed, with its split. Owner and admins can edit inline."
         />

@@ -13,6 +13,7 @@ import { TopBarStack } from "./top-bar";
 import { MobileNav } from "./mobile-nav";
 import { PageBreadcrumbs } from "./page-breadcrumbs";
 import { logout } from "@/lib/api/identity";
+import { formatCountdown } from "@/lib/utils";
 
 /**
  * <AppShell> — main app chrome (redesign)
@@ -52,15 +53,6 @@ function useDemoCountdown() {
   }, [router]);
 
   return secondsLeft;
-}
-
-function formatCountdown(seconds: number) {
-  const h = Math.floor(seconds / 3600);
-  const m = Math.floor((seconds % 3600) / 60);
-  const s = seconds % 60;
-  if (h > 0) return `${h}h ${m}m`;
-  if (m > 0) return `${m}m ${s.toString().padStart(2, "0")}s`;
-  return `${s}s`;
 }
 
 function DemoBanner() {

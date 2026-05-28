@@ -72,7 +72,7 @@ export enum DisposableIncomeSource {
   Estimate = "estimate",
 }
 
-export const DisposableIncomeSourceSchema = z.nativeEnum(DisposableIncomeSource);
+export const DisposableIncomeSourceSchema = z.enum(DisposableIncomeSource);
 
 export const ContributionPeriodSchema = z.object({
   periodLabel: z.string(),

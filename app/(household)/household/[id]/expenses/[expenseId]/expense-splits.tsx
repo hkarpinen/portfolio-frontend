@@ -1,6 +1,7 @@
 "use client";
 
 import { Alert, Btn, Input, SelectField, UserInitials } from "@/components/editorial";
+import { memberDisplayName } from "@/lib/utils";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -9,6 +10,7 @@ import { useAddExpenseSplit, useRemoveExpenseSplit } from "@/hooks/use-expenses"
 
 import type { HouseholdExpenseDetailResponse } from "@/types/household-expense";
 import { formatCurrency } from "@/lib/formatting";
+import { splitAllocation } from "./expense-detail-derivations";
 
 const splitSchema = z.object({
   membershipId: z.string().optional(),
@@ -77,8 +79,10 @@ export function ExpenseSplits({
     resolver: zodResolver(splitSchema),
   });
 
-  const splitTotal = splits.reduce((sum, s) => sum + Number(s.amount), 0);
-  const remaining = Number(expense.amount) - splitTotal;
+  const { allocated: splitTotal, netRemaining: remaining } = splitAllocation(
+    splits,
+    Number(expense.amount),
+  );
 
   const onAddSplit = (data: FormData) => {
     const membershipId = isPrivileged ? data.membershipId : currentMembership?.membershipId;
@@ -161,8 +165,7 @@ export function ExpenseSplits({
                     <UserInitials name={split.displayName} size="lg" />
                     <div>
                       <p className="text-base font-medium text-ink">
-                        {split.displayName ||
-                          `${(split.splitId ?? split.userId ?? "").slice(0, 8)}…`}
+                        {memberDisplayName(split, split.splitId ?? split.userId)}
                       </p>
                       <p className="text-sm text-ink-3">
                         {split.membershipRole}
@@ -216,7 +219,7 @@ export function ExpenseSplits({
                   <option value="">Select member</option>
                   {members.map((m) => (
                     <option key={m.membershipId} value={m.membershipId}>
-                      {m.displayName || `${m.userId.slice(0, 8)}…`} ({m.role})
+                      {memberDisplayName(m)} ({m.role})
                     </option>
                   ))}
                 </SelectField>

@@ -7,6 +7,7 @@ import { fetchThreadsServer } from "@/lib/api/forum";
 import { CommunityMembersTab } from "./settings/members-tab";
 import { CommunityActions } from "./community-actions";
 import { communityHeadline, communityDeck } from "@/lib/forum/editorial-copy";
+import { pluralize } from "@/lib/utils";
 
 import { ThreadRow } from "../../thread-row";
 import { getSession } from "@/lib/auth/session";
@@ -104,7 +105,7 @@ export default async function CommunityPage({
         <section aria-labelledby="panel-threads" className="flex flex-col gap-5">
           <DepartmentHead
             kicker="Threads · Posted"
-            count={`${threads.length} thread${threads.length === 1 ? "" : "s"}`}
+            count={`${threads.length} ${pluralize("thread", threads.length)}`}
             title="The <em>feed</em>"
           />
           {threads.length === 0 ? (

@@ -3,6 +3,7 @@
 import { Btn } from "@/components/editorial";
 import { useState } from "react";
 import type { CalendarEventDto } from "@/lib/api/calendar";
+import { MONTH_NAMES, pluralize } from "@/lib/utils";
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -42,25 +43,10 @@ export function CalendarGrid({ year, month, events, onDelete, deleting }: Calend
 
   const selectedEvent = selected ? events.find((e) => e.id === selected) : null;
 
-  const MONTHS_LONG = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
-
   return (
     <div>
       {/* Calendar grid — role=grid for keyboard navigation context */}
-      <div role="grid" aria-label={`${MONTHS_LONG[month]} ${year} calendar`}>
+      <div role="grid" aria-label={`${MONTH_NAMES[month]} ${year} calendar`}>
         {/* Day headers — role=row + columnheader */}
         <div role="row" className="grid grid-cols-7 border-b border-t border-ink">
           {DAYS.map((d) => (
@@ -90,7 +76,7 @@ export function CalendarGrid({ year, month, events, onDelete, deleting }: Calend
             }
             const dayEvents = eventsForDay(day);
             const isToday = isSameDay(new Date(year, month, day), today);
-            const dateLabel = `${MONTHS_LONG[month]} ${day}${isToday ? ", today" : ""}${dayEvents.length > 0 ? `, ${dayEvents.length} event${dayEvents.length !== 1 ? "s" : ""}` : ""}`;
+            const dateLabel = `${MONTH_NAMES[month]} ${day}${isToday ? ", today" : ""}${dayEvents.length > 0 ? `, ${dayEvents.length} ${pluralize("event", dayEvents.length)}` : ""}`;
 
             return (
               <div

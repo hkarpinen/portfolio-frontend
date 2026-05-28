@@ -40,6 +40,9 @@ import {
   Newspaper,
   Star,
   ListFilter,
+  Eye,
+  EyeOff,
+  Image as ImageIcon,
 } from "lucide-react";
 
 export const ICON_MAP = {
@@ -85,6 +88,9 @@ export const ICON_MAP = {
   feed: Newspaper,
   star: Star,
   filter: ListFilter,
+  eye: Eye,
+  eyeOff: EyeOff,
+  image: ImageIcon,
 } as const;
 
 export type IconName = keyof typeof ICON_MAP;

@@ -14,6 +14,7 @@ import { fetchAllBalancesServer } from "@/lib/api/household-expenses";
 
 import { HouseholdBalanceBadge } from "@/components/finance/household-balance-badge";
 import { householdsHeadline, householdsDeck } from "@/lib/household/editorial-copy";
+import { pluralize } from "@/lib/utils";
 import s from "./page.module.css";
 
 export const dynamic = "force-dynamic";
@@ -94,7 +95,7 @@ export default async function HouseholdsPage() {
           <section className="flex flex-col gap-5">
             <DepartmentHead
               kicker="On file"
-              count={`${count} household${count === 1 ? "" : "s"}`}
+              count={`${count} ${pluralize("household", count)}`}
               title="Your <em>ledger</em>"
               deck="Each tile opens the household's expenses, contributions, calendar, and chores."
             />
@@ -104,7 +105,7 @@ export default async function HouseholdsPage() {
             >
               {households.map((h) => {
                 const memberCount = h.memberCount ?? 1;
-                const memberLabel = `${memberCount} member${memberCount !== 1 ? "s" : ""}`;
+                const memberLabel = `${memberCount} ${pluralize("member", memberCount)}`;
                 return (
                   <Link
                     key={h.id}

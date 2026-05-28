@@ -10,6 +10,7 @@ import {
 } from "@/components/editorial";
 import { useState } from "react";
 import { useMe, useAdminUsers, useBanUser, useChangeUserRole } from "@/hooks/use-identity";
+import { pluralize } from "@/lib/utils";
 
 /**
  * Admin panel — visible only to users with the Admin role.
@@ -34,7 +35,7 @@ export default function AdminPage() {
         kicker="Admin · Identity"
         title={
           users.length > 0
-            ? `<em>${users.length}</em> member${users.length === 1 ? "" : "s"} on file`
+            ? `<em>${users.length}</em> ${pluralize("member", users.length)} on file`
             : `<em>No</em> members on file yet`
         }
         deck="Roster, roles, and ban status across the identity service. Changes take effect immediately."

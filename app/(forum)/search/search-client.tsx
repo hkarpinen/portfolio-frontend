@@ -4,7 +4,7 @@ import { Icon, Spinner } from "@/components/editorial";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useForumSearch } from "@/hooks/use-forum";
-import { timeAgo } from "@/lib/utils";
+import { pluralize, timeAgo } from "@/lib/utils";
 
 import type { SearchResult } from "@/types/forum";
 
@@ -62,7 +62,7 @@ export function SearchClient() {
         {!loading &&
           query &&
           results.length > 0 &&
-          `${results.length} result${results.length !== 1 ? "s" : ""} for ${query}`}
+          `${results.length} ${pluralize("result", results.length)} for ${query}`}
         {!loading && query && results.length === 0 && `No results for ${query}`}
       </div>
 
@@ -70,7 +70,7 @@ export function SearchClient() {
 
       {query && !loading && results.length > 0 && (
         <p className="text-base text-ink-3" aria-hidden="true">
-          {results.length} result{results.length !== 1 ? "s" : ""} for &ldquo;{query}&rdquo;
+          {results.length} {pluralize("result", results.length)} for &ldquo;{query}&rdquo;
         </p>
       )}
 

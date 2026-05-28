@@ -14,7 +14,8 @@ import { useHouseholdMembers } from "@/hooks/use-household";
 
 import { choresHeadline } from "@/lib/household/editorial-copy";
 import type { ChoreDto } from "@/lib/api/chores";
-import { formatShortDate } from "@/lib/formatting";
+import { pluralize } from "@/lib/utils";
+import { formatChoreDueDate, overdueChoreCount } from "./chores-derivations";
 
 const FREQ_LABEL: Record<string, string> = {
   Daily: "Daily",
@@ -22,19 +23,6 @@ const FREQ_LABEL: Record<string, string> = {
   BiWeekly: "Bi-weekly",
   Monthly: "Monthly",
 };
-
-function formatDue(iso?: string): { text: string; overdue: boolean; srText: string } {
-  if (!iso) return { text: "—", overdue: false, srText: "No due date" };
-  const d = new Date(iso);
-  const now = new Date();
-  const startOf = (x: Date) => new Date(x.getFullYear(), x.getMonth(), x.getDate());
-  const days = Math.round((startOf(d).getTime() - startOf(now).getTime()) / 86_400_000);
-  const dateStr = formatShortDate(d);
-  if (days < 0) return { text: dateStr, overdue: true, srText: `Overdue — was due ${dateStr}` };
-  if (days === 0) return { text: "Today", overdue: false, srText: "Due today" };
-  if (days === 1) return { text: "Tomorrow", overdue: false, srText: "Due tomorrow" };
-  return { text: dateStr, overdue: false, srText: `Due ${dateStr}` };
-}
 
 function ChoreRow({
   chore,
@@ -53,7 +41,7 @@ function ChoreRow({
 }) {
   const assignee = members.find((m) => m.userId === chore.assignedToUserId);
   const done = !!chore.completedAt;
-  const due = formatDue(chore.dueDate ?? undefined);
+  const due = formatChoreDueDate(chore.dueDate);
 
   return (
     <tr className={`border-b border-rule-soft group${due.overdue ? "" : ""}`}>
@@ -127,10 +115,7 @@ export default function ChoresPage() {
   const del = useDeleteChore(householdId);
 
   const chores = choresQuery.data ?? [];
-  const overdueCount = chores.filter((c) => {
-    if (c.completedAt || !c.dueDate) return false;
-    return new Date(c.dueDate) < new Date();
-  }).length;
+  const overdueCount = overdueChoreCount(chores);
 
   const members = (membersQuery.data ?? []).map((m) => ({
     userId: (m as any).userId as string,
@@ -158,7 +143,7 @@ export default function ChoresPage() {
       <section className="flex flex-col gap-5">
         <DepartmentHead
           kicker={showAll ? "All chores" : "Active chores"}
-          count={`${chores.length} chore${chores.length === 1 ? "" : "s"}${overdueCount > 0 ? ` · ${overdueCount} overdue` : ""}`}
+          count={`${chores.length} ${pluralize("chore", chores.length)}${overdueCount > 0 ? ` · ${overdueCount} overdue` : ""}`}
           title="The <em>chore list</em>"
         />
         <div className="-mt-2 flex items-center justify-end">

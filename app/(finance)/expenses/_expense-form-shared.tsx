@@ -18,11 +18,11 @@ export const expenseSchema = z.object({
     .min(1, "Amount is required")
     .refine((v) => !isNaN(Number(v)) && Number(v) > 0, "Amount must be positive"),
   currency: z.string().min(1),
-  category: z.nativeEnum(ExpenseCategory),
+  category: z.enum(ExpenseCategory),
   dueDate: z.string().min(1, "Due date is required"),
   // TODO(backend-OneTime): once finance/RecurrenceFrequency adds OneTime + backfills
-  // existing nulls, tighten to `z.nativeEnum(Frequency)` (required, no empty literal).
-  recurrenceFrequency: z.nativeEnum(Frequency).optional().or(z.literal("")),
+  // existing nulls, tighten to `z.enum(Frequency)` (required, no empty literal).
+  recurrenceFrequency: z.enum(Frequency).optional().or(z.literal("")),
   description: z.string().max(2000).optional(),
 });
 

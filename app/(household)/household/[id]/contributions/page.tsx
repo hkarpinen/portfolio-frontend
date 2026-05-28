@@ -7,47 +7,9 @@ import { useHouseholdContributions } from "@/hooks/use-expenses";
 import { useHousehold } from "@/hooks/use-household";
 
 import { contributionsHeadline } from "@/lib/household/editorial-copy";
-import type { HouseholdMonthlyContributions } from "@/types/contributions";
+import { computeSettlements } from "@/lib/contributions";
 import { formatCurrency } from "@/lib/formatting";
-
-/** Compute the minimal settlement transactions from net member balances. */
-function computeSettlements(
-  month: HouseholdMonthlyContributions,
-): { from: string; to: string; amount: number }[] {
-  // Build net balance per member: positive = owed money, negative = owes money
-  const nets = (month.members ?? []).map((m) => ({
-    name: m.displayName ?? `User ${m.userId.slice(0, 6)}…`,
-    net: (m.totalPaid ?? 0) - (m.totalDue ?? 0),
-  }));
-
-  const creditors = nets.filter((m) => m.net > 0.005).sort((a, b) => b.net - a.net);
-  const debtors = nets.filter((m) => m.net < -0.005).sort((a, b) => a.net - b.net);
-
-  const settlements: { from: string; to: string; amount: number }[] = [];
-  let ci = 0;
-  let di = 0;
-  const c = creditors.map((x) => ({ ...x }));
-  const d = debtors.map((x) => ({ ...x }));
-
-  while (ci < c.length && di < d.length) {
-    // The loop guard `ci < c.length && di < d.length` proves these
-    // indexed accesses are defined, but TS's strict-indexed-access
-    // can't see it. Bind to locals once so the non-null assertion
-    // happens at the source, not every reference.
-    const credit = c[ci]!;
-    const debit = d[di]!;
-    const pay = Math.min(credit.net, -debit.net);
-    if (pay > 0.005) {
-      settlements.push({ from: debit.name, to: credit.name, amount: pay });
-    }
-    credit.net -= pay;
-    debit.net += pay;
-    if (Math.abs(credit.net) < 0.005) ci++;
-    if (Math.abs(debit.net) < 0.005) di++;
-  }
-
-  return settlements;
-}
+import { memberDisplayName, pluralize, sumBy } from "@/lib/utils";
 
 export default function HouseholdContributionsPage() {
   const { id: householdId } = useParams<{ id: string }>();
@@ -67,7 +29,7 @@ export default function HouseholdContributionsPage() {
   const settlements = month ? computeSettlements(month) : [];
 
   // Unsettled = sum of all surplus credits (which equals sum of all debts).
-  const unsettledTotal = settlements.reduce((s, x) => s + x.amount, 0);
+  const unsettledTotal = sumBy(settlements, (x) => x.amount);
   const headlineLabel = month?.periodLabel ?? "This month";
   const headline = contributionsHeadline({
     currency: cur,
@@ -150,7 +112,7 @@ export default function HouseholdContributionsPage() {
                       return (
                         <tr key={m.userId} className="border-b border-rule-soft">
                           <td className="py-7 pr-6 font-serif text-[1.0625rem] italic text-ink">
-                            {m.displayName || `Member ${m.userId.slice(0, 6)}…`}
+                            {memberDisplayName(m)}
                           </td>
                           <td className="whitespace-nowrap py-7 pr-6 text-right font-mono text-sm text-ink">
                             {formatCurrency(m.totalPaid, cur)}
@@ -182,7 +144,7 @@ export default function HouseholdContributionsPage() {
             <section className="flex flex-col gap-5">
               <DepartmentHead
                 kicker="Settlement · Suggested"
-                count={`${settlements.length} transfer${settlements.length === 1 ? "" : "s"} · ${formatCurrency(unsettledTotal, cur)}`}
+                count={`${settlements.length} ${pluralize("transfer", settlements.length)} · ${formatCurrency(unsettledTotal, cur)}`}
                 title="Minimum <em>transfers</em> to balance"
                 deck="The fewest payments needed to bring every member to $0 net."
               />

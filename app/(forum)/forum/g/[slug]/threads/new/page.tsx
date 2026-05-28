@@ -228,20 +228,9 @@ export default function NewThreadPage({ params }: { params: { slug: string } }) 
             Hidden behind a details element to reduce visual noise for most users. */}
         <details className="group">
           <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-semibold uppercase tracking-[0.08em] text-ink-3 transition-colors hover:text-ink">
-            <svg
-              aria-hidden="true"
-              width="10"
-              height="10"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2.5}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="transition-transform group-open:rotate-90"
-            >
-              <polyline points="9 18 15 12 9 6" />
-            </svg>
+            <span aria-hidden="true" className="transition-transform group-open:rotate-90">
+              <Icon name="chevRight" size={10} strokeWidth={2.5} />
+            </span>
             Advanced — flair
           </summary>
           <div className="mt-4">

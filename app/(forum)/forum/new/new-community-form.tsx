@@ -1,6 +1,6 @@
 "use client";
 
-import { Btn, Input, SelectField, Textarea } from "@/components/editorial";
+import { Btn, Icon, Input, SelectField, Textarea } from "@/components/editorial";
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCreateCommunity, useUploadCommunityImage } from "@/hooks/use-community";
@@ -102,18 +102,9 @@ export function NewCommunityForm() {
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={imageUrl} alt="" className="h-full w-full object-cover" />
               ) : (
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="var(--text-3)"
-                  strokeWidth="1.5"
-                >
-                  <rect x="3" y="3" width="18" height="18" rx="4" />
-                  <circle cx="8.5" cy="8.5" r="1.5" />
-                  <path d="m21 15-5-5L5 21" />
-                </svg>
+                <span className="text-ink-3">
+                  <Icon name="image" size={24} strokeWidth={1.5} />
+                </span>
               )}
             </button>
             <div className="flex flex-col gap-2">

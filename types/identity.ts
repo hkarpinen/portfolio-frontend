@@ -9,7 +9,7 @@ export enum UserRole {
   Admin = "Admin",
 }
 
-const UserRoleSchema = z.nativeEnum(UserRole);
+const UserRoleSchema = z.enum(UserRole);
 
 // ─────────────────────────────────────────────────────────────────────────────
 

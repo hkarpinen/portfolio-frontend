@@ -10,7 +10,7 @@ export enum CommunityRole {
   Owner = "Owner",
 }
 
-export const CommunityRoleSchema = z.nativeEnum(CommunityRole);
+export const CommunityRoleSchema = z.enum(CommunityRole);
 
 export enum CommunityVisibility {
   Public = "Public",
@@ -18,7 +18,7 @@ export enum CommunityVisibility {
   Restricted = "Restricted",
 }
 
-export const CommunityVisibilitySchema = z.nativeEnum(CommunityVisibility);
+export const CommunityVisibilitySchema = z.enum(CommunityVisibility);
 
 export enum ReportTargetType {
   Thread = "Thread",
@@ -26,7 +26,7 @@ export enum ReportTargetType {
   User = "User",
 }
 
-export const ReportTargetTypeSchema = z.nativeEnum(ReportTargetType);
+export const ReportTargetTypeSchema = z.enum(ReportTargetType);
 
 export enum ModerationAction {
   BanUser = "BanUser",
@@ -42,7 +42,7 @@ export enum ModerationAction {
   ResolveReportDismissed = "ResolveReportDismissed",
 }
 
-export const ModerationActionSchema = z.nativeEnum(ModerationAction);
+export const ModerationActionSchema = z.enum(ModerationAction);
 
 // ─────────────────────────────────────────────────────────────────────────────
 

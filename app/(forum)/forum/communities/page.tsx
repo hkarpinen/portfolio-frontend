@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { fetchCommunitiesServer } from "@/lib/api/communities";
 import { JoinButton } from "../join-button";
+import { communityTileMeta } from "@/lib/forum/editorial-copy";
 import type { CommunitySummaryResponse } from "@/types/forum";
 
 export const dynamic = "force-dynamic";
@@ -47,12 +48,10 @@ export default async function CommunitiesBrowsePage() {
             style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}
           >
             {communities.map((c) => {
-              const memberCount = c.memberCount ?? 0;
-              const memberLabel = `${memberCount.toLocaleString()} member${memberCount === 1 ? "" : "s"}`;
-              const threadLabel =
-                c.threadCount > 0
-                  ? ` · ${c.threadCount.toLocaleString()} thread${c.threadCount === 1 ? "" : "s"}`
-                  : "";
+              const { memberLabel, threadLabel } = communityTileMeta({
+                memberCount: c.memberCount ?? 0,
+                threadCount: c.threadCount,
+              });
 
               return (
                 <li key={c.communityId} className="ed-module">

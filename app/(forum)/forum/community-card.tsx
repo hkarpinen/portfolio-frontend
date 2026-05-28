@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ApiError } from "@/lib/api-client";
 import { useCommunityMembership, useJoinCommunity } from "@/hooks/use-community";
 import type { CommunityActivitySnapshot } from "@/types/forum";
-import { formatShortDate } from "@/lib/formatting";
+import { timeAgo } from "@/lib/utils";
 
 interface CommunityCardProps {
   communityId: string;
@@ -17,18 +17,6 @@ interface CommunityCardProps {
   threadCount?: number;
   commentCount?: number;
   latestActivity?: CommunityActivitySnapshot;
-}
-
-function formatRelative(dateStr: string) {
-  const diff = Date.now() - new Date(dateStr).getTime();
-  const mins = Math.floor(diff / 60_000);
-  if (mins < 1) return "just now";
-  if (mins < 60) return `${mins}m ago`;
-  const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h ago`;
-  const days = Math.floor(hrs / 24);
-  if (days < 7) return `${days}d ago`;
-  return formatShortDate(dateStr);
 }
 
 function ActivityAvatar({ avatarUrl, name }: { avatarUrl?: string; name?: string }) {
@@ -153,7 +141,7 @@ export function CommunityCard({
               </p>
             </div>
             {activityTime && (
-              <span className="shrink-0 text-sm text-ink-3">{formatRelative(activityTime)}</span>
+              <span className="shrink-0 text-sm text-ink-3">{timeAgo(activityTime)}</span>
             )}
           </div>
         </Link>

@@ -3,6 +3,7 @@
 import { Btn } from "@/components/editorial";
 import { useState } from "react";
 import { useRemoveMember, useChangeMemberRole, useTransferOwnership } from "@/hooks/use-household";
+import { idsEqual, memberDisplayName } from "@/lib/utils";
 import type { MembershipResponse } from "@/types/membership";
 
 interface MemberActionsProps {
@@ -40,7 +41,7 @@ export function MemberActions({
       ) : (
         <div className="flex flex-col gap-4">
           {members.map((m) => {
-            const isSelf = m.userId.toLowerCase() === myUserId.toLowerCase();
+            const isSelf = idsEqual(m.userId, myUserId);
             const canRemove = isOwner && !isSelf;
             const canChangeRole = isOwner && !isSelf && m.role !== "Owner";
             return (
@@ -50,7 +51,7 @@ export function MemberActions({
               >
                 <div>
                   <p className="flex items-center gap-3 text-base font-semibold text-ink">
-                    {m.displayName || `${m.userId.slice(0, 8)}…`}
+                    {memberDisplayName(m)}
                     {isSelf && (
                       <span className="bg-red-soft px-4 py-1 font-mono text-sm text-red">you</span>
                     )}
@@ -79,7 +80,7 @@ export function MemberActions({
                       {transferTargetId === m.membershipId ? (
                         <div className="flex items-center gap-3">
                           <span className="text-base text-ink-2">
-                            Transfer to {m.displayName || m.userId.slice(0, 8)}?
+                            Transfer to {memberDisplayName(m)}?
                           </span>
                           <Btn
                             variant="primary"

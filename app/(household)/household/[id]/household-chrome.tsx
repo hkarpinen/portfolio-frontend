@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useHousehold, useHouseholdMembers } from "@/hooks/use-household";
 import { HouseholdBalanceBadge } from "@/components/finance/household-balance-badge";
+import { getInitials, memberDisplayName, pluralize } from "@/lib/utils";
 
 type Tab = "expenses" | "contributions" | "calendar" | "chores";
 
@@ -14,19 +15,6 @@ const TAB_DEFS: { key: Tab; label: string; href: (id: string) => string }[] = [
 ];
 
 const MAX_VISIBLE_AVATARS = 6;
-
-function getInitials(name?: string): string {
-  if (!name) return "?";
-  const parts = name.trim().split(/\s+/);
-  if (parts.length >= 2) {
-    // length >= 2 guarantees both indexes; the optional-chain on the
-    // first-char access handles the "  Sam" → ["", "Sam"] edge.
-    const first = parts[0]?.[0] ?? "";
-    const last = parts[parts.length - 1]?.[0] ?? "";
-    return (first + last).toUpperCase();
-  }
-  return name.slice(0, 2).toUpperCase();
-}
 
 function MemberAvatarChips({
   members,
@@ -40,13 +28,13 @@ function MemberAvatarChips({
     <div
       className="mt-2 flex items-center gap-1"
       role="list"
-      aria-label={`${members.length} household member${members.length !== 1 ? "s" : ""}`}
+      aria-label={`${members.length} household ${pluralize("member", members.length)}`}
     >
       {visible.map((m) => (
         <span
           key={m.membershipId}
           role="listitem"
-          aria-label={m.displayName ?? `Member ${m.userId.slice(0, 6)}`}
+          aria-label={memberDisplayName(m)}
           className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-paper-2 font-mono text-[0.6rem] uppercase tracking-[0.04em] text-ink-3"
           style={{ border: "1px solid var(--ink-3)" }}
         >
@@ -56,7 +44,7 @@ function MemberAvatarChips({
       {overflow > 0 && (
         <span
           role="listitem"
-          aria-label={`${overflow} more member${overflow !== 1 ? "s" : ""} not shown`}
+          aria-label={`${overflow} more ${pluralize("member", overflow)} not shown`}
           className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-paper-2 font-mono text-[0.6rem] tracking-[0.04em] text-ink-3"
           style={{ border: "1px solid var(--ink-3)" }}
         >

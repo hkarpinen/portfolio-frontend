@@ -7,8 +7,6 @@ import { useDeleteExpense, useExpenses } from "@/hooks/use-expenses";
 import type { ExpensePage, Expense } from "@/types/expense";
 import { ExpenseRow } from "./expense-row";
 
-export { CATEGORY_COLORS, CATEGORY_ICONS } from "./expense-row";
-
 export function ExpenseList({ initialData }: { initialData: ExpensePage }) {
   const { data } = useExpenses(initialData);
   // This list backs the "Personal recurring" section — drop one-time entries

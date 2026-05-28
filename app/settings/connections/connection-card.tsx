@@ -6,6 +6,7 @@ import { useSyncPlaidItem, useUnlinkPlaidItem } from "@/hooks/use-connections";
 
 import type { Connection, LinkedAccountResponse } from "@/lib/api/plaid";
 import { formatCurrency } from "@/lib/formatting";
+import { pluralize } from "@/lib/utils";
 
 const statusColor: Record<Connection["status"], string> = {
   Healthy: "var(--success)",
@@ -81,7 +82,7 @@ export function ConnectionCard({ item }: { item: Connection }) {
             </span>
           </div>
           <p className="mt-1.5 text-base text-ink-3">
-            {item.accounts.length} account{item.accounts.length !== 1 ? "s" : ""}
+            {item.accounts.length} {pluralize("account", item.accounts.length)}
             {lastSync ? ` · Synced ${lastSync}` : " · Never synced"}
           </p>
         </div>

@@ -28,7 +28,7 @@ export enum DeductionType {
   Other = "Other",
 }
 
-export const DeductionTypeSchema = z.nativeEnum(DeductionType);
+export const DeductionTypeSchema = z.enum(DeductionType);
 
 // ── DeductionCalculationMethod ────────────────────────────────────────────────
 
@@ -37,7 +37,7 @@ export enum DeductionCalculationMethod {
   FixedAmount = "FixedAmount",
 }
 
-export const DeductionCalculationMethodSchema = z.nativeEnum(DeductionCalculationMethod);
+export const DeductionCalculationMethodSchema = z.enum(DeductionCalculationMethod);
 
 // ── Interfaces ────────────────────────────────────────────────────────────────
 

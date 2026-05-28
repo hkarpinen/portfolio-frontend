@@ -9,29 +9,6 @@ import { useSearchParams } from "next/navigation";
 import { getErrorMessage } from "@/lib/error-messages";
 import { useResetPassword } from "@/hooks/use-identity";
 
-const EYE = (show: boolean) => (
-  <svg
-    width="14"
-    height="14"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={1.75}
-  >
-    {show ? (
-      <>
-        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
-        <line x1="1" y1="1" x2="23" y2="23" />
-      </>
-    ) : (
-      <>
-        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-        <circle cx="12" cy="12" r="3" />
-      </>
-    )}
-  </svg>
-);
-
 const schema = z
   .object({
     newPassword: z.string().min(8, "Password must be at least 8 characters"),
@@ -158,7 +135,7 @@ function ResetPasswordContent() {
             aria-pressed={showNew}
             className="absolute bottom-3.5 right-0 cursor-pointer border-none bg-transparent p-0 leading-none text-ink-3"
           >
-            {EYE(showNew)}
+            <Icon name={showNew ? "eyeOff" : "eye"} size={14} strokeWidth={1.75} />
           </button>
         </div>
 
@@ -178,7 +155,7 @@ function ResetPasswordContent() {
             aria-pressed={showConfirm}
             className="absolute bottom-3.5 right-0 cursor-pointer border-none bg-transparent p-0 leading-none text-ink-3"
           >
-            {EYE(showConfirm)}
+            <Icon name={showConfirm ? "eyeOff" : "eye"} size={14} strokeWidth={1.75} />
           </button>
         </div>
 

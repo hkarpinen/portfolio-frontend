@@ -5,6 +5,7 @@ import Link from "next/link";
 import type { ContributionItem } from "@/types/contributions";
 
 import { formatCurrency, formatAmount } from "@/lib/formatting";
+import { pluralize, sumBy } from "@/lib/utils";
 
 export interface SharedSplitGroup {
   billId: string;
@@ -65,14 +66,14 @@ export function SharedSplitsTable({
   groups: SharedSplitGroup[];
   householdNamesById: Record<string, string>;
 }) {
-  const total = groups.reduce((sum, g) => sum + g.monthlyAmount, 0);
+  const total = sumBy(groups, (g) => g.monthlyAmount);
   const currency = groups[0]?.currency ?? "USD";
 
   return (
     <div className="overflow-x-auto" role="region" aria-label="Shared household splits this month">
       <table className="ed-agate">
         <caption className="sr-only">
-          Shared household splits this month — {groups.length} bill{groups.length !== 1 ? "s" : ""},
+          Shared household splits this month — {groups.length} {pluralize("bill", groups.length)},
           total {formatCurrency(total, currency)}
         </caption>
         <thead>
@@ -111,7 +112,7 @@ export function SharedSplitsTable({
         <tfoot>
           <tr>
             <td colSpan={3}>
-              Total · {groups.length} shared bill{groups.length !== 1 ? "s" : ""}
+              Total · {groups.length} shared {pluralize("bill", groups.length)}
             </td>
             <td className="num">{formatCurrency(total, currency)}</td>
           </tr>
@@ -119,10 +120,7 @@ export function SharedSplitsTable({
       </table>
       <SourceNote
         source="Household ledgers"
-        meta={[
-          `${groups.length} bill${groups.length !== 1 ? "s" : ""}`,
-          "ranked by monthly amount",
-        ]}
+        meta={[`${groups.length} ${pluralize("bill", groups.length)}`, "ranked by monthly amount"]}
       />
     </div>
   );

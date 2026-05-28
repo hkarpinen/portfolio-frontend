@@ -17,8 +17,8 @@ export const incomeSchema = z.object({
     .min(1, "Amount is required")
     .refine((v) => !isNaN(Number(v)) && Number(v) > 0, "Amount must be positive"),
   currency: z.string().min(1),
-  quotedAs: z.nativeEnum(Frequency),
-  paidEvery: z.nativeEnum(Frequency),
+  quotedAs: z.enum(Frequency),
+  paidEvery: z.enum(Frequency),
   startDate: z.string().min(1, "Start date is required"),
   lastPaycheckDate: z.string().min(1, "Last paycheck date is required"),
 });

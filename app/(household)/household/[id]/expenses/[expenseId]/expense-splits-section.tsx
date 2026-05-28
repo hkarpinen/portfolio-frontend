@@ -1,13 +1,19 @@
 "use client";
 
-import { Alert, Btn, Input, SelectField } from "@/components/editorial";
+import { Alert, Btn, Icon, Input, SelectField } from "@/components/editorial";
 import { useState } from "react";
 import { useAddExpenseSplit, useRemoveExpenseSplit } from "@/hooks/use-expenses";
 import { getErrorMessage } from "@/lib/error-messages";
 
 import { formatCurrency } from "@/lib/formatting";
+import { idsEqual, memberDisplayName } from "@/lib/utils";
 import type { HouseholdExpense, ExpenseSplit } from "@/types/household-expense";
 import type { MembershipResponse } from "@/types/membership";
+import {
+  eligibleSplitMembers,
+  splitAllocation,
+  splitShareLabel,
+} from "./expense-detail-derivations";
 
 /**
  * "Split between" section of the household-expense detail page.
@@ -38,14 +44,11 @@ export function ExpenseSplitsSection({
   const [addMembershipId, setAddMembershipId] = useState("");
   const [addAmount, setAddAmount] = useState("");
 
-  const splitTotal = splits.reduce((sum, s) => sum + Number(s.amount), 0);
-  const remaining = Math.max(0, Number(expense.amount) - splitTotal);
-  const splitUserIds = new Set(
-    splits.map((s) => s.userId?.toLowerCase()).filter(Boolean) as string[],
-  );
-  const eligibleMembers = members.filter((m) => !splitUserIds.has(m.userId?.toLowerCase() ?? ""));
-  const currentUserInSplit = !!(
-    currentMembership && splitUserIds.has(currentMembership.userId?.toLowerCase() ?? "")
+  const { allocated: splitTotal, remaining } = splitAllocation(splits, Number(expense.amount));
+  const { eligibleMembers, currentUserInSplit } = eligibleSplitMembers(
+    splits,
+    members,
+    currentMembership,
   );
   const canEditSplits = !!currentMembership;
 
@@ -172,28 +175,22 @@ function SplitsTable({
         </thead>
         <tbody>
           {splits.map((split) => {
-            const pct =
-              expense.amount > 0
-                ? ((Number(split.amount) / Number(expense.amount)) * 100).toFixed(1)
-                : "—";
+            const pct = splitShareLabel(split, expense);
             const splitFmt = formatCurrency(
               Number(split.amount),
               split.currency ?? expense.currency ?? "USD",
             );
-            const isOwnSplit =
-              currentMembership?.userId &&
-              split.userId?.toLowerCase() === currentMembership.userId.toLowerCase();
+            const isOwnSplit = idsEqual(split.userId, currentMembership?.userId);
             const mayRemove = !split.isClaimed && (isPrivileged || isOwnSplit);
             const isRemoving = removingSplitId === split.splitId;
 
             return (
               <tr key={split.splitId} className="border-b border-rule-soft">
                 <td className="py-7 pr-6 font-serif text-[1.0625rem] italic text-ink">
-                  {split.displayName ||
-                    `Member ${(split.splitId ?? split.userId ?? "").slice(0, 6)}…`}
+                  {memberDisplayName(split, split.splitId ?? split.userId)}
                 </td>
                 <td className="whitespace-nowrap py-7 pr-6 text-right font-mono text-sm text-ink-3">
-                  {pct}%
+                  {pct}
                 </td>
                 <td className="whitespace-nowrap py-7 pr-6 text-right font-mono text-sm text-ink">
                   {splitFmt}
@@ -232,19 +229,7 @@ function SplitStatusPill({ claimed }: { claimed: boolean }) {
         className="inline-flex items-center gap-[5px] font-mono text-xs uppercase tracking-[0.08em] text-ink-3"
         aria-label="Split claimed"
       >
-        <svg
-          aria-hidden
-          width="11"
-          height="11"
-          viewBox="0 0 12 12"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <polyline points="2 6 5 9 10 3" />
-        </svg>
+        <Icon name="check" size={11} strokeWidth={2.5} aria-hidden />
         Claimed
       </span>
     );
@@ -309,7 +294,7 @@ function AddSplitForm({
               <option value="">Select member…</option>
               {eligibleMembers.map((m) => (
                 <option key={m.membershipId} value={m.membershipId}>
-                  {m.displayName || `${m.userId.slice(0, 8)}…`} ({m.role})
+                  {memberDisplayName(m)} ({m.role})
                 </option>
               ))}
             </SelectField>

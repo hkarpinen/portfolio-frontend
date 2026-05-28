@@ -2,6 +2,7 @@
 
 import { Spinner } from "@/components/editorial";
 import { useNetPayBreakdown } from "@/hooks/use-income";
+import { formatCurrency } from "@/lib/formatting";
 
 export type Period = "weekly" | "biweekly" | "monthly" | "annually";
 
@@ -18,9 +19,9 @@ interface IncomeDetailPanelProps {
   onPeriodChange: (p: Period) => void;
 }
 
-function money(n: number) {
-  return n.toLocaleString("en-US", { style: "currency", currency: "USD" });
-}
+// Personal income is USD-only today (see lib/finance/editorial-copy.ts §5.1).
+// When the personal side ships a per-source currency, thread it through here.
+const money = (n: number) => formatCurrency(n, "USD");
 
 export function IncomeDetailPanel({ incomeId, period, onPeriodChange }: IncomeDetailPanelProps) {
   const now = new Date();

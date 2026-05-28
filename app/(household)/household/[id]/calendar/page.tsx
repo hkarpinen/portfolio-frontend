@@ -12,21 +12,7 @@ import { useCalendarEvents, useDeleteCalendarEvent } from "@/hooks/use-calendar"
 
 import { CalendarGrid } from "./calendar-grid";
 import { calendarHeadline } from "@/lib/household/editorial-copy";
-
-const MONTHS = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
+import { MONTH_NAMES, pluralize } from "@/lib/utils";
 
 export default function CalendarPage({ params }: { params: { id: string } }) {
   const { id: householdId } = params;
@@ -58,8 +44,8 @@ export default function CalendarPage({ params }: { params: { id: string } }) {
     setMonth(today.getMonth());
   }
 
-  // month is 0–11; MONTHS has length 12. Strict-indexed-access fallback.
-  const monthName = MONTHS[month] ?? "";
+  // month is 0–11; MONTH_NAMES has length 12. Strict-indexed-access fallback.
+  const monthName = MONTH_NAMES[month] ?? "";
   const headline = calendarHeadline({ count: events.length, monthName });
 
   return (
@@ -99,7 +85,7 @@ export default function CalendarPage({ params }: { params: { id: string } }) {
       <section className="flex flex-col gap-4">
         <DepartmentHead
           kicker={`${monthName} · Events`}
-          count={`${events.length} event${events.length === 1 ? "" : "s"}`}
+          count={`${events.length} ${pluralize("event", events.length)}`}
           title="Posted <em>this month</em>"
         />
         {events.length === 0 ? (

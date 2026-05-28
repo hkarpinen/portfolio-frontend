@@ -8,6 +8,7 @@ import { getErrorMessage } from "@/lib/error-messages";
 import { useHouseholdExpenseDetail, useDeleteHouseholdExpense } from "@/hooks/use-expenses";
 import { useMe } from "@/hooks/use-identity";
 import { useHousehold, useHouseholdMembers } from "@/hooks/use-household";
+import { idsEqual } from "@/lib/utils";
 import { ExpenseEditForm } from "./expense-edit-form";
 import { ExpenseMetadataCard } from "./expense-metadata-card";
 import { ExpenseSplitsSection } from "./expense-splits-section";
@@ -34,17 +35,14 @@ export default function ExpensePage() {
   const expense = page?.expense;
   const splits = page?.splits ?? [];
   const members = householdMembers ?? [];
-  const currentMembership =
-    members.find((m) => me?.id && m.userId?.toLowerCase() === me.id.toLowerCase()) ?? null;
+  const currentMembership = members.find((m) => idsEqual(m.userId, me?.id)) ?? null;
   // Ownership lives on the household entity (`ownerId`), separate from the
   // membership row's role — the owner's membership isn't always labelled
   // "Owner". Mirror the household page's `isOwner || role === "Admin"` check
-  // so the owner sees Edit/Delete here too.
-  const isOwner = !!(
-    me?.id &&
-    household?.ownerId &&
-    me.id.toLowerCase() === household.ownerId.toLowerCase()
-  );
+  // so the owner sees Edit/Delete here too. `idsEqual` returns false when
+  // either side is missing, so the `me?.id && household?.ownerId &&` guards
+  // are no longer needed.
+  const isOwner = idsEqual(me?.id, household?.ownerId);
   const isPrivileged =
     isOwner || currentMembership?.role === "Owner" || currentMembership?.role === "Admin";
 

@@ -1,4 +1,5 @@
 import React from "react";
+import { timeAgo } from "@/lib/utils";
 
 /**
  * <SourceNote> — byline / source line under a table or section
@@ -18,18 +19,6 @@ interface SourceNoteProps {
   meta?: string[];
 }
 
-function relativeTime(then: Date): string {
-  const ms = Date.now() - then.getTime();
-  const s = Math.max(0, Math.round(ms / 1000));
-  if (s < 60) return "just now";
-  const m = Math.round(s / 60);
-  if (m < 60) return `${m}m ago`;
-  const h = Math.round(m / 60);
-  if (h < 24) return `${h}h ago`;
-  const d = Math.round(h / 24);
-  return `${d}d ago`;
-}
-
 export function SourceNote({ source, syncedAt, meta = [] }: SourceNoteProps) {
   const parts: React.ReactNode[] = [];
   if (source) {
@@ -41,7 +30,7 @@ export function SourceNote({ source, syncedAt, meta = [] }: SourceNoteProps) {
     );
   }
   if (syncedAt) {
-    parts.push(<span key="synced">synced {relativeTime(syncedAt)}</span>);
+    parts.push(<span key="synced">synced {timeAgo(syncedAt)}</span>);
   }
   for (let i = 0; i < meta.length; i++) {
     parts.push(<span key={`m-${i}`}>{meta[i]}</span>);

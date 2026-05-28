@@ -160,18 +160,9 @@ export function ThreadActions({
         {submitted ? (
           <div className="flex flex-col items-center gap-6 p-[8px_0]">
             <div className="flex h-24 w-24 items-center justify-center bg-red-soft">
-              <svg
-                width="22"
-                height="22"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="var(--ink)"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <polyline points="20 6 9 17 4 12" />
-              </svg>
+              <span className="text-ink">
+                <Icon name="check" size={22} strokeWidth={2.5} />
+              </span>
             </div>
             <p className="m-0 text-center text-md text-ink-2">{REPORT_SUBMITTED_COPY}</p>
           </div>

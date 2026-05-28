@@ -7,6 +7,7 @@ import { z } from "zod";
 import { getErrorMessage } from "@/lib/error-messages";
 
 import { useUpdateHouseholdExpense } from "@/hooks/use-expenses";
+import { toDateInputValue } from "@/lib/utils";
 import type { HouseholdExpenseDetailResponse } from "@/types/household-expense";
 
 const editBillSchema = z.object({
@@ -65,7 +66,7 @@ export function ExpenseEditForm({
       amount: String(expense.amount),
       currency: expense.currency,
       category: String(expense.category),
-      dueDate: expense.dueDate ? new Date(expense.dueDate).toISOString().slice(0, 10) : "",
+      dueDate: expense.dueDate ? toDateInputValue(expense.dueDate) : "",
       recurrenceFrequency: expense.recurrenceFrequency ?? "",
       description: expense.description ?? "",
     },

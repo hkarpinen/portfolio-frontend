@@ -3,7 +3,27 @@
  * may contain inline `<em>` for the red italic accent.
  */
 
+import { pluralize } from "@/lib/utils";
+
 const num = (n: number) => n.toLocaleString("en-US");
+
+// ── Community tile meta ──────────────────────────────────────────────────────
+// The `<CommunityStrip>` on the landing page and the full /forum/communities
+// browse page used to hand-roll the same "memberLabel · threadLabel" line.
+// Both now call this helper so the wording stays in lockstep.
+
+export function communityTileMeta({
+  memberCount,
+  threadCount,
+}: {
+  memberCount: number;
+  threadCount: number;
+}): { memberLabel: string; threadLabel: string } {
+  const memberLabel = `${num(memberCount)} ${pluralize("member", memberCount)}`;
+  const threadLabel =
+    threadCount > 0 ? ` · ${num(threadCount)} ${pluralize("thread", threadCount)}` : "";
+  return { memberLabel, threadLabel };
+}
 
 // /forum (list) ──────────────────────────────────────────────────────────────
 
@@ -35,7 +55,7 @@ export function communityDeck({
   memberCount: number;
   threadCount: number;
 }): string {
-  const counts = `${num(memberCount)} member${memberCount === 1 ? "" : "s"} · ${num(threadCount)} thread${threadCount === 1 ? "" : "s"} posted`;
+  const counts = `${num(memberCount)} ${pluralize("member", memberCount)} · ${num(threadCount)} ${pluralize("thread", threadCount)} posted`;
   if (description && description.trim()) {
     return `${description.trim()} — ${counts}.`;
   }

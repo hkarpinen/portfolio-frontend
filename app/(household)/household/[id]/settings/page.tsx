@@ -7,6 +7,7 @@ import { HouseholdSchema } from "@/types/household";
 import { MembershipResponseSchema } from "@/types/membership";
 import { MeSchema } from "@/types/identity";
 
+import { idsEqual } from "@/lib/utils";
 import { SettingsForm } from "./settings-form";
 import { InviteSection } from "./invite-section";
 import { MemberActions } from "./member-actions";
@@ -42,8 +43,8 @@ export default async function HouseholdSettingsPage({ params }: Props) {
 
   const members = membersRaw ?? [];
   const myUserId = me?.id ?? "";
-  const myMembership = members.find((m) => m.userId.toLowerCase() === myUserId.toLowerCase());
-  const isOwner = myUserId.toLowerCase() === household.ownerId.toLowerCase();
+  const myMembership = members.find((m) => idsEqual(m.userId, myUserId));
+  const isOwner = idsEqual(myUserId, household.ownerId);
   const isPrivileged = isOwner || myMembership?.role === "Admin";
   const canLeave = !isOwner && !!myMembership;
 

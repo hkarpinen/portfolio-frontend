@@ -27,7 +27,7 @@ export enum ExpenseCategory {
   Other = "Other",
 }
 
-export const ExpenseCategorySchema = z.nativeEnum(ExpenseCategory);
+export const ExpenseCategorySchema = z.enum(ExpenseCategory);
 
 export const EXPENSE_CATEGORY_OPTIONS = Object.values(ExpenseCategory);
 

@@ -18,34 +18,12 @@ import {
   type NotificationItem,
 } from "@/lib/api/notifications";
 
-import { timeAgo } from "@/lib/utils";
+import { pluralize, timeAgo } from "@/lib/utils";
 import { notificationKeys } from "@/lib/query-keys";
 import { notificationsHeadline, notificationsDeck } from "@/lib/notifications/editorial-copy";
+import { categorizeNotification } from "@/lib/notifications/categorize";
 
 type Filter = "all" | "mentions" | "household" | "forum";
-
-function categoryOf(eventType: string): Filter | "other" {
-  const t = (eventType ?? "").toLowerCase();
-  if (t.includes("mention")) return "mentions";
-  if (
-    t.includes("household") ||
-    t.includes("expense") ||
-    t.includes("chore") ||
-    t.includes("settle") ||
-    t.includes("calendar")
-  )
-    return "household";
-  if (
-    t.includes("forum") ||
-    t.includes("thread") ||
-    t.includes("comment") ||
-    t.includes("reply") ||
-    t.includes("community") ||
-    t.includes("vote")
-  )
-    return "forum";
-  return "other";
-}
 
 function Row({ n, onRead }: { n: NotificationItem; onRead: (id: string) => void }) {
   const unreadDot = (
@@ -106,13 +84,13 @@ export default function NotificationsInboxPage() {
 
   const counts = {
     all: items.length,
-    mentions: items.filter((n) => categoryOf(n.eventType) === "mentions").length,
-    household: items.filter((n) => categoryOf(n.eventType) === "household").length,
-    forum: items.filter((n) => categoryOf(n.eventType) === "forum").length,
+    mentions: items.filter((n) => categorizeNotification(n.eventType) === "mentions").length,
+    household: items.filter((n) => categorizeNotification(n.eventType) === "household").length,
+    forum: items.filter((n) => categorizeNotification(n.eventType) === "forum").length,
   };
 
   const visible =
-    filter === "all" ? items : items.filter((n) => categoryOf(n.eventType) === filter);
+    filter === "all" ? items : items.filter((n) => categorizeNotification(n.eventType) === filter);
 
   function markRead(id: string) {
     markNotificationRead(id);
@@ -178,7 +156,7 @@ export default function NotificationsInboxPage() {
       <section className="flex flex-col gap-4">
         <DepartmentHead
           kicker={`Filter · ${activeTab?.label ?? "All"}`}
-          count={`${visible.length} item${visible.length === 1 ? "" : "s"}`}
+          count={`${visible.length} ${pluralize("item", visible.length)}`}
           title="Notices <em>filed</em>"
         />
         {isLoading ? (

@@ -6,6 +6,7 @@ import {
   useAppointModerator,
   useRemoveModerator,
 } from "@/hooks/use-community";
+import { memberDisplayName } from "@/lib/utils";
 
 interface Props {
   communityId: string;
@@ -57,7 +58,7 @@ export function CommunityMembersTab({ communityId }: Props) {
               <UserInitials name={m.displayName} size="lg" />
               <div>
                 <p className="text-base font-medium text-ink">
-                  {m.displayName ?? `${m.userId.slice(0, 8)}…`}
+                  {memberDisplayName(m)}
                 </p>
                 <p className="text-sm text-ink-3">
                   Joined{" "}

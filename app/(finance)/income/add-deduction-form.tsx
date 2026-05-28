@@ -1,6 +1,6 @@
 "use client";
 
-import { Btn, Input, SelectField } from "@/components/editorial";
+import { Btn, Icon, Input, SelectField } from "@/components/editorial";
 import { DeductionCalculationMethod, DeductionType } from "@/types/deductions";
 import { Frequency } from "@/types/schedule";
 import { TYPE_CONFIGS, VOLUNTARY_DEDUCTION_TYPES, DEDUCTION_FREQUENCIES } from "./deduction-config";
@@ -174,19 +174,12 @@ export function AddDeductionForm({
           className="flex w-full cursor-pointer items-center justify-between border-none bg-transparent px-6 py-[9px]"
         >
           <span className="text-base font-semibold text-ink-3">Advanced</span>
-          <svg
-            width="12"
-            height="12"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="var(--text-3)"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className={`transition-transform duration-[180ms]${advancedOpen ? "rotate-180" : ""}`}
+          <span
+            style={{ color: "var(--text-3)" }}
+            className={`transition-transform duration-[180ms] ${advancedOpen ? "rotate-180" : ""}`}
           >
-            <polyline points="6 9 12 15 18 9" />
-          </svg>
+            <Icon name="chevDown" size={12} strokeWidth={2.5} />
+          </span>
         </button>
         {advancedOpen && (
           <div className="flex flex-col gap-5 border-t border-ink p-[0_12px_12px]">

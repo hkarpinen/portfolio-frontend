@@ -15,7 +15,7 @@ export enum FilingStatus {
   HeadOfHousehold = "HeadOfHousehold",
 }
 
-export const FilingStatusSchema = z.nativeEnum(FilingStatus);
+export const FilingStatusSchema = z.enum(FilingStatus);
 
 export const FILING_STATUS_LABELS: Record<FilingStatus, string> = {
   [FilingStatus.Single]: "Single",

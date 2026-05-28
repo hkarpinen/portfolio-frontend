@@ -15,28 +15,14 @@
  */
 
 import { formatCurrency } from "@/lib/formatting";
+import { MONTH_NAMES } from "@/lib/utils";
 import type { TickerItem } from "@/types/ticker";
 
-const MONTHS = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
-
 export function currentMonthName(now: Date = new Date()): string {
-  // getUTCMonth() returns 0-11; MONTHS has length 12. The non-null
+  // getUTCMonth() returns 0-11; MONTH_NAMES has length 12. The non-null
   // assertion is sound; the alternative is a `?? ""` fallback that's
   // unreachable in practice but makes TS strict-indexed-access happy.
-  return MONTHS[now.getUTCMonth()]!;
+  return MONTH_NAMES[now.getUTCMonth()]!;
 }
 
 // ── Expenses page ────────────────────────────────────────────────────────────

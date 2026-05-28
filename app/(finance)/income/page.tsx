@@ -14,6 +14,7 @@ import {
   buildIncomeTicker,
 } from "@/lib/finance/editorial-copy";
 import { formatCurrency } from "@/lib/formatting";
+import { pluralize } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -99,7 +100,7 @@ export default async function IncomePage() {
       <section className="flex flex-col gap-5">
         <DepartmentHead
           kicker="Sources · On file"
-          count={`${sources.length} stream${sources.length === 1 ? "" : "s"}`}
+          count={`${sources.length} ${pluralize("stream", sources.length)}`}
           title="Income <em>sources</em>"
           deck="Each source models its own pay cadence, deductions, and tax profile."
         />

@@ -6,8 +6,9 @@ import {
   sortPeriods,
   emptyBucket,
   mergeBucket,
+  computeSettlements,
 } from "@/lib/contributions";
-import type { ContributionPeriod } from "@/types/contributions";
+import type { ContributionPeriod, HouseholdMonthlyContributions } from "@/types/contributions";
 
 function makePeriod(
   periodStart: string,
@@ -262,5 +263,73 @@ describe("sortPeriods", () => {
     expect(result[1].label).toBe("Mar 2025");
     expect(result[2].label).toBe("Feb 2025");
     expect(result[3].label).toBe("Jan 2025");
+  });
+});
+
+describe("computeSettlements", () => {
+  function makeMonth(
+    members: { userId: string; displayName?: string; totalPaid: number; totalDue: number }[],
+  ): HouseholdMonthlyContributions {
+    return {
+      periodLabel: "test",
+      periodStart: "2025-01-01",
+      currency: "USD",
+      total: 0,
+      members: members.map((m) => ({
+        userId: m.userId,
+        displayName: m.displayName,
+        totalPaid: m.totalPaid,
+        totalDue: m.totalDue,
+      })) as unknown as HouseholdMonthlyContributions["members"],
+    } as HouseholdMonthlyContributions;
+  }
+
+  it("returns empty when everyone is balanced", () => {
+    const month = makeMonth([
+      { userId: "a", displayName: "Alice", totalPaid: 100, totalDue: 100 },
+      { userId: "b", displayName: "Bob", totalPaid: 100, totalDue: 100 },
+    ]);
+    expect(computeSettlements(month)).toEqual([]);
+  });
+
+  it("pairs a debtor with a creditor of equal magnitude", () => {
+    const month = makeMonth([
+      { userId: "a", displayName: "Alice", totalPaid: 100, totalDue: 50 },
+      { userId: "b", displayName: "Bob", totalPaid: 50, totalDue: 100 },
+    ]);
+    const result = computeSettlements(month);
+    expect(result).toEqual([{ from: "Bob", to: "Alice", amount: 50 }]);
+  });
+
+  it("greedily splits one debtor across multiple creditors", () => {
+    const month = makeMonth([
+      { userId: "a", displayName: "A", totalPaid: 120, totalDue: 60 }, // +60 creditor
+      { userId: "b", displayName: "B", totalPaid: 40, totalDue: 0 }, // +40 creditor
+      { userId: "c", displayName: "C", totalPaid: 0, totalDue: 100 }, // -100 debtor
+    ]);
+    const result = computeSettlements(month);
+    // Greedy pairs the biggest creditor first.
+    expect(result).toEqual([
+      { from: "C", to: "A", amount: 60 },
+      { from: "C", to: "B", amount: 40 },
+    ]);
+  });
+
+  it("falls back to a userId-derived label when displayName is missing", () => {
+    const month = makeMonth([
+      { userId: "abcdef123456", totalPaid: 100, totalDue: 0 },
+      { userId: "ghijkl789012", totalPaid: 0, totalDue: 100 },
+    ]);
+    const result = computeSettlements(month);
+    expect(result[0]?.from).toMatch(/^User ghijkl/);
+    expect(result[0]?.to).toMatch(/^User abcdef/);
+  });
+
+  it("ignores half-cent residuals (±$0.005 zero band)", () => {
+    const month = makeMonth([
+      { userId: "a", displayName: "A", totalPaid: 50.001, totalDue: 50 },
+      { userId: "b", displayName: "B", totalPaid: 50, totalDue: 50.001 },
+    ]);
+    expect(computeSettlements(month)).toEqual([]);
   });
 });

@@ -10,6 +10,7 @@ import {
   Textarea,
 } from "@/components/editorial";
 import { useRouter } from "next/navigation";
+import { memberDisplayName } from "@/lib/utils";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -86,7 +87,7 @@ export default function NewExpensePage({ params }: { params: { id: string } }) {
       setSplits(
         members.map((m: any) => ({
           membershipId: m.membershipId as string,
-          displayName: (m.displayName ?? m.username ?? m.userId.slice(0, 8)) as string,
+          displayName: memberDisplayName(m),
           checked: true,
           percent: evenPct,
         })),
@@ -186,7 +187,7 @@ export default function NewExpensePage({ params }: { params: { id: string } }) {
           <option value="">Select payer</option>
           {members.map((m: any) => (
             <option key={m.membershipId} value={m.membershipId}>
-              {m.displayName ?? m.username ?? m.userId.slice(0, 8)}
+              {memberDisplayName(m)}
             </option>
           ))}
         </SelectField>

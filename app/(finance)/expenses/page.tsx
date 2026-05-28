@@ -6,28 +6,19 @@ import type { HouseholdSummaryDto } from "@/lib/api/households";
 import { fetchIncomeServer } from "@/lib/api/income";
 
 import { ExpensesClient } from "./expenses-client";
+import { computeIncomeMonthly } from "./expenses-derivations";
 import { currentMonthName, expensesHeadline, expensesDeck } from "@/lib/finance/editorial-copy";
-import { toMonthlyAmount } from "@/lib/utils";
+import {
+  findCurrentPeriod,
+  monthObligations,
+  oneTimePersonalBills,
+  recurringPersonalBills,
+  sharedBillIds,
+} from "@/lib/contributions";
 import type { Expense } from "@/types/expense";
 import type { IncomeSource } from "@/types/income";
 
 export const dynamic = "force-dynamic";
-
-/** Mirrors the calculation inside FinancialSummary so the headline + deck
- *  derived here read the same figures the lede block will render. */
-function computeIncomeMonthly(sources: IncomeSource[]) {
-  let monthlyGross = 0;
-  let monthlyDeductions = 0;
-  for (const source of sources) {
-    const gross = toMonthlyAmount(source.amount, source.quotedAs);
-    monthlyGross += gross;
-    for (const d of source.deductions ?? []) {
-      const base = d.method === "PercentOfGross" ? (d.value / 100) * gross : d.value;
-      monthlyDeductions += toMonthlyAmount(base, d.frequency ?? "Monthly");
-    }
-  }
-  return { monthlyGross, monthlyNet: monthlyGross - monthlyDeductions };
-}
 
 export default async function ExpensesPage() {
   const cookieHeader = await getCookieHeader();
@@ -52,21 +43,15 @@ export default async function ExpensesPage() {
 
   // Headline + deck are derived server-side from the same figures the
   // FinancialSummary lede will render, so the front-page reads as one
-  // composition rather than two views of two truths.
-  const nowKey = now.toISOString().slice(0, 7);
-  const currentPeriod = initialMonths.find((m) => m.periodStart.slice(0, 7) === nowKey);
+  // composition rather than two views of two truths. `now` is plumbed so
+  // the SSR pass and the client hydration agree on which period is current.
+  const currentPeriod = findCurrentPeriod(initialMonths, now);
   const { monthlyGross, monthlyNet } = computeIncomeMonthly(initialIncome);
-  const sharedDue = currentPeriod?.totalDue ?? 0;
-  const personalDue = currentPeriod?.personalBillsDue ?? 0;
-  const totalOut = sharedDue + personalDue;
+  const totalOut = monthObligations(currentPeriod);
   const disposable = monthlyNet - totalOut;
-  const recurringCount = (currentPeriod?.personalBills ?? []).filter(
-    (b) => b.recurrenceFrequency,
-  ).length;
-  const oneTimeCount = (currentPeriod?.personalBills ?? []).filter(
-    (b) => !b.recurrenceFrequency,
-  ).length;
-  const sharedBillCount = new Set((currentPeriod?.contributions ?? []).map((c) => c.billId)).size;
+  const recurringCount = recurringPersonalBills(currentPeriod).length;
+  const oneTimeCount = oneTimePersonalBills(currentPeriod).length;
+  const sharedBillCount = sharedBillIds(currentPeriod).size;
 
   const headline = expensesHeadline({ disposable, income: monthlyGross, monthName });
   const deck = expensesDeck({

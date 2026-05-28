@@ -19,6 +19,7 @@ export { Spinner } from "./spinner";
 export { Skeleton } from "./skeleton";
 export { Modal } from "./modal";
 export { Icon, type IconName } from "./icon";
+export { GithubMark, GoogleG } from "./brand-icons";
 export { Collapsible } from "./collapsible";
 export { ImageUpload } from "./image-upload";
 export { MastheadRow } from "./masthead-row";
