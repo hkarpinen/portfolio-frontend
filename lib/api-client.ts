@@ -170,4 +170,19 @@ export const api = {
     upload: <S extends ZodTypeAny>(path: string, schema: S, formData: FormData) =>
       parsedUpload(path, schema, formData),
   },
+  /**
+   * Fire-and-forget mutations whose response payload isn't consumed (logout,
+   * 2FA confirm, member-role swap, profile update, etc.). Returns
+   * `Promise<void>` so callers don't accidentally use the result. Use this
+   * instead of the `<void>` generic on `api.post`/`put`/etc. — the audit's
+   * §1.1 exit criterion bans the latter syntactic form, and `z.void()` on
+   * `api.parsed.*` would falsely reject a backend that returns `{}` on a
+   * non-204 success.
+   */
+  send: {
+    post: (path: string, body?: unknown) => request<void>(path, "POST", body),
+    put: (path: string, body?: unknown) => request<void>(path, "PUT", body),
+    patch: (path: string, body?: unknown) => request<void>(path, "PATCH", body),
+    delete: (path: string, body?: unknown) => request<void>(path, "DELETE", body),
+  },
 };

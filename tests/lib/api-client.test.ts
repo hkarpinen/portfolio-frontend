@@ -100,6 +100,42 @@ describe("parseBody (blind path)", () => {
   });
 });
 
+describe("api.send.* (fire-and-forget)", () => {
+  it("posts the body as JSON and resolves to void on success", async () => {
+    const stub = mockFetchOnce({ status: 204 }, null as unknown as string);
+    await expect(api.send.post("/x", { a: 1 })).resolves.toBeUndefined();
+
+    // Verify the fetch call shape — Content-Type set, body serialised.
+    expect(stub).toHaveBeenCalledTimes(1);
+    const [, init] = stub.mock.calls[0] as [string, RequestInit];
+    expect(init.method).toBe("POST");
+    expect((init.headers as Record<string, string>)["Content-Type"]).toBe("application/json");
+    expect(init.body).toBe(JSON.stringify({ a: 1 }));
+  });
+
+  it("propagates a 4xx as ApiError, not a silent resolution", async () => {
+    mockFetchOnce(
+      { status: 403, headers: { "Content-Type": "application/json" } },
+      JSON.stringify({ error: "forbidden" }),
+    );
+    await expect(api.send.delete("/x")).rejects.toMatchObject({
+      name: "ApiError",
+      status: 403,
+      message: "forbidden",
+    });
+  });
+
+  it("accepts a 200 with a non-empty body and discards the payload", async () => {
+    // The whole point of send.* is to NOT validate a response we don't care
+    // about. A backend that ships `{}` instead of 204 must not break the call.
+    mockFetchOnce(
+      { status: 200, headers: { "Content-Type": "application/json" } },
+      JSON.stringify({ unexpected: "payload" }),
+    );
+    await expect(api.send.put("/x", {})).resolves.toBeDefined();
+  });
+});
+
 describe("api.parsed.* (validated path)", () => {
   const schema = z.object({ count: z.number() });
 

@@ -46,7 +46,7 @@ export const updateCommunity = (communityId: string, body: Partial<CommunitySumm
   );
 
 export const deleteCommunity = (communityId: string) =>
-  api.delete<void>(`/api/forum/communities/${communityId}`);
+  api.send.delete(`/api/forum/communities/${communityId}`);
 
 export const fetchMembership = (communityId: string) =>
   api.parsed.get(

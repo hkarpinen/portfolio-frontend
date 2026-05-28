@@ -197,7 +197,7 @@ export const fetchMyForumProfile = () =>
   api.parsed.get("/api/forum/profiles/me", MyForumProfileSchema);
 
 export const updateMyForumProfile = (payload: { bio: string | null; signature: string | null }) =>
-  api.put<void>("/api/forum/profiles/me", payload);
+  api.send.put("/api/forum/profiles/me", payload);
 
 // ─── Server-side (RSC) fetchers ──────────────────────────────────────────────
 

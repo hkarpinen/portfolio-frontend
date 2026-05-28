@@ -1,9 +1,10 @@
 import Link from "next/link";
+import { z } from "zod";
 import { cookies } from "next/headers";
-import { serverFetch } from "@/lib/server-api-client";
-import type { Household } from "@/types/household";
-import type { MembershipResponse } from "@/types/membership";
-import type { Me as UserProfile } from "@/types/identity";
+import { parsedServerFetch } from "@/lib/server-api-client";
+import { HouseholdSchema } from "@/types/household";
+import { MembershipResponseSchema } from "@/types/membership";
+import { MeSchema } from "@/types/identity";
 import { EditorialPageHead } from "@/components/editorial/editorial-page-head";
 import { SettingsForm } from "./settings-form";
 import { InviteSection } from "./invite-section";
@@ -22,19 +23,27 @@ const NAV_SECTIONS = [
   { id: "danger", label: "Danger zone" },
 ];
 
+// `/members` returns a plain array; wrapping it in a schema keeps the
+// validated boundary uniform with the other two fetches.
+const MembersResponseSchema = z.array(MembershipResponseSchema);
+
 export default async function HouseholdSettingsPage({ params }: Props) {
   const cookieHeader = cookies().toString();
   const [household, membersRaw, me] = await Promise.all([
-    serverFetch<Household>(`/api/households/${params.id}`, cookieHeader),
-    serverFetch<MembershipResponse[]>(`/api/households/${params.id}/members`, cookieHeader),
-    serverFetch<UserProfile>("/api/identity/me", cookieHeader),
+    parsedServerFetch(`/api/households/${params.id}`, HouseholdSchema, cookieHeader),
+    parsedServerFetch(
+      `/api/households/${params.id}/members`,
+      MembersResponseSchema,
+      cookieHeader,
+    ),
+    parsedServerFetch("/api/identity/me", MeSchema, cookieHeader),
   ]);
 
   if (!household) {
     return <div className="p-16 text-base text-red">Household not found.</div>;
   }
 
-  const members = (Array.isArray(membersRaw) ? membersRaw : []) as MembershipResponse[];
+  const members = membersRaw ?? [];
   const myUserId = me?.id ?? "";
   const myMembership = members.find((m) => m.userId.toLowerCase() === myUserId.toLowerCase());
   const isOwner = myUserId.toLowerCase() === household.ownerId.toLowerCase();

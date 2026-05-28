@@ -17,6 +17,17 @@
     "react/self-closing-comp": "error",
     "react/jsx-boolean-value": ["error", "never"],
     "react/jsx-curly-brace-presence": ["error", { "props": "never", "children": "never" }],
-    "import/no-duplicates": "error"
+    "import/no-duplicates": "error",
+    "no-restricted-syntax": [
+      "error",
+      {
+        "selector": "CallExpression[typeArguments][callee.object.name='api'][callee.property.name=/^(get|post|put|patch|delete|upload)$/]",
+        "message": "Blind generic on api.<verb><T> bypasses zod validation. Use api.parsed.<verb>(path, schema) for typed responses, or api.send.<verb>(path, body?) for fire-and-forget."
+      },
+      {
+        "selector": "CallExpression[typeArguments][callee.name='serverFetch']",
+        "message": "Blind generic on serverFetch<T> bypasses zod validation. Use parsedServerFetch(path, schema, cookieHeader)."
+      }
+    ]
   }
 }

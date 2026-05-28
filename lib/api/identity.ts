@@ -10,7 +10,7 @@ export const fetchMe = () => api.parsed.get("/api/identity/me", MeSchema);
 export const fetchMeServer = (cookieHeader: string) =>
   parsedServerFetch("/api/identity/me", MeSchema, cookieHeader);
 
-export const logout = () => api.post<void>("/api/identity/logout");
+export const logout = () => api.send.post("/api/identity/logout");
 
 // ─── Auth flows ───────────────────────────────────────────────────────────────
 
@@ -20,8 +20,7 @@ export interface LoginPayload {
   rememberMe?: boolean;
 }
 
-export const login = (payload: LoginPayload) =>
-  api.post<void>("/api/identity/login", payload);
+export const login = (payload: LoginPayload) => api.send.post("/api/identity/login", payload);
 
 export interface RegisterPayload {
   email: string;
@@ -31,19 +30,19 @@ export interface RegisterPayload {
 }
 
 export const register = (payload: RegisterPayload) =>
-  api.post<void>("/api/identity/register", payload);
+  api.send.post("/api/identity/register", payload);
 
 export const confirmEmail = (userId: string, token: string) =>
-  api.post<void>("/api/identity/confirm-email", { userId, token });
+  api.send.post("/api/identity/confirm-email", { userId, token });
 
 export const resendConfirmationEmail = (email: string) =>
-  api.post<void>("/api/identity/resend-confirmation", { email });
+  api.send.post("/api/identity/resend-confirmation", { email });
 
 export const forgotPassword = (email: string) =>
-  api.post<void>("/api/identity/forgot-password", { email });
+  api.send.post("/api/identity/forgot-password", { email });
 
 export const resetPassword = (userId: string, token: string, newPassword: string) =>
-  api.post<void>("/api/identity/reset-password", { userId, token, newPassword });
+  api.send.post("/api/identity/reset-password", { userId, token, newPassword });
 
 const DemoStartedSchema = z.object({ demoExpiresAt: z.string() });
 
@@ -53,7 +52,7 @@ export const startDemo = (captchaToken: string) =>
 // ─── Password / profile updates ───────────────────────────────────────────────
 
 export const updatePassword = (currentPassword: string, newPassword: string) =>
-  api.put<void>("/api/identity/password", { currentPassword, newPassword });
+  api.send.put("/api/identity/password", { currentPassword, newPassword });
 
 /**
  * Partial update of the current user. Backend tolerates omitted fields — only
@@ -66,8 +65,7 @@ export interface UpdateMePayload {
   avatarUrl?: string | null;
 }
 
-export const updateMe = (payload: UpdateMePayload) =>
-  api.put<void>("/api/identity/me", payload);
+export const updateMe = (payload: UpdateMePayload) => api.send.put("/api/identity/me", payload);
 
 const AvatarUploadResponseSchema = z.object({ avatarUrl: z.string() });
 
@@ -95,11 +93,9 @@ export type Enable2FAResponse = z.infer<typeof Enable2FAResponseSchema>;
 export const enable2FA = () =>
   api.parsed.post("/api/identity/2fa/enable", Enable2FAResponseSchema);
 
-export const confirm2FA = (code: string) =>
-  api.post<void>("/api/identity/2fa/confirm", { code });
+export const confirm2FA = (code: string) => api.send.post("/api/identity/2fa/confirm", { code });
 
-export const verify2FA = (code: string) =>
-  api.post<void>("/api/identity/2fa/verify", { code });
+export const verify2FA = (code: string) => api.send.post("/api/identity/2fa/verify", { code });
 
 // ─── Sessions ─────────────────────────────────────────────────────────────────
 
@@ -118,10 +114,10 @@ const SessionsListSchema = z.object({ sessions: z.array(SessionItemSchema) });
 export const fetchSessions = () => api.parsed.get("/api/identity/sessions", SessionsListSchema);
 
 export const signOutSession = (sessionId: string) =>
-  api.post<void>(`/api/identity/sessions/${sessionId}/revoke`, {});
+  api.send.post(`/api/identity/sessions/${sessionId}/revoke`, {});
 
 export const signOutAllOtherSessions = () =>
-  api.post<void>("/api/identity/sessions/revoke-others", {});
+  api.send.post("/api/identity/sessions/revoke-others", {});
 
 // ─── Admin ────────────────────────────────────────────────────────────────────
 
@@ -131,7 +127,8 @@ export const fetchAdminUsers = (page = 1, pageSize = 50) =>
     z.array(AdminUserSchema),
   );
 
-export const banUser = (userId: string) => api.post(`/api/identity/admin/users/${userId}/ban`, {});
+export const banUser = (userId: string) =>
+  api.send.post(`/api/identity/admin/users/${userId}/ban`, {});
 
 export const changeUserRole = (userId: string, role: string) =>
-  api.post(`/api/identity/admin/users/${userId}/role`, { role });
+  api.send.post(`/api/identity/admin/users/${userId}/role`, { role });
