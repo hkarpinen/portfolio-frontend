@@ -9,7 +9,9 @@ import { EXPENSE_FREQUENCY_OPTIONS, expenseSchema } from "./_expense-form-shared
 import type { ExpenseFormData } from "./_expense-form-shared";
 import { getErrorMessage } from "@/lib/error-messages";
 
-import { EXPENSE_CATEGORY_OPTIONS, type Expense } from "@/types/expense";
+import { EXPENSE_CATEGORY_OPTIONS, ExpenseCategory, type Expense } from "@/types/expense";
+import { Frequency } from "@/types/schedule";
+import { parseEnum } from "@/lib/parse-enum";
 
 export const CATEGORY_COLORS: Record<string, string> = {
   Housing: "var(--red)",
@@ -101,10 +103,15 @@ export function ExpenseRow({
       title: expense.title,
       amount: String(expense.amount),
       currency: expense.currency,
-      category: expense.category as ExpenseFormData["category"],
+      // parseEnum (audit §1.2) narrows the wire string to the schema's
+      // enum at runtime; a stale or renamed value falls back to "Other"
+      // rather than silently corrupting the form's category union.
+      category: parseEnum(ExpenseCategory, expense.category, ExpenseCategory.Other),
       dueDate: expense.dueDate ? new Date(expense.dueDate).toISOString().slice(0, 10) : "",
-      recurrenceFrequency: (expense.recurrenceFrequency ??
-        "") as ExpenseFormData["recurrenceFrequency"],
+      // Empty string is the form's "no recurrence" sentinel; only narrow
+      // when a real frequency comes back from the wire.
+      recurrenceFrequency:
+        parseEnum(Frequency, expense.recurrenceFrequency) ?? ("" as const),
       description: expense.description ?? "",
     },
   });

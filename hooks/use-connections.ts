@@ -23,34 +23,26 @@ export { connectionKeys };
 /** @deprecated Use connectionKeys */
 export const plaidKeys = connectionKeys;
 
+/**
+ * Lazy-load Plaid Link's vanilla CDN build. The PlaidLinkGlobal type lives
+ * in `types/plaid.d.ts` as a `window.Plaid?` ambient declaration, which
+ * eliminates the prior `(window as any).Plaid` casts (audit §1.3).
+ */
 function loadPlaidLink(): Promise<PlaidLinkGlobal> {
   if (typeof window === "undefined") return Promise.reject(new Error("SSR"));
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const existing = (window as any).Plaid as PlaidLinkGlobal | undefined;
-  if (existing) return Promise.resolve(existing);
+  if (window.Plaid) return Promise.resolve(window.Plaid);
 
   return new Promise((resolve, reject) => {
     const script = document.createElement("script");
     script.src = "https://cdn.plaid.com/link/v2/stable/link-initialize.js";
     script.async = true;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    script.onload = () => resolve((window as any).Plaid as PlaidLinkGlobal);
+    script.onload = () => {
+      if (window.Plaid) resolve(window.Plaid);
+      else reject(new Error("Plaid Link loaded but window.Plaid is missing."));
+    };
     script.onerror = () => reject(new Error("Failed to load Plaid Link script."));
     document.head.appendChild(script);
   });
-}
-
-interface PlaidLinkGlobal {
-  create: (config: PlaidLinkConfig) => { open: () => void; exit: () => void; destroy: () => void };
-}
-
-interface PlaidLinkConfig {
-  token: string;
-  onSuccess: (
-    publicToken: string,
-    metadata: { institution?: { institution_id: string; name: string } | null },
-  ) => void;
-  onExit?: (err: unknown, metadata: unknown) => void;
 }
 
 export function usePlaidLink() {

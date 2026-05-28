@@ -148,10 +148,17 @@ export const TYPE_CONFIGS: Record<DeductionType, TypeConfig | undefined> = {
 
 /** Deduction types the user can manually add. Filed (tax-withholding) types
  *  are handled separately via the TaxWithholdingProfile, not as line-item
- *  deductions, so they're excluded from voluntary types. */
-export const VOLUNTARY_DEDUCTION_TYPES: readonly DeductionType[] = Object.keys(TYPE_CONFIGS).filter(
-  (t) => TYPE_CONFIGS[t as DeductionType] !== undefined,
-) as DeductionType[];
+ *  deductions, so they're excluded from voluntary types.
+ *
+ *  The single cast `as DeductionType[]` is justified by construction:
+ *  `TYPE_CONFIGS` is typed `Record<DeductionType, …>`, so its key set IS
+ *  the enum's value set. TypeScript can't infer that from `Object.keys`
+ *  alone — collapsing the per-iteration cast into one boundary cast
+ *  (audit §1.2) keeps the body of the filter type-safe. */
+const ALL_DEDUCTION_TYPES = Object.keys(TYPE_CONFIGS) as DeductionType[];
+export const VOLUNTARY_DEDUCTION_TYPES: readonly DeductionType[] = ALL_DEDUCTION_TYPES.filter(
+  (t) => TYPE_CONFIGS[t] !== undefined,
+);
 
 /** @deprecated Use VOLUNTARY_DEDUCTION_TYPES */
 export const VOLUNTARY_TYPES = VOLUNTARY_DEDUCTION_TYPES;

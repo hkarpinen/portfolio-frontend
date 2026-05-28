@@ -5,8 +5,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useUpdateIncomeSource } from "@/hooks/use-income";
 import type { IncomeSource } from "@/types/income";
-import { FREQUENCY_LABELS } from "@/types/schedule";
+import { FREQUENCY_LABELS, Frequency } from "@/types/schedule";
 import { incomeSchema, INCOME_FREQUENCY_OPTIONS, type IncomeFormData } from "./_income-form-shared";
+import { parseEnum } from "@/lib/parse-enum";
 
 /**
  * The inline "edit income source" form that expands inside an IncomeCard.
@@ -33,8 +34,11 @@ export function IncomeCardEditForm({
       source: source.source,
       amount: String(source.amount),
       currency: source.currency ?? "USD",
-      quotedAs: (source.quotedAs as IncomeFormData["quotedAs"]) ?? "Annually",
-      paidEvery: (source.paidEvery as IncomeFormData["paidEvery"]) ?? "BiWeekly",
+      // parseEnum (audit §1.2): narrow at the seam, with a safe default if
+      // the backend ever ships an unrecognised cadence (instead of the
+      // form mounting with a corrupt enum and exploding on submit).
+      quotedAs: parseEnum(Frequency, source.quotedAs, Frequency.Annually),
+      paidEvery: parseEnum(Frequency, source.paidEvery, Frequency.BiWeekly),
       startDate: source.startDate ? source.startDate.slice(0, 10) : "",
       lastPaycheckDate: source.lastPaycheckDate
         ? source.lastPaycheckDate.slice(0, 10)
