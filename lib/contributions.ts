@@ -51,7 +51,7 @@ export function sharedBillIds(period: ContributionPeriod | undefined): Set<strin
 
 // ── Aggregations (year / quarter / month rollups) ─────────────────────────────
 
-export interface AggregatedPeriod {
+interface AggregatedPeriod {
   label: string;
   periodStart: string;
   totalDue: number;
@@ -149,7 +149,7 @@ export function toMonthlyPeriods(months: ContributionPeriod[]): AggregatedPeriod
 // ── Settlements ───────────────────────────────────────────────────────────────
 
 /** One leg of the suggested settle-up: who pays whom, in the household currency. */
-export interface SettlementTransfer {
+interface SettlementTransfer {
   from: string;
   to: string;
   amount: number;

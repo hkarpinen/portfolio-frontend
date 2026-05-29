@@ -37,11 +37,6 @@ export const createChore = (
   },
 ) => api.parsed.post(`/api/households/${householdId}/chores`, CreatedIdSchema, body);
 
-export const assignChore = (householdId: string, choreId: string, assignToUserId: string) =>
-  api.post(`/api/households/${householdId}/chores/${choreId}/assign`, {
-    assignToUserId,
-  });
-
 export const completeChore = (householdId: string, choreId: string) =>
   api.post(`/api/households/${householdId}/chores/${choreId}/complete`, {});
 

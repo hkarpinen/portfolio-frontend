@@ -10,7 +10,7 @@ import React from "react";
  * All visual rules in /app/globals.css under `.ed-lede*`.
  */
 
-export interface LedeAside {
+interface LedeAside {
   label: string;
   value: string;
   /** Optional sub-line under the value, e.g. "3 personal · 2 shared". */

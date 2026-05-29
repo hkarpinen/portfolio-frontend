@@ -65,7 +65,7 @@ export type HouseholdMonthlyContributions = z.infer<typeof HouseholdMonthlyContr
 
 // ── Contribution period (the caller's monthly view) ──────────────────────────
 
-export enum DisposableIncomeSource {
+enum DisposableIncomeSource {
   Balance = "balance",
   Estimate = "estimate",
 }

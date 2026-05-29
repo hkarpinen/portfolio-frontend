@@ -1,8 +1,6 @@
 import React from "react";
 import type { TickerItem } from "@/types/ticker";
 
-export type { TickerItem };
-
 /**
  * <Ticker> — animated horizontal data strip (editorial)
  *

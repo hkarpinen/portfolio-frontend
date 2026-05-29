@@ -117,37 +117,3 @@ export function useUnlinkPlaidItem() {
   });
 }
 
-/** Bank sync suggestions. */
-export function useBankSyncSuggestions() {
-  return useQuery({
-    queryKey: connectionKeys.recurring(),
-    queryFn: () => listSuggestions().then((r) => r.suggestions as RecurringSuggestion[]),
-  });
-}
-
-export function useRefreshRecurring() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: refreshSuggestions,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: connectionKeys.recurring() }),
-  });
-}
-
-/** Accept a bank sync suggestion. */
-export function useAcceptSuggestion() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: acceptSuggestion,
-    // Accepting a bank-sync suggestion creates a real expense or income
-    // record on the backend, so the finance caches need to repopulate. Going
-    // through `financeKeys` keeps this invariant: change the key shape in
-    // one place and every consumer follows.
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: connectionKeys.recurring() });
-      queryClient.invalidateQueries({ queryKey: financeKeys.expenses() });
-      queryClient.invalidateQueries({ queryKey: financeKeys.income() });
-      queryClient.invalidateQueries({ queryKey: financeKeys.overview() });
-    },
-  });
-}
-

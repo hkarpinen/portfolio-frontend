@@ -40,9 +40,6 @@ export const fetchThreads = (
 // (body alias, commentCount, etc.) as undefined. The wire schema only checks
 // the API-returned shape; we cast back to `Thread` for downstream type
 // consumers that branch on the optional extras.
-export const fetchThread = (threadId: string): Promise<Thread> =>
-  api.parsed.get(`/api/forum/threads/${threadId}`, ThreadWireSchema) as Promise<Thread>;
-
 export const createThread = (body: {
   communityId?: string;
   communitySlug?: string;
@@ -128,14 +125,6 @@ function mapTreeNode(node: CommentTreeNode): Comment {
   };
 }
 
-export const fetchComments = async (threadId: string): Promise<{ items: Comment[] }> => {
-  const data = await api.parsed.get(
-    `/api/forum/comments/thread/${threadId}`,
-    CommentTreeResponseSchema,
-  );
-  return { items: (data?.rootComments ?? []).map((n) => mapTreeNode(n as CommentTreeNode)) };
-};
-
 export const createComment = (body: {
   threadId: string;
   content: string;
@@ -161,28 +150,7 @@ export const searchForum = (query: string) =>
   );
 
 // ─── Profiles ────────────────────────────────────────────────────────────────
-
-export const fetchForumProfile = (userId: string) =>
-  api.parsed.get(`/api/forum/profiles/${userId}`, ForumProfileSchema);
-
-export const fetchProfileThreads = (userId: string, page = 1, pageSize = 20) =>
-  api.parsed.get(
-    `/api/forum/profiles/${userId}/threads?page=${page}&pageSize=${pageSize}`,
-    ThreadPageSchema,
-  );
-
-export const fetchProfileComments = (userId: string, page = 1, pageSize = 20) =>
-  api.parsed.get(
-    `/api/forum/profiles/${userId}/comments?page=${page}&pageSize=${pageSize}`,
-    ProfileCommentPageSchema,
-  );
-
-export const fetchProfileMemberships = (userId: string) =>
-  api.parsed.get(`/api/forum/profiles/${userId}/memberships`, z.array(UserCommunityItemSchema));
-
-// Server-side counterparts for the profile RSC (audit §3.3 — server-ifying
-// the profile page). Each is the parsedServerFetch mirror of the client
-// fetcher above with the same schema.
+// All profile reads happen server-side via the RSC fetchers below (audit §3.3).
 export const fetchForumProfileServer = (userId: string, cookieHeader?: string) =>
   parsedServerFetch(`/api/forum/profiles/${userId}`, ForumProfileSchema, cookieHeader);
 

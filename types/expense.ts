@@ -39,7 +39,7 @@ export const EXPENSE_CATEGORY_OPTIONS = Object.values(ExpenseCategory);
  * Personal vs Household; scope-specific ids (`userId`, `groupId`,
  * `createdBy`, `payerMembershipId`) are nullable on the wire.
  */
-export const ExpenseScopeSchema = z.enum(["Personal", "Household"]);
+const ExpenseScopeSchema = z.enum(["Personal", "Household"]);
 
 export const ExpenseSchema = z.object({
   expenseId: z.string(),

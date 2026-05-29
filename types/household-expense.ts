@@ -58,7 +58,7 @@ export const HouseholdExpenseDetailResponseSchema = z.object({
 });
 export type HouseholdExpenseDetailResponse = z.infer<typeof HouseholdExpenseDetailResponseSchema>;
 
-export const UpcomingHouseholdExpenseSchema = z.object({
+const UpcomingHouseholdExpenseSchema = z.object({
   billId: z.string(),
   householdId: z.string(),
   householdName: z.string(),

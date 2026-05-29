@@ -3,7 +3,7 @@ import { z } from "zod";
 // ── UserRole ──────────────────────────────────────────────────────────────────
 // Mirrors identity/src/Domain/Aggregates/User/UserRole.cs.
 
-export enum UserRole {
+enum UserRole {
   Demo = "Demo",
   Member = "Member",
   Admin = "Admin",

@@ -10,9 +10,6 @@ import type { PayrollDeduction } from "@/types/deductions";
 
 export const fetchIncome = () => api.parsed.get("/api/finance/income", IncomeListResponseSchema);
 
-export const fetchHouseholdIncome = (householdId: string) =>
-  api.parsed.get(`/api/finance/groups/${householdId}/income`, IncomeListResponseSchema);
-
 export const createIncomeSource = (body: {
   source: string;
   amount: number;

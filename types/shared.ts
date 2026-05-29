@@ -22,7 +22,7 @@ export function pagedResponseSchema<T extends z.ZodTypeAny>(itemSchema: T) {
   });
 }
 
-export const MoneyFieldsSchema = z.object({
+const MoneyFieldsSchema = z.object({
   amount: z.number(),
   currency: z.string(),
 });

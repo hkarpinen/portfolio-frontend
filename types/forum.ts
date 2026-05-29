@@ -4,7 +4,7 @@ import { z } from "zod";
 // Mirror forum/src/Domain/ValueObjects/. Per `[[finance-publishes-domain-events-directly]]`,
 // consumers declare matching types in their own namespace.
 
-export enum CommunityRole {
+enum CommunityRole {
   Member = "Member",
   Moderator = "Moderator",
   Owner = "Owner",
@@ -20,7 +20,7 @@ export enum CommunityVisibility {
 
 const CommunityVisibilitySchema = z.enum(CommunityVisibility);
 
-export enum ReportTargetType {
+enum ReportTargetType {
   Thread = "Thread",
   Comment = "Comment",
   User = "User",
@@ -28,7 +28,7 @@ export enum ReportTargetType {
 
 const ReportTargetTypeSchema = z.enum(ReportTargetType);
 
-export enum ModerationAction {
+enum ModerationAction {
   BanUser = "BanUser",
   UnbanUser = "UnbanUser",
   DeleteThread = "DeleteThread",
@@ -57,7 +57,7 @@ const CommunityActivitySnapshotSchema = z.object({
   latestReplyAuthorDisplayName: z.string().nullish(),
   latestReplyAuthorAvatarUrl: z.string().nullish(),
 });
-export type CommunityActivitySnapshot = z.infer<typeof CommunityActivitySnapshotSchema>;
+type CommunityActivitySnapshot = z.infer<typeof CommunityActivitySnapshotSchema>;
 
 export const CommunitySummaryResponseSchema = z.object({
   communityId: z.string(),
@@ -78,12 +78,6 @@ export const CommunitySummaryResponseSchema = z.object({
   latestActivity: CommunityActivitySnapshotSchema.nullish(),
 });
 export type CommunitySummaryResponse = z.infer<typeof CommunitySummaryResponseSchema>;
-
-// CommunityDetailResponse currently has the exact same shape as
-// CommunitySummaryResponse (`latestActivity?` was redeclared identically).
-// Kept as a separate alias because consumers branch on the semantic distinction.
-export const CommunityDetailResponseSchema = CommunitySummaryResponseSchema;
-export type CommunityDetailResponse = z.infer<typeof CommunityDetailResponseSchema>;
 
 // Thread schemas — the `Thread` interface includes several fields the API
 // does NOT return ("authorUsername", "commentCount", "body", etc.). The

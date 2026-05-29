@@ -7,8 +7,6 @@ export { StatCard } from "./stat-card";
 export { EmptyState } from "./empty-state";
 export { ListWithLoadingAndEmpty } from "./list-with-loading-and-empty";
 export { Alert } from "./alert";
-export { CommunityAvatar } from "./community-avatar";
-export { ThreadCard } from "./thread-card";
 export { DeleteIconButton } from "./delete-icon-button";
 export { Toggle } from "./toggle";
 export { Spinner } from "./spinner";

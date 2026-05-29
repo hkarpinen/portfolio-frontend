@@ -34,17 +34,5 @@ export const createCalendarEvent = (
   },
 ) => api.parsed.post(`/api/households/${householdId}/calendar`, CreatedIdSchema, body);
 
-export const updateCalendarEvent = (
-  householdId: string,
-  eventId: string,
-  body: {
-    title: string;
-    description?: string;
-    startsAt: string;
-    endsAt?: string;
-    allDay: boolean;
-  },
-) => api.put(`/api/households/${householdId}/calendar/${eventId}`, body);
-
 export const deleteCalendarEvent = (householdId: string, eventId: string) =>
   api.delete(`/api/households/${householdId}/calendar/${eventId}`);

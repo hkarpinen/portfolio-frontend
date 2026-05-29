@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 
-export interface LinkTabItem {
+interface LinkTabItem {
   label: string;
   href: string;
   /** Value compared against the resolved active value to determine active state. */

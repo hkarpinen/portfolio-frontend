@@ -23,7 +23,7 @@ export const HouseholdSchema = z.object({
 });
 export type Household = z.infer<typeof HouseholdSchema>;
 
-export const HouseholdSummarySchema = HouseholdSchema.extend({
+const HouseholdSummarySchema = HouseholdSchema.extend({
   totalBills: z.number(),
   totalGrossIncome: z.number(),
   netBalance: z.number(),
@@ -52,7 +52,7 @@ const HouseholdDashboardSchema = z.object({
   balanceAsOf: z.string().nullable().optional(),
 });
 
-export const HouseholdDetailResponseSchema = z.object({
+const HouseholdDetailResponseSchema = z.object({
   household: HouseholdSchema,
   members: z.array(MembershipResponseSchema),
   bills: z.array(HouseholdExpenseSchema),

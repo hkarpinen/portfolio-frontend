@@ -5,13 +5,13 @@ import { fetchCommunityBySlugServer } from "@/lib/api/communities";
 import { getCookieHeader } from "@/lib/server-cookies";
 
 import { SettingsTabs } from "./settings-tabs";
-import { CommunityVisibility, type CommunityDetailResponse } from "@/types/forum";
+import { CommunityVisibility, type CommunitySummaryResponse } from "@/types/forum";
 import { parseEnum } from "@/lib/parse-enum";
 
 export const dynamic = "force-dynamic";
 
 export default async function CommunitySettingsPage({ params }: { params: { slug: string } }) {
-  const community: CommunityDetailResponse | null = await fetchCommunityBySlugServer(
+  const community: CommunitySummaryResponse | null = await fetchCommunityBySlugServer(
     params.slug,
     await getCookieHeader(),
   );
