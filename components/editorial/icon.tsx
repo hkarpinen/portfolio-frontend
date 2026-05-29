@@ -1,5 +1,6 @@
 import {
   Home,
+  HousePlus,
   User,
   FileText,
   MessageSquare,
@@ -49,7 +50,10 @@ export const ICON_MAP = {
   home: Home,
   about: User,
   expenses: FileText,
-  household: Home,
+  // Distinct from `home` (the / landing) — the + decorator reads as "your
+  // shared household" rather than a generic dwelling, and keeps Home/House
+  // visually separable in the bottom mobile nav.
+  household: HousePlus,
   forum: MessageSquare,
   settings: Settings,
   bell: Bell,

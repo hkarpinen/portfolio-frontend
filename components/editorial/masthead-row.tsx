@@ -5,17 +5,24 @@ import React from "react";
  *
  * Replaces the in-content breadcrumb on editorial pages. Renders:
  *
- *   [BRAND ·]  DESK · [subNav] · LONG-DATE   ←gap→   [action]  ·  VOL/NO
+ *   [BRAND ·]  DESK · LONG-DATE         ←gap→         [action]  ·  VOL/NO
+ *   [subNav strip — its own row, full width, scrolls if it overflows]
  *
- * On mobile the row stacks: desk/date on line 1, subNav on line 2, action +
- * edition on line 3. Brand is opt-in — the topbar already wears the brand,
- * so repeating it here on every page is loud. Action slot is for the page's
- * primary CTA (e.g. "+ Add expense") so the headline below can run at the
- * full editorial measure unbroken.
+ * Identity (desk/date) and stamp (action/edition) share row 1; subNav, when
+ * present, claims row 2 outright via flex-basis:100%. Earlier versions
+ * inlined the subNav between desk and date inside the left column, which
+ * forced the right column to wrap onto its own orphan line as soon as a
+ * full tab set (4–5 tabs) was added — household detail was the worst case.
+ *
+ * Brand is opt-in — the topbar already wears the brand, so repeating it
+ * here on every page is loud. Action slot is for the page's primary CTA
+ * (e.g. "+ Add expense") so the headline below can run at the full
+ * editorial measure unbroken.
  *
  * The volume/number is derived from the date: VOL = year − 2023 (Roman),
  * NO = day-of-year. Both `date` and `edition` may be overridden if a page
- * wants a stamped value (e.g. period archives).
+ * wants a stamped value (e.g. period archives). Edition is hidden on
+ * phone-width — it's decorative and the row reads cleaner without it.
  *
  * All visual rules live in /app/globals.css under `.ed-masthead-*`.
  */
@@ -106,14 +113,6 @@ export function MastheadRow({ desk, date, edition, brand, action, subNav }: Mast
             </>
           )}
           <span className="ed-masthead-desk">{desk}</span>
-          {subNav && (
-            <>
-              <span className="ed-masthead-sep ed-masthead-sep-tabs" aria-hidden="true">
-                ·
-              </span>
-              <span className="ed-masthead-subnav">{subNav}</span>
-            </>
-          )}
           <span className="ed-masthead-sep ed-masthead-sep-date" aria-hidden="true">
             ·
           </span>
@@ -129,6 +128,7 @@ export function MastheadRow({ desk, date, edition, brand, action, subNav }: Mast
             </span>
           )}
         </div>
+        {subNav && <div className="ed-masthead-subnav">{subNav}</div>}
       </div>
     </div>
   );

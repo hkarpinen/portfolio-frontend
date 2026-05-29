@@ -2987,10 +2987,12 @@ html[data-density="compact"] {
                <AppShell> via its `topBand` slot so its rules span the
                scroll area (same pattern as .ed-page-breadcrumb).
         ROW  : caps at --content-max so the text aligns with the headline
-               below. Two columns:
-                  LEFT  : [BRAND ·] DESK · [subNav] · DATE
-                  RIGHT : [action] · EDITION
-     Single row on desktop, multi-row stack on mobile. */
+               below. Three children, in this DOM order:
+                  LEFT   : [BRAND ·] DESK · DATE        (row 1, hugs left)
+                  RIGHT  : [action] · EDITION           (row 1, hugs right)
+                  SUBNAV : tabs strip (optional)        (row 2, full width)
+               Subnav forces itself onto its own line via flex-basis:100%
+               so the right column never gets orphaned by tab overflow. */
   .ed-masthead-band {
     border-top: 1.5px solid var(--ink);
     border-bottom: 1px solid var(--rule-soft);
@@ -3011,7 +3013,8 @@ html[data-density="compact"] {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: 8px 16px;
+    column-gap: 16px;
+    row-gap: 8px;
     font-family: var(--ff-mono);
     font-size: var(--ts-meta);
     font-weight: 600;
@@ -3024,12 +3027,25 @@ html[data-density="compact"] {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: 8px 12px;
+    column-gap: 12px;
+    row-gap: 6px;
+    min-width: 0;
+  }
+  .ed-masthead-left {
+    /* Lets the long household-name desk shrink rather than shove the right
+       column off the row. */
+    flex: 1 1 auto;
     min-width: 0;
   }
   .ed-masthead-right {
+    /* Sits flush right on row 1 (margin-left:auto) and again on its own
+       line if it does eventually wrap on a very narrow viewport (the
+       wrap line inherits the same justification). No flex-grow — we no
+       longer need to stretch a wrapped right column across the width,
+       because the subnav owns its own row now. */
     margin-left: auto;
-    gap: 8px 16px;
+    column-gap: 16px;
+    flex-shrink: 0;
   }
   .ed-masthead-brand {
     color: var(--ink);
@@ -3042,23 +3058,47 @@ html[data-density="compact"] {
   }
   .ed-masthead-desk {
     color: var(--red);
+    /* The desk often carries a household/community name that can be long.
+       Truncate rather than force the row to wrap awkwardly. */
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
   }
   .ed-masthead-sep {
     color: var(--ink-4);
+    flex-shrink: 0;
   }
   .ed-masthead-date {
     color: var(--ink-2);
+    white-space: nowrap;
+    flex-shrink: 0;
   }
   .ed-masthead-edition {
     color: var(--ink-3);
     font-variant-numeric: tabular-nums;
+    white-space: nowrap;
   }
 
-  /* Inline sub-nav slot (tabs riding the masthead). */
+  /* Sub-nav slot: own row, full width, horizontally scrollable when the
+     tab set is wider than the viewport. Behaviour applies at every width
+     now — even on desktop, the household desk's five tabs can come close
+     to overflowing on small laptops. */
   .ed-masthead-subnav {
-    display: inline-flex;
+    display: flex;
     align-items: center;
+    flex-basis: 100%;
+    min-width: 0;
     gap: 2px;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    /* Hide the scrollbar visually but keep the scroll behaviour. */
+    scrollbar-width: none; /* Firefox */
+    -webkit-overflow-scrolling: touch; /* iOS momentum */
+  }
+  .ed-masthead-subnav::-webkit-scrollbar {
+    display: none; /* WebKit */
   }
   .ed-masthead-subnav .ed-masthead-tab {
     font-family: var(--ff-mono);
@@ -3075,6 +3115,8 @@ html[data-density="compact"] {
       border-color var(--dur-fast),
       background var(--dur-fast);
     line-height: 1;
+    flex-shrink: 0;
+    white-space: nowrap;
   }
   .ed-masthead-subnav .ed-masthead-tab:hover {
     color: var(--ink);
@@ -3092,29 +3134,46 @@ html[data-density="compact"] {
     align-items: center;
   }
 
-  /* Mobile: drop to a clear stack. Edition pulls tight under the date so
-     it doesn't read as a third orphan band. Action moves below the
-     masthead group and stays full-width via its own consumer. */
+  /* Phone width: drop the edition stamp — it's decorative and noisy when
+     vertical space matters. Tighten the date so it tucks under the desk
+     rather than fighting it on row 1. The action slot stretches to full
+     width: with edition hidden, the right column has nothing else in it,
+     and a right-aligned bare button on its own line reads as orphaned. */
   @media (max-width: 720px) {
     .ed-masthead-row {
-      flex-direction: column;
-      align-items: stretch;
-      gap: 6px;
+      row-gap: 6px;
     }
     .ed-masthead-left,
     .ed-masthead-right {
-      margin-left: 0;
-      gap: 6px 10px;
+      column-gap: 10px;
+      row-gap: 6px;
     }
-    .ed-masthead-sep-date {
+    .ed-masthead-edition {
       display: none;
     }
     .ed-masthead-date {
-      width: 100%;
       color: var(--ink-3);
     }
+    /* The bullet before the date reads as clutter once the row is tight;
+       drop it and let the column-gap separate desk from date. */
+    .ed-masthead-sep-date {
+      display: none;
+    }
+    /* Full-width CTA below the tab strip. Reading order is: who am I
+       (identity) → where can I go (tabs) → what can I do (action). The
+       button claims its own line and fills it — standard mobile pattern,
+       and a much clearer affordance than a right-edge orphan. */
+    .ed-masthead-right {
+      flex-basis: 100%;
+      margin-left: 0;
+      order: 1; /* push after subnav (default order: 0) */
+    }
     .ed-masthead-action {
-      order: 99;
+      flex: 1 1 auto;
+      width: 100%;
+    }
+    .ed-masthead-action > * {
+      width: 100%;
     }
   }
 
