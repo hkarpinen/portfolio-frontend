@@ -256,7 +256,7 @@ export function LifecycleRibbon() {
           <desc id="lifecycle-ribbon-desc">
             A user tap travels through Nginx to the Finance service, which writes a Charge and an
             outbox row in one Postgres transaction. The OutboxPublisher dispatches the event to
-            RabbitMQ, which fans out to Finance's own double-entry ledger consumer, Household, and
+            RabbitMQ, which fans out to Finance&apos;s own double-entry ledger consumer, Household, and
             Notifications.
           </desc>
 
