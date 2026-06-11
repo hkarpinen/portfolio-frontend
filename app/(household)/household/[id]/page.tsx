@@ -1,7 +1,7 @@
-import { Btn, DepartmentHead, EditorialPageHead, Icon, LedeStat } from "@/components/editorial";
-import Link from "next/link";
+import { ArrowLink, Btn, DepartmentHead, EditorialPageHead, Icon } from "@/components/editorial";
 import { notFound } from "next/navigation";
 import { ExpensesList } from "./expenses-list";
+import { HouseholdMoneySummary } from "./household-money-summary";
 import { fetchHouseholdServer, fetchHouseholdMembersServer } from "@/lib/api/households";
 import { fetchHouseholdExpensesServer } from "@/lib/api/household-expenses";
 import { getSession } from "@/lib/auth/session";
@@ -12,7 +12,6 @@ import { parseEnum } from "@/lib/parse-enum";
 
 import { currentMonthName } from "@/lib/finance/editorial-copy";
 import { householdDetailHeadline, householdDetailDeck } from "@/lib/household/editorial-copy";
-import { formatCurrency } from "@/lib/formatting";
 import { idsEqual, pluralize } from "@/lib/utils";
 import { householdMonthFigures } from "./household-detail-derivations";
 
@@ -49,10 +48,7 @@ export default async function HouseholdPage({ params }: { params: { id: string }
   // detail page. Plain members get read access plus their own split.
   const canManage = isOwner || myMembership?.role === "Owner" || myMembership?.role === "Admin";
 
-  const { monthlyObligations, yourShare, yourSharePct } = householdMonthFigures(
-    householdExpenses,
-    memberCount,
-  );
+  const { monthlyObligations, yourShare } = householdMonthFigures(householdExpenses, memberCount);
 
   const monthName = currentMonthName(new Date());
   const headline = householdDetailHeadline({
@@ -72,39 +68,13 @@ export default async function HouseholdPage({ params }: { params: { id: string }
 
   return (
     <div className="page-enter flex flex-col gap-6">
-      <Link href="/household" className="ed-label-muted self-start no-underline hover:text-red">
-        ← All households
-      </Link>
+      <ArrowLink href="/household" direction="left" className="ed-label-muted self-start">
+        All households
+      </ArrowLink>
 
       <EditorialPageHead kicker={`${monthName} edition`} title={headline} deck={deck} />
 
-      <LedeStat
-        label={`Your share · ${monthName}`}
-        value={
-          yourShare !== null
-            ? formatCurrency(yourShare, household.currencyCode, { precision: 0 })
-            : "—"
-        }
-        deck={
-          monthlyObligations !== null && monthlyObligations > 0 && yourSharePct !== null
-            ? `${yourSharePct}% of ${formatCurrency(monthlyObligations, household.currencyCode, { precision: 0 })} total owed across the household this month.`
-            : "Add an expense with member splits to start tracking your share."
-        }
-        aside={[
-          {
-            label: "Total this month",
-            value:
-              monthlyObligations !== null
-                ? formatCurrency(monthlyObligations, household.currencyCode, { precision: 0 })
-                : "—",
-            sub: `${householdExpenses.length} ${pluralize("expense", householdExpenses.length)}`,
-          },
-          { label: "Members", value: String(memberCount), sub: household.currencyCode },
-          // TODO(handoff8): wire to contributions endpoint.
-          { label: "Open splits", value: "—", sub: "unpaid" },
-          { label: "Last settle-up", value: "—", sub: "no settlements yet" },
-        ]}
-      />
+      <HouseholdMoneySummary householdId={params.id} currencyCode={household.currencyCode} />
 
       <section className="flex flex-col gap-5">
         <DepartmentHead
@@ -113,7 +83,7 @@ export default async function HouseholdPage({ params }: { params: { id: string }
           title="Shared <em>expenses</em>"
           deck="Every bill the household has filed, with its split. Owner and admins can edit inline."
         />
-        <div className="-mt-2 flex justify-end gap-3">
+        <div className="-mt-2 flex flex-wrap items-center justify-end gap-3">
           <Btn
             variant="secondary"
             size="sm"

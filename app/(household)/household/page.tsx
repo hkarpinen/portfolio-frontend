@@ -22,7 +22,7 @@ export const dynamic = "force-dynamic";
 const ORIENT = [
   { title: "About the project", desc: "What this is and why", href: "/about" },
   { title: "Try the forum", desc: "Threaded discussions", href: "/forum" },
-  { title: "Round out your profile", desc: "Avatar, bio, prefs", href: "/settings/profile" },
+  { title: "Round out your profile", desc: "Avatar, bio, prefs", href: "/identity/settings/profile" },
 ];
 
 export default async function HouseholdsPage() {
@@ -127,8 +127,8 @@ export default async function HouseholdsPage() {
                         variant="card"
                         initialData={balancesById[h.id] ?? null}
                       />
-                      <span className="ed-module-arrow" aria-hidden>
-                        Open →
+                      <span className="ed-module-arrow inline-flex items-center gap-1" aria-hidden>
+                        Open <Icon name="arrowRight" size={13} strokeWidth={2} />
                       </span>
                     </div>
                   </Link>

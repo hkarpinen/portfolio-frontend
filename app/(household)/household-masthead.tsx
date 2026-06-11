@@ -12,14 +12,14 @@ import { useHousehold } from "@/hooks/use-household";
  * spans the full scroll area (matching the breadcrumb pattern).
  *
  * Three modes, picked from the pathname:
- *   1. List view (`/household`, `/dashboard`)  → desk "Household Desk", no tabs
- *   2. New / Join (`/household/new`, `/household/join`) → desk "Household Desk", no tabs
- *   3. Detail (`/household/[id]/...`)          → desk = household name,
+ *   1. List view (`/household`)                -> desk "Household Desk", no tabs
+ *   2. New / Join (`/household/new`, `/household/join`) -> desk "Household Desk", no tabs
+ *   3. Detail (`/household/[id]/...`)          -> desk = household name,
  *                                                 tabs for sub-pages,
  *                                                 action varies per tab
  */
 
-type HouseholdTab = "expenses" | "contributions" | "calendar" | "chores" | "settings";
+type HouseholdTab = "money" | "calendar" | "chores" | "settings";
 
 interface TabDef {
   key: HouseholdTab;
@@ -30,18 +30,16 @@ interface TabDef {
 
 const HOUSEHOLD_TABS: TabDef[] = [
   {
-    key: "expenses",
-    label: "Expenses",
+    key: "money",
+    label: "Money",
     href: (id) => `/household/${id}`,
-    // /household/[id] AND /household/[id]/expenses/* both belong to the
-    // expenses tab — the index page already lists shared expenses.
-    match: (p, id) => p === `/household/${id}` || p.startsWith(`/household/${id}/expenses`),
-  },
-  {
-    key: "contributions",
-    label: "Contributions",
-    href: (id) => `/household/${id}/contributions`,
-    match: (p, id) => p.startsWith(`/household/${id}/contributions`),
+    // The Money landing (/household/[id]) carries the balance, settle-up, and
+    // the shared-expenses list; the expense forms (/expenses/*) and the ledger
+    // drill-in (/ledger/*) are all part of the household's money.
+    match: (p, id) =>
+      p === `/household/${id}` ||
+      p.startsWith(`/household/${id}/expenses`) ||
+      p.startsWith(`/household/${id}/ledger`),
   },
   {
     key: "calendar",
@@ -88,7 +86,7 @@ function HouseholdSubNav({ householdId, pathname }: { householdId: string; pathn
 function actionForTab(householdId: string, activeTab: HouseholdTab | null): React.ReactNode {
   if (!activeTab) return null;
   switch (activeTab) {
-    case "expenses":
+    case "money":
       return (
         <Btn
           href={`/household/${householdId}/expenses/new`}

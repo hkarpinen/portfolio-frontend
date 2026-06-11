@@ -8,13 +8,13 @@ import type { MemberBalance, MemberBalanceListResponse } from "@/types/membershi
  * Compact "YOU'RE OWED / YOU OWE / Settled" badge for one household,
  * computed from the caller's per-member balance list.
  *
- * NetSettlement convention (see types/finance.ts MemberBalance): positive means
- * the other member owes the caller. Summing across all members gives the
- * caller's overall position in the household.
+ * NetSettlement convention (see types/membership.ts MemberBalance): positive
+ * means the other member owes the caller. Summing across all members gives
+ * the caller's overall position in the household.
  *
  * Visual variants:
- *   - `card`   — used on the household list cards (page.tsx)
- *   - `header` — used on the household detail header (household-chrome.tsx)
+ *   - `card`   — used on the household list cards (household/page.tsx)
+ *   - `header` — reserved for a detail-header rendering (currently unused)
  *
  * Both variants use `.ed-mod-badge` so styling matches. Net-positive renders
  * with `.ed-mod-badge-filled-red` per the W2-H4 design spec.

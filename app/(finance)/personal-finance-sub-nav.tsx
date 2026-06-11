@@ -4,8 +4,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const TABS = [
-  { label: "Expenses", href: "/expenses" },
-  { label: "Income", href: "/income" },
+  // "Money" is the merged home (where you stand + net positions + bills). It owns the legacy
+  // /finance/expenses subtree too, so the add-expense form (/finance/expenses/new) keeps it active.
+  {
+    label: "Money",
+    href: "/finance/overview",
+    match: (p: string) => p.startsWith("/finance/overview") || p.startsWith("/finance/expenses"),
+  },
+  { label: "Income", href: "/finance/income", match: (p: string) => p.startsWith("/finance/income") },
 ] as const;
 
 /**
@@ -20,7 +26,7 @@ export function PersonalFinanceMastheadTabs() {
   return (
     <span role="tablist" aria-label="Personal finance sub-desks">
       {TABS.map((tab) => {
-        const active = pathname.startsWith(tab.href);
+        const active = tab.match(pathname);
         return (
           <Link
             key={tab.href}
