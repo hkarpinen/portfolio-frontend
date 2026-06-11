@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "https://stackgazette.dev";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "https://hankkarpinen.com";
 
 /**
  * Person schema tuned for name-search dominance.
