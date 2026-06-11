@@ -40,11 +40,13 @@ type Method = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
  * {@link ApiError}. Centralising this avoids subtle behaviour drift between
  * the JSON and multipart upload helpers.
  *
- * Note: a 401 is intentionally surfaced as a regular {@link ApiError}. We do
- * NOT redirect to /login here. Routing is enforced by `middleware.ts`; doing
- * a hard `window.location` here would (a) break public pages that
- * legitimately call authenticated endpoints (e.g. `useMe()` on a public
- * profile) and (b) hide the real error from React Query's cache/error UI.
+ * Note: a 401 is intentionally surfaced as a regular {@link ApiError} — we do
+ * NOT redirect here. A hard `window.location` at this layer would (a) break
+ * public pages that legitimately call authenticated endpoints (e.g. `useMe()`
+ * on a public profile) and (b) hide the real error from React Query's
+ * cache/error UI. Session-expiry redirects are handled centrally in
+ * `components/layout/query-provider.tsx`, which can tell a logged-in session
+ * dying (cached `me`) from an anonymous visitor's expected 401.
  */
 async function toApiError(res: Response): Promise<ApiError> {
   const payload = await res.json().catch(() => ({}) as Record<string, unknown>);
