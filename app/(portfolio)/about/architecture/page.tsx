@@ -20,19 +20,19 @@ export const metadata: Metadata = {
   // Title template will append " — The Stack & Gazette" automatically
   title: "Architecture",
   description:
-    "Six .NET 8 microservices on a RabbitMQ spine. Volatility-based decomposition (IDesign × DDD), transactional outbox, idempotent consumers, hand-rolled identity. The architecture behind The Stack & Gazette, illustrated.",
+    "Seven .NET 8 microservices on a RabbitMQ spine. Volatility-based decomposition (IDesign × DDD), transactional outbox, idempotent consumers, hand-rolled identity. The architecture behind The Stack & Gazette, illustrated.",
   alternates: { canonical: "/about/architecture" },
   openGraph: {
     title: "Architecture — The Stack & Gazette",
     description:
-      "Six .NET 8 microservices on one RabbitMQ spine. IDesign × DDD, transactional outbox, idempotent consumers — illustrated.",
+      "Seven .NET 8 microservices on one RabbitMQ spine. IDesign × DDD, transactional outbox, idempotent consumers — illustrated.",
     url: "/about/architecture",
     type: "article",
   },
   twitter: {
     title: "Architecture — The Stack & Gazette",
     description:
-      "Six .NET 8 microservices on one RabbitMQ spine. IDesign × DDD, transactional outbox, idempotent consumers — illustrated.",
+      "Seven .NET 8 microservices on one RabbitMQ spine. IDesign × DDD, transactional outbox, idempotent consumers — illustrated.",
   },
   keywords: [
     "microservices architecture",
@@ -72,15 +72,15 @@ export default function ArchitecturePage() {
     <div className="ed-about">
       <EditorialPageHead
         kicker="About · The architecture"
-        title="Six services, <em>one spine.</em>"
-        deck="The site is six independent .NET microservices behind one Nginx gateway. They share no database and no contracts library — they cooperate through domain events on a RabbitMQ bus. Here's why, and what one event looks like end to end."
+        title="Seven services, <em>one spine.</em>"
+        deck="The site is seven independent .NET microservices behind one Nginx gateway. They share no database and no contracts library — they cooperate through domain events on a RabbitMQ bus. Here's why, and what one event looks like end to end."
       />
 
       {/* ── Why this shape — the long-form intro ─────────────────────────── */}
       <section aria-labelledby="why-heading" className="ed-about-grid" style={{ marginTop: 48 }}>
         <div className="flex flex-col gap-6">
           <h2 id="why-heading" className="ed-h3">
-            Why <em>six</em>, not one?
+            Why <em>seven</em>, not one?
           </h2>
           <p
             style={{
@@ -121,7 +121,7 @@ export default function ArchitecturePage() {
                 <dt className="font-mono text-xs uppercase tracking-[0.16em] text-paper opacity-60">
                   Services
                 </dt>
-                <dd className="ed-h4 ed-card-dark-lead">Six on the bus, two off</dd>
+                <dd className="ed-h4 ed-card-dark-lead">Five on the bus, two off</dd>
               </div>
               <div>
                 <dt className="font-mono text-xs uppercase tracking-[0.16em] text-paper opacity-60">
@@ -168,7 +168,7 @@ export default function ArchitecturePage() {
           </p>
         </div>
         <p className="ed-section-row-deck">
-          A single tap on the &quot;Add expense&quot; button travels through six stages. The
+          A single tap on the &quot;Add expense&quot; button travels through seven stages. The
           user&apos;s HTTP request returns before the bus even hears about it — the publish is
           decoupled by the transactional outbox.
         </p>
@@ -266,7 +266,7 @@ export default function ArchitecturePage() {
           >
             GitHub
           </a>{" "}
-          · Six .NET 8 services · One Next.js shell ·{" "}
+          · Seven .NET 8 services · One Next.js shell ·{" "}
           <Link href="/" className="text-red underline">
             Back to home
           </Link>

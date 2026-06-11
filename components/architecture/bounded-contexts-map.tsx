@@ -313,10 +313,10 @@ export function BoundedContextsMap() {
             y={BOTTOM_BOX_Y}
             service="Finance"
             owns={[
-              "Expense  ·  ExpenseSplit",
+              "Charge  ·  Allocation",
+              "Ledger  ·  JournalEntry",
               "IncomeSource",
               "FinancialConnection",
-              "FinancialTransaction",
             ]}
             drawnAround="money"
           />
@@ -337,7 +337,7 @@ export function BoundedContextsMap() {
             x={LEFT_CONN_X}
             yStart={BOTTOM_BOX_Y}
             yEnd={BUS_Y + BUS_H}
-            events={["ExpenseCreated", "ExpenseSplitPaid", "IncomeSourceCreated"]}
+            events={["ChargeCreated", "AllocationCreated", "SettlementRecorded"]}
             direction="publish"
             labelAnchor="start"
           />
@@ -345,7 +345,7 @@ export function BoundedContextsMap() {
             x={RIGHT_CONN_X}
             yStart={BOTTOM_BOX_Y}
             yEnd={BUS_Y + BUS_H}
-            events={["ThreadCreated", "CommentCreated", "VoteCast"]}
+            events={["ThreadCreated", "CommentCreated", "ModeratorAppointed"]}
             direction="publish"
             labelAnchor="end"
           />
@@ -507,7 +507,7 @@ export function BoundedContextsMap() {
             }}
           >
             Consumers bind to the publisher&apos;s own domain event types (e.g.{" "}
-            <code style={{ wordBreak: "break-word" }}>Finance.Domain.Events.ExpenseCreated</code>) —
+            <code style={{ wordBreak: "break-word" }}>Finance.Domain.Events.ChargeCreated</code>) —
             no shared contracts NuGet, no mapping shim. The bus carries the real thing.
           </p>
         </div>

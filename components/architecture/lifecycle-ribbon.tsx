@@ -2,7 +2,7 @@
  * <LifecycleRibbon> — full-width architecture diagram for /about/architecture.
  *
  * The "story" version of what the landing teaser hints at. Traces one
- * domain event (ExpenseCreated) from a user tap all the way to two
+ * domain event (ChargeCreated) from a user tap all the way to three
  * downstream consumers, including the transactional outbox detour through
  * Postgres. Every label here is real — event class names match
  * Finance.Domain.Events; consumer behaviors match what's wired up.
@@ -212,7 +212,7 @@ const STEPS = [
   {
     n: "02",
     title: "Finance writes in one transaction",
-    body: "The handler inserts the Expense aggregate AND an outbox row (the serialized ExpenseCreated event) in the same Postgres transaction. If either fails, both roll back — the bus never sees a phantom event.",
+    body: "The handler inserts the Charge aggregate AND an outbox row (the serialized ChargeCreated event) in the same Postgres transaction. If either fails, both roll back — the bus never sees a phantom event.",
   },
   {
     n: "03",
@@ -222,17 +222,22 @@ const STEPS = [
   {
     n: "04",
     title: "RabbitMQ fans out",
-    body: "A topic exchange routes the message to every queue bound to finance.expense.recorded. Each consuming service has its own queue, prefixed with the service name so they don’t compete.",
+    body: "A topic exchange routes the message to every queue bound to finance.charge.created. Each consuming service has its own queue, prefixed with the service name so they don’t compete.",
   },
   {
     n: "05",
-    title: "Household appends to the activity feed",
-    body: "Household’s consumer checks HouseholdId; if the expense is household-scoped, it writes a row to the activity feed and marks the event processed (idempotency table). If not, it drops the message.",
+    title: "Finance posts its own ledger",
+    body: "Finance’s own LedgerPostingConsumer takes ChargeCreated back off the bus and posts the double-entry accrual (Dr Expense / Cr Vendor Payable) into the group’s ledger. The originating service reacts to its own event — the books are never written inside the request thread, and a failed posting redelivers instead of being lost.",
   },
   {
     n: "06",
+    title: "Household mirrors it to the home",
+    body: "Household’s consumer checks HouseholdId; if the charge is household-scoped, it mirrors the bill into the shared calendar and the activity feed, marking the event processed (idempotency table). If not, it drops the message.",
+  },
+  {
+    n: "07",
     title: "Notifications fans out to members",
-    body: "Notifications looks up every member of the household, inserts a Notification row per member, and emits a push. No shared library — both consumers declare matching types in Finance.Domain.Events.",
+    body: "Notifications looks up every member of the household, inserts a Notification row per member, and emits a push. No shared library — every consumer declares matching types in Finance.Domain.Events.",
   },
 ];
 
@@ -247,11 +252,12 @@ export function LifecycleRibbon() {
           className="h-auto w-full min-w-[760px]"
           style={{ background: PAPER }}
         >
-          <title id="lifecycle-ribbon-title">Lifecycle of an ExpenseCreated domain event</title>
+          <title id="lifecycle-ribbon-title">Lifecycle of a ChargeCreated domain event</title>
           <desc id="lifecycle-ribbon-desc">
-            A user tap travels through Nginx to the Finance service, which writes an Expense and an
+            A user tap travels through Nginx to the Finance service, which writes a Charge and an
             outbox row in one Postgres transaction. The OutboxPublisher dispatches the event to
-            RabbitMQ, which fans out to Household and Notifications consumers.
+            RabbitMQ, which fans out to Finance's own double-entry ledger consumer, Household, and
+            Notifications.
           </desc>
 
           {/* Step numbers above each major column. The 05/06 kicker sits
@@ -262,7 +268,7 @@ export function LifecycleRibbon() {
             { x: 410, label: "02" },
             { x: 630, label: "03" },
             { x: 880, label: "04" },
-            { x: 1100, label: "05 / 06" },
+            { x: 1100, label: "05 / 06 / 07" },
           ].map((s) => (
             <text
               key={s.label}
@@ -290,12 +296,14 @@ export function LifecycleRibbon() {
           <ArrowH x1={840} x2={940} y={102} label="PUBLISH" accent />
           <Node x={940} y={70} w={220} h={64} label="RABBITMQ" sub="topic exchange" accent />
 
-          {/* Consumers on the right, stacked */}
-          <Node x={1200} y={20} w={250} h={56} label="HOUSEHOLD" sub="activity-feed consumer" />
-          <Node x={1200} y={130} w={250} h={56} label="NOTIFICATIONS" sub="fanout consumer" />
+          {/* Consumers on the right, stacked. The first is Finance's OWN ledger consumer —
+              the originating service reacts to its own event off the bus. */}
+          <Node x={1200} y={20} w={250} h={56} label="LEDGER" sub="finance posts its own event" />
+          <Node x={1200} y={130} w={250} h={56} label="HOUSEHOLD" sub="calendar + activity feed" />
+          <Node x={1200} y={240} w={250} h={56} label="NOTIFICATIONS" sub="fanout consumer" />
 
           {/* -- Finance -> Postgres (write) -- */}
-          <Node x={430} y={290} w={150} h={64} label="POSTGRES" sub="expense + outbox" />
+          <Node x={430} y={290} w={150} h={64} label="POSTGRES" sub="charge + outbox" />
           <ArrowPath
             points={[
               [505, 134],
@@ -317,11 +325,11 @@ export function LifecycleRibbon() {
             dashed
           />
 
-          {/* -- RabbitMQ -> two consumers (fan out, accent) -- */}
+          {/* -- RabbitMQ -> three consumers (fan out, accent) -- */}
           <ArrowPath
             points={[
-              [1160, 90],
-              [1185, 90],
+              [1160, 88],
+              [1185, 88],
               [1185, 48],
               [1200, 48],
             ]}
@@ -329,10 +337,19 @@ export function LifecycleRibbon() {
           />
           <ArrowPath
             points={[
-              [1160, 114],
-              [1185, 114],
+              [1160, 108],
+              [1185, 108],
               [1185, 158],
               [1200, 158],
+            ]}
+            accent
+          />
+          <ArrowPath
+            points={[
+              [1160, 128],
+              [1185, 128],
+              [1185, 268],
+              [1200, 268],
             ]}
             accent
           />
@@ -348,7 +365,7 @@ export function LifecycleRibbon() {
             fill={RED}
             style={{ letterSpacing: "0.08em" }}
           >
-            finance.expense.recorded
+            finance.charge.created
           </text>
           <text
             x={1050}
@@ -359,7 +376,7 @@ export function LifecycleRibbon() {
             fill={INK_3}
             style={{ letterSpacing: "0.06em" }}
           >
-            Finance.Domain.Events.ExpenseCreated
+            Finance.Domain.Events.ChargeCreated
           </text>
 
           {/* Faint axis labels at the bottom */}
@@ -412,7 +429,7 @@ export function LifecycleRibbon() {
       </div>
 
       <figcaption className="sr-only">
-        Lifecycle of one ExpenseCreated event, end to end. Step annotations below.
+        Lifecycle of one ChargeCreated event, end to end. Step annotations below.
       </figcaption>
 
       {/* Step annotations — body type, two-column on wide screens */}

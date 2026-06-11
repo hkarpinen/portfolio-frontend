@@ -61,7 +61,7 @@ const CLAIMS: Claim[] = [
     name: "Hand-rolled identity service",
     body: (
       <>
-        One of the six services is Identity — JWT auth, refresh tokens, RBAC, email verification,
+        One of the seven services is Identity — JWT auth, refresh tokens, RBAC, email verification,
         demo sessions, all in .NET. Every other service consumes its events for projections. No
         Auth0, no Clerk in the mesh.
       </>
@@ -79,7 +79,7 @@ export function ArchitecturePitch() {
             className="font-700 font-mono text-xs uppercase tracking-[0.18em]"
             style={{ color: "var(--red)" }}
           >
-            Feature · Six services · One bus
+            Feature · Seven services · One bus
           </span>
           <h2 id="architecture-pitch-heading" className="ed-h3 leading-tight">
             Built like <em>production</em>, not a tutorial.
@@ -99,7 +99,7 @@ export function ArchitecturePitch() {
           upfront. Three "each its own X" clauses make the microservice
           separation impossible to miss. */}
       <p className="ed-section-row-deck" style={{ maxWidth: "72ch" }}>
-        Six .NET 8 services, each independently deployable, each with its own Postgres schema and
+        Seven .NET 8 services, each independently deployable, each with its own Postgres schema and
         its own RabbitMQ queue. They cooperate only through domain events on a shared bus. Designed
         with IDesign volatility decomposition, modeled with DDD, hand-rolled end to end.
       </p>
