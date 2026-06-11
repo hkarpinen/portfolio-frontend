@@ -7,10 +7,10 @@ import { usePathname, useParams } from "next/navigation";
  * <ForumMasthead> — layout-level masthead for the (forum) route group.
  *
  * Three modes, picked from pathname:
- *   1. List (`/forum`, `/`) → desk "Forum Desk", action "+ New community"
- *   2. Community (`/forum/g/[slug]/*`) → desk "Forum · g/{slug}",
+ *   1. List (`/forum`, `/`) -> desk "Forum Desk", action "+ New community"
+ *   2. Community (`/forum/g/[slug]/*`) -> desk "Forum · g/{slug}",
  *      action "+ New thread"
- *   3. Profile / search / new / mod tools → desk "Forum Desk", no action
+ *   3. Profile / search / new / mod tools -> desk "Forum Desk", no action
  *      (these are utility surfaces, not content)
  */
 

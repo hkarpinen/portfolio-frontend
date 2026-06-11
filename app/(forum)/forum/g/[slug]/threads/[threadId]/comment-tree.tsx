@@ -75,7 +75,7 @@ function CommentNode({
           <span className="font-mono text-xs uppercase tracking-[0.12em] text-ink">
             {comment.authorId ? (
               <Link
-                href={`/profile/${comment.authorId}`}
+                href={`/forum/profile/${comment.authorId}`}
                 aria-label={`View profile of ${authorName}`}
                 className={styles.authorLink}
               >
@@ -121,7 +121,7 @@ function CommentNode({
             (isDemo ? (
               <span className="font-mono text-xs uppercase tracking-[0.12em] text-ink-3">
                 Demo —{" "}
-                <a href="/register" className="font-medium normal-case text-red no-underline">
+                <a href="/identity/register" className="font-medium normal-case text-red no-underline">
                   sign up
                 </a>{" "}
                 to reply
@@ -139,7 +139,7 @@ function CommentNode({
               </button>
             ) : (
               <Link
-                href={`/login?from=${encodeURIComponent(pathname)}`}
+                href={`/identity/login?from=${encodeURIComponent(pathname)}`}
                 className="font-mono text-xs uppercase tracking-[0.12em] text-ink-3 no-underline hover:text-ink"
               >
                 Sign in to reply

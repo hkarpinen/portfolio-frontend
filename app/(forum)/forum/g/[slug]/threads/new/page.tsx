@@ -2,6 +2,7 @@
 
 import {
   Alert,
+  ArrowLink,
   Btn,
   Icon,
   Input,
@@ -61,7 +62,7 @@ export default function NewThreadPage({ params }: { params: { slug: string } }) 
       const raw = localStorage.getItem(DRAFT_KEY(params.slug));
       if (!raw) return;
       const result = DraftSchema.safeParse(JSON.parse(raw));
-      if (!result.success) return; // stale/malformed shape → fresh form
+      if (!result.success) return; // stale/malformed shape -> fresh form
       const draft = result.data;
       setTitle(draft.title);
       setContent(draft.content);
@@ -98,17 +99,18 @@ export default function NewThreadPage({ params }: { params: { slug: string } }) 
   if (isDemo) {
     return (
       <div className="page-enter flex max-w-[680px] flex-col gap-8">
-        <Link
+        <ArrowLink
           href={`/forum/g/${params.slug}`}
-          className="ed-label-muted no-underline hover:text-red"
+          direction="left"
+          className="ed-label-muted"
         >
-          ← g/{params.slug}
-        </Link>
+          g/{params.slug}
+        </ArrowLink>
         <SectionHeader kicker="New thread" title="Start a <em>thread</em>" />
         <div className="ed-card flex flex-col items-start gap-4">
           <p className="ed-deck">
             Posting threads isn&apos;t available in the demo.{" "}
-            <Link href="/register" className="font-semibold text-red">
+            <Link href="/identity/register" className="font-semibold text-red">
               Create a free account
             </Link>{" "}
             to join the conversation.
@@ -144,9 +146,9 @@ export default function NewThreadPage({ params }: { params: { slug: string } }) 
 
   return (
     <div className="page-enter flex max-w-[680px] flex-col gap-8">
-      <Link href={`/forum/g/${params.slug}`} className="ed-label-muted no-underline hover:text-red">
-        ← g/{params.slug}
-      </Link>
+      <ArrowLink href={`/forum/g/${params.slug}`} direction="left" className="ed-label-muted">
+        g/{params.slug}
+      </ArrowLink>
 
       <SectionHeader
         kicker="New thread"

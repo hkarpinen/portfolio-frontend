@@ -1,4 +1,11 @@
-import { DepartmentHead, EditorialPageHead, EmptyState, Icon } from "@/components/editorial";
+import {
+  ArrowLink,
+  DepartmentHead,
+  EditorialPageHead,
+  EmptyState,
+  Icon,
+  UserInitials,
+} from "@/components/editorial";
 import Link from "next/link";
 
 import { fetchCommunitiesServer } from "@/lib/api/communities";
@@ -55,9 +62,12 @@ export default async function CommunitiesBrowsePage() {
 
               return (
                 <li key={c.communityId} className="ed-module">
-                  <span className="ed-module-kicker" aria-hidden>
-                    Community
-                  </span>
+                  <div className="mb-4 flex items-center gap-4">
+                    <UserInitials name={c.name} avatarUrl={c.imageUrl} size="lg" />
+                    <span className="ed-module-kicker" aria-hidden>
+                      Community
+                    </span>
+                  </div>
                   <Link
                     href={`/forum/g/${c.slug}`}
                     className="ed-module-title no-underline hover:text-red"
@@ -75,13 +85,13 @@ export default async function CommunitiesBrowsePage() {
                   </p>
                   <div className="ed-module-foot">
                     <JoinButton communityId={c.communityId} />
-                    <Link
+                    <ArrowLink
                       href={`/forum/g/${c.slug}`}
-                      className="ed-module-arrow no-underline hover:text-red"
+                      className="ed-module-arrow"
                       aria-label={`Open ${c.name}`}
                     >
-                      Open →
-                    </Link>
+                      Open
+                    </ArrowLink>
                   </div>
                 </li>
               );

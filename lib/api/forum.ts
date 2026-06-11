@@ -10,6 +10,7 @@ import {
   ForumProfileSchema,
   UserCommunityItemSchema,
   SearchResultSchema,
+  ModerationQueueResponseSchema,
   type Comment,
   type Thread,
 } from "@/types/forum";
@@ -216,6 +217,34 @@ export const reportThread = (threadId: string, payload: ReportPayload) =>
 
 export const reportComment = (commentId: string, payload: ReportPayload) =>
   api.send.post(`/api/forum/comments/${commentId}/report`, payload);
+
+// ─── Mod queue ──────────────────────────────────────────────────────────────
+
+/** Per-community moderator queue. Server-rendered so the moderator's
+ *  cookie scopes the page and an empty queue paints with no client roundtrip. */
+export const fetchModQueueServer = (
+  slug: string,
+  cookieHeader: string,
+  page = 1,
+  pageSize = 20,
+) =>
+  parsedServerFetch(
+    `/api/forum/communities/${slug}/mod-queue?page=${page}&pageSize=${pageSize}`,
+    ModerationQueueResponseSchema,
+    cookieHeader,
+  );
+
+/** Approve a report: acknowledge and close without removing content. */
+export const approveReport = (slug: string, reportId: string) =>
+  api.send.post(`/api/forum/communities/${slug}/mod-queue/${reportId}/approve`);
+
+/** Remove the reported content and close the report. */
+export const removeReportedContent = (slug: string, reportId: string) =>
+  api.send.post(`/api/forum/communities/${slug}/mod-queue/${reportId}/remove`);
+
+/** Dismiss the report as unfounded. */
+export const dismissReport = (slug: string, reportId: string) =>
+  api.send.post(`/api/forum/communities/${slug}/mod-queue/${reportId}/dismiss`);
 
 // ─── Server-side (RSC) fetchers ──────────────────────────────────────────────
 

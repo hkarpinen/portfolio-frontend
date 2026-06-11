@@ -9,9 +9,37 @@ import {
   updateMyForumProfile,
   reportThread,
   reportComment,
+  approveReport,
+  removeReportedContent,
+  dismissReport,
   type ReportPayload,
 } from "@/lib/api/forum";
 import { forumKeys } from "@/lib/query-keys";
+
+/**
+ * Resolve a queued report — approve / remove-content / dismiss. The
+ * mod-queue page is server-rendered, so on success we router.refresh()
+ * to re-fetch the RSC tree instead of invalidating a React Query cache
+ * (there isn't one for this surface).
+ */
+export type ResolveAction = "approve" | "remove" | "dismiss";
+
+export function useResolveReport(slug: string) {
+  const router = useRouter();
+  return useMutation({
+    mutationFn: ({ reportId, action }: { reportId: string; action: ResolveAction }) => {
+      switch (action) {
+        case "approve":
+          return approveReport(slug, reportId);
+        case "remove":
+          return removeReportedContent(slug, reportId);
+        case "dismiss":
+          return dismissReport(slug, reportId);
+      }
+    },
+    onSuccess: () => router.refresh(),
+  });
+}
 
 export function useCreateThread() {
   const queryClient = useQueryClient();

@@ -15,7 +15,7 @@ const REPORT_REASONS = [
 ];
 
 interface ReportButtonProps {
-  /** "thread" → POST /api/forum/threads/{id}/report. "comment" → /api/forum/comments/{id}/report. */
+  /** "thread" -> POST /api/forum/threads/{id}/report. "comment" -> /api/forum/comments/{id}/report. */
   kind: "thread" | "comment";
   targetId: string;
   /** Optional className override on the trigger button. Defaults to the meta-row style. */

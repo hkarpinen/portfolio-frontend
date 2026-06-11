@@ -251,14 +251,15 @@ function shortId(id: string | null | undefined, length: number = 8): string {
 
 /**
  * Canonical "show this user / member" label. Falls back in order:
- * `displayName` → `username` → `Member ${shortId}…`. Used across every
- * surface that renders a member row (member-actions, contributions table,
- * expense splits, household chrome aria-labels). Consolidates ~10
- * one-off `??`-chains that each used a different format.
+ * `displayName` → `username` → `Member abc12345…` (first 8 chars of the
+ * id). Used across every surface that renders a member row
+ * (member-actions, contributions table, expense splits, household
+ * aria-labels). Consolidates ~10 one-off `??`-chains that each used a
+ * different format.
  *
  * Pass an explicit `fallbackId` when the natural id isn't `member.userId`
  * — currently only the split-detail table needs this, where a row can
- * arrive with `splitId` set but `userId` missing.
+ * arrive with `allocationId` set but `userId` missing.
  */
 export function memberDisplayName(
   member: {

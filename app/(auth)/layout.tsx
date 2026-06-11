@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { requireAnonymous } from "@/lib/auth/session";
+import { Icon } from "@/components/editorial";
 
 /** Auth routes (login/register/etc.) add no SEO value — keep them out of
  *  the index so search results show the public landing instead. */
@@ -40,7 +41,8 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
       <div className="ed-auth-right">
         <div className="ed-auth-back-row">
           <Link href="/" className="ed-auth-back">
-            ← Back to landing
+            <Icon name="arrowLeft" size={13} strokeWidth={2} className="inline align-[-2px]" /> Back
+            to landing
           </Link>
         </div>
         <div className="ed-auth-right-body">{children}</div>

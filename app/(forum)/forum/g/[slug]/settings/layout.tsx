@@ -7,9 +7,9 @@ import { getCookieHeader } from "@/lib/server-cookies";
  * Guard for `/forum/[slug]/settings/*`.
  *
  * Order of checks:
- *   1. Must be authenticated → otherwise redirect to /login.
- *   2. Community must exist  → otherwise notFound().
- *   3. Caller must be Owner or Moderator → otherwise notFound() (we do not
+ *   1. Must be authenticated -> otherwise redirect to /login.
+ *   2. Community must exist  -> otherwise notFound().
+ *   3. Caller must be Owner or Moderator -> otherwise notFound() (we do not
  *      reveal "settings exist but you can't see them").
  *
  * The backend re-enforces every mutation; this layout only stops the UI

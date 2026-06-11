@@ -97,7 +97,7 @@ export async function requireUser(): Promise<Session> {
   const session = await getSession();
   if (!session) {
     const from = encodeURIComponent(await currentFromPath());
-    redirect(`/login?from=${from}`);
+    redirect(`/identity/login?from=${from}`);
   }
   return session;
 }

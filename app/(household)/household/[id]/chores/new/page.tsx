@@ -1,9 +1,16 @@
 "use client";
 
-import { Btn, Icon, Input, SectionHeader, SelectField, Textarea } from "@/components/editorial";
+import {
+  ArrowLink,
+  Btn,
+  Icon,
+  Input,
+  SectionHeader,
+  SelectField,
+  Textarea,
+} from "@/components/editorial";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { useCreateChore } from "@/hooks/use-chores";
 import { useHousehold } from "@/hooks/use-household";
 import { getErrorMessage } from "@/lib/error-messages";
@@ -49,12 +56,13 @@ export default function NewChorePage({ params }: { params: { id: string } }) {
 
   return (
     <div className="page-enter flex max-w-[640px] flex-col gap-8">
-      <Link
+      <ArrowLink
         href={`/household/${householdId}/chores`}
-        className="ed-label-muted no-underline hover:text-red"
+        direction="left"
+        className="ed-label-muted"
       >
-        ← {household?.name ? `${household.name} · Chores` : "Chores"}
-      </Link>
+        {household?.name ? `${household.name} · Chores` : "Chores"}
+      </ArrowLink>
 
       <SectionHeader kicker="New chore" title="New <em>chore</em>" />
 

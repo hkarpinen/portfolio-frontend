@@ -1,4 +1,10 @@
-import { DepartmentHead, EditorialPageHead, EmptyState, Icon } from "@/components/editorial";
+import {
+  DepartmentHead,
+  EditorialPageHead,
+  EmptyState,
+  Icon,
+  UserInitials,
+} from "@/components/editorial";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { fetchCommunityBySlugServer } from "@/lib/api/communities";
@@ -54,12 +60,23 @@ export default async function CommunityPage({
 
   return (
     <div className="page-enter flex flex-col gap-6">
+      {/* Community avatar sits flush above the masthead so the image is
+          the first thing the eye lands on. Falls back to coloured initials
+          when no image was uploaded. */}
+      <div className="flex items-center gap-5">
+        <UserInitials
+          name={community.name}
+          avatarUrl={community.imageUrl}
+          size="lg"
+          className="h-20 w-20"
+        />
+      </div>
       <EditorialPageHead
         kicker="Community"
         title={communityHeadline({ slug: params.slug })}
         deck={communityDeck({
           // Schema uses `.nullish()` (string | null | undefined); the helper
-          // signature accepts string | undefined. Normalise null → undefined
+          // signature accepts string | undefined. Normalise null -> undefined
           // at the consumer to keep both honest.
           description: community.description ?? undefined,
           memberCount: community.memberCount,

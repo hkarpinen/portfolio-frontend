@@ -1,12 +1,11 @@
-import { EmptyState, Icon, SectionHeader } from "@/components/editorial";
-import Link from "next/link";
+import { ArrowLink, EmptyState, Icon, SectionHeader } from "@/components/editorial";
 
 export default function ModLogPage({ params }: { params: { slug: string } }) {
   return (
     <div className="page-enter flex flex-col gap-8">
-      <Link href={`/forum/g/${params.slug}`} className="ed-label-muted no-underline hover:text-red">
-        ← g/{params.slug}
-      </Link>
+      <ArrowLink href={`/forum/g/${params.slug}`} direction="left" className="ed-label-muted">
+        g/{params.slug}
+      </ArrowLink>
 
       <SectionHeader
         kicker="Moderation · Log"

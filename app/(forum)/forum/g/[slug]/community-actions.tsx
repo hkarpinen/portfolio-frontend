@@ -27,8 +27,8 @@ interface CommunityActionsProps {
 function AnonActions() {
   const pathname = usePathname();
   return (
-    <Link href={`/login?from=${encodeURIComponent(pathname)}`} className="ed-tab-aux text-red">
-      Join community <span aria-hidden="true">→</span>
+    <Link href={`/identity/login?from=${encodeURIComponent(pathname)}`} className="ed-tab-aux text-red">
+      Join community <Icon name="arrowRight" size={13} strokeWidth={2} aria-hidden />
     </Link>
   );
 }
@@ -61,7 +61,7 @@ function AuthedActions({ communityId, slug }: { communityId: string; slug: strin
           disabled={joinMutation.isPending}
           className="ed-tab-aux cursor-pointer border-0 bg-transparent text-red disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {joinMutation.isPending ? "Joining…" : "Join community"} <span aria-hidden="true">→</span>
+          {joinMutation.isPending ? "Joining…" : "Join community"} <Icon name="arrowRight" size={13} strokeWidth={2} aria-hidden />
         </button>
       </>
     );
@@ -74,7 +74,7 @@ function AuthedActions({ communityId, slug }: { communityId: string; slug: strin
       {canManage && (
         <>
           <Link href={`/forum/g/${slug}/mod-queue`} className="ed-tab-aux">
-            Mod queue <span aria-hidden="true">↗</span>
+            Mod queue <Icon name="arrowUpRight" size={13} strokeWidth={2} aria-hidden />
           </Link>
           <Link href={`/forum/g/${slug}/settings`} className="ed-tab-aux">
             <Icon name="settings" size={13} strokeWidth={2} aria-hidden /> Settings

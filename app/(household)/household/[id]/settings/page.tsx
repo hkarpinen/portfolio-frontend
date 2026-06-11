@@ -1,5 +1,4 @@
-import { EditorialPageHead } from "@/components/editorial";
-import Link from "next/link";
+import { ArrowLink, EditorialPageHead } from "@/components/editorial";
 import { z } from "zod";
 import { cookies } from "next/headers";
 import { parsedServerFetch } from "@/lib/server-api-client";
@@ -54,12 +53,13 @@ export default async function HouseholdSettingsPage({ params }: Props) {
 
   return (
     <div className="page-enter flex flex-col gap-6">
-      <Link
+      <ArrowLink
         href={`/household/${params.id}`}
-        className="ed-label-muted self-start no-underline hover:text-red"
+        direction="left"
+        className="ed-label-muted self-start"
       >
-        ← Back to household
-      </Link>
+        Back to household
+      </ArrowLink>
 
       <EditorialPageHead
         kicker="Household · Settings"

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowLink, UserInitials } from "@/components/editorial";
 import { JoinButton } from "./join-button";
 import { communityTileMeta } from "@/lib/forum/editorial-copy";
 import type { CommunitySummaryResponse } from "@/types/forum";
@@ -30,9 +31,12 @@ export function CommunityStrip({ communities }: CommunityStripProps) {
 
         return (
           <li key={c.communityId} className="ed-module">
-            <span className="ed-module-kicker" aria-hidden>
-              Community
-            </span>
+            <div className="mb-4 flex items-center gap-4">
+              <UserInitials name={c.name} avatarUrl={c.imageUrl} size="lg" />
+              <span className="ed-module-kicker" aria-hidden>
+                Community
+              </span>
+            </div>
             <Link
               href={`/forum/g/${c.slug}`}
               className="ed-module-title no-underline hover:text-red"
@@ -50,13 +54,13 @@ export function CommunityStrip({ communities }: CommunityStripProps) {
             </p>
             <div className="ed-module-foot">
               <JoinButton communityId={c.communityId} />
-              <Link
+              <ArrowLink
                 href={`/forum/g/${c.slug}`}
-                className="ed-module-arrow no-underline hover:text-red"
+                className="ed-module-arrow"
                 aria-label={`Open ${c.name}`}
               >
-                Open →
-              </Link>
+                Open
+              </ArrowLink>
             </div>
           </li>
         );

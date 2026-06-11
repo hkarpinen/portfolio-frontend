@@ -26,10 +26,9 @@ describe("cn", () => {
   });
 });
 
-// `timeAgo` is exercised in its own describe block below (formerly
-// `timeAgo`). The previous block here asserted the pre-consolidation
-// behaviour (no "just now", 30-day cutoff, raw locale fallback) — that
-// implementation no longer exists; the canonical assertions live below.
+// `timeAgo` is exercised in its own describe block below. It absorbed
+// the former `relativeTimeShort` helper; assertions for the consolidated
+// "just now" / 7-day cutoff / short locale fallback behaviour live below.
 
 describe("toMonthlyAmount", () => {
   it("returns amount unchanged for monthly frequency", () => {

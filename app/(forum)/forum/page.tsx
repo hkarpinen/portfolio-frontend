@@ -1,4 +1,4 @@
-import { DepartmentHead, EditorialPageHead } from "@/components/editorial";
+import { ArrowLink, DepartmentHead, EditorialPageHead, Icon } from "@/components/editorial";
 import Link from "next/link";
 import { ForumFeed } from "./forum-feed";
 import { CommunityStrip } from "./community-strip";
@@ -48,8 +48,11 @@ export default async function CommunitiesPage() {
         {communities.length === 0 ? (
           <p className="ed-hint">
             No communities yet.{" "}
-            <Link href="/forum/new" className="font-semibold text-red no-underline">
-              Create the first →
+            <Link
+              href="/forum/new"
+              className="inline-flex items-center gap-1 font-semibold text-red no-underline"
+            >
+              Create the first <Icon name="arrowRight" size={13} strokeWidth={2} />
             </Link>
           </p>
         ) : (
@@ -57,12 +60,12 @@ export default async function CommunitiesPage() {
             <CommunityStrip communities={trending} />
             {communities.length > 3 && (
               <div className="flex justify-end">
-                <Link
+                <ArrowLink
                   href="/forum/communities"
-                  className="font-mono text-xs uppercase tracking-wide text-ink-3 no-underline hover:text-red"
+                  className="font-mono text-xs uppercase tracking-wide text-ink-3"
                 >
-                  Browse all ({communities.length}) <span aria-hidden>→</span>
-                </Link>
+                  Browse all ({communities.length})
+                </ArrowLink>
               </div>
             )}
           </>

@@ -110,7 +110,12 @@ export default async function ForumFeedPage({ searchParams }: { searchParams: { 
                     >
                       <div className="card-hover cursor-pointer border-ink bg-paper p-8 shadow-card">
                         <div className="mb-4 flex items-center gap-5">
-                          <UserInitials name={c.name} size="lg" className="h-18 w-18" />
+                          <UserInitials
+                            name={c.name}
+                            avatarUrl={c.imageUrl}
+                            size="lg"
+                            className="h-18 w-18"
+                          />
                           <div>
                             <p className="font-serif text-md font-bold text-ink">{c.name}</p>
                             <p className="text-sm text-ink-3">{c.description ?? ""}</p>
@@ -231,14 +236,17 @@ export default async function ForumFeedPage({ searchParams }: { searchParams: { 
                     href={`/forum/g/${c.slug ?? c.name}`}
                     className="row-hover flex items-center gap-4 px-4 py-3 no-underline"
                   >
-                    <UserInitials name={c.name} size="lg" />
+                    <UserInitials name={c.name} avatarUrl={c.imageUrl} size="lg" />
                     <span className="text-base font-medium text-ink-2">{c.name}</span>
                   </Link>
                 ))}
               </div>
             )}
-            <Link href="/forum" className="mt-6 block text-base text-red no-underline">
-              Browse all communities →
+            <Link
+              href="/forum"
+              className="mt-6 inline-flex items-center gap-1 text-base text-red no-underline"
+            >
+              Browse all communities <Icon name="arrowRight" size={13} strokeWidth={2} />
             </Link>
           </nav>
 

@@ -143,11 +143,14 @@ export const CommunityMembershipSchema = z.object({
 });
 export type CommunityMembership = z.infer<typeof CommunityMembershipSchema>;
 
-const ModQueueItemSchema = z.object({
+export const ModQueueItemSchema = z.object({
   queueItemId: z.string(),
   communityId: z.string(),
   targetType: ReportTargetTypeSchema,
   targetId: z.string(),
+  /** Thread to deep-link from the queue. Equals `targetId` when targetType
+   *  is Thread; for Comment targets it's the parent thread. */
+  targetThreadId: z.string().nullish(),
   targetTitle: z.string().nullish(),
   targetAuthorId: z.string().nullish(),
   targetAuthorName: z.string().nullish(),
@@ -157,6 +160,14 @@ const ModQueueItemSchema = z.object({
   details: z.string().nullish(),
   reportedAt: z.string(),
 });
+export type ModQueueItem = z.infer<typeof ModQueueItemSchema>;
+
+/** Paged mod-queue response — mirrors `ModerationQueueDto`. */
+export const ModerationQueueResponseSchema = z.object({
+  items: z.array(ModQueueItemSchema),
+  totalCount: z.number(),
+});
+export type ModerationQueueResponse = z.infer<typeof ModerationQueueResponseSchema>;
 
 const ModLogEntrySchema = z.object({
   logId: z.string(),

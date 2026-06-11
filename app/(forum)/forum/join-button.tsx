@@ -36,7 +36,7 @@ export function JoinButton({ communityId }: JoinButtonProps) {
         joinMutation.mutate(undefined, {
           onError: (err) => {
             if (err instanceof ApiError && err.status === 401) {
-              window.location.href = "/login";
+              window.location.href = "/identity/login";
             }
           },
         });

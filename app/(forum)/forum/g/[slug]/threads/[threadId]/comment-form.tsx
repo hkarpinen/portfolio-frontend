@@ -1,6 +1,6 @@
 "use client";
 
-import { Alert, Btn, Textarea } from "@/components/editorial";
+import { Alert, Btn, Icon, Textarea } from "@/components/editorial";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -39,7 +39,7 @@ export function CommentForm({ threadId, isAuthed }: CommentFormProps) {
     return (
       <p className="text-base text-ink-3">
         <Link
-          href={`/login?from=${encodeURIComponent(pathname)}`}
+          href={`/identity/login?from=${encodeURIComponent(pathname)}`}
           className="font-medium text-red no-underline"
         >
           Sign in
@@ -53,7 +53,7 @@ export function CommentForm({ threadId, isAuthed }: CommentFormProps) {
     return (
       <p className="text-base text-ink-3">
         Commenting is not available in the demo.{" "}
-        <a href="/register" className="font-medium text-red no-underline">
+        <a href="/identity/register" className="font-medium text-red no-underline">
           Create a free account
         </a>{" "}
         to join the conversation.
@@ -126,8 +126,18 @@ export function CommentForm({ threadId, isAuthed }: CommentFormProps) {
         <Btn type="button" variant="secondary" size="sm" onClick={togglePreview}>
           {previewing ? "Edit" : "Preview"}
         </Btn>
-        <Btn type="submit" variant="primary" size="sm" disabled={createComment.isPending}>
-          {createComment.isPending ? "Posting…" : "Post reply →"}
+        <Btn
+          type="submit"
+          variant="primary"
+          size="sm"
+          disabled={createComment.isPending}
+          iconRight={
+            createComment.isPending ? undefined : (
+              <Icon name="arrowRight" size={13} strokeWidth={2} />
+            )
+          }
+        >
+          {createComment.isPending ? "Posting…" : "Post reply"}
         </Btn>
       </div>
     </form>

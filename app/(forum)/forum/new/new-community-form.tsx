@@ -29,7 +29,7 @@ export function NewCommunityForm() {
         <div className="flex flex-col gap-6 border-ink bg-paper p-12 shadow-stamp">
           <p className="text-base text-ink-2">
             Creating communities is not available in the demo.{" "}
-            <a href="/register" className="font-medium text-red no-underline">
+            <a href="/identity/register" className="font-medium text-red no-underline">
               Create a free account
             </a>{" "}
             to get started.

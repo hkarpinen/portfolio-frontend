@@ -1,5 +1,4 @@
-import { SectionHeader } from "@/components/editorial";
-import Link from "next/link";
+import { ArrowLink, SectionHeader } from "@/components/editorial";
 import { NewHouseholdForm } from "./new-household-form";
 
 /**
@@ -11,9 +10,9 @@ import { NewHouseholdForm } from "./new-household-form";
 export default function NewHouseholdPage() {
   return (
     <div className="page-enter flex max-w-[640px] flex-col gap-8">
-      <Link href="/household" className="ed-label-muted no-underline hover:text-red">
-        ← All households
-      </Link>
+      <ArrowLink href="/household" direction="left" className="ed-label-muted">
+        All households
+      </ArrowLink>
 
       <SectionHeader
         kicker="Household · New"

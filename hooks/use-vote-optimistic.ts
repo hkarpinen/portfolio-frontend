@@ -50,7 +50,7 @@ export function useVoteOptimistic({
           setScore((s) => s - delta);
           setVoted(previous);
           if (redirectOn401 && err instanceof ApiError && err.status === 401) {
-            window.location.href = "/login";
+            window.location.href = "/identity/login";
           }
         },
       },

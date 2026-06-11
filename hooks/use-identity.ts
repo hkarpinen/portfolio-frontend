@@ -59,7 +59,7 @@ export function useLogout() {
       /* swallow — we still want to surface the user back to the login page */
     }
     queryClient.clear();
-    router.push("/login");
+    router.push("/identity/login");
     router.refresh();
   }, [queryClient, router]);
 }

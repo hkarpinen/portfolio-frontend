@@ -1,6 +1,5 @@
-import { SectionHeader } from "@/components/editorial";
+import { ArrowLink, SectionHeader } from "@/components/editorial";
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import { fetchCommunityBySlugServer } from "@/lib/api/communities";
 import { getCookieHeader } from "@/lib/server-cookies";
 
@@ -19,9 +18,9 @@ export default async function CommunitySettingsPage({ params }: { params: { slug
 
   return (
     <div className="page-enter flex max-w-[680px] flex-col gap-8">
-      <Link href={`/forum/g/${params.slug}`} className="ed-label-muted no-underline hover:text-red">
-        ← g/{params.slug}
-      </Link>
+      <ArrowLink href={`/forum/g/${params.slug}`} direction="left" className="ed-label-muted">
+        g/{params.slug}
+      </ArrowLink>
 
       <SectionHeader
         kicker="Community · Settings"
