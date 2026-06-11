@@ -44,6 +44,9 @@ export const HouseholdExpenseSchema = z.object({
   // Has the VENDOR been paid (the bill itself), distinct from the caller's share (isPaid). Derived
   // from the ledger server-side. Upcoming/unpaid bills are false; legacy cash-basis charges read true.
   vendorPaid: z.boolean().optional(),
+  // The caller's OWN share amount on this charge (their allocation); null when they have no
+  // allocation. Drives "your share" so it reflects the real split, not an even-split estimate.
+  callerShare: z.number().nullish(),
 });
 export type HouseholdExpense = z.infer<typeof HouseholdExpenseSchema>;
 
