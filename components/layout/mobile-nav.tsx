@@ -17,12 +17,17 @@ const CELLS: Cell[] = [
   { label: "House", href: "/household", icon: "household", activeIfStartsWith: ["/household"] },
   {
     label: "Finance",
-    href: "/expenses",
+    href: "/finance/overview",
     icon: "expenses",
-    activeIfStartsWith: ["/expenses", "/income"],
+    activeIfStartsWith: ["/finance"],
   },
   { label: "Forum", href: "/forum", icon: "forum", activeIfStartsWith: ["/forum"] },
-  { label: "Me", href: "/settings/profile", icon: "about", activeIfStartsWith: ["/settings"] },
+  {
+    label: "Me",
+    href: "/identity/settings/profile",
+    icon: "about",
+    activeIfStartsWith: ["/identity/settings"],
+  },
 ];
 
 export function MobileNav({ pathname }: { pathname: string }) {

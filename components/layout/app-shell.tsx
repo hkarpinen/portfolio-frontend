@@ -10,6 +10,7 @@ import {
 import { NotificationsToaster } from "@/components/layout/notifications-toaster";
 import { Sidebar } from "./sidebar-nav";
 import { TopBarStack } from "./top-bar";
+import { Icon } from "@/components/editorial";
 import { MobileNav } from "./mobile-nav";
 import { PageBreadcrumbs } from "./page-breadcrumbs";
 import { logout } from "@/lib/api/identity";
@@ -39,7 +40,7 @@ function useDemoCountdown() {
         if (!expiredRef.current) {
           expiredRef.current = true;
           localStorage.removeItem(DEMO_EXPIRES_AT_KEY);
-          logout().finally(() => router.replace("/register?reason=demo-expired"));
+          logout().finally(() => router.replace("/identity/register?reason=demo-expired"));
         }
         setSecondsLeft(0);
         return;
@@ -63,7 +64,10 @@ function DemoBanner() {
       <span>
         Demo session · expires in <b>{secondsLeft > 0 ? formatCountdown(secondsLeft) : "0s"}</b>
       </span>
-      <Link href="/register">Create a free account →</Link>
+      <Link href="/identity/register">
+        Create a free account{" "}
+        <Icon name="arrowRight" size={13} strokeWidth={2} className="inline align-[-2px]" />
+      </Link>
     </div>
   );
 }

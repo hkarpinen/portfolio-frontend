@@ -21,22 +21,13 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: "*",
         allow: "/",
         disallow: [
-          // Auth flow
-          "/login",
-          "/register",
-          "/forgot-password",
-          "/reset-password",
-          "/confirm-email",
+          // Identity (auth + settings)
+          "/identity",
           // Authenticated app interiors
           "/forum",
-          "/expenses",
-          "/income",
+          "/finance",
           "/household",
-          "/dashboard",
-          "/profile",
-          "/search",
           "/notifications",
-          "/settings",
           "/admin",
           // User uploads — never indexable
           "/uploads",

@@ -1,4 +1,4 @@
-import { Badge } from "@/components/editorial";
+import { Badge, Icon } from "@/components/editorial";
 import Link from "next/link";
 
 import { MODULES } from "./landing-config";
@@ -43,7 +43,8 @@ export function LandingModulesSection() {
                   {m.public ? "Public" : "Account"}
                 </Badge>
                 <span className="ed-module-card-arrow" aria-hidden="true">
-                  {m.cta} →
+                  {m.cta}{" "}
+                  <Icon name="arrowRight" size={12} strokeWidth={2} className="inline align-[-1px]" />
                 </span>
               </div>
             </Link>

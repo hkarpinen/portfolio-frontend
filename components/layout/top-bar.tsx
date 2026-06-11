@@ -73,10 +73,10 @@ export function TopBarStack({
       <div className="ed-topbar-actions">
         {displayName === null && (
           <div className="hidden items-center gap-2 sm:flex">
-            <Link href="/login" className="ed-topbar-pill">
+            <Link href="/identity/login" className="ed-topbar-pill">
               Sign in
             </Link>
-            <Link href="/register" className="ed-topbar-pill ed-topbar-pill-primary">
+            <Link href="/identity/register" className="ed-topbar-pill ed-topbar-pill-primary">
               Create account
             </Link>
           </div>
@@ -128,7 +128,8 @@ export function TopBarStack({
                                 }}
                                 className="ed-popover-item-link"
                               >
-                                View →
+                                View{" "}
+                                <Icon name="arrowRight" size={13} strokeWidth={2} className="inline align-[-2px]" />
                               </Link>
                             )}
                             <button
@@ -162,7 +163,7 @@ export function TopBarStack({
               </Popover.Portal>
             </Popover.Root>
 
-            <Link href="/settings/profile" aria-label="Open settings" className="ed-topbar-avatar">
+            <Link href="/identity/settings/profile" aria-label="Open settings" className="ed-topbar-avatar">
               <Avatar name={displayName} url={avatarUrl} size="md" />
             </Link>
           </>

@@ -1,4 +1,4 @@
-import { Btn } from "@/components/editorial";
+import { Btn, Icon } from "@/components/editorial";
 
 /**
  * Landing hero — kicker + display headline + deck + CTA row.
@@ -25,7 +25,7 @@ export function LandingHero() {
         in inside three seconds.
       </p>
       <div className="ed-hero-cta-row">
-        <Btn href="/demo" variant="primary" size="lg" iconRight={<span aria-hidden="true">→</span>}>
+        <Btn href="/demo" variant="primary" size="lg" iconRight={<Icon name="arrowRight" size={14} strokeWidth={2} />}>
           Try the demo
         </Btn>
         <Btn asChild variant="secondary" size="lg">

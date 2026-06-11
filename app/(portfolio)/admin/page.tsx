@@ -4,6 +4,7 @@ import {
   Btn,
   DepartmentHead,
   EditorialPageHead,
+  Icon,
   LedeStat,
   Spinner,
   UserInitials,
@@ -204,8 +205,9 @@ export default function AdminPage() {
               disabled={page <= 1}
               onClick={() => setPage((p) => p - 1)}
               aria-label="Previous page"
+              iconLeft={<Icon name="arrowLeft" size={14} strokeWidth={2} />}
             >
-              ← Prev
+              Prev
             </Btn>
             <span
               className="flex items-center text-base text-ink-3"
@@ -219,8 +221,9 @@ export default function AdminPage() {
               disabled={page >= totalPages}
               onClick={() => setPage((p) => p + 1)}
               aria-label="Next page"
+              iconRight={<Icon name="arrowRight" size={14} strokeWidth={2} />}
             >
-              Next →
+              Next
             </Btn>
           </nav>
         )}

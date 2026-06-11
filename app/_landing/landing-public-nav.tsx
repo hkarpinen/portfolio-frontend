@@ -47,10 +47,10 @@ export function LandingPublicNav({
         <div className="flex items-center gap-2">
           {!signedIn ? (
             <>
-              <Btn href="/login" variant="secondary" size="sm">
+              <Btn href="/identity/login" variant="secondary" size="sm">
                 Sign in
               </Btn>
-              <Btn href="/register" variant="primary" size="sm">
+              <Btn href="/identity/register" variant="primary" size="sm">
                 Create account
               </Btn>
             </>
@@ -115,7 +115,8 @@ function SignedInActions({
                           }}
                           className="ed-popover-item-link"
                         >
-                          View →
+                          View{" "}
+                          <Icon name="arrowRight" size={13} strokeWidth={2} className="inline align-[-2px]" />
                         </Link>
                       )}
                       <button
@@ -149,7 +150,7 @@ function SignedInActions({
         </Popover.Portal>
       </Popover.Root>
 
-      <Link href="/settings/profile" aria-label="Open settings" className="ed-topbar-avatar">
+      <Link href="/identity/settings/profile" aria-label="Open settings" className="ed-topbar-avatar">
         <Avatar name={displayName} url={avatarUrl} size="md" />
       </Link>
     </>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Btn } from "@/components/editorial";
+import { Btn, Icon } from "@/components/editorial";
 import { useState } from "react";
 
 /**
@@ -40,7 +40,7 @@ export function LandingHiringBanner() {
           variant="primary"
           size="lg"
           className="shrink-0"
-          iconRight={<span aria-hidden="true">→</span>}
+          iconRight={<Icon name="arrowRight" size={14} strokeWidth={2} />}
         >
           Get in touch
         </Btn>

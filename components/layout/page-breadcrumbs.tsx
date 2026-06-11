@@ -57,21 +57,31 @@ function pathToCrumbs(pathname: string): { label: string; href?: string }[] {
 // /expenses/new still get breadcrumbs because there's actually a return
 // path worth showing.
 const SUPPRESSED_EXACT = new Set<string>([
-  "/expenses",
-  "/income",
+  "/finance/overview",
+  "/finance/income",
   "/household",
-  "/dashboard",
   "/notifications",
   "/forum",
   "/about",
+  // The architecture long-form sits under /about. The portfolio masthead
+  // already orients the reader and the page hero supplies the title, so
+  // the generic "About / Architecture" breadcrumb above the masthead is
+  // duplicative chrome.
+  "/about/architecture",
   "/contact",
   "/admin",
+  // Single-tool service pages. The URL carries a service prefix (Math,
+  // Geography) for hierarchical correctness, but there is no /math or
+  // /geography landing page to crumb back to — rendering the trail would
+  // emit a dead link. The page's H1 + sidebar already orient the reader.
+  "/math/convert",
+  "/geography/weather",
   // The new-source pages hand-roll their own in-content breadcrumb with
   // friendlier labels ("Add source" / "Add expense" instead of the literal
   // "new" URL segment). The audit (§5.6) flagged that both render on these
   // routes — suppress the auto trail to leave just the polished one.
-  "/expenses/new",
-  "/income/new",
+  "/finance/expenses/new",
+  "/finance/income/new",
 ]);
 
 /** Routes whose entire subtree is wayfound by their group's MastheadRow
@@ -83,8 +93,8 @@ const SUPPRESSED_SUBTREE: string[] = [
   "/household/",
   // /forum/g/[slug]/* — masthead carries the community slug as the desk.
   "/forum/g/",
-  // /settings/* — masthead + left-rail nav replace the breadcrumb trail.
-  "/settings/",
+  // /identity/settings/* — masthead + left-rail nav replace the trail.
+  "/identity/settings/",
 ];
 
 export function PageBreadcrumbs() {

@@ -140,8 +140,9 @@ export default function DemoPage() {
 
               <p className="ed-hint mt-6">
                 Like what you see?{" "}
-                <Link href="/register" className="font-semibold text-red">
-                  Create a free account →
+                <Link href="/identity/register" className="font-semibold text-red">
+                  Create a free account{" "}
+                  <Icon name="arrowRight" size={13} strokeWidth={2} className="inline align-[-2px]" />
                 </Link>
               </p>
             </>

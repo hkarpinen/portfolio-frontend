@@ -34,15 +34,14 @@ const NAV_ACCOUNT = [
     href: "/household",
     icon: "household" as const,
     exactMatch: false,
-    extraPaths: ["/dashboard"],
   },
   {
-    label: "Finance",
-    desc: "Expenses & Income",
-    href: "/expenses",
+    label: "Money",
+    desc: "Your money, personal & shared",
+    href: "/finance/overview",
     icon: "expenses" as const,
     exactMatch: false,
-    extraPaths: ["/income"],
+    extraPaths: ["/finance"],
   },
   { label: "Forum", desc: "Community", href: "/forum", icon: "forum" as const, exactMatch: false },
 ];
@@ -51,14 +50,14 @@ const NAV_UTILITIES = [
   {
     label: "Weather",
     desc: "Live conditions",
-    href: "/weather",
+    href: "/geography/weather",
     icon: "weather" as const,
     exactMatch: false,
   },
   {
     label: "Convert",
     desc: "Unit conversion",
-    href: "/convert",
+    href: "/math/convert",
     icon: "math" as const,
     exactMatch: false,
   },
@@ -72,10 +71,10 @@ const NAV_UTILITIES = [
   {
     label: "Settings",
     desc: "Profile & account",
-    href: "/settings/profile",
+    href: "/identity/settings/profile",
     icon: "settings" as const,
     exactMatch: false,
-    extraPaths: ["/settings"],
+    extraPaths: ["/identity/settings"],
   },
 ];
 
@@ -229,7 +228,8 @@ export function Sidebar({
               <div className="ed-sidebar-foot-who">
                 <span className="ed-sidebar-foot-name">{displayName}</span>
                 <button onClick={logout} aria-label="Sign out" className="ed-sidebar-foot-signout">
-                  Sign out ↗
+                  Sign out{" "}
+                  <Icon name="arrowUpRight" size={12} strokeWidth={2} className="inline align-[-1px]" />
                 </button>
               </div>
             </div>

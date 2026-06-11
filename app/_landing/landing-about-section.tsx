@@ -6,8 +6,8 @@ import { SKILLS } from "./landing-config";
 /**
  * "Hi, I'm Hank Karpinen." — bio + headshot + skills grid.
  *
- * Sits between the modules grid and the hiring banner: what's built →
- * how → who → let's work together. `id="about"` so the top nav can
+ * Sits between the modules grid and the hiring banner: what's built ->
+ * how -> who -> let's work together. `id="about"` so the top nav can
  * anchor-link here.
  */
 export function LandingAboutSection() {
