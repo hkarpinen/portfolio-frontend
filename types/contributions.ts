@@ -14,7 +14,7 @@ import { ExpenseCategorySchema, ExpenseItemSchema } from "./expense";
 // ── Individual contribution items ─────────────────────────────────────────────
 
 export const ContributionItemSchema = z.object({
-  splitId: z.string(),
+  allocationId: z.string(),
   billId: z.string(),
   /** Nullable on the wire — DTO comment notes it may be null for per-member breakdowns. */
   groupId: z.string().nullish(),
@@ -28,20 +28,22 @@ export const ContributionItemSchema = z.object({
   amount: z.number(),
   currency: z.string(),
   dueDate: z.string(),
-  isClaimed: z.boolean(),
-  claimedAt: z.string().nullable(),
+  // Finance owns the domain language — splits are "paid", not "claimed".
+  // See memory: finance-split-paid-not-split-claimed.
+  isPaid: z.boolean(),
+  paidAt: z.string().nullable(),
 });
 export type ContributionItem = z.infer<typeof ContributionItemSchema>;
 
 const HouseholdContributionItemSchema = z.object({
-  splitId: z.string(),
+  allocationId: z.string(),
   billId: z.string(),
   billTitle: z.string(),
   billCategory: ExpenseCategorySchema.optional(),
   amount: z.number(),
   currency: z.string(),
   dueDate: z.string(),
-  isClaimed: z.boolean(),
+  isPaid: z.boolean(),
 });
 
 // ── Monthly aggregations ─────────────────────────────────────────────────────

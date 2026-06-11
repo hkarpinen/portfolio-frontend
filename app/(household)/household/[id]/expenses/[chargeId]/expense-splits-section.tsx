@@ -2,11 +2,18 @@
 
 import { Alert, Btn, Icon, Input, SelectField } from "@/components/editorial";
 import { useState } from "react";
-import { useAddExpenseSplit, useRemoveExpenseSplit } from "@/hooks/use-expenses";
+import {
+  useAddExpenseSplit,
+  useAssignHouseholdAllocation,
+  useRemoveExpenseSplit,
+  usePayHouseholdExpense,
+  useUnpayHouseholdExpense,
+} from "@/hooks/use-expenses";
 import { getErrorMessage } from "@/lib/error-messages";
 
 import { formatCurrency } from "@/lib/formatting";
 import { idsEqual, memberDisplayName } from "@/lib/utils";
+import { deriveChargeFunding } from "@/lib/charge-funding";
 import type { HouseholdExpense, ExpenseSplit } from "@/types/household-expense";
 import type { MembershipResponse } from "@/types/membership";
 import {
@@ -24,7 +31,7 @@ import {
  */
 export function ExpenseSplitsSection({
   householdId,
-  expenseId,
+  chargeId,
   expense,
   splits,
   members,
@@ -32,16 +39,35 @@ export function ExpenseSplitsSection({
   isPrivileged,
 }: {
   householdId: string;
-  expenseId: string;
+  chargeId: string;
   expense: HouseholdExpense;
   splits: ExpenseSplit[];
   members: MembershipResponse[];
   currentMembership: MembershipResponse | null;
   isPrivileged: boolean;
 }) {
-  const addSplitMutation = useAddExpenseSplit(householdId, expenseId);
-  const removeSplitMutation = useRemoveExpenseSplit(householdId, expenseId);
-  const [addMembershipId, setAddMembershipId] = useState("");
+  const addSplitMutation = useAddExpenseSplit(householdId, chargeId);
+  const assignMutation = useAssignHouseholdAllocation(householdId, chargeId);
+  const removeSplitMutation = useRemoveExpenseSplit(householdId, chargeId);
+  const payMutation = usePayHouseholdExpense(householdId, chargeId);
+  const unpayMutation = useUnpayHouseholdExpense(householdId, chargeId);
+  const occurrenceDate = expense.currentOccurrenceDate ?? new Date().toISOString();
+
+  // The funding model is a per-charge choice: a member fronted the bill (PayerMember — others pay
+  // them back) or it came from the shared pot (GroupCash — everyone pays in). Drives the wording of
+  // the settle action and the section note.
+  const { isPooled, payerName } = deriveChargeFunding(expense, members);
+  const markPaidLabel = isPooled
+    ? "Pay into pot"
+    : payerName
+      ? `Pay ${payerName} back`
+      : "Mark my share paid";
+
+  const fundingNote = isPooled
+    ? "Each member pays their share into the household pot; the owner settles with the vendor once everyone's in."
+    : `Each member pays ${payerName ?? "the member who fronted the bill"} back for their share.`;
+
+  const [addUserId, setAddUserId] = useState("");
   const [addAmount, setAddAmount] = useState("");
 
   const { allocated: splitTotal, remaining } = splitAllocation(splits, Number(expense.amount));
@@ -54,18 +80,26 @@ export function ExpenseSplitsSection({
 
   function handleAddSplit(e: React.FormEvent) {
     e.preventDefault();
-    const membershipId = isPrivileged ? addMembershipId : currentMembership?.membershipId;
+    // Finance keys allocation actors on the identity userId. A privileged member may add a split
+    // for any member (target userId from the dropdown); a regular member only for themselves.
+    const userId = isPrivileged ? addUserId : currentMembership?.userId;
     const amt = Number(addAmount);
-    if (!membershipId || !amt || amt <= 0) return;
-    addSplitMutation.mutate(
-      { membershipId, amount: amt, currency: expense.currency },
-      {
-        onSuccess: () => {
-          setAddMembershipId("");
-          setAddAmount("");
-        },
-      },
-    );
+    if (!userId || !amt || amt <= 0) return;
+
+    const onSuccess = () => {
+      setAddUserId("");
+      setAddAmount("");
+    };
+    const body = { userId, amount: amt, currency: expense.currency };
+
+    // Your OWN share goes straight to finance (synchronous). Assigning ANOTHER member's share is
+    // role-gated, so it routes through the household service, which authorizes (Owner/Admin) and
+    // emits an event finance applies a moment later — no service-to-service call.
+    if (userId === currentMembership?.userId) {
+      addSplitMutation.mutate(body, { onSuccess });
+    } else {
+      assignMutation.mutate(body, { onSuccess });
+    }
   }
 
   return (
@@ -82,6 +116,8 @@ export function ExpenseSplitsSection({
         </span>
       </div>
 
+      {fundingNote && <p className="ed-label-muted -mt-1">{fundingNote}</p>}
+
       {splits.length === 0 ? (
         <p className="ed-label-muted">No splits yet — the full amount is unallocated.</p>
       ) : (
@@ -91,16 +127,33 @@ export function ExpenseSplitsSection({
           currentMembership={currentMembership}
           isPrivileged={isPrivileged}
           canEditSplits={canEditSplits}
-          onRemove={(splitId) => removeSplitMutation.mutate(splitId)}
+          onRemove={(allocationId) => removeSplitMutation.mutate(allocationId)}
           removingSplitId={
             removeSplitMutation.isPending ? (removeSplitMutation.variables ?? null) : null
           }
+          onMarkMinePaid={() => payMutation.mutate(occurrenceDate)}
+          isMarkingPaid={payMutation.isPending}
+          markPaidLabel={markPaidLabel}
+          onUnpayMine={() => unpayMutation.mutate(occurrenceDate)}
+          isUnpaying={unpayMutation.isPending}
         />
       )}
 
       {removeSplitMutation.isError && (
         <Alert variant="danger">
           {getErrorMessage(removeSplitMutation.error, "Failed to remove split.")}
+        </Alert>
+      )}
+
+      {payMutation.isError && (
+        <Alert variant="danger">
+          {getErrorMessage(payMutation.error, "Failed to mark your share paid.")}
+        </Alert>
+      )}
+
+      {unpayMutation.isError && (
+        <Alert variant="danger">
+          {getErrorMessage(unpayMutation.error, "Failed to undo your payment.")}
         </Alert>
       )}
 
@@ -113,15 +166,17 @@ export function ExpenseSplitsSection({
             eligibleMembers={eligibleMembers}
             currency={expense.currency}
             remaining={remaining}
-            addMembershipId={addMembershipId}
-            setAddMembershipId={setAddMembershipId}
+            addUserId={addUserId}
+            setAddUserId={setAddUserId}
             addAmount={addAmount}
             setAddAmount={setAddAmount}
-            isPending={addSplitMutation.isPending}
+            isPending={addSplitMutation.isPending || assignMutation.isPending}
             error={
               addSplitMutation.isError
                 ? getErrorMessage(addSplitMutation.error, "Failed to add split.")
-                : null
+                : assignMutation.isError
+                  ? getErrorMessage(assignMutation.error, "You can only set another member's split if you're an owner or admin.")
+                  : null
             }
             onSubmit={handleAddSplit}
           />
@@ -140,14 +195,24 @@ function SplitsTable({
   canEditSplits,
   onRemove,
   removingSplitId,
+  onMarkMinePaid,
+  isMarkingPaid,
+  markPaidLabel,
+  onUnpayMine,
+  isUnpaying,
 }: {
   splits: ExpenseSplit[];
   expense: HouseholdExpense;
   currentMembership: MembershipResponse | null;
   isPrivileged: boolean;
   canEditSplits: boolean;
-  onRemove: (splitId: string) => void;
+  onRemove: (allocationId: string) => void;
   removingSplitId: string | null;
+  onMarkMinePaid: () => void;
+  isMarkingPaid: boolean;
+  markPaidLabel: string;
+  onUnpayMine: () => void;
+  isUnpaying: boolean;
 }) {
   return (
     <div className="overflow-x-auto">
@@ -181,13 +246,20 @@ function SplitsTable({
               split.currency ?? expense.currency ?? "USD",
             );
             const isOwnSplit = idsEqual(split.userId, currentMembership?.userId);
-            const mayRemove = !split.isClaimed && (isPrivileged || isOwnSplit);
-            const isRemoving = removingSplitId === split.splitId;
+            const mayRemove = !split.isPaid && (isPrivileged || isOwnSplit);
+            const isRemoving = removingSplitId === split.allocationId;
+            // On a "a member paid" (PayerMember) charge, the payer fronted the bill — their own
+            // share is covered by paying the vendor, so there is nothing to settle. They must never
+            // see a "Pay … back" action for it (you can't pay yourself back). Pooled charges have no
+            // fronted share: everyone owes the pot.
+            const isPayerFrontedShare =
+              expense.fundingSource !== "GroupCash" &&
+              idsEqual(split.userId, expense.payerUserId);
 
             return (
-              <tr key={split.splitId} className="border-b border-rule-soft">
+              <tr key={split.allocationId} className="border-b border-rule-soft">
                 <td className="py-7 pr-6 font-serif text-[1.0625rem] italic text-ink">
-                  {memberDisplayName(split, split.splitId ?? split.userId)}
+                  {memberDisplayName(split, split.allocationId ?? split.userId)}
                 </td>
                 <td className="whitespace-nowrap py-7 pr-6 text-right font-mono text-sm text-ink-3">
                   {pct}
@@ -196,14 +268,63 @@ function SplitsTable({
                   {splitFmt}
                 </td>
                 <td className="whitespace-nowrap py-7 pr-6">
-                  <SplitStatusPill claimed={split.isClaimed} />
+                  {isPayerFrontedShare ? (
+                    // The payer fronted the bill, so they never settle their own share. But their
+                    // outlay is only captured in the ledger once the vendor payment is recorded
+                    // (Dr Vendor Payable / Cr Member:payer). Only claim "Fronted" once that's true;
+                    // until then the bill simply hasn't been recorded as paid yet — show Awaiting,
+                    // not a (nonsensical) "pay yourself back" action.
+                    expense.vendorPaid ? (
+                      <span
+                        className="inline-flex items-center gap-[5px] font-mono text-xs uppercase tracking-[0.08em] text-ink-3"
+                        aria-label={
+                          isOwnSplit
+                            ? "You fronted this bill — your share is covered"
+                            : "Fronted by the payer — covered"
+                        }
+                      >
+                        <Icon name="check" size={11} strokeWidth={2.5} aria-hidden />
+                        Fronted{isOwnSplit ? " · you" : ""}
+                      </span>
+                    ) : (
+                      <span
+                        className="font-mono text-xs uppercase tracking-[0.08em] text-ink-3"
+                        aria-label="Awaiting — the vendor payment isn't recorded yet"
+                      >
+                        Awaiting payment
+                      </span>
+                    )
+                  ) : isOwnSplit && !split.isPaid ? (
+                    <Btn
+                      variant="primary"
+                      size="sm"
+                      onClick={onMarkMinePaid}
+                      disabled={isMarkingPaid}
+                      aria-label={markPaidLabel}
+                    >
+                      {isMarkingPaid ? "Marking…" : markPaidLabel}
+                    </Btn>
+                  ) : isOwnSplit && split.isPaid ? (
+                    <button
+                      type="button"
+                      onClick={onUnpayMine}
+                      disabled={isUnpaying}
+                      aria-label="Undo — mark your share unpaid"
+                      className="inline-flex cursor-pointer items-center gap-[5px] border-none bg-transparent p-0 font-mono text-xs uppercase tracking-[0.08em] text-ink-3 hover:text-red focus:text-red disabled:opacity-50"
+                    >
+                      <Icon name="check" size={11} strokeWidth={2.5} aria-hidden />
+                      {isUnpaying ? "Undoing…" : "Paid · you (undo)"}
+                    </button>
+                  ) : (
+                    <SplitStatusPill claimed={split.isPaid} mine={isOwnSplit} />
+                  )}
                 </td>
                 {canEditSplits && (
                   <td className="whitespace-nowrap py-7 text-right">
                     {mayRemove && (
                       <button
                         type="button"
-                        onClick={() => onRemove(split.splitId)}
+                        onClick={() => onRemove(split.allocationId)}
                         disabled={isRemoving}
                         aria-label={`Remove ${split.displayName || "member"} from this split`}
                         className="cursor-pointer border-none bg-transparent p-0 font-mono text-xs uppercase tracking-[0.08em] text-ink-3 hover:text-red focus:text-red disabled:opacity-50"
@@ -222,15 +343,15 @@ function SplitsTable({
   );
 }
 
-function SplitStatusPill({ claimed }: { claimed: boolean }) {
+function SplitStatusPill({ claimed, mine = false }: { claimed: boolean; mine?: boolean }) {
   if (claimed) {
     return (
       <span
         className="inline-flex items-center gap-[5px] font-mono text-xs uppercase tracking-[0.08em] text-ink-3"
-        aria-label="Split claimed"
+        aria-label={mine ? "Your share is paid" : "Paid"}
       >
         <Icon name="check" size={11} strokeWidth={2.5} aria-hidden />
-        Claimed
+        Paid{mine ? " · you" : ""}
       </span>
     );
   }
@@ -238,7 +359,7 @@ function SplitStatusPill({ claimed }: { claimed: boolean }) {
     <span
       className="font-mono text-xs uppercase tracking-[0.08em] text-red"
       style={{ border: "1px solid var(--red)", padding: "2px 8px" }}
-      aria-label="Split open — not yet claimed"
+      aria-label="Open — not yet paid"
     >
       Open
     </span>
@@ -253,8 +374,8 @@ function AddSplitForm({
   eligibleMembers,
   currency,
   remaining,
-  addMembershipId,
-  setAddMembershipId,
+  addUserId,
+  setAddUserId,
   addAmount,
   setAddAmount,
   isPending,
@@ -266,8 +387,8 @@ function AddSplitForm({
   eligibleMembers: MembershipResponse[];
   currency: string;
   remaining: number;
-  addMembershipId: string;
-  setAddMembershipId: (v: string) => void;
+  addUserId: string;
+  setAddUserId: (v: string) => void;
   addAmount: string;
   setAddAmount: (v: string) => void;
   isPending: boolean;
@@ -287,13 +408,13 @@ function AddSplitForm({
           <div className="min-w-0 flex-1">
             <SelectField
               label="Member"
-              value={addMembershipId}
-              onChange={(e) => setAddMembershipId(e.target.value)}
+              value={addUserId}
+              onChange={(e) => setAddUserId(e.target.value)}
               required
             >
               <option value="">Select member…</option>
               {eligibleMembers.map((m) => (
-                <option key={m.membershipId} value={m.membershipId}>
+                <option key={m.userId} value={m.userId}>
                   {memberDisplayName(m)} ({m.role})
                 </option>
               ))}
@@ -322,7 +443,7 @@ function AddSplitForm({
           type="submit"
           variant="primary"
           size="sm"
-          disabled={isPending || !addAmount || (isPrivileged && !addMembershipId)}
+          disabled={isPending || !addAmount || (isPrivileged && !addUserId)}
         >
           {isPending ? "Adding…" : "Add split"}
         </Btn>

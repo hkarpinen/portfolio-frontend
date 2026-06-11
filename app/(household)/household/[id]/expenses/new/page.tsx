@@ -2,6 +2,7 @@
 
 import {
   Alert,
+  ArrowLink,
   Btn,
   Icon,
   Input,
@@ -15,10 +16,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import { useCreateHouseholdExpense } from "@/hooks/use-expenses";
 import { useHouseholdMembers } from "@/hooks/use-household";
+import { useMe } from "@/hooks/use-identity";
 import { getErrorMessage } from "@/lib/error-messages";
+
+type FundingSource = "PayerMember" | "GroupCash";
 
 const CATEGORIES = [
   "Rent",
@@ -48,13 +51,12 @@ const schema = z.object({
   description: z.string().max(500).optional(),
   isRecurring: z.boolean(),
   recurrenceFrequency: z.enum(FREQUENCIES).optional(),
-  payerMembershipId: z.string().optional(),
 });
 
 type FormData = z.infer<typeof schema>;
 
 interface SplitEntry {
-  membershipId: string;
+  userId: string;
   displayName: string;
   checked: boolean;
   percent: string;
@@ -64,7 +66,17 @@ export default function NewExpensePage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const createExpense = useCreateHouseholdExpense(params.id);
   const { data: membersRaw } = useHouseholdMembers(params.id);
+  const { data: me } = useMe();
   const members = membersRaw ?? [];
+
+  // Who paid the vendor: a member fronted it (PayerMember, default) or it came from the shared pot
+  // (GroupCash). For PayerMember the payer defaults to the current user.
+  const [fundingSource, setFundingSource] = useState<FundingSource>("PayerMember");
+  const [payerUserId, setPayerUserId] = useState<string>("");
+
+  useEffect(() => {
+    if (!payerUserId && me?.id) setPayerUserId(me.id);
+  }, [me?.id, payerUserId]);
 
   const {
     register,
@@ -86,7 +98,7 @@ export default function NewExpensePage({ params }: { params: { id: string } }) {
       const evenPct = members.length > 0 ? (100 / members.length).toFixed(2) : "0.00";
       setSplits(
         members.map((m: any) => ({
-          membershipId: m.membershipId as string,
+          userId: m.userId as string,
           displayName: memberDisplayName(m),
           checked: true,
           percent: evenPct,
@@ -109,17 +121,27 @@ export default function NewExpensePage({ params }: { params: { id: string } }) {
   }
 
   const onSubmit = (data: FormData) => {
-    // TODO(handoff8): wire splits to API — createHouseholdExpense does not yet accept splits[]
-    // or payerMembershipId. Send the basic expense now; splits are UI-only until the API is extended.
+    const total = Number(data.amount);
+    // Percent splits -> per-member amounts. The finance API absorbs any rounding
+    // remainder into the funding account, so exact-to-the-cent isn't required.
+    const allocations = checkedSplits.map((s) => ({
+      userId: s.userId,
+      amount: Math.round(total * (parseFloat(s.percent) || 0)) / 100,
+      currency: data.currency,
+    }));
+
     createExpense.mutate(
       {
         title: data.title,
-        amount: Number(data.amount),
+        amount: total,
         currency: data.currency,
         category: data.category,
         dueDate: new Date(data.dueDate).toISOString(),
         description: data.description,
         recurrenceFrequency: data.isRecurring ? data.recurrenceFrequency : undefined,
+        fundingSource,
+        payerUserId: fundingSource === "PayerMember" ? payerUserId || undefined : undefined,
+        allocations: allocations.length > 0 ? allocations : undefined,
       },
       {
         onSuccess: () => router.push(`/household/${params.id}`),
@@ -129,9 +151,9 @@ export default function NewExpensePage({ params }: { params: { id: string } }) {
 
   return (
     <div className="page-enter flex max-w-[640px] flex-col gap-8">
-      <Link href={`/household/${params.id}`} className="ed-label-muted no-underline hover:text-red">
-        ← Back to household
-      </Link>
+      <ArrowLink href={`/household/${params.id}`} direction="left" className="ed-label-muted">
+        Back to household
+      </ArrowLink>
 
       <SectionHeader kicker="New expense" title="Add an <em>expense</em>" />
 
@@ -182,15 +204,6 @@ export default function NewExpensePage({ params }: { params: { id: string } }) {
           </SelectField>
         </div>
 
-        {/* Payer dropdown */}
-        <SelectField label="Payer" {...register("payerMembershipId")}>
-          <option value="">Select payer</option>
-          {members.map((m: any) => (
-            <option key={m.membershipId} value={m.membershipId}>
-              {memberDisplayName(m)}
-            </option>
-          ))}
-        </SelectField>
 
         <Textarea
           label="Notes"
@@ -199,13 +212,66 @@ export default function NewExpensePage({ params }: { params: { id: string } }) {
           {...register("description")}
         />
 
+        {/* Who paid the vendor */}
+        <fieldset className="m-0 flex flex-col gap-3 border-none p-0">
+          <legend className="ed-kicker mb-1">Who paid?</legend>
+          <div className="flex flex-col gap-2">
+            <label className="flex cursor-pointer items-start gap-3">
+              <input
+                type="radio"
+                name="fundingSource"
+                value="PayerMember"
+                checked={fundingSource === "PayerMember"}
+                onChange={() => setFundingSource("PayerMember")}
+                className="mt-1 h-4 w-4 shrink-0 accent-[var(--red)]"
+              />
+              <span className="flex flex-col">
+                <span className="font-serif text-base italic text-ink">A member paid</span>
+                <span className="font-mono text-xs text-ink-3">
+                  Someone fronted the bill — others pay them back.
+                </span>
+              </span>
+            </label>
+            <label className="flex cursor-pointer items-start gap-3">
+              <input
+                type="radio"
+                name="fundingSource"
+                value="GroupCash"
+                checked={fundingSource === "GroupCash"}
+                onChange={() => setFundingSource("GroupCash")}
+                className="mt-1 h-4 w-4 shrink-0 accent-[var(--red)]"
+              />
+              <span className="flex flex-col">
+                <span className="font-serif text-base italic text-ink">From the pot</span>
+                <span className="font-mono text-xs text-ink-3">
+                  Paid from the shared household account — everyone pays into the pot.
+                </span>
+              </span>
+            </label>
+          </div>
+
+          {fundingSource === "PayerMember" && members.length > 0 && (
+            <SelectField
+              label="Paid by"
+              value={payerUserId}
+              onChange={(e) => setPayerUserId(e.target.value)}
+            >
+              {members.map((m: any) => (
+                <option key={m.userId} value={m.userId}>
+                  {memberDisplayName(m)}
+                </option>
+              ))}
+            </SelectField>
+          )}
+        </fieldset>
+
         {/* Split between section */}
         {splits.length > 0 && (
           <fieldset className="m-0 flex flex-col gap-4 border-none p-0">
             <legend className="ed-kicker mb-1">Split between</legend>
             <div className="flex flex-col gap-3">
               {splits.map((s, idx) => (
-                <div key={s.membershipId} className="flex items-center gap-4">
+                <div key={s.userId} className="flex items-center gap-4">
                   <input
                     type="checkbox"
                     id={`split-${idx}`}
@@ -275,7 +341,7 @@ export default function NewExpensePage({ params }: { params: { id: string } }) {
         <div className="flex gap-3">
           <Btn
             type="submit"
-            disabled={createExpense.isPending}
+            disabled={createExpense.isPending || !pctValid}
             variant="primary"
             size="lg"
             iconRight={<Icon name="arrowRight" size={16} />}

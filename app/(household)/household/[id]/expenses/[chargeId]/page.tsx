@@ -1,7 +1,6 @@
 "use client";
 
-import { Alert, Btn, LoadingSplash } from "@/components/editorial";
-import Link from "next/link";
+import { Alert, ArrowLink, Btn, LoadingSplash } from "@/components/editorial";
 import { useEffect, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { getErrorMessage } from "@/lib/error-messages";
@@ -12,14 +11,15 @@ import { idsEqual } from "@/lib/utils";
 import { ExpenseEditForm } from "./expense-edit-form";
 import { ExpenseMetadataCard } from "./expense-metadata-card";
 import { ExpenseSplitsSection } from "./expense-splits-section";
+import { VendorPaymentPanel } from "./vendor-payment-panel";
 
 // TODO(handoff8): activity sidebar — no activity hook exists; omitted per instructions
 
 export default function ExpensePage() {
-  const { id, expenseId } = useParams<{ id: string; expenseId: string }>();
+  const { id, chargeId } = useParams<{ id: string; chargeId: string }>();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { data: page, isLoading, error: fetchError } = useHouseholdExpenseDetail(id, expenseId);
+  const { data: page, isLoading, error: fetchError } = useHouseholdExpenseDetail(id, chargeId);
   const { data: me } = useMe();
   // `?edit=1` from the household list's row-level Edit link auto-opens the
   // form so the user lands directly in edit mode.
@@ -32,8 +32,8 @@ export default function ExpensePage() {
   const { data: household } = useHousehold(id);
   const deleteMutation = useDeleteHouseholdExpense(id);
 
-  const expense = page?.expense;
-  const splits = page?.splits ?? [];
+  const expense = page?.charge;
+  const splits = page?.allocations ?? [];
   const members = householdMembers ?? [];
   const currentMembership = members.find((m) => idsEqual(m.userId, me?.id)) ?? null;
   // Ownership lives on the household entity (`ownerId`), separate from the
@@ -51,7 +51,7 @@ export default function ExpensePage() {
       setDeleteConfirm(true);
       return;
     }
-    deleteMutation.mutate(expenseId, {
+    deleteMutation.mutate(chargeId, {
       onSuccess: () => router.push(`/household/${id}`),
     });
   }
@@ -68,9 +68,9 @@ export default function ExpensePage() {
 
   return (
     <div className="page-enter flex max-w-[800px] flex-col gap-10">
-      <Link href={`/household/${id}`} className="ed-label-muted no-underline hover:text-red">
-        ← Back to household
-      </Link>
+      <ArrowLink href={`/household/${id}`} direction="left" className="ed-label-muted">
+        Back to household
+      </ArrowLink>
 
       <header className="ed-section-head">
         <p className="ed-kicker">Expense</p>
@@ -102,16 +102,26 @@ export default function ExpensePage() {
         <ExpenseEditForm
           expense={expense}
           householdId={id}
-          expenseId={expenseId}
+          chargeId={chargeId}
           onClose={() => setEditOpen(false)}
         />
       )}
 
-      <ExpenseMetadataCard expense={expense} />
+      <ExpenseMetadataCard expense={expense} members={members} />
+
+      <VendorPaymentPanel
+        householdId={id}
+        chargeId={chargeId}
+        expense={expense}
+        members={members}
+        isOwner={idsEqual(expense.createdBy, me?.id)}
+        paidCount={splits.filter((s) => s.isPaid).length}
+        totalCount={splits.length}
+      />
 
       <ExpenseSplitsSection
         householdId={id}
-        expenseId={expenseId}
+        chargeId={chargeId}
         expense={expense}
         splits={splits}
         members={members}

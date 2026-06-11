@@ -37,12 +37,12 @@ export const EXPENSE_CATEGORY_OPTIONS = Object.values(ExpenseCategory);
  * Unified expense shape — mirrors `ExpenseResponseDto` in
  * finance/src/Application/Dtos/ExpenseDtos.cs. `scope` discriminates
  * Personal vs Household; scope-specific ids (`userId`, `groupId`,
- * `createdBy`, `payerMembershipId`) are nullable on the wire.
+ * `createdBy`, `payerUserId`) are nullable on the wire.
  */
 const ExpenseScopeSchema = z.enum(["Personal", "Household"]);
 
 export const ExpenseSchema = z.object({
-  expenseId: z.string(),
+  chargeId: z.string(),
   scope: ExpenseScopeSchema,
   userId: z.string().nullish(),
   groupId: z.string().nullish(),
@@ -61,12 +61,13 @@ export const ExpenseSchema = z.object({
   updatedAt: z.string(),
   isPaid: z.boolean().optional(),
   currentOccurrenceDate: z.string().nullish(),
-  payerMembershipId: z.string().nullish(),
+  payerUserId: z.string().nullish(),
+  fundingSource: z.string().nullish(),
 });
 export type Expense = z.infer<typeof ExpenseSchema>;
 
 export const ExpenseItemSchema = z.object({
-  expenseId: z.string(),
+  chargeId: z.string(),
   title: z.string(),
   category: ExpenseCategorySchema,
   amount: z.number(),

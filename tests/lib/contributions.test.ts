@@ -92,8 +92,8 @@ describe("mergeBucket", () => {
       amount: 800,
       currency: "USD",
       dueDate: "2025-01-01",
-      isClaimed: false,
-      claimedAt: null,
+      isPaid: false,
+      paidAt: null,
     };
     const period = makePeriod("2025-01-01", { contributions: [contribution] });
 

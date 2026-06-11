@@ -149,28 +149,31 @@ export function toMonthlyPeriods(months: ContributionPeriod[]): AggregatedPeriod
 // ── Settlements ───────────────────────────────────────────────────────────────
 
 /** One leg of the suggested settle-up: who pays whom, in the household currency. */
-interface SettlementTransfer {
+export interface SettlementTransfer {
   from: string;
   to: string;
   amount: number;
+  /** Identity userIds, when the source carries them — lets the UI action the transfer. */
+  fromId?: string;
+  toId?: string;
+}
+
+/** A member's net position: positive = owed money (creditor), negative = owes (debtor). */
+export interface MemberNet {
+  name: string;
+  net: number;
+  /** Identity userId, when known — flows through to the resulting transfers for actioning. */
+  id?: string;
 }
 
 /**
- * Compute the minimum settle-up transfers from a month's member balances
- * (positive net = owed money, negative net = owes money). Greedily pairs
- * the biggest creditor with the biggest debtor until the residuals all
- * land inside the ±$0.005 (~half-cent) zero band.
- *
- * Returned in pay-order; consumers can sum `amount` for the unsettled
- * total. Lives here so the household contributions view and any future
- * dashboard widget share one canonical reduction.
+ * The minimum settle-up transfers from a set of member net balances (positive net = owed money,
+ * negative net = owes money). Greedily pairs the biggest creditor with the biggest debtor until the
+ * residuals all land inside the ±$0.005 (~half-cent) zero band. Returned in pay-order; sum `amount`
+ * for the unsettled total. The canonical reduction — feed it a month's contributions (see
+ * {@link computeSettlements}) or all-time ledger member balances.
  */
-export function computeSettlements(month: HouseholdMonthlyContributions): SettlementTransfer[] {
-  const nets = (month.members ?? []).map((m) => ({
-    name: m.displayName ?? `User ${m.userId.slice(0, 6)}…`,
-    net: (m.totalPaid ?? 0) - (m.totalDue ?? 0),
-  }));
-
+export function minimalTransfers(nets: MemberNet[]): SettlementTransfer[] {
   const creditors = nets.filter((m) => m.net > 0.005).sort((a, b) => b.net - a.net);
   const debtors = nets.filter((m) => m.net < -0.005).sort((a, b) => a.net - b.net);
 
@@ -181,15 +184,19 @@ export function computeSettlements(month: HouseholdMonthlyContributions): Settle
   const d = debtors.map((x) => ({ ...x }));
 
   while (ci < c.length && di < d.length) {
-    // The loop guard `ci < c.length && di < d.length` proves these
-    // indexed accesses are defined, but TS's strict-indexed-access
-    // can't see it. Bind to locals once so the non-null assertion
-    // happens at the source, not every reference.
+    // The loop guard proves these indexed accesses are defined, but TS's
+    // strict-indexed-access can't see it — bind to locals once.
     const credit = c[ci]!;
     const debit = d[di]!;
     const pay = Math.min(credit.net, -debit.net);
     if (pay > 0.005) {
-      settlements.push({ from: debit.name, to: credit.name, amount: pay });
+      settlements.push({
+        from: debit.name,
+        to: credit.name,
+        amount: pay,
+        fromId: debit.id,
+        toId: credit.id,
+      });
     }
     credit.net -= pay;
     debit.net += pay;
@@ -198,6 +205,16 @@ export function computeSettlements(month: HouseholdMonthlyContributions): Settle
   }
 
   return settlements;
+}
+
+/** Minimal settle-up transfers for a single month's contributions (net = paid − due per member). */
+export function computeSettlements(month: HouseholdMonthlyContributions): SettlementTransfer[] {
+  return minimalTransfers(
+    (month.members ?? []).map((m) => ({
+      name: m.displayName ?? `User ${m.userId.slice(0, 6)}…`,
+      net: (m.totalPaid ?? 0) - (m.totalDue ?? 0),
+    })),
+  );
 }
 
 export function sortPeriods(periods: AggregatedPeriod[]): AggregatedPeriod[] {

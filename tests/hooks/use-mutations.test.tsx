@@ -117,7 +117,7 @@ describe("usePayHouseholdExpense", () => {
 
     // Seed the list cache with one row so we can observe the optimistic patch.
     queryClient.setQueryData(financeKeys.householdExpenses(HID), {
-      items: [{ expenseId: EXPENSE_ID, isPaid: false }],
+      items: [{ chargeId: EXPENSE_ID, isPaid: false }],
     });
     seed(queryClient, financeKeys.householdExpenseDetail(HID, EXPENSE_ID));
     seed(queryClient, financeKeys.householdContributions(HID));
@@ -134,7 +134,7 @@ describe("usePayHouseholdExpense", () => {
     // invalidation refetches. Caching this contract because removing it
     // would visibly stutter the UI on pay.
     const listCache = queryClient.getQueryData<{
-      items: { expenseId: string; isPaid: boolean; currentOccurrenceDate?: string }[];
+      items: { chargeId: string; isPaid: boolean; currentOccurrenceDate?: string }[];
     }>(financeKeys.householdExpenses(HID));
     expect(listCache?.items[0].isPaid).toBe(true);
     expect(listCache?.items[0].currentOccurrenceDate).toBe(occurrence);

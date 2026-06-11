@@ -77,6 +77,17 @@ export const removeMember = (householdId: string, membershipId: string) =>
 export const changeMemberRole = (householdId: string, membershipId: string, role: string) =>
   api.put(`/api/households/${householdId}/members/${membershipId}/role`, { role });
 
+/**
+ * Assign a member's allocation (share) on a finance charge, role-gated by household (a member
+ * may assign their OWN share; Owner/Admin may assign another member's). Household authorizes,
+ * then emits an event finance applies a moment later — returns 202; the split lands asynchronously.
+ */
+export const assignHouseholdAllocation = (
+  householdId: string,
+  chargeId: string,
+  body: { userId: string; amount: number; currency: string },
+) => api.post(`/api/households/${householdId}/charges/${chargeId}/allocations`, body);
+
 export const generateInvite = (householdId: string, recipientEmail?: string) =>
   api.post(
     `/api/households/${householdId}/invite`,

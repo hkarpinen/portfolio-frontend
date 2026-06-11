@@ -1,8 +1,6 @@
-import { LedeStat, PullQuote } from "@/components/editorial";
+import { LedeStat } from "@/components/editorial";
 import { computeIncomeMonthly } from "./expenses-derivations";
-import { expensesPullQuote } from "@/lib/finance/editorial-copy";
 import {
-  findCurrentPeriod,
   monthObligations,
   oneTimePersonalBills,
   recurringPersonalBills,
@@ -21,20 +19,20 @@ import type { IncomeSource } from "@/types/income";
  * FinancialSummary — top-of-page editorial figure block.
  *
  * Renders a hero `<LedeStat>` for "Net this month" (the figure that
- * matters), a secondary `<LedgerStrip>` with three supporting metrics, and
- * — conditionally — a `<PullQuote>` callout when the data has something
- * noteworthy to say.
+ * matters), with supporting metrics threaded through its `aside` so
+ * every number has one home, and — conditionally — a `<PullQuote>`
+ * callout when the data has something noteworthy to say.
  */
 export function FinancialSummary({
-  initialMonths,
+  period,
   incomeSources,
   monthName,
 }: {
-  initialMonths: ContributionPeriod[];
+  period: ContributionPeriod | undefined;
   incomeSources: IncomeSource[];
   monthName: string;
 }) {
-  const current = findCurrentPeriod(initialMonths);
+  const current = period;
 
   // Income comes from the income sources directly so the "in" figure matches
   // the income page's "Gross monthly". The backend's projectedIncome is
@@ -62,8 +60,6 @@ export function FinancialSummary({
   const monthlyRecurringTotal = personalRecurringTotal + sharedBillsDue;
   const personalRecurringCount = personalRecurringBills.length;
   const sharedBillIdSet = sharedBillIds(current);
-
-  const quote = expensesPullQuote({ disposable, monthName });
 
   // Compact breakdown strings rendered next to the aside figures so the
   // lede block is the single home for these numbers — the duplicate
@@ -107,12 +103,6 @@ export function FinancialSummary({
           },
         ]}
       />
-
-      {quote && (
-        <PullQuote attribution={quote.attribution}>
-          <span dangerouslySetInnerHTML={{ __html: quote.body }} />
-        </PullQuote>
-      )}
     </div>
   );
 }

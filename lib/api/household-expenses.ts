@@ -42,7 +42,7 @@ export const updateHouseholdExpense = (
   api.parsed.put(
     `/api/finance/groups/${householdId}/expenses/${householdExpenseId}`,
     HouseholdExpenseSchema,
-    { expenseId: householdExpenseId, ...body },
+    { chargeId: householdExpenseId, ...body },
   );
 
 export const deleteHouseholdExpense = (householdId: string, householdExpenseId: string) =>
@@ -69,7 +69,7 @@ export const unpayHouseholdExpense = (
 export const addExpenseSplit = (
   householdId: string,
   householdExpenseId: string,
-  body: { membershipId: string; amount: number; currency: string },
+  body: { userId: string; amount: number; currency: string },
 ) =>
   api.parsed.post(
     `/api/finance/groups/${householdId}/expenses/${householdExpenseId}/splits`,
@@ -77,8 +77,14 @@ export const addExpenseSplit = (
     body,
   );
 
-export const removeSplit = (householdId: string, householdExpenseId: string, splitId: string) =>
-  api.delete(`/api/finance/groups/${householdId}/expenses/${householdExpenseId}/splits/${splitId}`);
+export const removeSplit = (householdId: string, householdExpenseId: string, allocationId: string) =>
+  api.delete(`/api/finance/groups/${householdId}/expenses/${householdExpenseId}/splits/${allocationId}`);
+
+/** Record a direct settle-up payment from the caller to another member (caller = payer). */
+export const settleUpTransfer = (
+  householdId: string,
+  body: { toUserId: string; amount: number; currency: string },
+) => api.post(`/api/finance/groups/${householdId}/settlements/transfer`, body);
 
 /** Per-other-member balances within a household, from the caller's POV. */
 export const fetchHouseholdBalances = (householdId: string) =>
@@ -126,5 +132,29 @@ export const createHouseholdExpense = (
     dueDate: string;
     description?: string;
     recurrenceFrequency?: string;
+    /** Who fronted the vendor: a member paid from their own pocket (`PayerMember`) or it came from
+     *  the shared household pot (`GroupCash`). Defaults to `PayerMember` server-side. */
+    fundingSource?: "PayerMember" | "GroupCash";
+    /** The member who fronted the bill (PayerMember). Defaults to the creator server-side. */
+    payerUserId?: string;
+    /** Per-member shares. Each member later marks their share paid — back to the payer
+     *  (PayerMember) or into the pot (GroupCash); the API absorbs any rounding remainder. */
+    allocations?: { userId: string; amount: number; currency: string }[];
   },
 ) => api.parsed.post(`/api/finance/groups/${householdId}/expenses`, HouseholdExpenseSchema, body);
+
+/** Owner pays the vendor from the shared household account, once all shares are in (collect-first). */
+export const markVendorPaid = (householdId: string, householdExpenseId: string, occurrenceDate: string) =>
+  api.post(`/api/finance/groups/${householdId}/expenses/${householdExpenseId}/vendor-payment`, {
+    occurrenceDate,
+  });
+
+/** Undo a vendor payment (back to upcoming/unpaid). */
+export const markVendorUnpaid = (
+  householdId: string,
+  householdExpenseId: string,
+  occurrenceDate: string,
+) =>
+  api.delete(`/api/finance/groups/${householdId}/expenses/${householdExpenseId}/vendor-payment`, {
+    occurrenceDate,
+  });

@@ -41,19 +41,19 @@ const CATEGORIES = [
 const FREQUENCIES = ["Daily", "Weekly", "Biweekly", "Monthly", "Quarterly", "Yearly"];
 
 interface ExpenseEditFormProps {
-  expense: HouseholdExpenseDetailResponse["expense"];
+  expense: HouseholdExpenseDetailResponse["charge"];
   householdId: string;
-  expenseId: string;
+  chargeId: string;
   onClose: () => void;
 }
 
 export function ExpenseEditForm({
   expense,
   householdId,
-  expenseId,
+  chargeId,
   onClose,
 }: ExpenseEditFormProps) {
-  const updateExpenseMutation = useUpdateHouseholdExpense(householdId, expenseId);
+  const updateExpenseMutation = useUpdateHouseholdExpense(householdId, chargeId);
 
   const {
     register,

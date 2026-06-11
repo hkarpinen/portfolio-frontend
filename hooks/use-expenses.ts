@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient, type QueryClient } from "@tanstack/react-query";
 import {
   fetchExpenses,
   createExpense,
@@ -16,10 +16,13 @@ import {
   unpayHouseholdExpense,
   addExpenseSplit,
   removeSplit,
+  settleUpTransfer,
   createHouseholdExpense,
   updateHouseholdExpense,
+  markVendorPaid,
+  markVendorUnpaid,
 } from "@/lib/api/household-expenses";
-import { fetchHouseholdContributions } from "@/lib/api/households";
+import { fetchHouseholdContributions, assignHouseholdAllocation } from "@/lib/api/households";
 import { financeKeys } from "@/lib/query-keys";
 import {
   invalidatePersonalExpenses,
@@ -34,6 +37,22 @@ import type {
   ExpenseSplit,
 } from "@/types/household-expense";
 import type { MemberBalanceListResponse } from "@/types/membership";
+
+/** Optimistically flip `charge.vendorPaid` in the cached charge detail. vendorPaid is ledger-derived
+ *  (~1–2s outbox lag), so patching the cache lets the detail page react instantly instead of waiting
+ *  for the LedgerPostingConsumer to post — without an immediate refetch that would read back stale. */
+function patchDetailVendorPaid(
+  queryClient: QueryClient,
+  householdId: string,
+  householdExpenseId: string,
+  vendorPaid: boolean,
+) {
+  queryClient.setQueryData(
+    financeKeys.householdExpenseDetail(householdId, householdExpenseId),
+    (old: HouseholdExpenseDetailResponse | undefined) =>
+      old ? { ...old, charge: { ...old.charge, vendorPaid } } : old,
+  );
+}
 
 // ─── Personal expenses ────────────────────────────────────────────────────────
 
@@ -181,7 +200,7 @@ export function usePayHouseholdExpense(householdId: string, householdExpenseId: 
             ? {
                 ...old,
                 items: old.items.map((b) =>
-                  b.expenseId === householdExpenseId
+                  b.chargeId === householdExpenseId
                     ? { ...b, isPaid: true, currentOccurrenceDate: occurrenceDate }
                     : b,
                 ),
@@ -206,7 +225,7 @@ export function useUnpayHouseholdExpense(householdId: string, householdExpenseId
             ? {
                 ...old,
                 items: old.items.map((b) =>
-                  b.expenseId === householdExpenseId ? { ...b, isPaid: false } : b,
+                  b.chargeId === householdExpenseId ? { ...b, isPaid: false } : b,
                 ),
               }
             : old,
@@ -216,10 +235,70 @@ export function useUnpayHouseholdExpense(householdId: string, householdExpenseId
   });
 }
 
+/** Mark the VENDOR paid (the bill itself), choosing who paid now. Flips the bill to paid and
+ *  refreshes the list/detail + balances + ledger (member shares become settleable). */
+export function useMarkVendorPaid(householdId: string, householdExpenseId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (occurrenceDate: string) =>
+      markVendorPaid(householdId, householdExpenseId, occurrenceDate),
+    onSuccess: () => {
+      queryClient.setQueryData(
+        financeKeys.householdExpenses(householdId),
+        (old: HouseholdExpenseListResponse | undefined) =>
+          old
+            ? {
+                ...old,
+                items: old.items.map((b) =>
+                  b.chargeId === householdExpenseId ? { ...b, vendorPaid: true } : b,
+                ),
+              }
+            : old,
+      );
+      // Optimistically flip the detail's vendorPaid so the panel + the payer's fronted share update
+      // instantly. We deliberately do NOT invalidate the detail here: vendorPaid is ledger-derived
+      // and the LedgerPostingConsumer hasn't posted yet (~1–2s outbox lag), so an immediate refetch
+      // would read back false and revert the UI. The optimistic value is what the ledger converges
+      // to; staleTime / navigation reconciles it.
+      patchDetailVendorPaid(queryClient, householdId, householdExpenseId, true);
+      queryClient.invalidateQueries({ queryKey: financeKeys.householdBalances(householdId) });
+      queryClient.invalidateQueries({ queryKey: financeKeys.groupLedger(householdId) });
+      queryClient.invalidateQueries({ queryKey: financeKeys.accountStatements(householdId) });
+    },
+  });
+}
+
+/** Undo a vendor payment — back to upcoming/unpaid. */
+export function useMarkVendorUnpaid(householdId: string, householdExpenseId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (occurrenceDate: string) =>
+      markVendorUnpaid(householdId, householdExpenseId, occurrenceDate),
+    onSuccess: () => {
+      queryClient.setQueryData(
+        financeKeys.householdExpenses(householdId),
+        (old: HouseholdExpenseListResponse | undefined) =>
+          old
+            ? {
+                ...old,
+                items: old.items.map((b) =>
+                  b.chargeId === householdExpenseId ? { ...b, vendorPaid: false } : b,
+                ),
+              }
+            : old,
+      );
+      patchDetailVendorPaid(queryClient, householdId, householdExpenseId, false);
+      queryClient.invalidateQueries({ queryKey: financeKeys.householdBalances(householdId) });
+      queryClient.invalidateQueries({ queryKey: financeKeys.groupLedger(householdId) });
+      queryClient.invalidateQueries({ queryKey: financeKeys.accountStatements(householdId) });
+    },
+  });
+}
+
 export function useAddExpenseSplit(householdId: string, householdExpenseId: string) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (body: { membershipId: string; amount: number; currency: string }) =>
+    mutationFn: (body: { userId: string; amount: number; currency: string }) =>
       addExpenseSplit(householdId, householdExpenseId, body),
     onSuccess: (newSplit: ExpenseSplit) => {
       // Optimistic append on the detail cache; full invalidation rebuilds the
@@ -227,9 +306,45 @@ export function useAddExpenseSplit(householdId: string, householdExpenseId: stri
       queryClient.setQueryData(
         financeKeys.householdExpenseDetail(householdId, householdExpenseId),
         (old: HouseholdExpenseDetailResponse | undefined) =>
-          old ? { ...old, splits: [...old.splits, newSplit] } : old,
+          old ? { ...old, allocations: [...old.allocations, newSplit] } : old,
       );
       invalidateHouseholdExpenseDetail(queryClient, householdId, householdExpenseId);
+    },
+  });
+}
+
+/**
+ * Assign ANOTHER member's split via the household service (role-gated: Owner/Admin only). This is
+ * the async, no-service-to-service path: household authorizes and emits an event finance applies a
+ * moment later, so we invalidate now and again after the event has likely landed. Use
+ * {@link useAddExpenseSplit} for the caller's OWN split (synchronous, direct to finance).
+ */
+export function useAssignHouseholdAllocation(householdId: string, householdExpenseId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (body: { userId: string; amount: number; currency: string }) =>
+      assignHouseholdAllocation(householdId, householdExpenseId, body),
+    onSuccess: () => {
+      invalidateHouseholdExpenseDetail(queryClient, householdId, householdExpenseId);
+      // The allocation lands asynchronously once finance consumes the event; reconcile shortly.
+      setTimeout(
+        () => invalidateHouseholdExpenseDetail(queryClient, householdId, householdExpenseId),
+        2500,
+      );
+    },
+  });
+}
+
+/** Record the caller settling up with another member (caller = payer). Refreshes balances + ledger. */
+export function useSettleUpTransfer(householdId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (body: { toUserId: string; amount: number; currency: string }) =>
+      settleUpTransfer(householdId, body),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: financeKeys.householdBalances(householdId) });
+      queryClient.invalidateQueries({ queryKey: financeKeys.groupLedger(householdId) });
+      queryClient.invalidateQueries({ queryKey: financeKeys.accountStatements(householdId) });
     },
   });
 }
@@ -237,12 +352,12 @@ export function useAddExpenseSplit(householdId: string, householdExpenseId: stri
 export function useRemoveExpenseSplit(householdId: string, householdExpenseId: string) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (splitId: string) => removeSplit(householdId, householdExpenseId, splitId),
-    onSuccess: (_: unknown, splitId: string) => {
+    mutationFn: (allocationId: string) => removeSplit(householdId, householdExpenseId, allocationId),
+    onSuccess: (_: unknown, allocationId: string) => {
       queryClient.setQueryData(
         financeKeys.householdExpenseDetail(householdId, householdExpenseId),
         (old: HouseholdExpenseDetailResponse | undefined) =>
-          old ? { ...old, splits: old.splits.filter((s) => s.splitId !== splitId) } : old,
+          old ? { ...old, allocations: old.allocations.filter((s) => s.allocationId !== allocationId) } : old,
       );
       invalidateHouseholdExpenseDetail(queryClient, householdId, householdExpenseId);
     },

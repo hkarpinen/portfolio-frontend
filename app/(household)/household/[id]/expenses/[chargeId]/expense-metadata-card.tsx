@@ -1,10 +1,19 @@
 "use client";
 
 import type { HouseholdExpense } from "@/types/household-expense";
+import type { MembershipResponse } from "@/types/membership";
 import { formatCurrency, formatFullDate } from "@/lib/formatting";
+import { deriveChargeFunding } from "@/lib/charge-funding";
 
-/** Four-column "amount · date · payer · category" card under the expense header. */
-export function ExpenseMetadataCard({ expense }: { expense: HouseholdExpense }) {
+/** Four-column "amount · date · vendor-paid-by · category" card under the expense header. */
+export function ExpenseMetadataCard({
+  expense,
+  members,
+}: {
+  expense: HouseholdExpense;
+  members: MembershipResponse[];
+}) {
+  const { fundingLabel } = deriveChargeFunding(expense, members);
   return (
     <div
       className="grid grid-cols-2 gap-px border border-rule bg-[var(--rule)] sm:grid-cols-4"
@@ -21,9 +30,8 @@ export function ExpenseMetadataCard({ expense }: { expense: HouseholdExpense }) 
         <p className="font-mono text-sm text-ink">{formatFullDate(expense.dueDate)}</p>
       </div>
       <div className="flex flex-col gap-1 bg-paper p-5">
-        <p className="ed-kicker text-ink-3">Payer</p>
-        {/* TODO(handoff8): wire to payer — HouseholdExpense has no payerId field yet */}
-        <p className="font-mono text-sm text-ink-3">—</p>
+        <p className="ed-kicker text-ink-3">Vendor paid by</p>
+        <p className="font-mono text-sm text-ink">{fundingLabel}</p>
       </div>
       <div className="flex flex-col gap-1 bg-paper p-5">
         <p className="ed-kicker text-ink-3">Category</p>

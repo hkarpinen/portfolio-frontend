@@ -155,46 +155,26 @@ export interface UpcomingBill {
 }
 
 export function buildExpensesTicker({
-  disposable,
-  totalOut,
-  income,
   upcoming,
   monthName,
 }: {
-  disposable: number;
-  totalOut: number;
-  income: number;
   upcoming: UpcomingBill[];
   monthName: string;
 }): TickerItem[] {
-  const items: TickerItem[] = [
-    {
-      kicker: "MONTH",
-      label: monthName,
-      value: formatCurrency(disposable, "USD", { precision: 0, signed: true }),
-      direction: disposable < 0 ? "down" : "up",
-    },
-    {
-      kicker: "OUT",
-      label: "Total",
-      value: formatCurrency(totalOut, "USD", { precision: 0 }),
-      direction: "flat",
-    },
-    {
-      kicker: "IN",
-      label: "Earned",
-      value: formatCurrency(income, "USD", { precision: 0 }),
-      direction: "flat",
-    },
-  ];
-  // Surface the next ~4 upcoming bills so the ticker is genuinely useful.
-  for (const b of upcoming.slice(0, 4)) {
-    const due = new Date(b.dueDate);
-    const dueLabel = due.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  // The ticker is the page's dedicated "what's coming up" strip — deliberately
+  // distinct from the FinancialSummary lede, which already owns net / in / out.
+  // Restating those figures here would just echo the hero, so the ticker shows
+  // upcoming bills only. No upcoming bills -> no ticker (the component hides []).
+  const due = upcoming.slice(0, 6);
+  if (due.length === 0) return [];
+  const items: TickerItem[] = [{ kicker: "Coming up", label: monthName }];
+  for (const b of due) {
+    const d = new Date(b.dueDate);
+    const dueLabel = d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
     items.push({
-      kicker: "DUE",
+      kicker: "Due",
       label: b.title,
-      value: `${formatCurrency(b.amount, "USD", { precision: 0 })} ${dueLabel}`,
+      value: `${formatCurrency(b.amount, "USD", { precision: 0 })} · ${dueLabel}`,
       direction: "flat",
     });
   }

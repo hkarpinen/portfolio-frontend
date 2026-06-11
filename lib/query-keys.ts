@@ -26,6 +26,13 @@ export const financeKeys = {
   netPayBreakdown: (incomeId: string, year?: number, month?: number) =>
     [...financeKeys.income(), incomeId, "net-pay", year ?? "", month ?? ""] as const,
 
+  // Group ledger (event-driven, group-scoped)
+  groupLedger: (groupId: string) => ["groupLedger", groupId] as const,
+  accountStatement: (groupId: string, accountId: string) =>
+    ["accountStatement", groupId, accountId] as const,
+  // Prefix matching every account's statement in a group (for invalidating after a posting).
+  accountStatements: (groupId: string) => ["accountStatement", groupId] as const,
+
   // Overview / contributions
   overview: () => [...financeKeys.all, "overview"] as const,
   householdContributions: (householdId?: string) =>

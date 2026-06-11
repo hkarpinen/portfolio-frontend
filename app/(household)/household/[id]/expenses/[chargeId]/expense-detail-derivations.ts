@@ -2,8 +2,8 @@ import type { ExpenseSplit, HouseholdExpense } from "@/types/household-expense";
 import type { MembershipResponse } from "@/types/membership";
 
 /**
- * Pure projections for the household expense-detail page. Both the inline
- * splits section and the older standalone `expense-splits.tsx` used to
+ * Pure projections for the household expense-detail page. The splits
+ * section (`expense-splits-section.tsx`) and the page shell used to
  * hand-roll the same allocation reduction; pulling it here means one
  * canonical answer for "what's allocated / what's left".
  */
@@ -14,8 +14,8 @@ export function splitAllocation(splits: ExpenseSplit[], totalAmount: number) {
   return {
     allocated,
     remaining: Math.max(0, Number(totalAmount) - allocated),
-    /** Unclamped remainder — negative when over-allocated. The old
-     *  `expense-splits.tsx` rendered this in its "Unallocated" tint card. */
+    /** Unclamped remainder — negative when over-allocated. Rendered in
+     *  the splits section's "Unallocated" tint card. */
     netRemaining: Number(totalAmount) - allocated,
   };
 }

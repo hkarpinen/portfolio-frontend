@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { FrequencySchema } from "./schedule";
 import { ExpenseCategorySchema } from "./expense";
-import { HouseholdRoleSchema, MembershipResponseSchema } from "./membership";
 import { pagedResponseSchema } from "./shared";
 
 /**
@@ -21,7 +20,9 @@ import { pagedResponseSchema } from "./shared";
  * both `null` and missing.
  */
 export const HouseholdExpenseSchema = z.object({
-  expenseId: z.string(),
+  chargeId: z.string(),
+  // Identity userId of the bill's creator/owner — only the owner pays the vendor (collect-first).
+  createdBy: z.string().nullish(),
   title: z.string(),
   amount: z.number(),
   currency: z.string(),
@@ -32,38 +33,42 @@ export const HouseholdExpenseSchema = z.object({
   description: z.string().nullish(),
   currentOccurrenceDate: z.string().nullish(),
   isPaid: z.boolean().optional(),
+  // The identity userId of the payer who fronted the bill (always set for group charges). Under
+  // PayerMember funding their own share is covered (not reversible); under GroupCash they settle
+  // like everyone. Finance keys actors on the person, not the household membership.
+  payerUserId: z.string().nullish(),
+  // Which account funded the vendor payment: "PayerMember" (front-and-reimburse) or "GroupCash"
+  // (pooled — every member, the payer included, settles reversibly). The *intended/of-record*
+  // funding; only meaningful once the vendor is actually paid.
+  fundingSource: z.string().nullish(),
+  // Has the VENDOR been paid (the bill itself), distinct from the caller's share (isPaid). Derived
+  // from the ledger server-side. Upcoming/unpaid bills are false; legacy cash-basis charges read true.
+  vendorPaid: z.boolean().optional(),
 });
 export type HouseholdExpense = z.infer<typeof HouseholdExpenseSchema>;
 
 export const ExpenseSplitSchema = z.object({
-  splitId: z.string(),
+  allocationId: z.string(),
   userId: z.string(),
   displayName: z.string().nullish(),
   avatarUrl: z.string().nullish(),
   membershipRole: z.string(),
   amount: z.number(),
   currency: z.string(),
-  isClaimed: z.boolean(),
+  // Finance owns the domain language — splits are "paid", not "claimed".
+  // See finance SplitDetailDto / memory: finance-split-paid-not-split-claimed.
+  isPaid: z.boolean(),
 });
 export type ExpenseSplit = z.infer<typeof ExpenseSplitSchema>;
 
 export const HouseholdExpenseListResponseSchema = pagedResponseSchema(HouseholdExpenseSchema);
 export type HouseholdExpenseListResponse = z.infer<typeof HouseholdExpenseListResponseSchema>;
 
+// Mirrors finance `GroupChargeDetailDto` — just `{ charge, allocations }`. The
+// household members list is fetched separately on the page via
+// `useHouseholdMembers` because finance treats group membership as opaque.
 export const HouseholdExpenseDetailResponseSchema = z.object({
-  expense: HouseholdExpenseSchema,
-  splits: z.array(ExpenseSplitSchema),
-  members: z.array(MembershipResponseSchema),
-  currentUserRole: HouseholdRoleSchema.optional(),
+  charge: HouseholdExpenseSchema,
+  allocations: z.array(ExpenseSplitSchema),
 });
 export type HouseholdExpenseDetailResponse = z.infer<typeof HouseholdExpenseDetailResponseSchema>;
-
-const UpcomingHouseholdExpenseSchema = z.object({
-  billId: z.string(),
-  householdId: z.string(),
-  householdName: z.string(),
-  title: z.string(),
-  amount: z.number(),
-  currency: z.string(),
-  dueDate: z.string(),
-});

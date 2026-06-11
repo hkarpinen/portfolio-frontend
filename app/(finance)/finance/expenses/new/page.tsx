@@ -6,8 +6,8 @@ export default function AddExpensePage() {
     <div className="page-enter flex max-w-[640px] flex-col gap-12">
       {/* Breadcrumb */}
       <nav aria-label="Breadcrumb" className="ed-breadcrumb">
-        <Link href="/expenses" className="ed-breadcrumb-link">
-          Expenses
+        <Link href="/finance/overview" className="ed-breadcrumb-link">
+          Money
         </Link>
         <span className="ed-breadcrumb-sep" aria-hidden="true">
           /

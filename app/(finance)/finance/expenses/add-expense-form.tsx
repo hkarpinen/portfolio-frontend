@@ -48,7 +48,7 @@ export function AddExpenseForm() {
       {
         onSuccess: () => {
           reset();
-          router.push("/expenses");
+          router.push("/finance/overview");
         },
       },
     );
@@ -166,7 +166,7 @@ export function AddExpenseForm() {
           <Btn
             type="button"
             variant="secondary"
-            onClick={() => router.push("/expenses")}
+            onClick={() => router.push("/finance/overview")}
             className="flex-1"
           >
             Cancel

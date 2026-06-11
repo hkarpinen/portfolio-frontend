@@ -1,10 +1,11 @@
 "use client";
 
-import { SourceNote } from "@/components/editorial";
+import { Icon, SourceNote } from "@/components/editorial";
 import Link from "next/link";
 import type { ContributionItem } from "@/types/contributions";
 
 import { formatCurrency, formatAmount } from "@/lib/formatting";
+import { categoryIcon } from "@/lib/expense-category";
 import { pluralize, sumBy } from "@/lib/utils";
 
 interface SharedSplitGroup {
@@ -17,7 +18,7 @@ interface SharedSplitGroup {
   occurrenceCount: number;
   monthlyAmount: number;
   nextDueDate?: string;
-  splitIds: string[];
+  allocationIds: string[];
 }
 
 /**
@@ -33,7 +34,7 @@ export function groupSharedSplitsByBill(items: ContributionItem[]): SharedSplitG
     if (existing) {
       existing.occurrenceCount += 1;
       existing.monthlyAmount += Number(c.amount);
-      existing.splitIds.push(c.splitId);
+      existing.allocationIds.push(c.allocationId);
       if (!existing.nextDueDate || c.dueDate < existing.nextDueDate) {
         existing.nextDueDate = c.dueDate;
       }
@@ -43,7 +44,7 @@ export function groupSharedSplitsByBill(items: ContributionItem[]): SharedSplitG
         billTitle: c.billTitle,
         // Schema fields use `.nullish()` (string | null | undefined); the
         // local interface uses optional only (string | undefined). Normalise
-        // `null` → `undefined` here so the group stays narrow.
+        // `null` -> `undefined` here so the group stays narrow.
         billCategory: c.billCategory ?? undefined,
         groupId: c.groupId ?? "",
         householdName: c.householdName ?? undefined,
@@ -51,7 +52,7 @@ export function groupSharedSplitsByBill(items: ContributionItem[]): SharedSplitG
         occurrenceCount: 1,
         monthlyAmount: Number(c.amount),
         nextDueDate: c.dueDate,
-        splitIds: [c.splitId],
+        allocationIds: [c.allocationId],
       });
     }
   }
@@ -79,8 +80,12 @@ export function SharedSplitsTable({
         <thead>
           <tr>
             <th scope="col">Bill</th>
-            <th scope="col">Household</th>
-            <th scope="col">Category</th>
+            <th scope="col" className="hidden sm:table-cell">
+              Household
+            </th>
+            <th scope="col" className="hidden sm:table-cell">
+              Category
+            </th>
             <th scope="col" className="num">
               Your share
             </th>
@@ -96,11 +101,25 @@ export function SharedSplitsTable({
                   {g.occurrenceCount > 1 && (
                     <span className="ed-agate-occur">× {g.occurrenceCount}</span>
                   )}
+                  {/* Mobile: household + category collapse under the bill title. */}
+                  <p className="ed-hint mt-0.5 sm:hidden">
+                    <Link href={`/household/${g.groupId}`}>{householdName}</Link>
+                    {g.billCategory ? ` · ${g.billCategory}` : ""}
+                  </p>
                 </td>
-                <td className="muted">
+                <td className="muted hidden sm:table-cell">
                   <Link href={`/household/${g.groupId}`}>{householdName}</Link>
                 </td>
-                <td className="muted">{g.billCategory ?? "—"}</td>
+                <td className="muted hidden sm:table-cell">
+                  {g.billCategory ? (
+                    <span className="inline-flex items-center gap-2">
+                      <Icon name={categoryIcon(g.billCategory)} size={14} strokeWidth={1.75} />
+                      {g.billCategory}
+                    </span>
+                  ) : (
+                    "—"
+                  )}
+                </td>
                 <td className="num">
                   <span className="ed-agate-currency">{currency}</span>
                   {formatAmount(g.monthlyAmount)}
@@ -109,14 +128,6 @@ export function SharedSplitsTable({
             );
           })}
         </tbody>
-        <tfoot>
-          <tr>
-            <td colSpan={3}>
-              Total · {groups.length} shared {pluralize("bill", groups.length)}
-            </td>
-            <td className="num">{formatCurrency(total, currency)}</td>
-          </tr>
-        </tfoot>
       </table>
       <SourceNote
         source="Household ledgers"

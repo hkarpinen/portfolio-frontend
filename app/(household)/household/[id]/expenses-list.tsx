@@ -12,12 +12,19 @@ import {
 
 import type { HouseholdExpense, HouseholdExpenseListResponse } from "@/types/household-expense";
 import { formatCurrency, formatShortDate } from "@/lib/formatting";
+import { useMe } from "@/hooks/use-identity";
+import { idsEqual } from "@/lib/utils";
 
 function StatusCell({ expense, householdId }: { expense: HouseholdExpense; householdId: string }) {
-  const payMutation = usePayHouseholdExpense(householdId, expense.expenseId);
-  const unpayMutation = useUnpayHouseholdExpense(householdId, expense.expenseId);
+  const payMutation = usePayHouseholdExpense(householdId, expense.chargeId);
+  const unpayMutation = useUnpayHouseholdExpense(householdId, expense.chargeId);
   const isPending = payMutation.isPending || unpayMutation.isPending;
   const isPaid = !!expense.isPaid;
+  const { data: me } = useMe();
+  // Under front-and-reimburse the payer's own share is covered by fronting the vendor (a static
+  // badge, not a reversible toggle). Under the shared pot the payer settles like everyone else.
+  const isPayer =
+    idsEqual(expense.payerUserId, me?.id) && expense.fundingSource !== "GroupCash";
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -25,6 +32,33 @@ function StatusCell({ expense, householdId }: { expense: HouseholdExpense; house
     const occ = expense.currentOccurrenceDate ?? new Date().toISOString();
     isPaid ? unpayMutation.mutate(occ) : payMutation.mutate(occ);
   };
+
+  // The bill itself hasn't been paid yet — shares aren't settleable until it is. Link to the
+  // detail page where it can be marked paid.
+  if (expense.vendorPaid === false) {
+    return (
+      <Link
+        href={`/household/${householdId}/expenses/${expense.chargeId}`}
+        className="inline-flex items-center gap-[5px] font-mono text-xs uppercase tracking-[0.08em] text-red no-underline hover:opacity-80"
+        aria-label={`${expense.title}: upcoming — not yet paid. Open to mark it paid.`}
+      >
+        <Icon name="alert" size={11} strokeWidth={2} aria-hidden />
+        <span>Upcoming</span>
+      </Link>
+    );
+  }
+
+  if (isPayer) {
+    return (
+      <span
+        className="inline-flex items-center gap-[5px] font-mono text-xs tracking-[0.08em] text-ink-3"
+        aria-label={`${expense.title}: you paid the bill — your share is covered`}
+      >
+        <Icon name="check" size={11} strokeWidth={2.5} aria-hidden />
+        <span>COVERED</span>
+      </span>
+    );
+  }
 
   if (isPaid) {
     return (
@@ -73,48 +107,48 @@ function ExpenseRow({
   isDeleting: boolean;
 }) {
   const formattedDate = formatShortDate(expense.dueDate);
-  const detailHref = `/household/${householdId}/expenses/${expense.expenseId}`;
+  const detailHref = `/household/${householdId}/expenses/${expense.chargeId}`;
 
   return (
-    <tr className="group border-b border-rule-soft">
-      <td className="py-7 pr-6">
+    <tr>
+      <td>
         <Link
           href={detailHref}
-          className="font-serif text-[1.0625rem] italic text-ink no-underline hover:text-red focus:text-red"
+          className="font-serif text-base font-bold text-ink no-underline hover:text-red focus:text-red"
         >
           {expense.title}
         </Link>
+        {/* Mobile: category + date collapse under the title so the table fits a phone. */}
+        <p className="ed-hint mt-0.5 sm:hidden">
+          {expense.category ? expense.category : "—"} · {formattedDate}
+        </p>
       </td>
-      <td className="whitespace-nowrap py-7 pr-6 font-mono text-xs uppercase tracking-[0.08em] text-ink-3">
+      <td className="muted hidden sm:table-cell">
         {expense.category ? expense.category : <span aria-label="No category">—</span>}
       </td>
-      <td className="whitespace-nowrap py-7 pr-6 font-mono text-xs tracking-[0.04em] text-ink-3">
-        {formattedDate}
-      </td>
+      <td className="muted hidden sm:table-cell">{formattedDate}</td>
       {/* TODO(handoff8): wire to payer — HouseholdExpense has no payerId yet; show "—" until API returns it */}
-      <td className="whitespace-nowrap py-7 pr-6 font-mono text-xs tracking-[0.04em] text-ink-3">
+      <td className="muted hidden sm:table-cell">
         <span aria-label="Payer not yet available">—</span>
       </td>
-      <td className="whitespace-nowrap py-7 pr-6 text-right font-serif text-[1.0625rem] font-bold text-ink">
-        {formatCurrency(Number(expense.amount), expense.currency)}
-      </td>
-      <td className="whitespace-nowrap py-7">
-        <div className="flex items-center gap-3">
+      <td className="num">{formatCurrency(Number(expense.amount), expense.currency)}</td>
+      <td>
+        <div className="flex items-center gap-2">
           <StatusCell expense={expense} householdId={householdId} />
           {canManage && (
             <>
               <Link
                 href={`${detailHref}?edit=1`}
-                className="inline-flex min-h-hit min-w-hit items-center justify-center text-ink-3 no-underline hover:text-red focus:text-red"
+                className="ed-icon-btn"
                 aria-label={`Edit expense: ${expense.title}`}
                 title="Edit"
               >
                 <Icon name="edit" size={14} strokeWidth={2} aria-hidden />
               </Link>
               <button
-                onClick={() => onDeleteClick(expense.expenseId)}
+                onClick={() => onDeleteClick(expense.chargeId)}
                 disabled={isDeleting}
-                className="inline-flex min-h-hit min-w-hit cursor-pointer items-center justify-center border-none bg-transparent p-0 text-ink-3 hover:text-red focus:text-red disabled:opacity-50"
+                className="ed-icon-btn disabled:opacity-50"
                 aria-label={`Delete expense: ${expense.title}`}
                 title="Delete"
               >
@@ -143,7 +177,7 @@ export function ExpensesList({
   const deleteMutation = useDeleteHouseholdExpense(householdId);
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
-  const targetExpense = expenses.find((e) => e.expenseId === deleteTargetId);
+  const targetExpense = expenses.find((e) => e.chargeId === deleteTargetId);
 
   function handleDeleteConfirm() {
     if (!deleteTargetId) return;
@@ -166,39 +200,35 @@ export function ExpensesList({
   return (
     <>
       <div className="overflow-x-auto">
-        <table className="w-full border-collapse" aria-label="Shared expenses">
+        <table className="ed-agate" aria-label="Shared expenses">
           <thead>
-            <tr className="border-b border-[var(--ink)]">
-              <th scope="col" className="ed-kicker pb-5 pr-6 text-left font-normal">
-                Expense
-              </th>
-              <th scope="col" className="ed-kicker pb-5 pr-6 text-left font-normal">
+            <tr>
+              <th scope="col">Expense</th>
+              <th scope="col" className="hidden sm:table-cell">
                 Category
               </th>
-              <th scope="col" className="ed-kicker pb-5 pr-6 text-left font-normal">
+              <th scope="col" className="hidden sm:table-cell">
                 Date
               </th>
-              <th scope="col" className="ed-kicker pb-5 pr-6 text-left font-normal">
+              <th scope="col" className="hidden sm:table-cell">
                 Payer
               </th>
-              <th scope="col" className="ed-kicker pb-5 pr-6 text-right font-normal">
+              <th scope="col" className="num">
                 Amount
               </th>
-              <th scope="col" className="ed-kicker pb-5 text-left font-normal">
-                Status
-              </th>
+              <th scope="col">Status</th>
             </tr>
           </thead>
           <tbody>
             {expenses.map((expense) => (
               <ExpenseRow
-                key={expense.expenseId}
+                key={expense.chargeId}
                 expense={expense}
                 householdId={householdId}
                 canManage={canManage}
                 onDeleteClick={(id) => setDeleteTargetId(id)}
                 isDeleting={
-                  deleteMutation.isPending && deleteMutation.variables === expense.expenseId
+                  deleteMutation.isPending && deleteMutation.variables === expense.chargeId
                 }
               />
             ))}
