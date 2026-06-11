@@ -294,7 +294,7 @@ export function LifecycleRibbon() {
           <Node x={1200} y={20} w={250} h={56} label="HOUSEHOLD" sub="activity-feed consumer" />
           <Node x={1200} y={130} w={250} h={56} label="NOTIFICATIONS" sub="fanout consumer" />
 
-          {/* ── Finance → Postgres (write) ──────────────────────── */}
+          {/* -- Finance -> Postgres (write) -- */}
           <Node x={430} y={290} w={150} h={64} label="POSTGRES" sub="expense + outbox" />
           <ArrowPath
             points={[
@@ -305,7 +305,7 @@ export function LifecycleRibbon() {
             labelXY={[600, 220]}
           />
 
-          {/* ── Postgres → OutboxPublisher (poll, dashed) ───────── */}
+          {/* -- Postgres -> OutboxPublisher (poll, dashed) -- */}
           <ArrowPath
             points={[
               [580, 320],
@@ -317,7 +317,7 @@ export function LifecycleRibbon() {
             dashed
           />
 
-          {/* ── RabbitMQ → two consumers (fan out, accent) ──────── */}
+          {/* -- RabbitMQ -> two consumers (fan out, accent) -- */}
           <ArrowPath
             points={[
               [1160, 90],
@@ -382,7 +382,7 @@ export function LifecycleRibbon() {
             fill={INK_3}
             style={{ letterSpacing: "0.18em", textTransform: "uppercase" }}
           >
-            ◄── request thread ──►
+            {"<-- request thread -->"}
           </text>
           <text
             x={660}
@@ -394,7 +394,7 @@ export function LifecycleRibbon() {
             fill={INK_3}
             style={{ letterSpacing: "0.18em", textTransform: "uppercase" }}
           >
-            ◄── background dispatch ──►
+            {"<-- background dispatch -->"}
           </text>
           <text
             x={1120}
@@ -406,7 +406,7 @@ export function LifecycleRibbon() {
             fill={INK_3}
             style={{ letterSpacing: "0.18em", textTransform: "uppercase" }}
           >
-            ◄── independent consumers ──►
+            {"<-- independent consumers -->"}
           </text>
         </svg>
       </div>

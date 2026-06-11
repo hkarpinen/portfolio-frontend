@@ -12,6 +12,7 @@ export { Toggle } from "./toggle";
 export { Spinner } from "./spinner";
 export { Modal } from "./modal";
 export { Icon, type IconName } from "./icon";
+export { ArrowLink } from "./arrow-link";
 export { GithubMark, GoogleG } from "./brand-icons";
 export { Collapsible } from "./collapsible";
 export { ImageUpload } from "./image-upload";

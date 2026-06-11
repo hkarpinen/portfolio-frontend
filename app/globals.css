@@ -7,13 +7,13 @@
    Drop-in replacement for /app/globals.css.
 
    What changed vs. the previous file:
-   - Mono label floor lifted from 0.55rem → 0.72rem on every --ts-* token
+   - Mono label floor lifted from 0.55rem -> 0.72rem on every --ts-* token
      a functional UI component reads (--ts-meta, --ts-label, --ts-body-sm)
    - Added semantic spacing scale --s-1 through --s-10 (used by redesigned
      components for card / section / form gaps)
    - Added --hit (44px), --sidebar-w, --content-max layout tokens
    - Added [data-density="compact"] and [data-nav="rail"] selectors that
-     reskin the shell from the Settings → Appearance page
+     reskin the shell from the Settings -> Appearance page
    - Skip-link styles for accessibility
    - Removed the `font-size: clamp(14px, ...)` rule on <html> — that fluid
      root was the root cause of "labels are 9px on mobile" failures. We
@@ -39,7 +39,7 @@
   /* ── Ink (text + structural lines) ──────────────────────────────────── */
   --ink: #15120a;
   --ink-2: #3a3424;
-  --ink-3: #786f56;
+  --ink-3: #6e664f;
   --ink-4: #aaa088;
   --rule: #15120a;
   --rule-soft: rgba(20, 17, 10, 0.16);
@@ -179,7 +179,7 @@
   --dur-page: 500ms;
 }
 
-/* Compact density — toggled from Settings → Appearance */
+/* Compact density — toggled from Settings -> Appearance */
 html[data-density="compact"] {
   --s-5: 14px;
   --s-6: 18px;
@@ -1647,8 +1647,8 @@ html[data-density="compact"] {
   }
 
   .ed-icon-btn {
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     border: 1px solid var(--rule-soft);
     background: transparent;
     color: var(--ink-2);
@@ -3160,7 +3160,7 @@ html[data-density="compact"] {
       display: none;
     }
     /* Full-width CTA below the tab strip. Reading order is: who am I
-       (identity) → where can I go (tabs) → what can I do (action). The
+       (identity) -> where can I go (tabs) -> what can I do (action). The
        button claims its own line and fills it — standard mobile pattern,
        and a much clearer affordance than a right-edge orphan. */
     .ed-masthead-right {
@@ -3578,6 +3578,16 @@ html[data-density="compact"] {
     transition: color var(--dur-fast);
   }
   .ed-agate tbody td a:hover {
+    color: var(--red);
+  }
+  .ed-arrow-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3em;
+    text-decoration: none;
+    transition: color var(--dur-fast);
+  }
+  .ed-arrow-link:hover {
     color: var(--red);
   }
   .ed-agate-occur {

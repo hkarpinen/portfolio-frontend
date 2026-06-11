@@ -5,7 +5,7 @@
  * (real aggregates from src/Domain/Aggregates/) and what it PUBLISHES.
  * Notifications hangs off the bus as a pure consumer.
  *
- * Layout: top row → 160px gap → bus → 140px gap → bottom row. Labels for
+ * Layout: top row -> 160px gap -> bus -> 140px gap -> bottom row. Labels for
  * each connector are anchored at the MIDPOINT of the connector line and
  * sit in the gap between box and bus — never inside a box.
  *
@@ -289,7 +289,7 @@ export function BoundedContextsMap() {
             R A B B I T M Q
           </text>
 
-          {/* ── Top boxes → bus (publish, downward) ─────────────── */}
+          {/* -- Top boxes -> bus (publish, downward) -- */}
           <VerticalConnector
             x={LEFT_CONN_X}
             yStart={TOP_BOX_Y + BOX_H}
@@ -332,7 +332,7 @@ export function BoundedContextsMap() {
             drawnAround="public speech"
           />
 
-          {/* ── Bottom boxes → bus (publish, upward) ─────────────── */}
+          {/* -- Bottom boxes -> bus (publish, upward) -- */}
           <VerticalConnector
             x={LEFT_CONN_X}
             yStart={BOTTOM_BOX_Y}
@@ -423,7 +423,7 @@ export function BoundedContextsMap() {
             </text>
           </g>
 
-          {/* ── Bus → Notifications (consume, dashed, downward) ─── */}
+          {/* -- Bus -> Notifications (consume, dashed, downward) -- */}
           <VerticalConnector
             x={VB_W / 2}
             yStart={BUS_Y + BUS_H}

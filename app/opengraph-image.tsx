@@ -58,7 +58,16 @@ export default function OpenGraphImage() {
       >
         <span>The Stack &amp; Gazette</span>
         <span style={{ display: "flex", alignItems: "center", color: RED }}>
-          ● Open to senior &amp; staff roles
+          <span
+            style={{
+              width: 10,
+              height: 10,
+              borderRadius: "50%",
+              background: RED,
+              marginRight: 8,
+            }}
+          />
+          Open to senior &amp; staff roles
         </span>
       </div>
 

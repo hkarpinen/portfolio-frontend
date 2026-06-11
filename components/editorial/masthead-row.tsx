@@ -5,7 +5,7 @@ import React from "react";
  *
  * Replaces the in-content breadcrumb on editorial pages. Renders:
  *
- *   [BRAND ·]  DESK · LONG-DATE         ←gap→         [action]  ·  VOL/NO
+ *   [BRAND ·]  DESK · LONG-DATE         <-gap->         [action]  ·  VOL/NO
  *   [subNav strip — its own row, full width, scrolls if it overflows]
  *
  * Identity (desk/date) and stamp (action/edition) share row 1; subNav, when

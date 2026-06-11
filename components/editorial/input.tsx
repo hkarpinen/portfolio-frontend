@@ -56,7 +56,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
       </div>
       {error && (
         <p id={`${inputId}-error`} className="ed-error">
-          ↳ {error}
+          <Icon name="cornerDownRight" size={12} strokeWidth={2} className="mr-1 inline align-[-2px]" />{error}
         </p>
       )}
       {hint && !error && (
@@ -98,7 +98,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(fun
       />
       {error && (
         <p id={`${inputId}-error`} className="ed-error">
-          ↳ {error}
+          <Icon name="cornerDownRight" size={12} strokeWidth={2} className="mr-1 inline align-[-2px]" />{error}
         </p>
       )}
       {hint && !error && (
@@ -148,7 +148,7 @@ export const SelectField = React.forwardRef<HTMLSelectElement, SelectFieldProps>
         </div>
         {error && (
           <p id={`${inputId}-error`} className="ed-error">
-            ↳ {error}
+            <Icon name="cornerDownRight" size={12} strokeWidth={2} className="mr-1 inline align-[-2px]" />{error}
           </p>
         )}
         {hint && !error && (

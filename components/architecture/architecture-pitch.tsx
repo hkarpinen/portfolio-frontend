@@ -1,11 +1,12 @@
 import Link from "next/link";
+import { Icon } from "@/components/editorial";
 
 /**
  * <ArchitecturePitch> — landing-page section that pitches the system,
  * not just the mechanism.
  *
  * Replaces the older <LifecycleTeaser>, which walked through a generic
- * event-driven flow ("you tap → bus carries → services react"). That
+ * event-driven flow ("you tap -> bus carries -> services react"). That
  * said nothing specific about this work. This component names the
  * actual patterns — IDesign volatility decomposition, transactional
  * outbox, idempotent consumers, no integration-event layer — so a
@@ -13,8 +14,8 @@ import Link from "next/link";
  * /about/architecture for the full diagrams.
  *
  * Sits between the modules grid and the "About the engineer" bio
- * section on the landing page. The narrative arc is: what's built →
- * how it's built (this) → who built it → let's work together.
+ * section on the landing page. The narrative arc is: what's built ->
+ * how it's built (this) -> who built it -> let's work together.
  *
  * Visual: editorial feature pitch. Kicker + claim headline + deck
  * paragraph + 2×2 grid of claim cards + CTA. No SVG diagrams here —
@@ -89,7 +90,8 @@ export function ArchitecturePitch() {
           className="font-700 shrink-0 font-mono text-xs uppercase tracking-[0.16em]"
           style={{ color: "var(--ink)" }}
         >
-          Read the full architecture →
+          Read the full architecture{" "}
+          <Icon name="arrowRight" size={12} strokeWidth={2} className="inline align-[-1px]" />
         </Link>
       </div>
 

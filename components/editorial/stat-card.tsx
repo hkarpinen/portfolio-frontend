@@ -1,4 +1,5 @@
 import React from "react";
+import { Icon } from "./icon";
 
 /**
  * <StatCard> — editorial stats (redesign)
@@ -30,8 +31,13 @@ export function StatCard({ label, value, sub, trend, trendDir, italic }: StatCar
       {(sub || trend) && (
         <p className={`ed-stat-sub ${subClass}`}>
           {trend && (
-            <span>
-              {trendDir === "up" ? "▲" : trendDir === "down" ? "▼" : ""} {trend}
+            <span className="inline-flex items-center gap-1">
+              {trendDir === "up" ? (
+                <Icon name="trendUp" size={11} strokeWidth={2.5} />
+              ) : trendDir === "down" ? (
+                <Icon name="trendDown" size={11} strokeWidth={2.5} />
+              ) : null}
+              {trend}
               {sub ? " · " : ""}
             </span>
           )}
