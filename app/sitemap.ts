@@ -11,7 +11,7 @@ import type { MetadataRoute } from "next";
  * Override SITE_URL with NEXT_PUBLIC_SITE_URL at build time when
  * deploying to a non-production host.
  */
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "https://stackgazette.dev";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "https://hankkarpinen.com";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const lastModified = new Date();

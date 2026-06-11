@@ -12,7 +12,7 @@ import type { MetadataRoute } from "next";
  * `robots: { index: false }` set in its layout, so even if a crawler
  * ignores robots.txt the page's <meta name="robots"> says no.
  */
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "https://stackgazette.dev";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "https://hankkarpinen.com";
 
 export default function robots(): MetadataRoute.Robots {
   return {

@@ -137,7 +137,7 @@ export default function OpenGraphImage() {
           color: INK_2,
         }}
       >
-        <span>stackgazette.dev</span>
+        <span>hankkarpinen.com</span>
         <span>Full-stack engineer · Pullman, WA</span>
       </div>
     </div>,

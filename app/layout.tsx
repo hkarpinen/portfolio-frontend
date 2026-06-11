@@ -28,7 +28,7 @@ const jetbrainsMono = JetBrains_Mono({
  * time when deploying to a staging or preview environment so canonical URLs
  * point at the right host.
  */
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "https://stackgazette.dev";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "https://hankkarpinen.com";
 
 const SITE_NAME = "The Stack & Gazette";
 const DEFAULT_TITLE = "Hank Karpinen — Full-stack engineer · .NET microservices, Next.js";
