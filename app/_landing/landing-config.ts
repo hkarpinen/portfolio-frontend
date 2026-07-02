@@ -68,28 +68,57 @@ export const MODULES: {
 ];
 
 /**
- * Skills inlined here (no longer split into a separate /about page).
- * Categories match what was on the old about page exactly.
+ * Skills, grouped to match the résumé — real breadth, not just .NET. Spans
+ * languages, architecture, cloud, data, testing (the QA roots), and the
+ * agile/leadership side.
  */
 export const SKILLS: { label: string; items: string[] }[] = [
   {
-    label: "Backend",
-    items: [".NET / C#", "ASP.NET Core", "EF Core", "Postgres", "RabbitMQ", "MassTransit"],
+    label: "Languages & Frameworks",
+    items: [
+      "C#",
+      ".NET",
+      "ASP.NET",
+      "TypeScript",
+      "JavaScript",
+      "React",
+      "Next.js",
+      "Node.js",
+      "Python",
+      "Groovy",
+    ],
   },
   {
-    label: "Frontend",
-    items: ["Next.js", "TypeScript", "React Query", "Tailwind", "Radix", "React Hook Form"],
+    label: "Architecture",
+    items: [
+      "Microservices",
+      "Domain-Driven Design",
+      "RESTful APIs",
+      "Event-Driven (RabbitMQ)",
+      "Legacy Modernization",
+      "System Design",
+    ],
   },
   {
     label: "Cloud & DevOps",
-    items: ["AWS", "Azure", "Docker", "Nginx", "GitHub Actions", "CI/CD"],
+    items: ["AWS", "Azure", "Docker", "CI/CD", "Git", "Containerization"],
   },
-  { label: "Data", items: ["PostgreSQL", "SQL", "Oracle", "MongoDB", "Entity Framework"] },
-  { label: "Also", items: ["Python", "Node.js", "REST APIs", "Microservices"] },
+  {
+    label: "Data",
+    items: ["Oracle", "PL/SQL", "SQL", "MongoDB", "DynamoDB", "MariaDB", "Data Pipelines"],
+  },
+  {
+    label: "Testing & QA",
+    items: ["Automated Testing", "Selenium", "API Testing", "TestRail", "Test Design"],
+  },
+  {
+    label: "Leadership & Agile",
+    items: ["Certified ScrumMaster", "Sprint Planning", "Retrospectives", "Stakeholder Collaboration"],
+  },
 ];
 
 export const NAV_LINKS: [string, string][] = [
-  ["About", "/#about"],
+  ["Overview", "/about"],
   ["Architecture", "/about/architecture"],
   ["Weather", "/geography/weather"],
   ["Convert", "/math/convert"],

@@ -15,7 +15,7 @@ import { LandingPage } from "./landing-page";
 
 export const metadata: Metadata = {
   // Omitting `title` here lets the root layout's `title.default` cascade
-  // (without the "%s — The Stack & Gazette" template appended), which is
+  // (without the "%s — Hank Karpinen" template appended), which is
   // exactly the title we want on the landing.
   alternates: { canonical: "/" },
 };
@@ -47,14 +47,14 @@ const PERSON_JSONLD = {
   jobTitle: "Full-stack engineer",
   nationality: "American",
   image: `${SITE_URL}/hank_headshot.jpeg`,
-  email: "mailto:hank@stackgazette.dev",
+  email: "mailto:contact@hankkarpinen.com",
   address: {
     "@type": "PostalAddress",
     addressLocality: "Pullman",
     addressRegion: "WA",
     addressCountry: "US",
   },
-  /** Every profile that links back to stackgazette.dev. The more of
+  /** Every profile that links back to hankkarpinen.com. The more of
    *  these Google can confirm, the more confidently it merges them
    *  into one entity in the knowledge graph. */
   sameAs: [
@@ -81,7 +81,7 @@ const PERSON_JSONLD = {
 const WEBSITE_JSONLD = {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  name: "The Stack & Gazette",
+  name: "Hank Karpinen",
   url: SITE_URL,
   description:
     "Portfolio of Hank Karpinen — full-stack engineer. Six .NET 8 microservices on RabbitMQ, hand-rolled auth, DDD + IDesign.",

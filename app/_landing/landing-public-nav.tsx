@@ -25,39 +25,35 @@ export function LandingPublicNav({
   avatarUrl: string | null;
 }) {
   return (
-    <header className="ed-public-nav" role="banner">
-      <div className="ed-public-nav-inner">
-        <Link href="/" className="ed-public-nav-lockup" aria-label="The Stack & Gazette — home">
-          <span className="ed-sidebar-mark" aria-hidden="true">
-            SG
-          </span>
-          <span>
-            The Stack <em>&amp;</em> Gazette
-          </span>
-        </Link>
+    <header className="public-nav" role="banner" aria-label="Primary">
+      <Link href="/" className="lockup" aria-label="Hank Karpinen — home">
+        <span className="mark" aria-hidden="true">
+          // HK
+        </span>
+        <span className="name">Hank Karpinen</span>
+      </Link>
 
-        <nav aria-label="Site sections" className="hidden items-center gap-1 lg:flex">
-          {NAV_LINKS.map(([label, href]) => (
-            <Link key={href} href={href} className="ed-public-nav-link">
-              {label}
-            </Link>
-          ))}
-        </nav>
+      <nav aria-label="Site sections" className="nav-links">
+        {NAV_LINKS.map(([label, href]) => (
+          <Link key={href} href={href}>
+            {label}
+          </Link>
+        ))}
+      </nav>
 
-        <div className="flex items-center gap-2">
-          {!signedIn ? (
-            <>
-              <Btn href="/identity/login" variant="secondary" size="sm">
-                Sign in
-              </Btn>
-              <Btn href="/identity/register" variant="primary" size="sm">
-                Create account
-              </Btn>
-            </>
-          ) : (
-            <SignedInActions displayName={displayName} avatarUrl={avatarUrl} />
-          )}
-        </div>
+      <div className="nav-cta">
+        {!signedIn ? (
+          <>
+            <Btn href="/identity/login" variant="secondary" size="sm">
+              $ login
+            </Btn>
+            <Btn href="/identity/register" variant="primary" size="sm">
+              $ register
+            </Btn>
+          </>
+        ) : (
+          <SignedInActions displayName={displayName} avatarUrl={avatarUrl} />
+        )}
       </div>
     </header>
   );

@@ -1,9 +1,9 @@
 /** Landing footer — copyright line + social links. Pure server component. */
 export function LandingFooter() {
   return (
-    <footer className="ed-public-footer" role="contentinfo">
-      <div>© 2026 Hank Karpinen · Next.js · .NET 8 · Postgres · RabbitMQ · Docker</div>
-      <nav aria-label="Social links" className="flex gap-5">
+    <footer className="public-footer" role="contentinfo">
+      <span>// © 2026 Hank Karpinen · Next.js 15 · .NET 8 · Postgres · RabbitMQ</span>
+      <nav aria-label="Social links" className="links">
         <a href="https://github.com/hkarpinen" target="_blank" rel="noopener noreferrer">
           GitHub
         </a>
@@ -14,7 +14,7 @@ export function LandingFooter() {
         >
           LinkedIn
         </a>
-        <a href="mailto:hank@stackgazette.dev">Email</a>
+        <a href="mailto:contact@hankkarpinen.com">Email</a>
       </nav>
     </footer>
   );

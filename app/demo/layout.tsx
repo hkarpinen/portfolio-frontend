@@ -8,16 +8,16 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Try the demo",
   description:
-    "One-click demo of The Stack & Gazette — six .NET 8 microservices, hand-rolled auth, household ledger, forum, finance. No signup, no email, you're in inside three seconds.",
+    "One-click demo of Hank Karpinen's portfolio — six .NET 8 microservices, hand-rolled auth, household ledger, forum, finance. No signup, no email, you're in inside three seconds.",
   alternates: { canonical: "/demo" },
   openGraph: {
-    title: "Try the demo — The Stack & Gazette",
+    title: "Try the demo — Hank Karpinen",
     description: "One-click into a full-stack microservices app. No signup. Demo resets nightly.",
     url: "/demo",
     type: "website",
   },
   twitter: {
-    title: "Try the demo — The Stack & Gazette",
+    title: "Try the demo — Hank Karpinen",
     description: "One-click into a full-stack microservices app. No signup. Demo resets nightly.",
   },
 };

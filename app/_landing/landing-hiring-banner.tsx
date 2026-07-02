@@ -1,49 +1,38 @@
-"use client";
-
 import { Btn, Icon } from "@/components/editorial";
-import { useState } from "react";
 
 /**
- * Dark hiring banner — kicker + "Let's work together" CTA + inline
- * contact-email capture. Owns its own `contactEmail` state since this is
- * the only place it's needed; the rest of the landing can stay server.
+ * CURRENTLY_OPEN_TO_ROLES — the Terminus landing's closing banner.
+ *
+ * Mirrors the prototype `.public-section` > `.banner.accent`: a left
+ * block (kicker + `.b-title` + availability line) and a `.cta-row` with
+ * the direct email and a `$ get-in-touch →` link to /contact.
  */
 export function LandingHiringBanner() {
-  const [contactEmail, setContactEmail] = useState("");
-
   return (
-    <section className="ed-banner-dark" aria-label="Hiring — get in touch">
-      <div className="min-w-[240px] flex-1">
-        <p className="ed-kicker">Currently open to roles</p>
-        <p className="ed-h3 ed-banner-dark-title">
-          Let&apos;s <em>work</em> together.
-        </p>
-        <p className="mt-2 font-mono text-sm uppercase tracking-[0.12em] text-[var(--paper)] opacity-80">
-          Senior &amp; staff full-stack · Remote, hybrid, or onsite · Pullman, WA
-        </p>
-      </div>
-      <div className="border-paper/30 flex w-full items-stretch gap-0 border-[1.5px] sm:w-auto sm:shrink-0">
-        <label htmlFor="contact-email" className="sr-only">
-          Your email address
-        </label>
-        <input
-          id="contact-email"
-          type="email"
-          value={contactEmail}
-          onChange={(e) => setContactEmail(e.target.value)}
-          placeholder="your@email.com"
-          className="placeholder:text-paper/40 min-w-0 flex-1 border-none bg-transparent px-4 py-3 font-mono text-sm tracking-[0.1em] text-paper outline-none sm:min-w-[200px]"
-          autoComplete="email"
-        />
-        <Btn
-          href={`/contact${contactEmail ? `?email=${encodeURIComponent(contactEmail)}` : ""}`}
-          variant="primary"
-          size="lg"
-          className="shrink-0"
-          iconRight={<Icon name="arrowRight" size={14} strokeWidth={2} />}
-        >
-          Get in touch
-        </Btn>
+    <section className="public-section">
+      <div className="banner accent" aria-label="Hiring — get in touch">
+        <div>
+          <div className="kicker" style={{ marginBottom: 8 }}>
+            // CURRENTLY_OPEN_TO_ROLES
+          </div>
+          <div className="b-title">Let&apos;s work together.</div>
+          <p style={{ marginTop: 8, fontSize: "0.75rem" }}>
+            Senior &amp; staff full-stack · Remote, hybrid, or onsite · Pullman, WA
+          </p>
+        </div>
+        <div className="cta-row" style={{ margin: 0 }}>
+          <Btn asChild variant="primary" size="lg">
+            <a href="mailto:contact@hankkarpinen.com">contact@hankkarpinen.com</a>
+          </Btn>
+          <Btn
+            href="/contact"
+            variant="secondary"
+            size="lg"
+            iconRight={<Icon name="arrowRight" size={14} strokeWidth={2} />}
+          >
+            $ get-in-touch
+          </Btn>
+        </div>
       </div>
     </section>
   );

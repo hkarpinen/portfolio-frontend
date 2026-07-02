@@ -1,56 +1,70 @@
-import { Badge, Icon } from "@/components/editorial";
+import { Btn, Icon } from "@/components/editorial";
 import Link from "next/link";
 
 import { MODULES } from "./landing-config";
 
-/** "What's inside" — grid of module cards, two public + three behind login. */
+/**
+ * MODULES[5] — the prototype's "Five modules" proof-points section.
+ *
+ * Mirrors the Terminus landing `.public-section` block: a `.head` row
+ * (kicker + headline + ghost CTA), a `.sub` deck, then a `.module-grid`
+ * of `.module` cards. Each card carries its real stack tags and a
+ * public/auth `.badge`.
+ */
 export function LandingModulesSection() {
   return (
-    <section className="ed-landing-section" aria-labelledby="modules-heading">
-      <div className="ed-section-row">
-        <h2 id="modules-heading" className="ed-h3">
-          What&apos;s <em>inside</em>
-        </h2>
+    <section className="public-section" aria-labelledby="modules-heading">
+      <div className="head">
+        <div>
+          <div className="kicker" style={{ marginBottom: 8 }}>
+            // EXPLORE
+          </div>
+          <h2 id="modules-heading">Real, working features — click any of them.</h2>
+        </div>
+        <Btn href="/about" variant="secondary" iconRight={<Icon name="arrowRight" size={13} strokeWidth={2} />}>
+          More about me
+        </Btn>
       </div>
-      <p className="ed-section-row-deck">
-        Five modules. Two are public — no account required. Three need a login, or just use the
-        demo.
+      <p className="sub">
+        These aren&apos;t screenshots. Every one is a live feature you can use right now. A couple
+        are open to everyone; the rest open instantly with the one-click demo — no signup, no email.
       </p>
-      <ul className="ed-modules-grid" aria-label="App modules">
+      <div className="module-grid" role="list">
         {MODULES.map((m) => (
-          <li key={m.num} className="contents">
-            <Link href={m.href} className="ed-module-card">
-              <span className="ed-module-card-num" aria-hidden="true">
-                No. {m.num}
-              </span>
-              <h3 className="ed-h3">{m.name}</h3>
-              <p className="ed-module-card-body">{m.desc}</p>
-              {m.tech.length > 0 && (
-                <div className="flex flex-wrap gap-1.5" aria-label={`Stack: ${m.tech.join(", ")}`}>
-                  {m.tech.map((t) => (
-                    <span
-                      key={t}
-                      className="font-700 border border-ink-3 px-1.5 py-0.5 font-mono text-[0.68rem] uppercase tracking-[0.10em]"
-                      style={{ color: "var(--ink-2)" }}
-                    >
-                      {t}
-                    </span>
-                  ))}
-                </div>
-              )}
-              <div className="ed-module-card-foot">
-                <Badge variant={m.public ? "success" : "default"} dot size="md">
-                  {m.public ? "Public" : "Account"}
-                </Badge>
-                <span className="ed-module-card-arrow" aria-hidden="true">
-                  {m.cta}{" "}
-                  <Icon name="arrowRight" size={12} strokeWidth={2} className="inline align-[-1px]" />
+          <Link key={m.num} href={m.href} className="module" role="listitem">
+            <span className="num">// MODULE_{m.num}</span>
+            <h3>{m.name}</h3>
+            <p>{m.desc}</p>
+            <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
+              {m.tech.map((t) => (
+                <span
+                  key={t}
+                  style={{
+                    font: "500 0.57rem/1.5 var(--ff-mono)",
+                    border: "1px solid var(--border)",
+                    padding: "1px 5px",
+                    color: "var(--text-4)",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.08em",
+                  }}
+                >
+                  {t}
                 </span>
-              </div>
-            </Link>
-          </li>
+              ))}
+            </div>
+            <div className="foot">
+              <span className={`badge ${m.public ? "green" : ""}`}>
+                <span className="dot" />
+                {m.public ? "OPEN" : "LOGIN"}
+              </span>
+              <span className="arrow">
+                {m.public ? "Open" : "Sign in"}{" "}
+                <Icon name="arrowRight" size={11} strokeWidth={2} className="inline align-[-1px]" />
+              </span>
+            </div>
+          </Link>
         ))}
-      </ul>
+      </div>
     </section>
   );
 }
