@@ -43,7 +43,7 @@ export default function EditCalendarEventPage({
       ) : isBill ? (
         // Bill mirrors are upstream-owned; the backend would 403 a PUT here.
         // Send the user to the underlying expense detail instead.
-        <div className="border border-[var(--ink)] bg-paper-2 px-6 py-5">
+        <div className="border border-border bg-paper-2 px-6 py-5">
           <p className="font-serif text-md">
             This event is synced from a shared expense and is read-only here.
           </p>

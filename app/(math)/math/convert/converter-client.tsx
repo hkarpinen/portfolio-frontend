@@ -1,6 +1,6 @@
 "use client";
 
-import { Icon, SectionHeader } from "@/components/editorial";
+import { Icon } from "@/components/editorial";
 import { CategoryTabs } from "./category-tabs";
 import { useConverter } from "./use-converter";
 import { QUICK_VALUES, formatNumber } from "./convert-config";
@@ -18,52 +18,62 @@ function unitOptions(units: UnitCategoryDto[]) {
   ));
 }
 
+
 export function ConverterClient() {
   const c = useConverter();
   const resultText = c.result ? formatNumber(c.result.outputValue) : "—";
   const quickChips = c.activeCategory ? (QUICK_VALUES[c.activeCategory] ?? []) : [];
 
   return (
-    <div className="page-enter flex flex-col gap-10">
-      <SectionHeader
-        kicker="Math · Utilities"
-        title="Convert."
-        subtitle="Length, mass, temperature, volume, speed, area, and data — type either side. Served through the Math microservice."
+    <div className="page-enter">
+      {/* ── Page head (ported .page-head / .kicker / .deck) ── */}
+      <header className="page-head">
+        <div className="titles">
+          <div className="kicker" style={{ marginBottom: 8 }}>
+            // TOOLS · CONVERT
+          </div>
+          <h1>Convert</h1>
+          <p className="deck">
+            Length, mass, temperature, volume, speed, area, data. Type the left side —
+            served through the Math microservice.
+          </p>
+        </div>
+      </header>
+
+      {/* ── Category tabs (ported .tabs) ── */}
+      <CategoryTabs
+        sorted={c.sorted}
+        activeCategory={c.activeCategory}
+        onSelect={c.selectCategory}
       />
 
-      <div className="flex flex-col gap-6">
-        <CategoryTabs
-          sorted={c.sorted}
-          activeCategory={c.activeCategory}
-          onSelect={c.selectCategory}
-        />
-
-        <div className="border-ink bg-paper-2 shadow-stamp">
-          {/* From */}
-          <div>
-            <label htmlFor="convert-value" className="ed-convert-label">
-              From
-            </label>
-            <div className="ed-convert-field">
+      {/* ── Converter card ── */}
+      <div className="card" style={{ maxWidth: 660 }}>
+        <div className="stack stack-5">
+          {/* FROM — big amber number input + unit select */}
+          <div className="field">
+            <label htmlFor="convert-value">// FROM</label>
+            <div className="convert-io">
               <input
                 id="convert-value"
                 type="number"
                 inputMode="decimal"
-                className="ed-convert-num"
                 placeholder="0"
                 value={c.valueInput}
                 onChange={(e) => c.setValueInput(e.target.value)}
                 aria-describedby="convert-status"
+                className="convert-value"
+                style={{ color: "var(--amber)" }}
               />
               <label htmlFor="convert-from-unit" className="sr-only">
                 Convert from unit
               </label>
               <select
                 id="convert-from-unit"
-                className="ed-convert-unit"
                 value={c.from}
                 onChange={(e) => c.handleFromChange(e.target.value)}
                 disabled={c.loadingUnits}
+                className="convert-unit"
               >
                 <option value="">— choose unit —</option>
                 {unitOptions(c.scopedCategories)}
@@ -71,41 +81,43 @@ export function ConverterClient() {
             </div>
           </div>
 
-          {/* Swap */}
-          <div className="ed-convert-swap-row">
+          {/* Swap — centered .btn.btn-icon */}
+          <div className="row" style={{ justifyContent: "center" }}>
             <button
               type="button"
+              className="btn btn-icon"
               onClick={c.swap}
               disabled={!c.from || !c.to}
               aria-label="Swap from and to units"
-              className="ed-convert-swap"
             >
               <Icon name="swap" size={16} strokeWidth={2} aria-hidden />
             </button>
           </div>
 
-          {/* To */}
-          <div>
-            <p className="ed-convert-label" aria-hidden="true">
-              To
-            </p>
-            <div className="ed-convert-field">
+          {/* TO — big green result (derived, read-only) + unit select */}
+          <div className="field">
+            <label htmlFor="convert-to-unit">// TO</label>
+            <div className="convert-io">
               <output
                 htmlFor="convert-value convert-from-unit"
-                className="ed-convert-num ed-convert-num-out"
                 aria-label={`Result: ${resultText} ${c.to}`}
+                className="convert-value"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  background: "var(--raised)",
+                  border: "1px solid var(--border)",
+                  color: "var(--green)",
+                }}
               >
                 {resultText}
               </output>
-              <label htmlFor="convert-to-unit" className="sr-only">
-                Convert to unit
-              </label>
               <select
                 id="convert-to-unit"
-                className="ed-convert-unit"
                 value={c.to}
                 onChange={(e) => c.handleToChange(e.target.value)}
                 disabled={c.loadingUnits}
+                className="convert-unit"
               >
                 <option value="">— choose unit —</option>
                 {unitOptions(
@@ -119,43 +131,56 @@ export function ConverterClient() {
         </div>
 
         {/* Live status region */}
-        <div id="convert-status" role="status" aria-live="polite" aria-atomic="true">
-          {c.isFetching && <p className="ed-convert-status">Computing…</p>}
+        <div
+          id="convert-status"
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+          style={{ marginTop: 12 }}
+        >
+          {c.isFetching && (
+            <p className="label" style={{ letterSpacing: "0.14em" }}>
+              Computing…
+            </p>
+          )}
           {c.isError && (
-            <p className="ed-convert-status ed-convert-status-err">
+            <p className="kicker" style={{ letterSpacing: "0.14em" }}>
               Incompatible units — both must belong to the same category.
             </p>
           )}
           {c.result && !c.isError && (
-            <p className="ed-convert-status">
+            <p className="label" style={{ letterSpacing: "0.12em" }}>
               {formatNumber(c.result.inputValue)} {c.result.from} ={" "}
               {formatNumber(c.result.outputValue)} {c.result.to}
             </p>
           )}
         </div>
 
-        {/* Quick Values chips */}
-        {quickChips.length > 0 && (
-          <div className="flex flex-col gap-3">
-            <p className="ed-kicker">Quick Values</p>
-            <div
-              className="flex flex-wrap gap-2"
-              role="group"
-              aria-label="Quick conversion examples"
-            >
-              {quickChips.map((chip) => (
-                <button
-                  key={chip.label}
-                  type="button"
-                  onClick={() => c.applyQuickValue(chip)}
-                  aria-label={`Apply conversion: ${chip.label}`}
-                  className="min-h-18 cursor-pointer border-[1.5px] border-[color:var(--ink-3)] bg-transparent px-3 py-2 font-mono text-xs uppercase tracking-[0.1em] text-ink-2 transition-colors hover:border-[color:var(--ink)] hover:text-ink"
-                >
-                  {chip.label}
-                </button>
-              ))}
-            </div>
+        <div className="divider-hr" />
+
+        {/* Quick reference chips */}
+        <div className="label" style={{ marginBottom: 10 }}>
+          // QUICK_REF
+        </div>
+        {quickChips.length > 0 ? (
+          <div className="row" style={{ gap: 6, flexWrap: "wrap" }} role="group" aria-label="Quick conversion examples">
+            {quickChips.map((chip) => (
+              <button
+                key={chip.label}
+                type="button"
+                onClick={() => c.applyQuickValue(chip)}
+                aria-label={`Apply conversion: ${chip.label}`}
+                className="badge"
+                style={{ cursor: "pointer" }}
+              >
+                {chip.label}
+              </button>
+            ))}
           </div>
+        ) : (
+          <p className="label" style={{ lineHeight: 1.9 }}>
+            Select a category for quick references.
+          </p>
         )}
       </div>
     </div>

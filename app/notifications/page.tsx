@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  Btn,
-  DepartmentHead,
-  EditorialPageHead,
-  EmptyDispatch,
-  EmptyState,
-  Icon,
-} from "@/components/editorial";
+import { Btn, EmptyState, Icon, SectionHeader } from "@/components/editorial";
 import { useState } from "react";
 import Link from "next/link";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -18,7 +11,7 @@ import {
   type NotificationItem,
 } from "@/lib/api/notifications";
 
-import { pluralize, timeAgo } from "@/lib/utils";
+import { timeAgo } from "@/lib/utils";
 import { notificationKeys } from "@/lib/query-keys";
 import { notificationsHeadline, notificationsDeck } from "@/lib/notifications/editorial-copy";
 import { categorizeNotification } from "@/lib/notifications/categorize";
@@ -26,37 +19,28 @@ import { categorizeNotification } from "@/lib/notifications/categorize";
 type Filter = "all" | "mentions" | "household" | "forum";
 
 function Row({ n, onRead }: { n: NotificationItem; onRead: (id: string) => void }) {
-  const unreadDot = (
-    <span
-      className={`mt-3.5 h-2 w-2 shrink-0 rounded-full ${n.isRead ? "border border-ink-4" : "bg-red"}`}
-      aria-label={n.isRead ? undefined : "Unread"}
-      title={n.isRead ? undefined : "Unread"}
-    />
-  );
-
   const body = (
     <>
-      {unreadDot}
-      <div className="min-w-0 flex-1">
-        <p
-          className={`font-body text-md leading-snug ${n.isRead ? "text-ink-2" : "font-medium text-ink"}`}
-        >
-          {n.title}
-          {n.message ? <span className="text-ink-3"> {n.message}</span> : null}
-        </p>
-        <p className="ed-meta mt-1.5">{timeAgo(n.occurredAt)}</p>
+      <div className="row mb-1.5 justify-between">
+        <span className="kicker text-[0.58rem]">// {n.title.toUpperCase()}</span>
+        <span className="label shrink-0">{timeAgo(n.occurredAt)}</span>
       </div>
+      {n.message ? (
+        <p className={`font-mono text-[0.78rem] leading-relaxed ${n.isRead ? "text-text-3" : "text-text-2"}`}>
+          {n.message}
+        </p>
+      ) : null}
     </>
   );
 
-  const cls = `flex gap-4 py-5 border-b border-rule-soft ${n.isRead ? "" : "bg-paper-2 px-3 -mx-3"}`;
+  const cls = `notif-item block ${n.isRead ? "" : "unread"}`;
 
   if (n.deepLink) {
     return (
       <Link
         href={n.deepLink}
         onClick={() => !n.isRead && onRead(n.eventId)}
-        className={`${cls} group no-underline`}
+        className={`${cls} no-underline`}
         aria-label={`${n.isRead ? "" : "Unread: "}${n.title}${n.message ? ` — ${n.message}` : ""}`}
       >
         {body}
@@ -117,25 +101,24 @@ export default function NotificationsInboxPage() {
 
   return (
     <div className="page-enter flex flex-col gap-6">
-      <EditorialPageHead
-        kicker="The Inbox"
+      <SectionHeader
+        kicker="// SYSTEM · INBOX"
         title={notificationsHeadline({ unread, total: items.length })}
-        deck={notificationsDeck({ unread })}
+        subtitle={notificationsDeck({ unread })}
+        action={
+          <Btn
+            variant="secondary"
+            size="sm"
+            onClick={markAll}
+            disabled={unread === 0}
+            aria-label={
+              unread > 0 ? `Mark all ${unread} notifications as read` : "All notifications are read"
+            }
+          >
+            Mark all read
+          </Btn>
+        }
       />
-
-      <div className="-mt-2 flex justify-end">
-        <Btn
-          variant="secondary"
-          size="sm"
-          onClick={markAll}
-          disabled={unread === 0}
-          aria-label={
-            unread > 0 ? `Mark all ${unread} notifications as read` : "All notifications are read"
-          }
-        >
-          Mark all read
-        </Btn>
-      </div>
 
       <nav role="tablist" aria-label="Filter notifications" className="ed-tabs-list">
         {TABS.map((t) => (
@@ -154,27 +137,25 @@ export default function NotificationsInboxPage() {
       </nav>
 
       <section className="flex flex-col gap-4">
-        <DepartmentHead
-          kicker={`Filter · ${activeTab?.label ?? "All"}`}
-          count={`${visible.length} ${pluralize("item", visible.length)}`}
-          title="Notices <em>filed</em>"
-        />
         {isLoading ? (
           <p className="ed-label-muted">Loading…</p>
         ) : visible.length === 0 ? (
           items.length === 0 ? (
             <EmptyState
+              kicker="// INBOX_EMPTY"
               glyph={<Icon name="bell" size={24} strokeWidth={1.5} />}
               title="Nothing here yet"
               body="Replies, mentions, and household activity will show up here."
             />
           ) : (
-            <EmptyDispatch>
-              Nothing in <em>{activeTab?.label ?? "this filter"}</em> right now
-            </EmptyDispatch>
+            <EmptyState
+              kicker={`// ${(activeTab?.label ?? "FILTER").toUpperCase()}_EMPTY`}
+              glyph={<Icon name="bell" size={24} strokeWidth={1.5} />}
+              title={`Nothing in ${activeTab?.label ?? "this filter"} right now`}
+            />
           )
         ) : (
-          <div className="flex flex-col">
+          <div className="card p-0">
             {visible.map((n) => (
               <Row key={n.eventId} n={n} onRead={markRead} />
             ))}

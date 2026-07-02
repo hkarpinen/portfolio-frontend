@@ -40,7 +40,7 @@ export function CommentForm({ threadId, isAuthed }: CommentFormProps) {
       <p className="text-base text-ink-3">
         <Link
           href={`/identity/login?from=${encodeURIComponent(pathname)}`}
-          className="font-medium text-red no-underline"
+          className="font-medium text-accent no-underline"
         >
           Sign in
         </Link>{" "}
@@ -53,7 +53,7 @@ export function CommentForm({ threadId, isAuthed }: CommentFormProps) {
     return (
       <p className="text-base text-ink-3">
         Commenting is not available in the demo.{" "}
-        <a href="/identity/register" className="font-medium text-red no-underline">
+        <a href="/identity/register" className="font-medium text-accent no-underline">
           Create a free account
         </a>{" "}
         to join the conversation.
@@ -109,7 +109,7 @@ export function CommentForm({ threadId, isAuthed }: CommentFormProps) {
           aria-label="Reply preview"
           dangerouslySetInnerHTML={{
             __html:
-              previewHtml.trim() || `<p class="text-ink-3 italic">Nothing to preview yet.</p>`,
+              previewHtml.trim() || `<p class="text-ink-3">Nothing to preview yet.</p>`,
           }}
         />
       ) : (

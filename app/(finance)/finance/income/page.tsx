@@ -1,18 +1,13 @@
-import { DepartmentHead, EditorialPageHead, LedeStat, Ticker } from "@/components/editorial";
+import { Btn, Icon } from "@/components/editorial";
+import { SectionHead } from "../../section-head";
+import { FinanceTabs } from "../../personal-finance-sub-nav";
 import { getCookieHeader } from "@/lib/server-cookies";
 import { IncomeList } from "./income-list";
 import { fetchIncomeServer, fetchNetPaySummaryServer } from "@/lib/api/income";
 import type { IncomeSource } from "@/types/income";
 import type { NetPaySummary } from "@/types/tax";
 
-// LedgerStrip removed — its figures duplicated the LedeStat aside.
-
-import {
-  currentMonthName,
-  incomeHeadline,
-  incomeDeck,
-  buildIncomeTicker,
-} from "@/lib/finance/editorial-copy";
+import { currentMonthName } from "@/lib/finance/editorial-copy";
 import { formatCurrency } from "@/lib/formatting";
 import { pluralize } from "@/lib/utils";
 
@@ -46,60 +41,67 @@ export default async function IncomePage() {
   const now = new Date();
   const monthName = currentMonthName(now);
 
-  const ticker = buildIncomeTicker({
-    monthlyGross,
-    monthlyNet,
-    totalTaxWithheld,
-    annualGross,
-    sourcesCount: sources.length,
-  });
-
   return (
-    <div className="page-enter flex flex-col gap-6">
-      <EditorialPageHead
-        kicker={`${monthName} edition`}
-        title={incomeHeadline({ sourcesCount: sources.length, monthlyNet })}
-        deck={incomeDeck({
-          sourcesCount: sources.length,
-          monthlyGross,
-          monthlyNet,
-          totalTaxWithheld,
-        })}
-      />
+    <div className="page-enter flex flex-col gap-8">
+      {/* Terminus `.page-head` — mirrors the Finance overview head, Income desk. */}
+      <header className="page-head">
+        <div className="titles">
+          <div className="kicker" style={{ marginBottom: "8px" }}>
+            // WORKSPACE · INCOME
+          </div>
+          <h1>Income</h1>
+          <p className="deck">
+            Each source models its own pay cadence, deductions, and tax profile — rolled up to your
+            monthly take-home.
+          </p>
+        </div>
+        <div className="actions">
+          <Btn
+            href="/finance/income/new"
+            variant="primary"
+            size="sm"
+            iconLeft={<Icon name="plus" size={12} strokeWidth={2.5} />}
+          >
+            Add income source
+          </Btn>
+        </div>
+      </header>
 
-      <Ticker items={ticker} ariaLabel="Income figures" />
+      <FinanceTabs />
 
-      <LedeStat
-        label="Net · monthly take-home"
-        value={formatCurrency(monthlyNet, "USD")}
-        deck={
-          totalTaxWithheld > 0
-            ? `After ${formatCurrency(totalTaxWithheld, "USD", { precision: 0 })} withheld in federal, state, and FICA.`
-            : "No payroll deductions on file — gross equals net."
-        }
-        aside={[
-          {
-            label: "Gross monthly",
-            value: formatCurrency(monthlyGross, "USD", { precision: 0 }),
-            sub: "before deductions",
-          },
-          {
-            label: "Tax withheld",
-            value: formatCurrency(totalTaxWithheld, "USD", { precision: 0 }),
-            sub: totalTaxWithheld > 0 ? "fed + state + FICA" : undefined,
-          },
-          {
-            label: "Annual gross",
-            value: formatCurrency(annualGross, "USD", { precision: 0 }),
-            sub: "monthly × 12",
-          },
-          { label: "Sources", value: String(sources.length) },
-        ]}
-      />
+      {/* `.stats` 4-up — Net take-home (green) / Gross / Tax withheld (amber) / Annual gross. */}
+      <div className="stats">
+        <div className="stat">
+          <div className="label">Net · take-home</div>
+          <div className="val green">{formatCurrency(monthlyNet, "USD", { precision: 0 })}</div>
+          <div className="delta">
+            {totalTaxWithheld > 0
+              ? `after ${formatCurrency(totalTaxWithheld, "USD", { precision: 0 })} withheld`
+              : "gross equals net"}
+          </div>
+        </div>
+        <div className="stat">
+          <div className="label">Gross · monthly</div>
+          <div className="val">{formatCurrency(monthlyGross, "USD", { precision: 0 })}</div>
+          <div className="delta">before deductions</div>
+        </div>
+        <div className="stat">
+          <div className="label">Tax withheld</div>
+          <div className="val amber">
+            {formatCurrency(totalTaxWithheld, "USD", { precision: 0 })}
+          </div>
+          <div className="delta">{totalTaxWithheld > 0 ? "fed + state + FICA" : "none on file"}</div>
+        </div>
+        <div className="stat">
+          <div className="label">Annual gross</div>
+          <div className="val">{formatCurrency(annualGross, "USD", { precision: 0 })}</div>
+          <div className="delta">{monthName} run-rate × 12</div>
+        </div>
+      </div>
 
       <section className="flex flex-col gap-5">
-        <DepartmentHead
-          kicker="Sources · On file"
+        <SectionHead
+          kicker="SOURCES · ON FILE"
           count={`${sources.length} ${pluralize("stream", sources.length)}`}
           title="Income <em>sources</em>"
           deck="Each source models its own pay cadence, deductions, and tax profile."

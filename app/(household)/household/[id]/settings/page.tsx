@@ -1,4 +1,5 @@
-import { ArrowLink, EditorialPageHead } from "@/components/editorial";
+import { ArrowLink, SectionHeader } from "@/components/editorial";
+import { HouseholdTabs } from "../household-tabs";
 import { z } from "zod";
 import { cookies } from "next/headers";
 import { parsedServerFetch } from "@/lib/server-api-client";
@@ -61,11 +62,13 @@ export default async function HouseholdSettingsPage({ params }: Props) {
         Back to household
       </ArrowLink>
 
-      <EditorialPageHead
-        kicker="Household · Settings"
+      <SectionHeader
+        kicker="// HOUSEHOLD · SETTINGS"
         title={`Settings for <em>${safeName}</em>`}
-        deck="General, members and roles, invite codes, and the danger zone."
+        subtitle="General, members and roles, invite codes, and the danger zone."
       />
+
+      <HouseholdTabs />
 
       {/* 2-column settings layout: left nav + right content */}
       <div className="flex items-start gap-10">

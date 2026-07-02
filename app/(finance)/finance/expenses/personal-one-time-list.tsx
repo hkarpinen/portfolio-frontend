@@ -1,6 +1,6 @@
 "use client";
 
-import { EmptyDispatch } from "@/components/editorial";
+import { EmptyState } from "@/components/editorial";
 
 import type { Expense } from "@/types/expense";
 import { ExpenseTable } from "./expense-table";
@@ -15,9 +15,11 @@ export function PersonalOneTimeList({ expenses }: { expenses: Expense[] }) {
     <ExpenseTable
       expenses={expenses}
       empty={
-        <EmptyDispatch>
-          No one-time expenses <em>posted</em> this month
-        </EmptyDispatch>
+        <EmptyState
+          kicker="// ONE_TIME_EMPTY"
+          title="No one-time expenses posted this month"
+          body="Non-recurring outlays you post to this month will appear here."
+        />
       }
     />
   );

@@ -12,7 +12,7 @@ const PROFILE_TAB_HREFS: Record<ProfileTab, string> = {
 
 export function ProfileTabs({ active }: { active: ProfileTab }) {
   return (
-    <nav aria-label="Profile sections" className="border-ink-b mb-14 flex gap-2">
+    <nav aria-label="Profile sections" className="tabs">
       {PROFILE_TABS.map((tab) => {
         const isActive = tab === active;
         return (
@@ -20,7 +20,6 @@ export function ProfileTabs({ active }: { active: ProfileTab }) {
             key={tab}
             href={PROFILE_TAB_HREFS[tab]}
             aria-current={isActive ? "page" : undefined}
-            className={`mb-[-1px] px-8 py-5 text-md no-underline transition-colors duration-150 ${isActive ? "border-b-[3px] border-red font-semibold text-red" : "border-b-2 border-transparent font-normal text-ink-3"}`}
           >
             {tab}
           </Link>

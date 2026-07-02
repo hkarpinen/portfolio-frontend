@@ -1,8 +1,9 @@
 "use client";
 
-import { Btn, Icon, Input, SelectField, Textarea } from "@/components/editorial";
+import { Icon } from "@/components/editorial";
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useCreateCommunity, useUploadCommunityImage } from "@/hooks/use-community";
 import { useIsDemo } from "@/hooks/use-demo";
 import { getErrorMessage } from "@/lib/error-messages";
@@ -18,25 +19,38 @@ export function NewCommunityForm() {
   const uploadImage = useUploadCommunityImage();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Back link + page head shared by demo and live forms.
+  const Head = (
+    <>
+      <Link href="/forum" className="back inline-flex items-center gap-2 no-underline">
+        <Icon name="arrowLeft" size={12} strokeWidth={2} aria-hidden /> Forum
+      </Link>
+      <header className="page-head">
+        <div className="titles">
+          <div className="kicker" style={{ marginBottom: 8 }}>
+            // FORUM · NEW
+          </div>
+          <h1>New community</h1>
+        </div>
+      </header>
+    </>
+  );
+
   if (isDemo) {
     return (
-      <div className="page-enter mx-auto flex max-w-[560px] flex-col gap-12">
-        <div>
-          <h1 className="m-0 font-serif text-4xl font-bold leading-none tracking-snug text-ink">
-            Create Community
-          </h1>
-        </div>
-        <div className="flex flex-col gap-6 border-ink bg-paper p-12 shadow-stamp">
-          <p className="text-base text-ink-2">
+      <div className="page-enter">
+        {Head}
+        <div className="card flex flex-col items-start gap-4">
+          <p className="deck">
             Creating communities is not available in the demo.{" "}
-            <a href="/identity/register" className="font-medium text-red no-underline">
+            <a href="/identity/register" className="font-medium text-accent no-underline">
               Create a free account
             </a>{" "}
             to get started.
           </p>
-          <Btn type="button" variant="secondary" onClick={() => router.back()}>
+          <button type="button" className="btn" onClick={() => router.back()}>
             Go back
-          </Btn>
+          </button>
         </div>
       </div>
     );
@@ -67,113 +81,124 @@ export function NewCommunityForm() {
   }
 
   return (
-    <div className="page-enter mx-auto flex max-w-[560px] flex-col gap-12">
-      <div>
-        <h1 className="m-0 font-serif text-4xl font-bold leading-none tracking-snug text-ink">
-          Create Community
-        </h1>
-        <p className="mt-3 text-md text-ink-3">Start a new community</p>
-      </div>
+    <div className="page-enter">
+      {Head}
 
-      <div className="border-ink bg-paper p-12 shadow-stamp">
-        <form onSubmit={handleSubmit} className="flex flex-col gap-8">
-          {createCommunity.isError && (
-            <div className="bg-red-soft px-7 py-5 text-base text-red [border:1px_solid_var(--danger)]">
-              {getErrorMessage(createCommunity.error, "An unexpected error occurred.")}
-            </div>
-          )}
+      <form className="form wide" onSubmit={handleSubmit}>
+        {createCommunity.isError && (
+          <div className="badge red" style={{ display: "block", padding: "10px 14px" }}>
+            {getErrorMessage(createCommunity.error, "An unexpected error occurred.")}
+          </div>
+        )}
 
-          {/* Image upload */}
-          <div className="flex items-center gap-8">
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/jpeg,image/png,image/webp,image/gif"
-              className="hidden"
-              onChange={handleImageChange}
-            />
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={uploadImage.isPending}
-              className={`flex h-[72px] w-[72px] shrink-0 cursor-pointer items-center justify-center overflow-hidden bg-paper-2 p-0 transition-[border-color] disabled:cursor-not-allowed duration-150${imageUrl ? "[border:3px_solid_var(--red)]" : "[border:2px_dashed_var(--ink-3)]"}`}
-            >
-              {imageUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={imageUrl} alt="" className="h-full w-full object-cover" />
-              ) : (
-                <span className="text-ink-3">
-                  <Icon name="image" size={24} strokeWidth={1.5} />
-                </span>
-              )}
-            </button>
-            <div className="flex flex-col gap-2">
-              <span className="text-base font-medium text-ink-2">Community image</span>
-              {imageUrl ? (
-                <Btn type="button" variant="ghost" size="sm" onClick={() => setImageUrl("")}>
-                  Remove
-                </Btn>
-              ) : null}
-              {uploadImage.isError && (
-                <span className="text-sm text-red">
-                  {getErrorMessage(uploadImage.error, "Upload failed.")}
-                </span>
-              )}
-              <span className="text-sm text-ink-3">
-                Optional · JPEG, PNG, WebP or GIF · max 5 MB
+        {/* Image upload */}
+        <div className="row" style={{ gap: 16 }}>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/gif"
+            className="hidden"
+            onChange={handleImageChange}
+          />
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploadImage.isPending}
+            className="flex shrink-0 cursor-pointer items-center justify-center overflow-hidden disabled:cursor-not-allowed"
+            style={{
+              width: 72,
+              height: 72,
+              background: "var(--raised)",
+              border: imageUrl ? "1px solid var(--amber)" : "1px dashed var(--border-hi)",
+            }}
+          >
+            {imageUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={imageUrl} alt="" className="h-full w-full object-cover" />
+            ) : (
+              <span style={{ color: "var(--text-4)" }}>
+                <Icon name="image" size={24} strokeWidth={1.5} />
               </span>
-            </div>
-          </div>
-
-          <div>
-            <Input
-              label="Name"
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              minLength={1}
-              maxLength={64}
-              placeholder="Community Name"
-            />
-            <span className="text-sm text-ink-3">
-              Lowercase letters, numbers, underscores only.
+            )}
+          </button>
+          <div className="flex flex-col gap-2">
+            <span style={{ font: "600 0.72rem/1 var(--ff-mono)", color: "var(--text)" }}>
+              Community image
             </span>
+            {imageUrl && (
+              <button
+                type="button"
+                className="btn btn-ghost btn-sm self-start"
+                onClick={() => setImageUrl("")}
+              >
+                Remove
+              </button>
+            )}
+            {uploadImage.isError && (
+              <span className="hint" style={{ color: "var(--red)" }}>
+                {getErrorMessage(uploadImage.error, "Upload failed.")}
+              </span>
+            )}
+            <span className="hint">Optional · JPEG, PNG, WebP or GIF · max 5 MB</span>
           </div>
-          <div>
-            <Textarea
-              label={`Description (optional · ${description.length}/1000)`}
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              maxLength={1000}
-              rows={3}
-              placeholder="What's this community about?"
-            />
-          </div>
-          <SelectField
-            label="Visibility"
+        </div>
+
+        <div className="field">
+          <label htmlFor="community-name">Name</label>
+          <input
+            id="community-name"
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+            minLength={1}
+            maxLength={64}
+            placeholder="Community Name"
+          />
+          <span className="hint">Lowercase letters, numbers, underscores only.</span>
+        </div>
+
+        <div className="field">
+          <label htmlFor="community-description">
+            Description (optional · {description.length}/1000)
+          </label>
+          <textarea
+            id="community-description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            maxLength={1000}
+            rows={3}
+            placeholder="What's this community about?"
+          />
+        </div>
+
+        <div className="field">
+          <label htmlFor="community-visibility">Visibility</label>
+          <select
+            id="community-visibility"
             value={privacy}
             onChange={(e) => setPrivacy(e.target.value)}
           >
             <option value="Public">Public</option>
             <option value="Private">Private</option>
             <option value="Restricted">Restricted</option>
-          </SelectField>
-          <div className="flex gap-5">
-            <Btn type="button" variant="secondary" onClick={() => router.back()} className="flex-1">
-              Cancel
-            </Btn>
-            <Btn
-              type="submit"
-              variant="primary"
-              disabled={createCommunity.isPending}
-              className="flex-[2]"
-            >
-              {createCommunity.isPending ? "Creating…" : "Create Community"}
-            </Btn>
-          </div>
-        </form>
-      </div>
+          </select>
+        </div>
+
+        <div className="form-actions">
+          <button
+            type="submit"
+            className="btn btn-primary btn-lg"
+            disabled={createCommunity.isPending}
+          >
+            {createCommunity.isPending ? "Creating…" : "$ create-community"}{" "}
+            <Icon name="arrowRight" size={14} strokeWidth={2} aria-hidden />
+          </button>
+          <button type="button" className="btn btn-lg" onClick={() => router.back()}>
+            Cancel
+          </button>
+        </div>
+      </form>
     </div>
   );
 }

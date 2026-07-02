@@ -28,9 +28,6 @@ export function IncomeList({ initialData }: { initialData: IncomeListResponse })
 
   return (
     <section aria-label="Income sources">
-      <h2 className="ed-h3 mb-6">
-        Income <em>sources</em>
-      </h2>
       <div aria-live="polite" aria-atomic="false" className="sr-only" role="status">
         {deleteIncome.isPending ? "Removing income source…" : ""}
       </div>

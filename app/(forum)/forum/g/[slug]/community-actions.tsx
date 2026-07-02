@@ -14,26 +14,29 @@ interface CommunityActionsProps {
 }
 
 /**
- * <CommunityActions> — membership + management links for the community page
- * tab strip's right-hand aux slot.
+ * <CommunityActions> — membership + management controls for the community
+ * page head's `.actions` slot.
  *
- * Renders compact `.ed-tab-aux` links so the row reads as one continuous strip
- * with the THREADS · RULES · MEMBERS tabs to its left. The masthead already
- * carries the primary "+ New thread" CTA — this slot's job is membership
- * (Join) for non-members and management (Mod queue / Settings) for mods.
+ * Renders Terminus `.btn` controls so they sit inline with the `Post` CTA:
+ * Join for non-members, Mod queue / Settings for moderators, and a quiet
+ * "Joined" badge for regular members. The masthead carries no membership
+ * action, so this is the single Join surface.
  */
 
 // Unauthenticated — pitch sign-in as the join path. No membership queries.
 function AnonActions() {
   const pathname = usePathname();
   return (
-    <Link href={`/identity/login?from=${encodeURIComponent(pathname)}`} className="ed-tab-aux text-red">
-      Join community <Icon name="arrowRight" size={13} strokeWidth={2} aria-hidden />
+    <Link
+      href={`/identity/login?from=${encodeURIComponent(pathname)}`}
+      className="btn btn-sm btn-primary no-underline"
+    >
+      $ join
     </Link>
   );
 }
 
-// Authenticated — query membership and render the appropriate aux links.
+// Authenticated — query membership and render the appropriate controls.
 function AuthedActions({ communityId, slug }: { communityId: string; slug: string }) {
   const { data: membership, isLoading } = useCommunityMembership(communityId);
   const joinMutation = useJoinCommunity(communityId);
@@ -42,9 +45,7 @@ function AuthedActions({ communityId, slug }: { communityId: string; slug: strin
   const canManage = membership?.role === "Owner" || membership?.role === "Moderator";
 
   if (isLoading) {
-    // Reserve roughly the width of "Join community" so the tabs row doesn't
-    // shift when membership resolves.
-    return <span className="ed-tab-aux opacity-40">…</span>;
+    return <span className="badge opacity-40">…</span>;
   }
 
   if (!joined) {
@@ -59,33 +60,30 @@ function AuthedActions({ communityId, slug }: { communityId: string; slug: strin
           type="button"
           onClick={() => joinMutation.mutate()}
           disabled={joinMutation.isPending}
-          className="ed-tab-aux cursor-pointer border-0 bg-transparent text-red disabled:cursor-not-allowed disabled:opacity-60"
+          className="btn btn-sm btn-primary"
         >
-          {joinMutation.isPending ? "Joining…" : "Join community"} <Icon name="arrowRight" size={13} strokeWidth={2} aria-hidden />
+          {joinMutation.isPending ? "Joining…" : "$ join"}
         </button>
       </>
     );
   }
 
-  // Joined — show management entries for mods, plus a quiet "Joined" badge
-  // so the slot isn't blank for regular members.
+  // Joined — show management entries for mods, plus a quiet "Joined" badge.
   return (
     <>
       {canManage && (
         <>
-          <Link href={`/forum/g/${slug}/mod-queue`} className="ed-tab-aux">
-            Mod queue <Icon name="arrowUpRight" size={13} strokeWidth={2} aria-hidden />
+          <Link href={`/forum/g/${slug}/mod-queue`} className="btn btn-sm no-underline">
+            Mod queue
           </Link>
-          <Link href={`/forum/g/${slug}/settings`} className="ed-tab-aux">
-            <Icon name="settings" size={13} strokeWidth={2} aria-hidden /> Settings
+          <Link href={`/forum/g/${slug}/settings`} className="btn btn-sm no-underline">
+            <Icon name="settings" size={12} strokeWidth={2} aria-hidden /> Settings
           </Link>
         </>
       )}
-      {!canManage && (
-        <span className="ed-tab-aux cursor-default text-ink-3">
-          <Icon name="check" size={13} strokeWidth={2} aria-hidden /> Joined
-        </span>
-      )}
+      <span className="badge green">
+        <Icon name="check" size={11} strokeWidth={2.5} aria-hidden /> Joined
+      </span>
     </>
   );
 }

@@ -218,7 +218,7 @@ function SplitsTable({
     <div className="overflow-x-auto">
       <table className="w-full border-collapse" aria-label="Expense splits by member">
         <thead>
-          <tr className="border-b border-[var(--ink)]">
+          <tr className="border-b border-border">
             <th scope="col" className="ed-kicker pb-5 pr-6 text-left font-normal">
               Member
             </th>

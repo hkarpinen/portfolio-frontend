@@ -1,6 +1,6 @@
 "use client";
 
-import { EditorialPageHead } from "@/components/editorial";
+import { SectionHeader } from "@/components/editorial";
 import { usePathname } from "next/navigation";
 
 /**
@@ -19,7 +19,7 @@ interface HeadCopy {
 }
 
 const FALLBACK: HeadCopy = {
-  kicker: "Account",
+  kicker: "// SYSTEM · SETTINGS",
   title: "Your <em>settings</em>",
   deck: "Profile, password, sessions, notifications.",
 };
@@ -30,7 +30,7 @@ const ROUTE_HEAD: { prefix: string; head: HeadCopy }[] = [
   {
     prefix: "/identity/settings/profile/forum",
     head: {
-      kicker: "Settings · Profile",
+      kicker: "// SETTINGS · PROFILE",
       title: "Forum <em>identity</em>",
       deck: "How you show up across forum threads and replies.",
     },
@@ -38,7 +38,7 @@ const ROUTE_HEAD: { prefix: string; head: HeadCopy }[] = [
   {
     prefix: "/identity/settings/profile/account",
     head: {
-      kicker: "Settings · Profile",
+      kicker: "// SETTINGS · PROFILE",
       title: "Account <em>identity</em>",
       deck: "Display name, avatar, bio — what other readers see.",
     },
@@ -46,7 +46,7 @@ const ROUTE_HEAD: { prefix: string; head: HeadCopy }[] = [
   {
     prefix: "/identity/settings/profile",
     head: {
-      kicker: "Settings · Profile",
+      kicker: "// SETTINGS · PROFILE",
       title: "Your <em>profile</em>",
       deck: "What your name, avatar, and bio look like across the app.",
     },
@@ -54,7 +54,7 @@ const ROUTE_HEAD: { prefix: string; head: HeadCopy }[] = [
   {
     prefix: "/identity/settings/security",
     head: {
-      kicker: "Settings · Account",
+      kicker: "// SETTINGS · ACCOUNT",
       title: "Account <em>security</em>",
       deck: "Password, two-factor authentication, and irreversible account actions.",
     },
@@ -62,7 +62,7 @@ const ROUTE_HEAD: { prefix: string; head: HeadCopy }[] = [
   {
     prefix: "/identity/settings/notifications",
     head: {
-      kicker: "Settings · Channels",
+      kicker: "// SETTINGS · CHANNELS",
       title: "Notification <em>preferences</em>",
       deck: "What we email you and what stays in the inbox.",
     },
@@ -70,7 +70,7 @@ const ROUTE_HEAD: { prefix: string; head: HeadCopy }[] = [
   {
     prefix: "/identity/settings/sessions",
     head: {
-      kicker: "Settings · Account",
+      kicker: "// SETTINGS · ACCOUNT",
       title: "Active <em>sessions</em>",
       deck: "Where you're signed in. Revoke any you don't recognise.",
     },
@@ -78,7 +78,7 @@ const ROUTE_HEAD: { prefix: string; head: HeadCopy }[] = [
   {
     prefix: "/identity/settings/connections",
     head: {
-      kicker: "Settings · Linked accounts",
+      kicker: "// SETTINGS · LINKED_ACCOUNTS",
       title: "Connected <em>accounts</em>",
       deck: "Google, GitHub, Plaid — anything the app talks to on your behalf.",
     },
@@ -86,8 +86,8 @@ const ROUTE_HEAD: { prefix: string; head: HeadCopy }[] = [
   {
     prefix: "/identity/settings/appearance",
     head: {
-      kicker: "Settings · Theme",
-      title: "Editorial <em>appearance</em>",
+      kicker: "// SETTINGS · THEME",
+      title: "Terminus <em>appearance</em>",
       deck: "Density, navigation style, and other surface preferences.",
     },
   },
@@ -97,5 +97,5 @@ export function SettingsPageHead() {
   const pathname = usePathname() || "/identity/settings";
   const match = ROUTE_HEAD.find((r) => pathname.startsWith(r.prefix));
   const head = match?.head ?? FALLBACK;
-  return <EditorialPageHead kicker={head.kicker} title={head.title} deck={head.deck} />;
+  return <SectionHeader kicker={head.kicker} title={head.title} subtitle={head.deck} />;
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLink, DepartmentHead, EditorialPageHead, EmptyState, Icon } from "@/components/editorial";
+import { ArrowLink, EmptyState, Icon, SectionHeader } from "@/components/editorial";
 import { useParams } from "next/navigation";
 import { useGroupLedger } from "@/hooks/use-ledger";
 import { useHouseholdMembers } from "@/hooks/use-household";
@@ -18,10 +18,10 @@ export default function LedgerPage() {
 
   return (
     <div className="page-enter flex flex-col gap-6">
-      <EditorialPageHead
-        kicker="The books · accountant view"
+      <SectionHeader
+        kicker="// THE_BOOKS · ACCOUNTANT_VIEW"
         title="The household <em>ledger</em>"
-        deck="The underlying double-entry books behind this household's money. Every charge and settlement posts as balanced entries; member balances are derived from the postings — not stored — so the books always reconcile."
+        subtitle="The underlying double-entry books behind this household's money. Every charge and settlement posts as balanced entries; member balances are derived from the postings — not stored — so the books always reconcile."
       />
 
       <div className="-mt-2">
@@ -69,7 +69,10 @@ export default function LedgerPage() {
             if (rows.length === 0) return null;
             return (
               <section key={type} className="flex flex-col gap-4">
-                <DepartmentHead kicker="Chart of accounts" title={type} count={`${rows.length}`} />
+                <div className="flex flex-wrap items-baseline justify-between gap-3 border-b border-border pb-3">
+                  <p className="ed-kicker">// {type.toUpperCase()}</p>
+                  <p className="ed-meta">{rows.length}</p>
+                </div>
                 <table className="ed-agate">
                   <thead>
                     <tr>

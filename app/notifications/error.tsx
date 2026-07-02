@@ -9,5 +9,5 @@ export default function NotificationsError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  return <ErrorSplash error={error} reset={reset} kicker="Notifications · Error" />;
+  return <ErrorSplash error={error} reset={reset} kicker="// NOTIFICATIONS · ERROR" />;
 }

@@ -52,18 +52,21 @@ function OAuthServiceCard({ service }: { service: OAuthService }) {
         </p>
       </div>
       {service.connected ? (
-        <Btn
-          variant="danger"
-          size="sm"
-          type="button"
-          onClick={() => {
-            /* TODO(handoff8): wire to disconnect endpoint */
-          }}
-          aria-label={`Disconnect ${service.label}`}
-          className="shrink-0 whitespace-nowrap"
-        >
-          Disconnect
-        </Btn>
+        <div className="flex shrink-0 items-center gap-3">
+          <span className="badge green">Connected</span>
+          <Btn
+            variant="danger"
+            size="sm"
+            type="button"
+            onClick={() => {
+              /* TODO(handoff8): wire to disconnect endpoint */
+            }}
+            aria-label={`Disconnect ${service.label}`}
+            className="whitespace-nowrap"
+          >
+            Disconnect
+          </Btn>
+        </div>
       ) : (
         <Btn
           variant="secondary"

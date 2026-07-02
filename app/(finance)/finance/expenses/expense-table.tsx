@@ -30,7 +30,7 @@ import { Frequency } from "@/types/schedule";
 import { parseEnum } from "@/lib/parse-enum";
 
 /**
- * <ExpenseTable> — personal bills as an ed-agate table, so Personal recurring and One-time read
+ * <ExpenseTable> — personal bills as a Terminus `.table`, so Personal recurring and One-time read
  * the same way as Shared household splits (one ledger of bills, not cards-then-table). Each row
  * expands in place to the inline edit form; pay/unpay and delete are row actions. The parent does
  * the recurring/one-time filtering, so this stays a pure renderer plus an `empty` slot.
@@ -44,8 +44,8 @@ export function ExpenseTable({ expenses, empty }: { expenses: Expense[]; empty: 
   const currency = expenses[0]?.currency ?? "USD";
 
   return (
-    <div className="overflow-x-auto" role="region" aria-label="Personal bills">
-      <table className="ed-agate">
+    <div className="table-wrap" role="region" aria-label="Personal bills">
+      <table className="table">
         <caption className="sr-only">
           {expenses.length} {pluralize("bill", expenses.length)}, total{" "}
           {formatCurrency(total, currency)}
@@ -59,10 +59,10 @@ export function ExpenseTable({ expenses, empty }: { expenses: Expense[]; empty: 
             <th scope="col" className="hidden sm:table-cell">
               Category
             </th>
-            <th scope="col" className="num">
+            <th scope="col" className="right">
               Amount
             </th>
-            <th scope="col">
+            <th scope="col" className="right">
               <span className="sr-only">Actions</span>
             </th>
           </tr>
@@ -158,32 +158,29 @@ function ExpenseTableRow({
     <>
       <tr>
         <td>
-          <span className="font-serif text-base font-bold text-ink">{expense.title}</span>
+          <span className="row-title">{expense.title}</span>
           {isOverdue && (
-            <span
-              className="ed-label-muted ml-2 inline-flex items-center gap-1 text-red"
-              role="status"
-            >
+            <span className="badge red" style={{ marginLeft: "8px" }} role="status">
               <Icon name="alert" size={12} strokeWidth={2} /> Overdue
             </span>
           )}
           {expense.isPaid && !isOverdue && (
-            <span
-              className="ed-label-muted ml-2 inline-flex items-center gap-1"
-              style={{ color: "var(--green)" }}
-              role="status"
-            >
+            <span className="badge green" style={{ marginLeft: "8px" }} role="status">
               <Icon name="check" size={12} strokeWidth={2.5} /> Paid
             </span>
           )}
           {/* Mobile: cadence + category collapse into a sub-line so the table
               fits a phone without horizontal scroll. */}
-          <p className="ed-hint mt-0.5 sm:hidden">
+          <p className="tx-sub mt-1 sm:hidden">
             {freqLabel} · {dayLabel}
             {ordinalSuffix(dayLabel)}
             {expense.category ? ` · ${expense.category}` : ""}
           </p>
-          {expense.description && <p className="ed-hint mt-0.5">{expense.description}</p>}
+          {expense.description && (
+            <p className="tx-sub mt-1" style={{ textTransform: "none", letterSpacing: 0 }}>
+              {expense.description}
+            </p>
+          )}
         </td>
         <td className="muted hidden sm:table-cell">
           {freqLabel} · {dayLabel}
@@ -199,16 +196,16 @@ function ExpenseTableRow({
             "—"
           )}
         </td>
-        <td className="num">
+        <td className="right">
           <span
-            className={isOverdue ? "text-red" : expense.isPaid ? "text-ink-3" : undefined}
+            className={`tx-amount ${expense.isPaid && !isOverdue ? "" : "debit"}`}
+            style={expense.isPaid && !isOverdue ? { color: "var(--text-4)" } : undefined}
             aria-label={amountLabel}
           >
-            <span className="ed-agate-currency">{expense.currency ?? "USD"}</span>
-            {formatAmount(expense.amount)}
+            −{expense.currency ?? "USD"} {formatAmount(expense.amount)}
           </span>
         </td>
-        <td className="num">
+        <td className="right">
           <span className="inline-flex items-center justify-end gap-2">
             <button
               onClick={handleTogglePaid}

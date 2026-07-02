@@ -15,16 +15,16 @@ const TABS = [
 ] as const;
 
 /**
- * <PersonalFinanceMastheadTabs> — compact inline variant for the masthead.
+ * <FinanceTabs> — the Terminus `.tabs` strip for the finance desk.
  *
- * Renders the same tabs styled to fit inside the masthead row: mono kicker
- * sizing, hard-stamp active state (paper-on-ink), tight padding. Use as
- * <MastheadRow subNav={<PersonalFinanceMastheadTabs />} />.
+ * Renders inside the page content, right after the `.page-head` (matching the
+ * prototype's `page-head → tabs → content` flow) rather than in a separate
+ * masthead band. Each finance page drops this in below its head.
  */
-export function PersonalFinanceMastheadTabs() {
+export function FinanceTabs() {
   const pathname = usePathname();
   return (
-    <span role="tablist" aria-label="Personal finance sub-desks">
+    <nav className="tabs" role="tablist" aria-label="Finance sections">
       {TABS.map((tab) => {
         const active = tab.match(pathname);
         return (
@@ -33,12 +33,11 @@ export function PersonalFinanceMastheadTabs() {
             href={tab.href}
             role="tab"
             aria-current={active ? "page" : undefined}
-            className="ed-masthead-tab"
           >
             {tab.label}
           </Link>
         );
       })}
-    </span>
+    </nav>
   );
 }

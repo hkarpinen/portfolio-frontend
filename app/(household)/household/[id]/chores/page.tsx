@@ -1,12 +1,7 @@
 "use client";
 
-import {
-  ConfirmDeleteDialog,
-  DepartmentHead,
-  EditorialPageHead,
-  EmptyState,
-  Icon,
-} from "@/components/editorial";
+import { Btn, ConfirmDeleteDialog, EmptyState, Icon, SectionHeader } from "@/components/editorial";
+import { HouseholdTabs } from "../household-tabs";
 import { useState } from "react";
 import { useParams } from "next/navigation";
 import { useChores, useCompleteChore, useDeleteChore } from "@/hooks/use-chores";
@@ -14,15 +9,7 @@ import { useHouseholdMembers } from "@/hooks/use-household";
 
 import { choresHeadline } from "@/lib/household/editorial-copy";
 import type { ChoreDto } from "@/lib/api/chores";
-import { pluralize } from "@/lib/utils";
 import { formatChoreDueDate, overdueChoreCount } from "./chores-derivations";
-
-const FREQ_LABEL: Record<string, string> = {
-  Daily: "Daily",
-  Weekly: "Weekly",
-  BiWeekly: "Bi-weekly",
-  Monthly: "Monthly",
-};
 
 function ChoreRow({
   chore,
@@ -43,61 +30,58 @@ function ChoreRow({
   const done = !!chore.completedAt;
   const due = formatChoreDueDate(chore.dueDate);
 
+  // Terminus .badge mapping: Done -> green, Overdue -> red, Due today -> amber,
+  // otherwise Pending -> default (no modifier).
+  const status: { label: string; cls: string } = done
+    ? { label: "Done", cls: "green" }
+    : due.overdue
+      ? { label: "Overdue", cls: "red" }
+      : due.text === "Today"
+        ? { label: "Due today", cls: "amber" }
+        : { label: "Pending", cls: "" };
+
   return (
-    <tr className={`border-b border-rule-soft group${due.overdue ? "" : ""}`}>
-      <td className="w-18 py-7 pr-4">
-        <button
-          onClick={() => onComplete(chore.id)}
-          disabled={completing || done}
-          aria-label={done ? `${chore.title}: completed` : `Mark "${chore.title}" as complete`}
-          aria-pressed={done}
-          className={`flex h-5 w-5 items-center justify-center border-[1.5px] border-ink ${done ? "bg-ink text-paper" : "cursor-pointer bg-paper text-transparent"}`}
-        >
-          {done && <Icon name="check" size={12} strokeWidth={2.5} aria-hidden />}
-        </button>
-      </td>
-      <td className="py-7 pr-6">
-        <span
-          className={`font-serif text-[1.0625rem] italic ${done ? "text-ink-3 line-through" : "text-ink"}`}
-        >
+    <tr className="group">
+      <td>
+        <span className={`row-title ${done ? "line-through opacity-60" : ""}`}>
           {chore.title}
           {done && <span className="sr-only"> (completed)</span>}
         </span>
+        <p className="ed-hint mt-0.5 sm:hidden">
+          {assignee ? (assignee.displayName ?? assignee.username) : "Anyone"} ·{" "}
+          <span aria-label={due.srText}>{due.text}</span>
+        </p>
       </td>
-      <td className="ed-label-muted whitespace-nowrap py-7 pr-6">
+      <td className="muted hidden sm:table-cell">
         {assignee ? (assignee.displayName ?? assignee.username) : "Anyone"}
       </td>
-      <td
-        className={`whitespace-nowrap py-7 pr-6 font-mono text-xs tracking-[0.04em] ${due.overdue ? "font-semibold text-red" : "text-ink-3"}`}
-      >
-        {/* Color alone never conveys overdue — the word "Overdue" is in the sr-text */}
-        <span aria-label={due.srText}>
-          {due.overdue && <span className="sr-only">Overdue: </span>}
-          {due.text}
-        </span>
-        {due.overdue && (
-          <span
-            aria-hidden
-            className="ml-[5px] font-mono text-[0.65rem] tracking-[0.06em] text-red"
-          >
-            OVERDUE
-          </span>
-        )}
+      <td className="muted hidden sm:table-cell">
+        <span aria-label={due.srText}>{due.text}</span>
       </td>
-      <td className="whitespace-nowrap py-7">
-        <div className="flex items-center justify-between gap-4">
-          <span className="ed-label-muted">
-            {chore.recurrenceFrequency
-              ? (FREQ_LABEL[chore.recurrenceFrequency] ?? chore.recurrenceFrequency)
-              : "One-off"}
-          </span>
+      <td>
+        <span className={`badge ${status.cls}`.trim()}>{status.label}</span>
+      </td>
+      <td className="right">
+        <div className="flex items-center justify-end gap-2">
+          {/* ${I.check} — mark complete */}
+          <button
+            onClick={() => onComplete(chore.id)}
+            disabled={completing || done}
+            aria-label={done ? `${chore.title}: completed` : `Mark "${chore.title}" as complete`}
+            aria-pressed={done}
+            className={`flex h-7 w-7 items-center justify-center border border-border ${done ? "bg-accent text-paper" : "cursor-pointer bg-transparent text-ink-3 hover:text-accent"}`}
+            title="Mark complete"
+          >
+            <Icon name="check" size={13} strokeWidth={2.5} aria-hidden />
+          </button>
           <button
             onClick={() => onDeleteClick(chore.id)}
             disabled={deleting}
-            className="cursor-pointer border-none bg-transparent p-0 font-mono text-xs tracking-[0.08em] text-ink-3 opacity-0 transition-opacity hover:text-red focus:text-red focus:opacity-100 group-hover:opacity-100"
+            className="ed-icon-btn opacity-0 transition-opacity focus:opacity-100 group-hover:opacity-100 disabled:opacity-50"
             aria-label={`Delete chore: ${chore.title}`}
+            title="Delete"
           >
-            Delete
+            <Icon name="trash" size={14} strokeWidth={2} aria-hidden />
           </button>
         </div>
       </td>
@@ -117,6 +101,14 @@ export default function ChoresPage() {
   const chores = choresQuery.data ?? [];
   const overdueCount = overdueChoreCount(chores);
 
+  // Terminus .stats figures, derived from the real chore list.
+  const todayStart = new Date(new Date().setHours(0, 0, 0, 0)).getTime();
+  const activeCount = chores.filter((c) => !c.completedAt).length;
+  const doneTodayCount = chores.filter(
+    (c) => c.completedAt && new Date(c.completedAt).getTime() >= todayStart,
+  ).length;
+  const unassignedCount = chores.filter((c) => !c.completedAt && !c.assignedToUserId).length;
+
   const members = (membersQuery.data ?? []).map((m) => ({
     userId: (m as any).userId as string,
     displayName: (m as any).displayName as string | undefined,
@@ -133,20 +125,40 @@ export default function ChoresPage() {
   }
 
   return (
-    <div className="page-enter flex flex-col gap-6">
-      <EditorialPageHead
-        kicker="Chores · This household"
+    <div className="page-enter">
+      <SectionHeader
+        kicker="// CHORES"
         title={choresHeadline({ overdue: overdueCount, total: chores.length })}
-        deck="Assigned chores, schedules, and what's overdue. Check the box to mark one done."
+        subtitle="Assigned chores, schedules, and what's overdue. Check the box to mark one done."
       />
 
-      <section className="flex flex-col gap-5">
-        <DepartmentHead
-          kicker={showAll ? "All chores" : "Active chores"}
-          count={`${chores.length} ${pluralize("chore", chores.length)}${overdueCount > 0 ? ` · ${overdueCount} overdue` : ""}`}
-          title="The <em>chore list</em>"
-        />
-        <div className="-mt-2 flex items-center justify-end">
+      <HouseholdTabs />
+
+      {/* .stats — Active / Done today / Overdue / Unassigned, from real chore data */}
+      <div className="stats" style={{ marginTop: 22 }}>
+        <div className="stat">
+          <div className="label">Active</div>
+          <div className="val amber">{activeCount}</div>
+          <div className="delta">this week</div>
+        </div>
+        <div className="stat">
+          <div className="label">Done today</div>
+          <div className="val green">{doneTodayCount}</div>
+        </div>
+        <div className="stat">
+          <div className="label">Overdue</div>
+          <div className="val red">{overdueCount}</div>
+        </div>
+        <div className="stat">
+          <div className="label">Unassigned</div>
+          <div className="val">{unassignedCount}</div>
+        </div>
+      </div>
+
+      {/* .section-h — // CHORES + show-all toggle + Add */}
+      <div className="section-h">
+        <h2>{showAll ? "// ALL_CHORES" : "// ACTIVE_CHORES"}</h2>
+        <div className="actions">
           <button
             onClick={() => setShowAll((v) => !v)}
             className="ed-label-muted cursor-pointer border-none bg-transparent p-0 hover:text-red"
@@ -154,8 +166,18 @@ export default function ChoresPage() {
           >
             {showAll ? "Active only" : "Show all"}
           </button>
+          <Btn
+            href={`/household/${householdId}/chores/new`}
+            variant="primary"
+            size="sm"
+            iconLeft={<Icon name="plus" size={12} strokeWidth={2.5} />}
+          >
+            Add
+          </Btn>
         </div>
+      </div>
 
+      <section className="flex flex-col gap-5">
         {choresQuery.isLoading ? (
           <p className="ed-label-muted" aria-live="polite">
             Loading chores…
@@ -168,24 +190,20 @@ export default function ChoresPage() {
             cta={{ label: "+ Add chore", href: `/household/${householdId}/chores/new` }}
           />
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse" aria-label="Household chores">
+          <div className="table-wrap">
+            <table className="table" aria-label="Household chores">
               <thead>
-                <tr className="border-b border-[var(--ink)]">
-                  <th scope="col" className="w-18 pb-5">
-                    <span className="sr-only">Complete</span>
+                <tr>
+                  <th scope="col">Chore</th>
+                  <th scope="col" className="hidden sm:table-cell">
+                    Assigned
                   </th>
-                  <th scope="col" className="ed-kicker pb-5 pr-6 text-left font-normal">
-                    Chore
-                  </th>
-                  <th scope="col" className="ed-kicker pb-5 pr-6 text-left font-normal">
-                    Assigned to
-                  </th>
-                  <th scope="col" className="ed-kicker pb-5 pr-6 text-left font-normal">
+                  <th scope="col" className="hidden sm:table-cell">
                     Due
                   </th>
-                  <th scope="col" className="ed-kicker pb-5 text-left font-normal">
-                    Repeats
+                  <th scope="col">Status</th>
+                  <th scope="col" className="right">
+                    <span className="sr-only">Actions</span>
                   </th>
                 </tr>
               </thead>

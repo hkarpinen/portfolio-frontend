@@ -1,6 +1,6 @@
 "use client";
 
-import { Icon, SourceNote } from "@/components/editorial";
+import { Icon } from "@/components/editorial";
 import Link from "next/link";
 import type { ContributionItem } from "@/types/contributions";
 
@@ -71,68 +71,75 @@ export function SharedSplitsTable({
   const currency = groups[0]?.currency ?? "USD";
 
   return (
-    <div className="overflow-x-auto" role="region" aria-label="Shared household splits this month">
-      <table className="ed-agate">
-        <caption className="sr-only">
-          Shared household splits this month — {groups.length} {pluralize("bill", groups.length)},
-          total {formatCurrency(total, currency)}
-        </caption>
-        <thead>
-          <tr>
-            <th scope="col">Bill</th>
-            <th scope="col" className="hidden sm:table-cell">
-              Household
-            </th>
-            <th scope="col" className="hidden sm:table-cell">
-              Category
-            </th>
-            <th scope="col" className="num">
-              Your share
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {groups.map((g) => {
-            const householdName = g.householdName || householdNamesById[g.groupId] || "Household";
-            return (
-              <tr key={g.billId}>
-                <td>
-                  <Link href={`/household/${g.groupId}/expenses/${g.billId}`}>{g.billTitle}</Link>
-                  {g.occurrenceCount > 1 && (
-                    <span className="ed-agate-occur">× {g.occurrenceCount}</span>
-                  )}
-                  {/* Mobile: household + category collapse under the bill title. */}
-                  <p className="ed-hint mt-0.5 sm:hidden">
+    <div role="region" aria-label="Shared household splits this month">
+      <div className="table-wrap">
+        <table className="table">
+          <caption className="sr-only">
+            Shared household splits this month — {groups.length} {pluralize("bill", groups.length)},
+            total {formatCurrency(total, currency)}
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Bill</th>
+              <th scope="col" className="hidden sm:table-cell">
+                Household
+              </th>
+              <th scope="col" className="hidden sm:table-cell">
+                Category
+              </th>
+              <th scope="col" className="right">
+                Your share
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {groups.map((g) => {
+              const householdName = g.householdName || householdNamesById[g.groupId] || "Household";
+              return (
+                <tr key={g.billId}>
+                  <td>
+                    <Link href={`/household/${g.groupId}/expenses/${g.billId}`} className="row-title">
+                      {g.billTitle}
+                    </Link>
+                    {g.occurrenceCount > 1 && (
+                      <span className="label" style={{ marginLeft: "6px" }}>
+                        × {g.occurrenceCount}
+                      </span>
+                    )}
+                    {/* Mobile: household + category collapse under the bill title. */}
+                    <p className="tx-sub mt-1 sm:hidden">
+                      <Link href={`/household/${g.groupId}`}>{householdName}</Link>
+                      {g.billCategory ? ` · ${g.billCategory}` : ""}
+                    </p>
+                  </td>
+                  <td className="muted hidden sm:table-cell">
                     <Link href={`/household/${g.groupId}`}>{householdName}</Link>
-                    {g.billCategory ? ` · ${g.billCategory}` : ""}
-                  </p>
-                </td>
-                <td className="muted hidden sm:table-cell">
-                  <Link href={`/household/${g.groupId}`}>{householdName}</Link>
-                </td>
-                <td className="muted hidden sm:table-cell">
-                  {g.billCategory ? (
-                    <span className="inline-flex items-center gap-2">
-                      <Icon name={categoryIcon(g.billCategory)} size={14} strokeWidth={1.75} />
-                      {g.billCategory}
+                  </td>
+                  <td className="muted hidden sm:table-cell">
+                    {g.billCategory ? (
+                      <span className="inline-flex items-center gap-2">
+                        <Icon name={categoryIcon(g.billCategory)} size={14} strokeWidth={1.75} />
+                        {g.billCategory}
+                      </span>
+                    ) : (
+                      "—"
+                    )}
+                  </td>
+                  <td className="right">
+                    <span className="tx-amount debit">
+                      −{currency} {formatAmount(g.monthlyAmount)}
                     </span>
-                  ) : (
-                    "—"
-                  )}
-                </td>
-                <td className="num">
-                  <span className="ed-agate-currency">{currency}</span>
-                  {formatAmount(g.monthlyAmount)}
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-      <SourceNote
-        source="Household ledgers"
-        meta={[`${groups.length} ${pluralize("bill", groups.length)}`, "ranked by monthly amount"]}
-      />
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      <p className="label mt-3" style={{ color: "var(--text-3)" }}>
+        // Source: household ledgers · {groups.length} {pluralize("bill", groups.length)} · ranked by
+        monthly amount
+      </p>
     </div>
   );
 }

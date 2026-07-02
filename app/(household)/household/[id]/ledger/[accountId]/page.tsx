@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLink, EditorialPageHead, EmptyState, Icon, LedeStat } from "@/components/editorial";
+import { ArrowLink, EmptyState, Icon, LedeStat, SectionHeader } from "@/components/editorial";
 import { AccountActivity } from "@/components/finance/account-activity";
 import { useParams } from "next/navigation";
 import { useAccountStatement } from "@/hooks/use-ledger";
@@ -22,10 +22,10 @@ export default function AccountStatementPage() {
 
   return (
     <div className="page-enter flex flex-col gap-6">
-      <EditorialPageHead
-        kicker="The books · statement"
+      <SectionHeader
+        kicker="// THE_BOOKS · STATEMENT"
         title={`Statement · <em>${label}</em>`}
-        deck="Every posting against this account, oldest first, with the running balance after each. The accountant view behind this household's money."
+        subtitle="Every posting against this account, oldest first, with the running balance after each. The accountant view behind this household's money."
       />
 
       <div className="-mt-2">

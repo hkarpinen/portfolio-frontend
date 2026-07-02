@@ -54,16 +54,18 @@ export function ManageDeductionsModal({ source, onClose }: ManageDeductionsModal
           </button>
         </div>
 
-        <div className="border-b border-ink p-[0_20px_16px]">
-          <div className="seg-control">
+        <div className="border-b border-border p-[0_20px_16px]">
+          <div className="segmented" role="group" aria-label="Deductions view">
             <button
-              className={`seg-btn ${activeTab === "tax" ? "seg-btn-active" : "seg-btn-inactive"}`}
+              type="button"
+              className={activeTab === "tax" ? "on" : ""}
               onClick={() => setActiveTab("tax")}
             >
               Tax Withholding
             </button>
             <button
-              className={`seg-btn ${activeTab === "deductions" ? "seg-btn-active" : "seg-btn-inactive"}`}
+              type="button"
+              className={activeTab === "deductions" ? "on" : ""}
               onClick={() => setActiveTab("deductions")}
             >
               Deductions{deductionCount > 0 ? ` · ${deductionCount}` : ""}

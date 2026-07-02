@@ -67,13 +67,13 @@ export default function AccountSettingsPage() {
       <ProfileTabs active="Account" />
 
       {loading ? (
-        <div className={`border-ink px-10 py-24 text-center ${cardClassName}`}>
+        <div className={`px-10 py-24 text-center ${cardClassName}`}>
           <p className="text-md text-ink-3">Loading...</p>
         </div>
       ) : (
-        <div className="sidebar-grid gap-10">
-          <div className={`border-ink ${cardClassName}`}>
-            <p className="ed-label-muted mb-8">Profile</p>
+        <div className="split">
+          <div className="card">
+            <h3 className="card-h mb-6">// PROFILE</h3>
             <form
               onSubmit={identityForm.handleSubmit(onIdentitySubmit)}
               className="flex flex-col gap-8"
@@ -86,7 +86,7 @@ export default function AccountSettingsPage() {
               </div>
 
               {/* Row: Display Name + Handle */}
-              <div className="grid grid-cols-2 gap-6">
+              <div className="field-row">
                 <Input
                   label="Display Name"
                   type="text"
@@ -113,7 +113,7 @@ export default function AccountSettingsPage() {
               />
 
               {/* Row: Location + Pronouns */}
-              <div className="grid grid-cols-2 gap-6">
+              <div className="field-row">
                 <Input
                   label="Location"
                   type="text"
@@ -136,10 +136,13 @@ export default function AccountSettingsPage() {
             </form>
           </div>
 
-          <AvatarUpload
-            value={identityForm.watch("avatarUrl") ?? null}
-            onChange={(url) => identityForm.setValue("avatarUrl", url)}
-          />
+          <aside className="card">
+            <h3 className="card-h mb-4">// AVATAR</h3>
+            <AvatarUpload
+              value={identityForm.watch("avatarUrl") ?? null}
+              onChange={(url) => identityForm.setValue("avatarUrl", url)}
+            />
+          </aside>
         </div>
       )}
     </div>

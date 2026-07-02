@@ -23,7 +23,7 @@ export default function AppearancePage() {
             Theme
           </h2>
           <p className="mb-6 text-base text-ink-3">
-            Choose how The Stack &amp; Gazette looks to you.
+            Choose how the app looks to you.
           </p>
           <fieldset className="m-0 flex flex-col gap-3 border-none p-0">
             <legend className="sr-only">Theme</legend>

@@ -5,13 +5,13 @@ export function DangerZoneSection() {
     <section
       id="danger"
       aria-labelledby="danger-zone-heading"
-      className="border-[1.5px] border-red bg-paper-2 p-5"
+      className="border border-danger bg-paper-2 p-5"
     >
       <h2
         id="danger-zone-heading"
-        className="text-[10px] font-bold uppercase tracking-widest text-red"
+        className="text-[10px] font-bold uppercase tracking-widest text-danger"
       >
-        Danger Zone
+        // DANGER_ZONE
       </h2>
       <p className="mb-2 mt-4 text-base text-ink-3">
         Permanently delete your account and all associated data.
@@ -20,7 +20,7 @@ export function DangerZoneSection() {
         This action is irreversible. All households, expenses, forum posts, and personal data will
         be erased immediately.
       </p>
-      <Btn variant="danger" type="button">
+      <Btn variant="danger" type="button" fullWidth>
         Delete Account
       </Btn>
     </section>

@@ -1,7 +1,5 @@
 import Link from "next/link";
-import { ArrowLink, UserInitials } from "@/components/editorial";
 import { JoinButton } from "./join-button";
-import { communityTileMeta } from "@/lib/forum/editorial-copy";
 import type { CommunitySummaryResponse } from "@/types/forum";
 
 interface CommunityStripProps {
@@ -9,62 +7,49 @@ interface CommunityStripProps {
 }
 
 /**
- * <CommunityStrip> — horizontal trending strip for the /forum landing.
+ * <CommunityStrip> — Terminus community grid for the /forum landing.
  *
- * Uses the `.ed-module` tile pattern shared with the household/finance
- * listing grids, so the strip reads as part of the same design system
- * instead of a forum-bespoke card. Title block links to the community;
- * `<JoinButton>` sits in the module foot as a secondary action — two
- * unambiguous click targets, no nested interactives.
+ * Mirrors the prototype's `.grid-2` of `.module` tiles: `.num` carries the
+ * g/slug, a short description, then a `.badge` member count. The prototype's
+ * `.badge.green` "online" pill has no live signal in the API yet, so the
+ * second badge surfaces the real thread count instead. `<JoinButton>` is a
+ * standalone action below the tile body — no interactive controls nested
+ * inside the title link.
  */
 export function CommunityStrip({ communities }: CommunityStripProps) {
   return (
-    <ul
-      className="m-0 grid list-none gap-4 p-0"
-      style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}
+    <div
+      className="grid-2"
+      style={{
+        gap: "1px",
+        background: "var(--border)",
+        border: "1px solid var(--border)",
+      }}
     >
       {communities.map((c) => {
-        const { memberLabel, threadLabel } = communityTileMeta({
-          memberCount: c.memberCount ?? 0,
-          threadCount: c.threadCount,
-        });
-
+        const members = (c.memberCount ?? 0).toLocaleString();
+        const threads = (c.threadCount ?? 0).toLocaleString();
         return (
-          <li key={c.communityId} className="ed-module">
-            <div className="mb-4 flex items-center gap-4">
-              <UserInitials name={c.name} avatarUrl={c.imageUrl} size="lg" />
-              <span className="ed-module-kicker" aria-hidden>
-                Community
-              </span>
-            </div>
+          <div key={c.communityId} className="module" style={{ minHeight: 0, padding: 14 }}>
             <Link
               href={`/forum/g/${c.slug}`}
-              className="ed-module-title no-underline hover:text-red"
+              className="num no-underline hover:text-accent"
             >
-              g/<em>{c.slug}</em>
+              g/{c.slug}
             </Link>
-            {c.description ? (
-              <p className="ed-module-desc line-clamp-2">{c.description}</p>
-            ) : (
-              <p className="ed-module-desc italic text-ink-3">No description yet.</p>
-            )}
-            <p className="ed-module-meta">
-              {memberLabel}
-              {threadLabel}
+            <p style={{ fontSize: "0.72rem", margin: 0 }}>
+              {c.description?.trim() || "No description yet."}
             </p>
-            <div className="ed-module-foot">
-              <JoinButton communityId={c.communityId} />
-              <ArrowLink
-                href={`/forum/g/${c.slug}`}
-                className="ed-module-arrow"
-                aria-label={`Open ${c.name}`}
-              >
-                Open
-              </ArrowLink>
+            <div className="row" style={{ gap: 8, marginTop: 8 }}>
+              <span className="badge">{members} members</span>
+              <span className="badge">{threads} threads</span>
             </div>
-          </li>
+            <div className="row" style={{ marginTop: 10 }}>
+              <JoinButton communityId={c.communityId} />
+            </div>
+          </div>
         );
       })}
-    </ul>
+    </div>
   );
 }

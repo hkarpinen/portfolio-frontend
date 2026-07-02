@@ -15,7 +15,7 @@ export default function NewHouseholdPage() {
       </ArrowLink>
 
       <SectionHeader
-        kicker="Household · New"
+        kicker="// HOUSEHOLD · NEW"
         title="New <em>household</em>"
         subtitle="Bills, chores, and calendar live inside a household. You can be in many."
       />

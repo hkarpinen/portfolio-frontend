@@ -67,7 +67,7 @@ export function ReportButton({
         onClick={() => setOpen(true)}
         className={
           triggerClassName ??
-          "cursor-pointer border-0 bg-transparent p-0 font-mono text-xs uppercase tracking-[0.12em] text-ink-3 hover:text-red"
+          "cursor-pointer border-0 bg-transparent p-0 font-mono text-xs uppercase tracking-[0.12em] text-ink-3 hover:text-danger"
         }
         aria-label={`Report ${kind}`}
       >

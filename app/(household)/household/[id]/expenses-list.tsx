@@ -33,17 +33,20 @@ function StatusCell({ expense, householdId }: { expense: HouseholdExpense; house
     isPaid ? unpayMutation.mutate(occ) : payMutation.mutate(occ);
   };
 
+  // Terminus status mapping: Unpaid/Upcoming -> .badge.red, Settled/Covered/Paid -> .badge.green.
+  // The badge wraps a button where the status is a toggle, a Link where it routes to detail.
+
   // The bill itself hasn't been paid yet — shares aren't settleable until it is. Link to the
   // detail page where it can be marked paid.
   if (expense.vendorPaid === false) {
     return (
       <Link
         href={`/household/${householdId}/expenses/${expense.chargeId}`}
-        className="inline-flex items-center gap-[5px] font-mono text-xs uppercase tracking-[0.08em] text-red no-underline hover:opacity-80"
+        className="badge red no-underline"
         aria-label={`${expense.title}: upcoming — not yet paid. Open to mark it paid.`}
       >
         <Icon name="alert" size={11} strokeWidth={2} aria-hidden />
-        <span>Upcoming</span>
+        Upcoming
       </Link>
     );
   }
@@ -51,11 +54,11 @@ function StatusCell({ expense, householdId }: { expense: HouseholdExpense; house
   if (isPayer) {
     return (
       <span
-        className="inline-flex items-center gap-[5px] font-mono text-xs tracking-[0.08em] text-ink-3"
+        className="badge green"
         aria-label={`${expense.title}: you paid the bill — your share is covered`}
       >
         <Icon name="check" size={11} strokeWidth={2.5} aria-hidden />
-        <span>COVERED</span>
+        Covered
       </span>
     );
   }
@@ -67,10 +70,10 @@ function StatusCell({ expense, householdId }: { expense: HouseholdExpense; house
         disabled={isPending}
         aria-label={`${expense.title}: marked as paid. Click to undo.`}
         aria-pressed
-        className="inline-flex cursor-pointer items-center gap-[5px] border-none bg-transparent p-0 font-mono text-xs tracking-[0.08em] text-ink-3 disabled:opacity-50"
+        className="badge green cursor-pointer bg-transparent disabled:opacity-50"
       >
         <Icon name="check" size={11} strokeWidth={2.5} aria-hidden />
-        <span>PAID</span>
+        Settled
       </button>
     );
   }
@@ -81,10 +84,9 @@ function StatusCell({ expense, householdId }: { expense: HouseholdExpense; house
       disabled={isPending}
       aria-label={`${expense.title}: open, not yet paid. Click to mark as paid.`}
       aria-pressed={false}
-      className="inline-flex cursor-pointer items-center bg-transparent font-mono text-xs tracking-[0.08em] text-red disabled:opacity-50"
-      style={{ border: "1px solid var(--red)", padding: "3px 8px" }}
+      className="badge red cursor-pointer disabled:opacity-50"
     >
-      <span>OPEN</span>
+      Unpaid
     </button>
   );
 }
@@ -112,10 +114,7 @@ function ExpenseRow({
   return (
     <tr>
       <td>
-        <Link
-          href={detailHref}
-          className="font-serif text-base font-bold text-ink no-underline hover:text-red focus:text-red"
-        >
+        <Link href={detailHref} className="row-title no-underline">
           {expense.title}
         </Link>
         {/* Mobile: category + date collapse under the title so the table fits a phone. */}
@@ -123,15 +122,27 @@ function ExpenseRow({
           {expense.category ? expense.category : "—"} · {formattedDate}
         </p>
       </td>
-      <td className="muted hidden sm:table-cell">
-        {expense.category ? expense.category : <span aria-label="No category">—</span>}
+      <td className="hidden sm:table-cell">
+        {expense.category ? (
+          <span className="badge">{expense.category}</span>
+        ) : (
+          <span className="muted" aria-label="No category">
+            —
+          </span>
+        )}
       </td>
       <td className="muted hidden sm:table-cell">{formattedDate}</td>
       {/* TODO(handoff8): wire to payer — HouseholdExpense has no payerId yet; show "—" until API returns it */}
       <td className="muted hidden sm:table-cell">
         <span aria-label="Payer not yet available">—</span>
       </td>
-      <td className="num">{formatCurrency(Number(expense.amount), expense.currency)}</td>
+      {/* Amount in amber per Terminus (.right + amber numeral) */}
+      <td
+        className="right"
+        style={{ font: "700 0.875rem/1 var(--ff-mono)", color: "var(--amber)" }}
+      >
+        {formatCurrency(Number(expense.amount), expense.currency)}
+      </td>
       <td>
         <div className="flex items-center gap-2">
           <StatusCell expense={expense} householdId={householdId} />
@@ -199,8 +210,8 @@ export function ExpensesList({
 
   return (
     <>
-      <div className="overflow-x-auto">
-        <table className="ed-agate" aria-label="Shared expenses">
+      <div className="table-wrap">
+        <table className="table" aria-label="Shared expenses">
           <thead>
             <tr>
               <th scope="col">Expense</th>
@@ -213,7 +224,7 @@ export function ExpensesList({
               <th scope="col" className="hidden sm:table-cell">
                 Payer
               </th>
-              <th scope="col" className="num">
+              <th scope="col" className="right">
                 Amount
               </th>
               <th scope="col">Status</th>

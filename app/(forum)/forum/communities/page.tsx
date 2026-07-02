@@ -1,46 +1,48 @@
-import {
-  ArrowLink,
-  DepartmentHead,
-  EditorialPageHead,
-  EmptyState,
-  Icon,
-  UserInitials,
-} from "@/components/editorial";
+import { EmptyState, Icon } from "@/components/editorial";
 import Link from "next/link";
 
 import { fetchCommunitiesServer } from "@/lib/api/communities";
 import { JoinButton } from "../join-button";
-import { communityTileMeta } from "@/lib/forum/editorial-copy";
 import type { CommunitySummaryResponse } from "@/types/forum";
 
 export const dynamic = "force-dynamic";
 
+const num = (n: number) => n.toLocaleString("en-US");
+
 /**
  * /forum/communities — full browse page.
  *
- * Linked from the "Browse all" action on the landing marquee. Uses the
- * shared `.ed-module` tile pattern so the catalogue reads the same as
- * the household / finance listings.
+ * Linked from the "Browse all" action on the landing grid. Uses the same
+ * Terminus `.grid-2` of `.module` tiles as the landing `<CommunityStrip>`.
  */
 export default async function CommunitiesBrowsePage() {
   const page = await fetchCommunitiesServer();
   const communities: CommunitySummaryResponse[] = page?.items ?? [];
 
   return (
-    <div className="page-enter flex flex-col gap-8">
-      <EditorialPageHead
-        kicker="Letters · Community"
-        title="Browse <em>communities</em>"
-        deck="Every public community on the network. Join one to start posting threads, or spin up your own."
-      />
+    <div className="page-enter">
+      <header className="page-head">
+        <div className="titles">
+          <div className="kicker" style={{ marginBottom: 8 }}>
+            // FORUM · COMMUNITIES
+          </div>
+          <h1>Communities</h1>
+          <p className="deck">
+            Every public community on the network. Join one to start posting threads, or spin up
+            your own.
+          </p>
+        </div>
+        <div className="actions">
+          <Link href="/forum/new" className="btn btn-sm btn-primary no-underline">
+            <Icon name="plus" size={12} strokeWidth={2.5} aria-hidden /> New community
+          </Link>
+        </div>
+      </header>
 
-      <section aria-labelledby="all-communities" className="flex flex-col gap-5">
-        <DepartmentHead
-          id="all-communities"
-          kicker="Catalogue"
-          count={`${communities.length} on file`}
-          title="All <em>communities</em>"
-        />
+      <section aria-labelledby="all-communities">
+        <div className="section-h" style={{ marginBottom: 0 }}>
+          <h2 id="all-communities">// ALL_COMMUNITIES [{communities.length}]</h2>
+        </div>
 
         {communities.length === 0 ? (
           <EmptyState
@@ -50,53 +52,35 @@ export default async function CommunitiesBrowsePage() {
             cta={{ label: "+ New community", href: "/forum/new" }}
           />
         ) : (
-          <ul
-            className="m-0 grid list-none gap-4 p-0"
-            style={{ gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))" }}
+          <div
+            className="grid-2"
+            style={{
+              gap: "1px",
+              background: "var(--border)",
+              border: "1px solid var(--border)",
+            }}
           >
-            {communities.map((c) => {
-              const { memberLabel, threadLabel } = communityTileMeta({
-                memberCount: c.memberCount ?? 0,
-                threadCount: c.threadCount,
-              });
-
-              return (
-                <li key={c.communityId} className="ed-module">
-                  <div className="mb-4 flex items-center gap-4">
-                    <UserInitials name={c.name} avatarUrl={c.imageUrl} size="lg" />
-                    <span className="ed-module-kicker" aria-hidden>
-                      Community
-                    </span>
-                  </div>
-                  <Link
-                    href={`/forum/g/${c.slug}`}
-                    className="ed-module-title no-underline hover:text-red"
-                  >
-                    g/<em>{c.slug}</em>
-                  </Link>
-                  {c.description ? (
-                    <p className="ed-module-desc line-clamp-3">{c.description}</p>
-                  ) : (
-                    <p className="ed-module-desc italic text-ink-3">No description yet.</p>
-                  )}
-                  <p className="ed-module-meta">
-                    {memberLabel}
-                    {threadLabel}
-                  </p>
-                  <div className="ed-module-foot">
-                    <JoinButton communityId={c.communityId} />
-                    <ArrowLink
-                      href={`/forum/g/${c.slug}`}
-                      className="ed-module-arrow"
-                      aria-label={`Open ${c.name}`}
-                    >
-                      Open
-                    </ArrowLink>
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
+            {communities.map((c) => (
+              <div key={c.communityId} className="module" style={{ minHeight: 0, padding: 14 }}>
+                <Link
+                  href={`/forum/g/${c.slug}`}
+                  className="num no-underline hover:text-accent"
+                >
+                  g/{c.slug}
+                </Link>
+                <p style={{ fontSize: "0.72rem", margin: 0 }}>
+                  {c.description?.trim() || "No description yet."}
+                </p>
+                <div className="row" style={{ gap: 8, marginTop: 8 }}>
+                  <span className="badge">{num(c.memberCount ?? 0)} members</span>
+                  <span className="badge">{num(c.threadCount ?? 0)} threads</span>
+                </div>
+                <div className="row" style={{ marginTop: 10 }}>
+                  <JoinButton communityId={c.communityId} />
+                </div>
+              </div>
+            ))}
+          </div>
         )}
       </section>
     </div>

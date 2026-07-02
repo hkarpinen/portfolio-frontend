@@ -14,10 +14,10 @@ import { useIsDemo } from "@/hooks/use-demo";
 
 // Indent rail colors by depth — accent fades as nesting deepens.
 const RAIL_COLORS = [
-  "var(--red)", // depth 1
-  "var(--accent-v)", // depth 2
-  "var(--border-2)", // depth 3
-  "var(--ink-3)", // depth 4+
+  "var(--amber)", // depth 1
+  "var(--border-hi)", // depth 2
+  "var(--border)", // depth 3
+  "var(--text-4)", // depth 4+
 ];
 function railColor(depth: number) {
   return RAIL_COLORS[Math.min(depth - 1, RAIL_COLORS.length - 1)];
@@ -46,33 +46,38 @@ function CommentNode({
   return (
     <article
       aria-label={`Comment by ${authorName}`}
-      className={isLast ? "" : "border-b border-rule-soft"}
       style={{
-        paddingLeft: depth > 0 ? "20px" : "0",
+        display: "flex",
+        gap: 14,
+        padding: "16px 0",
+        borderBottom: isLast ? "none" : "1px solid var(--border)",
+        paddingLeft: depth > 0 ? 20 : 0,
         borderLeft: depth > 0 ? `2px solid ${railColor(depth)}` : "none",
-        marginLeft: depth > 0 ? "10px" : "0",
+        marginLeft: depth > 0 ? 10 : 0,
       }}
     >
-      <div className="pb-5 pt-6">
-        {/* Author row — avatar + @handle · time · N votes */}
-        <div className="mb-3 flex flex-wrap items-center gap-4">
-          {comment.authorAvatarUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={comment.authorAvatarUrl}
-              alt=""
-              aria-hidden="true"
-              className="h-12 w-12 shrink-0 border-ink object-cover"
-            />
-          ) : (
-            <span
-              aria-hidden="true"
-              className="flex h-12 w-12 shrink-0 items-center justify-center border-ink bg-paper-3 text-sm font-bold text-ink-2"
-            >
-              {initials}
-            </span>
-          )}
-          <span className="font-mono text-xs uppercase tracking-[0.12em] text-ink">
+      {/* Avatar — Terminus `.avatar` (amber) or the author image. */}
+      <div>
+        {comment.authorAvatarUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={comment.authorAvatarUrl}
+            alt=""
+            aria-hidden="true"
+            className="avatar object-cover"
+            style={{ width: 28, height: 28 }}
+          />
+        ) : (
+          <span className="avatar" style={{ width: 28, height: 28, fontSize: 10 }}>
+            {initials}
+          </span>
+        )}
+      </div>
+
+      <div style={{ flex: 1, minWidth: 0 }}>
+        {/* Author row — amber handle · time */}
+        <div className="row" style={{ gap: 10, marginBottom: 8, flexWrap: "wrap" }}>
+          <span style={{ font: "600 0.72rem/1 var(--ff-mono)", color: "var(--amber)" }}>
             {comment.authorId ? (
               <Link
                 href={`/forum/profile/${comment.authorId}`}
@@ -85,30 +90,25 @@ function CommentNode({
               handle
             )}
           </span>
-          <span aria-hidden="true" className="font-mono text-xs text-ink-4">
-            ·
-          </span>
-          <time
-            dateTime={comment.createdAt}
-            className="font-mono text-xs uppercase tracking-[0.12em] text-ink-3"
-          >
+          <time className="label" dateTime={comment.createdAt}>
             {timeAgo(comment.createdAt)}
           </time>
-          <span aria-hidden="true" className="font-mono text-xs text-ink-4">
-            ·
-          </span>
-          <span className="font-mono text-xs uppercase tracking-[0.12em] text-ink-3">
-            {comment.voteScore ?? 0} {(comment.voteScore ?? 0) === 1 ? "vote" : "votes"}
-          </span>
         </div>
 
         {/* Content */}
-        <p className="mb-4 whitespace-pre-wrap text-md leading-[1.65] text-ink-2">
+        <p
+          className="whitespace-pre-wrap"
+          style={{
+            font: "400 0.8rem/1.75 var(--ff-mono)",
+            color: "var(--text-2)",
+            marginBottom: 10,
+          }}
+        >
           {comment.content}
         </p>
 
         {/* Action footer: vote · reply · report */}
-        <div className="flex items-center gap-5">
+        <div className="row" style={{ gap: 10 }}>
           <VoteControl
             threadId={threadId}
             targetType={1}
@@ -119,9 +119,9 @@ function CommentNode({
           />
           {depth < 3 &&
             (isDemo ? (
-              <span className="font-mono text-xs uppercase tracking-[0.12em] text-ink-3">
+              <span className="label normal-case">
                 Demo —{" "}
-                <a href="/identity/register" className="font-medium normal-case text-red no-underline">
+                <a href="/identity/register" className="font-medium text-accent no-underline">
                   sign up
                 </a>{" "}
                 to reply
@@ -133,14 +133,14 @@ function CommentNode({
                 aria-expanded={replying}
                 aria-label={replying ? `Cancel reply to ${authorName}` : `Reply to ${authorName}`}
                 data-replying={replying ? "true" : undefined}
-                className="cursor-pointer border-0 bg-transparent p-0 font-mono text-xs uppercase tracking-[0.12em] text-ink-3 hover:text-ink"
+                className="btn btn-ghost btn-sm"
               >
                 {replying ? "Cancel" : "Reply"}
               </button>
             ) : (
               <Link
                 href={`/identity/login?from=${encodeURIComponent(pathname)}`}
-                className="font-mono text-xs uppercase tracking-[0.12em] text-ink-3 no-underline hover:text-ink"
+                className="btn btn-ghost btn-sm no-underline"
               >
                 Sign in to reply
               </Link>
@@ -156,24 +156,24 @@ function CommentNode({
             onDone={() => setReplying(false)}
           />
         )}
-      </div>
 
-      {/* Nested replies */}
-      {comment.replies && comment.replies.length > 0 && (
-        <div role="list" aria-label={`Replies to ${authorName}`}>
-          {comment.replies.map((reply, i) => (
-            <div key={reply.commentId} role="listitem">
-              <CommentNode
-                comment={reply}
-                depth={depth + 1}
-                threadId={threadId}
-                isAuthed={isAuthed}
-                isLast={i === comment.replies!.length - 1}
-              />
-            </div>
-          ))}
-        </div>
-      )}
+        {/* Nested replies */}
+        {comment.replies && comment.replies.length > 0 && (
+          <div role="list" aria-label={`Replies to ${authorName}`} style={{ marginTop: 6 }}>
+            {comment.replies.map((reply, i) => (
+              <div key={reply.commentId} role="listitem">
+                <CommentNode
+                  comment={reply}
+                  depth={depth + 1}
+                  threadId={threadId}
+                  isAuthed={isAuthed}
+                  isLast={i === comment.replies!.length - 1}
+                />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </article>
   );
 }
@@ -190,7 +190,7 @@ export function CommentTree({
   isAuthed: boolean;
 }) {
   if (comments.length === 0) {
-    return <p className="py-6 text-base italic text-ink-3">No comments yet — be the first!</p>;
+    return <p className="py-6 text-base text-ink-3">No comments yet — be the first!</p>;
   }
   return (
     <div role="list" aria-label="Thread comments">

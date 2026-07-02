@@ -155,9 +155,9 @@ export default function NewExpensePage({ params }: { params: { id: string } }) {
         Back to household
       </ArrowLink>
 
-      <SectionHeader kicker="New expense" title="Add an <em>expense</em>" />
+      <SectionHeader kicker="// EXPENSES · NEW" title="Add an <em>expense</em>" />
 
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="form wide">
         {createExpense.isError && (
           <Alert variant="danger">{getErrorMessage(createExpense.error)}</Alert>
         )}
@@ -170,7 +170,7 @@ export default function NewExpensePage({ params }: { params: { id: string } }) {
           {...register("title")}
         />
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <div className="field-row">
           <Input
             label="Amount"
             type="number"
@@ -187,7 +187,7 @@ export default function NewExpensePage({ params }: { params: { id: string } }) {
           </SelectField>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <div className="field-row">
           <Input
             label="Date"
             type="date"
@@ -294,7 +294,7 @@ export default function NewExpensePage({ params }: { params: { id: string } }) {
                       disabled={!s.checked}
                       value={s.percent}
                       onChange={(e) => updatePercent(idx, e.target.value)}
-                      className="h-9 w-[72px] border border-[var(--ink)] bg-paper px-2 text-right font-mono text-sm text-ink disabled:cursor-not-allowed disabled:opacity-40"
+                      className="h-9 w-[72px] border border-border bg-paper px-2 text-right font-mono text-sm text-ink disabled:cursor-not-allowed disabled:opacity-40"
                       aria-label={`${s.displayName} share percentage`}
                     />
                     <span className="font-mono text-sm text-ink-3" aria-hidden>
@@ -338,7 +338,7 @@ export default function NewExpensePage({ params }: { params: { id: string } }) {
           )}
         </div>
 
-        <div className="flex gap-3">
+        <div className="form-actions">
           <Btn
             type="submit"
             disabled={createExpense.isPending || !pctValid}

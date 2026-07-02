@@ -17,6 +17,13 @@ const SORTS: { key: Sort; label: string }[] = [
   { key: "top", label: "Top" },
 ];
 
+// Section heading mirrors the active feed (prototype shows `// HOT_THREADS`).
+const SECTION_LABEL: Record<Sort, string> = {
+  hot: "// HOT_THREADS",
+  new: "// NEW_THREADS",
+  top: "// TOP_THREADS",
+};
+
 export function ForumFeed({
   initialHot,
   slugMap,
@@ -40,30 +47,30 @@ export function ForumFeed({
   const threads: ThreadSummaryResponse[] = data?.items ?? [];
 
   return (
-    <section aria-labelledby="forum-feed-heading" className="flex flex-col gap-4">
-      {/* Sort tabs — same visual language as the community page section tabs */}
-      <div className="ed-tabs-row">
-        <h2 id="forum-feed-heading" className="sr-only">
-          Threads
-        </h2>
-        <nav aria-label="Sort threads" className="ed-tabs-list flex-1" role="tablist">
-          {SORTS.map(({ key, label }) => {
-            const isActive = key === sort;
-            return (
-              <button
-                key={key}
-                type="button"
-                role="tab"
-                aria-selected={isActive}
-                aria-current={isActive ? "page" : undefined}
-                onClick={() => setSort(key)}
-                className="ed-tab"
-              >
-                {label}
-              </button>
-            );
-          })}
-        </nav>
+    <section aria-labelledby="forum-feed-heading" className="flex flex-col">
+      {/* Feed tabs — Terminus `.tabs`. Stateful sort buttons; `.tabs button` +
+          `.tabs button[aria-selected]` in globals.css supply the styling and
+          active amber underline. "Saved" is omitted: no saved-threads endpoint. */}
+      <nav className="tabs" role="tablist" aria-label="Feed tabs">
+        {SORTS.map(({ key, label }) => {
+          const isActive = key === sort;
+          return (
+            <button
+              key={key}
+              type="button"
+              role="tab"
+              aria-selected={isActive}
+              aria-current={isActive ? "page" : undefined}
+              onClick={() => setSort(key)}
+            >
+              {label}
+            </button>
+          );
+        })}
+      </nav>
+
+      <div className="section-h" style={{ marginBottom: 0 }}>
+        <h2 id="forum-feed-heading">{SECTION_LABEL[sort]}</h2>
       </div>
 
       <ListWithLoadingAndEmpty
@@ -76,7 +83,7 @@ export function ForumFeed({
           body: "Join a community and start the first thread.",
           cta: { label: "+ New thread", href: "/forum/new" },
         }}
-        className="flex flex-col"
+        className="stack"
       >
         {(t) => (
           <ThreadRow

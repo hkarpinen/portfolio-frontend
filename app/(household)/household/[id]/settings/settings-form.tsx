@@ -51,9 +51,12 @@ export function SettingsForm({ household }: { household: Household }) {
   };
 
   return (
-    <section className="flex flex-col gap-8 border-ink bg-paper-2 p-12 shadow-sm">
-      <p className="text-sm font-bold uppercase tracking-[0.1em] text-ink-3">Household Details</p>
-      <form onSubmit={handleSubmit(onSave)} className="flex flex-col gap-7">
+    // .card // GENERAL — Terminus settings general panel
+    <div className="card">
+      <h3 className="card-h" style={{ marginBottom: 14 }}>
+        // GENERAL
+      </h3>
+      <form onSubmit={handleSubmit(onSave)} className="form full">
         {updateHouseholdMutation.isError && (
           <Alert variant="danger">{getErrorMessage(updateHouseholdMutation.error)}</Alert>
         )}
@@ -65,7 +68,7 @@ export function SettingsForm({ household }: { household: Household }) {
           rows={3}
           error={errors.description?.message}
         />
-        <div className="form-grid-2">
+        <div className="field-row">
           <SelectField
             label="Currency"
             {...register("currencyCode")}
@@ -85,10 +88,12 @@ export function SettingsForm({ household }: { household: Household }) {
             ))}
           </SelectField>
         </div>
-        <Btn type="submit" disabled={updateHouseholdMutation.isPending} variant="primary">
-          {updateHouseholdMutation.isPending ? "Saving…" : "Save Changes"}
-        </Btn>
+        <div className="form-actions">
+          <Btn type="submit" disabled={updateHouseholdMutation.isPending} variant="primary">
+            {updateHouseholdMutation.isPending ? "Saving…" : "Save Changes"}
+          </Btn>
+        </div>
       </form>
-    </section>
+    </div>
   );
 }

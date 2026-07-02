@@ -1,4 +1,7 @@
-import { ArrowLink, DepartmentHead, EditorialPageHead, EmptyState, Icon } from "@/components/editorial";
+import Link from "next/link";
+import { Btn, EmptyState, Icon } from "@/components/editorial";
+import { SectionHead } from "../../section-head";
+import { FinanceTabs } from "../../personal-finance-sub-nav";
 import { getCookieHeader } from "@/lib/server-cookies";
 import { fetchContributionSummaryServer, listHouseholdsServer } from "@/lib/api/households";
 import type { HouseholdSummaryDto } from "@/lib/api/households";
@@ -17,9 +20,10 @@ export const dynamic = "force-dynamic";
  * Personal Money home — your whole money picture in one page: where you stand this month
  * (take-home vs obligations), where you net out across every household, and the bills behind it.
  *
- * Merged from the former Overview + Expenses tabs, which both led with the same disposable figure.
- * The one thing Overview uniquely carried — the cross-household net-positions table — now sits
- * between the lede and the bill lists (a single household's money lives in the household itself).
+ * Mirrors the Terminus prototype's PAGES['/expenses'] Finance overview: a `.page-head`, the
+ * `.stats` 4-up strip, then the `.grid-2` of recent expenses + income/budget — wired to real data.
+ * The one thing Overview uniquely carries — the cross-household net-positions table — sits between
+ * the stats and the bill lists (a single household's money lives in the household itself).
  */
 export default async function FinanceOverviewPage() {
   const cookieHeader = await getCookieHeader();
@@ -54,78 +58,108 @@ export default async function FinanceOverviewPage() {
   const hasAnything =
     initialIncome.length > 0 || householdList.length > 0 || initialMonths.length > 0;
 
+  // Terminus `.page-head` — kicker / title / deck + Filter & Add-expense actions. The masthead
+  // (layout topBand) carries the desk + tabs; this page head leads the scroll area like the proto.
+  const pageHead = (
+    <header className="page-head">
+      <div className="titles">
+        <div className="kicker" style={{ marginBottom: "8px" }}>
+          // WORKSPACE · FINANCE
+        </div>
+        <h1>Finance</h1>
+        <p className="deck">
+          Your take-home, what&apos;s going out, where you net out across every household, and the
+          bills behind it.
+        </p>
+      </div>
+      <div className="actions">
+        <Btn
+          href="/finance/expenses/new"
+          variant="primary"
+          size="sm"
+          iconLeft={<Icon name="plus" size={12} strokeWidth={2.5} />}
+        >
+          Add expense
+        </Btn>
+      </div>
+    </header>
+  );
+
   if (!hasAnything) {
     return (
       <div className="page-enter flex flex-col gap-6">
-        <EditorialPageHead
-          kicker="Your money"
-          title="Where you <em>stand</em>"
-          deck="Your take-home, what's going out, and where you net out across every household."
-        />
+        {pageHead}
+        <FinanceTabs />
         <EmptyState
           glyph={<Icon name="expenses" size={24} strokeWidth={1.5} />}
+          kicker="// MONEY_EMPTY"
           title="Nothing to summarize yet"
           body="Add an income source or a shared expense and your monthly picture builds itself here."
-          cta={{ label: "+ Add income", href: "/finance/income/new" }}
-          secondaryCta={{ label: "+ Add expense", href: "/finance/expenses/new" }}
+          cta={{ label: "$ add-income →", href: "/finance/income/new" }}
+          secondaryCta={{ label: "$ add-expense →", href: "/finance/expenses/new" }}
         />
       </div>
     );
   }
 
-  // Cross-household net-positions — injected between the financial-summary lede and the bill lists.
+  // Cross-household net-positions — injected between the `.stats` strip and the bill lists.
   const netPositions = (
     <section className="flex flex-col gap-5">
-      <DepartmentHead
-        kicker="Across your households"
+      <SectionHead
+        kicker="ACROSS YOUR HOUSEHOLDS"
         count={`${groups.length} ${groups.length === 1 ? "household" : "households"}`}
         title="Household <em>balances</em>"
         deck="What you'd pay or collect to settle up in each household today."
       />
       {groups.length === 0 ? (
-        <p className="ed-empty-dispatch">No shared balances across your households yet.</p>
+        <p className="label" style={{ color: "var(--text-3)" }}>
+          No shared balances across your households yet.
+        </p>
       ) : (
-        <table className="ed-agate">
-          <thead>
-            <tr>
-              <th>Household</th>
-              <th className="num">Your balance</th>
-            </tr>
-          </thead>
-          <tbody>
-            {groups.map((g) => {
-              const owed = g.net > 0.005;
-              const owe = g.net < -0.005;
-              return (
-                <tr key={g.id}>
-                  <td>
-                    <ArrowLink href={`/household/${g.id}`}>{g.name}</ArrowLink>
-                  </td>
-                  <td className="num">
-                    <span className={owed ? "text-green" : owe ? "text-red" : "text-ink-3"}>
-                      {owed
-                        ? `owed ${formatCurrency(g.net, g.currency)}`
-                        : owe
-                          ? `you owe ${formatCurrency(Math.abs(g.net), g.currency)}`
-                          : "settled up"}
-                    </span>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+        <div className="table-wrap">
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Household</th>
+                <th className="right">Your balance</th>
+              </tr>
+            </thead>
+            <tbody>
+              {groups.map((g) => {
+                const owed = g.net > 0.005;
+                const owe = g.net < -0.005;
+                return (
+                  <tr key={g.id}>
+                    <td>
+                      <Link href={`/household/${g.id}`} className="row-title">
+                        {g.name}
+                      </Link>
+                    </td>
+                    <td className="right">
+                      {owed ? (
+                        <span className="badge green">owed {formatCurrency(g.net, g.currency)}</span>
+                      ) : owe ? (
+                        <span className="badge red">
+                          you owe {formatCurrency(Math.abs(g.net), g.currency)}
+                        </span>
+                      ) : (
+                        <span className="badge">settled up</span>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       )}
     </section>
   );
 
   return (
     <div className="page-enter flex flex-col gap-8">
-      <EditorialPageHead
-        kicker="Your money"
-        title="Where you <em>stand</em>"
-        deck="Your take-home, what's going out, where you net out across every household, and the bills behind it."
-      />
+      {pageHead}
+      <FinanceTabs />
 
       <ExpensesClient
         initialMonths={initialMonths}

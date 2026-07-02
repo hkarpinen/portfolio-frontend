@@ -30,7 +30,7 @@ export function DangerZone({ householdId, householdName, members }: DangerZonePr
 
   return (
     <section
-      className="flex flex-col gap-6 bg-paper p-12 shadow-card"
+      className="flex flex-col gap-6 bg-paper p-12"
       style={{ border: "1px solid var(--danger)" }}
     >
       {/* border uses --danger token, not a static Tailwind color — kept as dynamic style */}

@@ -13,7 +13,7 @@ export default function JoinHouseholdPage() {
       </ArrowLink>
 
       <SectionHeader
-        kicker="Household · Join"
+        kicker="// HOUSEHOLD · JOIN"
         title="Join with an <em>invite code</em>"
         subtitle="Ask a current member to share the household's invite link."
       />

@@ -9,5 +9,5 @@ export default function MathError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  return <ErrorSplash error={error} reset={reset} kicker="Math · Error" />;
+  return <ErrorSplash error={error} reset={reset} kicker="// MATH · ERROR" />;
 }

@@ -1,4 +1,3 @@
-import { LedeStat } from "@/components/editorial";
 import { computeIncomeMonthly } from "./expenses-derivations";
 import {
   monthObligations,
@@ -7,7 +6,7 @@ import {
   sharedBillIds,
 } from "@/lib/contributions";
 import { formatCurrency } from "@/lib/formatting";
-import { pluralize, sumBy } from "@/lib/utils";
+import { pluralize } from "@/lib/utils";
 import type { ContributionPeriod } from "@/types/contributions";
 import type { IncomeSource } from "@/types/income";
 
@@ -16,12 +15,12 @@ import type { IncomeSource } from "@/types/income";
 // rather than re-aliasing.
 
 /**
- * FinancialSummary — top-of-page editorial figure block.
+ * FinancialSummary — top-of-page Terminus `.stats` strip.
  *
- * Renders a hero `<LedeStat>` for "Net this month" (the figure that
- * matters), with supporting metrics threaded through its `aside` so
- * every number has one home, and — conditionally — a `<PullQuote>`
- * callout when the data has something noteworthy to say.
+ * Mirrors the prototype's 4-up `.stats` block on PAGES['/expenses']: Net this
+ * month (green), Expenses, Income (amber), Savings rate (green) — each with a
+ * `.delta` sub-line. Swapped from the prior editorial `<LedeStat>` hero so the
+ * Money home reads as the dark-terminal Finance overview.
  */
 export function FinancialSummary({
   period,
@@ -42,67 +41,58 @@ export function FinancialSummary({
   const income = monthlyGross;
   const netIncome = monthlyNet;
 
-  const sharedBillsDue = current?.totalDue ?? 0;
   const totalOut = monthObligations(current);
   const disposable = netIncome - totalOut;
   const netOver = disposable < 0;
 
   // One-time this month: personal bills without a recurrenceFrequency.
   const oneTimeBills = oneTimePersonalBills(current);
-  const oneTimeTotal = sumBy(oneTimeBills, (b) => b.amount);
 
-  // "Monthly recurring" rolls in the user's share of shared household bills
-  // alongside personal recurring outgoings — the user thinks of their
-  // recurring obligations as one number, regardless of which household
-  // produced them.
+  // Posted-item count across personal recurring, shared splits, and one-time —
+  // backs the "Expenses" stat delta (transaction count).
   const personalRecurringBills = recurringPersonalBills(current);
-  const personalRecurringTotal = sumBy(personalRecurringBills, (b) => b.amount);
-  const monthlyRecurringTotal = personalRecurringTotal + sharedBillsDue;
   const personalRecurringCount = personalRecurringBills.length;
   const sharedBillIdSet = sharedBillIds(current);
+  const postedCount = personalRecurringCount + sharedBillIdSet.size + oneTimeBills.length;
 
-  // Compact breakdown strings rendered next to the aside figures so the
-  // lede block is the single home for these numbers — the duplicate
-  // LedgerStrip below this block was removed to avoid two readings of
-  // the same figures.
-  const recurringSub = current
-    ? `${personalRecurringCount} personal · ${sharedBillIdSet.size} shared`
-    : undefined;
-  const oneTimeSub =
-    oneTimeBills.length > 0
-      ? `${oneTimeBills.length} ${pluralize("expense", oneTimeBills.length)}`
-      : undefined;
+  // Savings rate = disposable ÷ take-home, clamped to [0, …]. Undefined when
+  // there's no income on file (avoid a divide-by-zero "NaN%").
+  const savingsRate = netIncome > 0 ? Math.round((disposable / netIncome) * 100) : null;
 
   return (
-    <div className="flex flex-col gap-8">
-      <LedeStat
-        label={`Net · ${monthName}`}
-        value={formatCurrency(disposable, "USD", { precision: 0, signed: true })}
-        negative={netOver}
-        deck={
-          income > 0
-            ? (() => {
-                const postedCount =
-                  personalRecurringCount + sharedBillIdSet.size + oneTimeBills.length;
-                return `${formatCurrency(income, "USD", { precision: 0 })} in against ${formatCurrency(totalOut, "USD", { precision: 0 })} out across ${postedCount} posted ${pluralize("item", postedCount)}.`;
-              })()
-            : "No income on file — add a source on the Income desk to see this month's read."
-        }
-        aside={[
-          { label: "In · take-home", value: formatCurrency(netIncome, "USD", { precision: 0 }) },
-          { label: "Out · total", value: formatCurrency(totalOut, "USD", { precision: 0 }) },
-          {
-            label: "Recurring",
-            value: formatCurrency(monthlyRecurringTotal, "USD", { precision: 0 }),
-            sub: recurringSub,
-          },
-          {
-            label: "One-time",
-            value: formatCurrency(oneTimeTotal, "USD", { precision: 0 }),
-            sub: oneTimeSub,
-          },
-        ]}
-      />
+    <div className="stats">
+      <div className="stat">
+        <div className="label">Net · {monthName}</div>
+        <div className={`val ${netOver ? "red" : "green"}`}>
+          {formatCurrency(disposable, "USD", { precision: 0, signed: true })}
+        </div>
+        <div className="delta">
+          {income > 0
+            ? `${formatCurrency(income, "USD", { precision: 0 })} in vs ${formatCurrency(totalOut, "USD", { precision: 0 })} out`
+            : "No income on file"}
+        </div>
+      </div>
+      <div className="stat">
+        <div className="label">Expenses</div>
+        <div className="val">{formatCurrency(totalOut, "USD", { precision: 0 })}</div>
+        <div className="delta">
+          {postedCount} {pluralize("item", postedCount)} posted
+        </div>
+      </div>
+      <div className="stat">
+        <div className="label">Income</div>
+        <div className="val amber">{formatCurrency(income, "USD", { precision: 0 })}</div>
+        <div className="delta">
+          {incomeSources.length} {pluralize("source", incomeSources.length)}
+        </div>
+      </div>
+      <div className="stat">
+        <div className="label">Savings rate</div>
+        <div className={`val ${savingsRate !== null && savingsRate >= 0 ? "green" : ""}`}>
+          {savingsRate !== null ? `${savingsRate}%` : "—"}
+        </div>
+        <div className="delta">net ÷ take-home</div>
+      </div>
     </div>
   );
 }

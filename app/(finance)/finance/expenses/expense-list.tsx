@@ -1,6 +1,6 @@
 "use client";
 
-import { EmptyDispatch } from "@/components/editorial";
+import { EmptyState } from "@/components/editorial";
 import { useExpenses } from "@/hooks/use-expenses";
 
 import type { ExpensePage, Expense } from "@/types/expense";
@@ -16,11 +16,13 @@ export function ExpenseList({ initialData }: { initialData: ExpensePage }) {
     <ExpenseTable
       expenses={expenses}
       empty={
-        // One-line dispatch, consistent with the Shared and One-time sections
-        // (the masthead carries the "Add expense" action).
-        <EmptyDispatch>
-          No <em>recurring</em> personal bills yet
-        </EmptyDispatch>
+        // Consistent with the Shared and One-time sections (the masthead
+        // carries the "Add expense" action).
+        <EmptyState
+          kicker="// RECURRING_EMPTY"
+          title="No recurring personal bills yet"
+          body="Bills you owe on a schedule will show up here once you add one."
+        />
       }
     />
   );

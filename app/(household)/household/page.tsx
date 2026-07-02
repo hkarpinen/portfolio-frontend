@@ -1,10 +1,4 @@
-import {
-  Btn,
-  DepartmentHead,
-  EditorialPageHead,
-  EmptyDispatch,
-  Icon,
-} from "@/components/editorial";
+import { Btn, EmptyState, Icon } from "@/components/editorial";
 import Link from "next/link";
 import { getCookieHeader } from "@/lib/server-cookies";
 import { JoinHouseholdButton } from "./join-button";
@@ -14,8 +8,8 @@ import { fetchAllBalancesServer } from "@/lib/api/household-expenses";
 
 import { HouseholdBalanceBadge } from "@/components/finance/household-balance-badge";
 import { householdsHeadline, householdsDeck } from "@/lib/household/editorial-copy";
+import { formatShortDate } from "@/lib/formatting";
 import { pluralize } from "@/lib/utils";
-import s from "./page.module.css";
 
 export const dynamic = "force-dynamic";
 
@@ -40,33 +34,52 @@ export default async function HouseholdsPage() {
         )
       : {};
 
+  const totalMembers = households.reduce((sum, h) => sum + (h.memberCount ?? 1), 0);
+  const currencyCount = new Set(households.map((h) => h.currencyCode)).size;
+
   return (
-    <div className="page-enter flex flex-col gap-8">
-      <EditorialPageHead
-        kicker="Ledger desk"
-        title={householdsHeadline({ count })}
-        deck={householdsDeck({ count })}
-      />
+    <div className="page-enter">
+      {/* .page-head — kicker + headline + Join/New actions (Terminus household list) */}
+      <header className="page-head">
+        <div className="titles">
+          <div className="kicker" style={{ marginBottom: 8 }}>
+            // WORKSPACE · LEDGER
+          </div>
+          {/* headline may carry inline <em>; page-code only, never user input */}
+          <h1 dangerouslySetInnerHTML={{ __html: householdsHeadline({ count }) }} />
+          {count > 0 && <p className="deck">{householdsDeck({ count })}</p>}
+        </div>
+        {count > 0 && (
+          <div className="actions">
+            <JoinHouseholdButton size="sm" />
+            <Btn
+              href="/household/new"
+              variant="primary"
+              size="sm"
+              iconLeft={<Icon name="plus" size={12} strokeWidth={2.5} />}
+            >
+              New
+            </Btn>
+          </div>
+        )}
+      </header>
 
       {count === 0 ? (
-        <div className="flex flex-col items-center gap-6 px-6 py-10 text-center">
-          <span className="flex h-14 w-14 items-center justify-center border-[1.5px] border-ink">
-            <Icon name="household" size={24} strokeWidth={1.5} />
-          </span>
+        <div className="flex flex-col gap-8">
+          <EmptyState
+            glyph={<Icon name="household" size={24} strokeWidth={1.5} />}
+            kicker="// HOUSEHOLDS_EMPTY"
+            title="No households on file <em>yet</em>"
+            body="Households are where shared bills, calendars, and chores live. Spin one up, or join an existing one with an invite code."
+            cta={{ label: "$ new-household →", href: "/household/new" }}
+          />
           <div className="flex flex-wrap items-center justify-center gap-3">
-            <Btn href="/household/new" variant="primary" size="lg">
-              + New household
-            </Btn>
             <JoinHouseholdButton size="lg" />
           </div>
 
-          <div className="mt-8 w-full max-w-[760px] text-left">
-            <DepartmentHead
-              kicker="Get oriented"
-              title="Or <em>poke around</em> first"
-              deck="Three small surfaces to read while you decide whether to spin one up."
-            />
-            <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <section className="flex flex-col gap-5">
+            <p className="ed-kicker">// GET_ORIENTED</p>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               {ORIENT.map((o) => (
                 <Link
                   key={o.href}
@@ -81,73 +94,83 @@ export default async function HouseholdsPage() {
                 </Link>
               ))}
             </div>
-          </div>
+          </section>
         </div>
       ) : (
         <>
-          <div className="-mt-2 flex justify-end gap-3">
-            <Btn href="/household/new" variant="primary" size="sm">
-              + New household
-            </Btn>
-            <JoinHouseholdButton size="sm" />
+          {/* .stats — 4-up strip. Prototype's open-splits/last-settled/active-chores
+              figures aren't available at the list level (they're per-household), so
+              this wires the real cross-household figures the loader does have. */}
+          <div className="stats">
+            <div className="stat">
+              <div className="label">Total households</div>
+              <div className="val">{count}</div>
+              <div className="delta">{pluralize("workspace", count)}</div>
+            </div>
+            <div className="stat">
+              <div className="label">Members</div>
+              <div className="val">{totalMembers}</div>
+              <div className="delta">across all</div>
+            </div>
+            <div className="stat">
+              <div className="label">Currencies</div>
+              <div className="val">{currencyCount}</div>
+              <div className="delta">in use</div>
+            </div>
+            <div className="stat">
+              <div className="label">Your role</div>
+              <div className="val">{households[0]?.role ?? "Member"}</div>
+              <div className="delta">primary</div>
+            </div>
           </div>
 
-          <section className="flex flex-col gap-5">
-            <DepartmentHead
-              kicker="On file"
-              count={`${count} ${pluralize("household", count)}`}
-              title="Your <em>ledger</em>"
-              deck="Each tile opens the household's expenses, contributions, calendar, and chores."
-            />
-            <div
-              className={`${s.grid} grid gap-4`}
-              style={{ gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))" }}
-            >
-              {households.map((h) => {
-                const memberCount = h.memberCount ?? 1;
-                const memberLabel = `${memberCount} ${pluralize("member", memberCount)}`;
-                return (
-                  <Link
-                    key={h.id}
-                    href={`/household/${h.id}`}
-                    className="ed-module"
-                    aria-label={`Open ${h.name} — ${memberLabel}, ${h.currencyCode}`}
-                  >
-                    <span className="ed-module-kicker" aria-hidden>
-                      Household
-                    </span>
-                    <h3 className="ed-module-title">{h.name}</h3>
-                    {h.description && <p className="ed-module-desc">{h.description}</p>}
-                    <p className="ed-module-meta">
-                      {memberLabel} · {h.currencyCode}
-                    </p>
-                    <div className="ed-module-foot">
-                      <HouseholdBalanceBadge
-                        householdId={h.id}
-                        variant="card"
-                        initialData={balancesById[h.id] ?? null}
-                      />
-                      <span className="ed-module-arrow inline-flex items-center gap-1" aria-hidden>
-                        Open <Icon name="arrowRight" size={13} strokeWidth={2} />
-                      </span>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          </section>
-
-          {/* TODO(handoff8): wire to activity API — fetch /api/households/activity */}
-          <section className="flex flex-col gap-5">
-            <DepartmentHead
-              kicker="Activity"
-              title="Recent <em>activity</em>"
-              deck="Posts, splits, settlements, and chore completions across your households."
-            />
-            <EmptyDispatch>
-              No recent activity <em>filed</em> yet
-            </EmptyDispatch>
-          </section>
+          {/* .table-wrap > .table — clickable rows to detail, .row-title titles,
+              balance via real <HouseholdBalanceBadge>, .right.muted "when" column. */}
+          <div className="table-wrap" style={{ marginTop: 18 }}>
+            <table className="table" aria-label="Your households">
+              <thead>
+                <tr>
+                  <th>Household</th>
+                  <th>Members</th>
+                  <th>Balance</th>
+                  <th>Currency</th>
+                  <th className="right">Joined</th>
+                </tr>
+              </thead>
+              <tbody>
+                {households.map((h) => {
+                  const memberCount = h.memberCount ?? 1;
+                  const memberLabel = `${memberCount} ${pluralize("member", memberCount)}`;
+                  return (
+                    <tr key={h.id}>
+                      <td>
+                        <Link
+                          href={`/household/${h.id}`}
+                          className="row-title no-underline"
+                          aria-label={`Open ${h.name} — ${memberLabel}, ${h.currencyCode}`}
+                        >
+                          {h.name}
+                        </Link>
+                        {h.description && (
+                          <p className="ed-hint mt-0.5 max-w-[40ch] truncate">{h.description}</p>
+                        )}
+                      </td>
+                      <td className="muted">{memberLabel}</td>
+                      <td>
+                        <HouseholdBalanceBadge
+                          householdId={h.id}
+                          variant="card"
+                          initialData={balancesById[h.id] ?? null}
+                        />
+                      </td>
+                      <td className="muted">{h.currencyCode}</td>
+                      <td className="right muted">{formatShortDate(h.joinedAt)}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </>
       )}
     </div>

@@ -38,7 +38,7 @@ export function JoinHouseholdForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
+    <form onSubmit={handleSubmit(onSubmit)} className="form">
       {joinHousehold.isError && (
         <Alert variant="danger">
           {getErrorMessage(
@@ -58,7 +58,7 @@ export function JoinHouseholdForm() {
         {...register("invitationCode")}
       />
 
-      <div className="flex gap-3">
+      <div className="form-actions">
         <Btn
           type="submit"
           disabled={joinHousehold.isPending}

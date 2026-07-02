@@ -17,20 +17,29 @@ interface CategoryTabsProps {
   onSelect: (cat: string) => void;
 }
 
+/**
+ * Ported prototype `.tabs` strip. Tabs stay stateful category buttons
+ * (driving `useConverter`); `.tabs button` + `.tabs button[aria-selected]`
+ * in globals.css supply the prototype styling and active amber underline.
+ */
 export function CategoryTabs({ sorted, activeCategory, onSelect }: CategoryTabsProps) {
   return (
-    <div role="tablist" aria-label="Conversion category" className="ed-utility-tabs">
-      {sorted.map((cat) => (
-        <button
-          key={cat.category}
-          role="tab"
-          aria-selected={activeCategory === cat.category}
-          onClick={() => onSelect(cat.category)}
-          className="ed-utility-tab"
-        >
-          {categoryLabel(cat.category)}
-        </button>
-      ))}
-    </div>
+    <nav className="tabs" role="tablist" aria-label="Conversion category">
+      {sorted.map((cat) => {
+        const active = activeCategory === cat.category;
+        return (
+          <button
+            key={cat.category}
+            type="button"
+            role="tab"
+            aria-selected={active}
+            aria-current={active ? "page" : undefined}
+            onClick={() => onSelect(cat.category)}
+          >
+            {categoryLabel(cat.category)}
+          </button>
+        );
+      })}
+    </nav>
   );
 }

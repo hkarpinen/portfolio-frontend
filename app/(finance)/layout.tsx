@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { AppShellServer } from "@/components/layout/app-shell-server";
 import { requireUser } from "@/lib/auth/session";
 import { RepoFooter } from "@/components/layout/repo-footer";
-import { FinanceMasthead } from "./finance-masthead";
 
 /** Authenticated app — contains user financial data. Never indexed. */
 export const metadata: Metadata = {
@@ -12,15 +11,13 @@ export const metadata: Metadata = {
 /**
  * Finance route group layout.
  *
- * Renders the editorial <FinanceMasthead /> into <AppShellServer>'s
- * `topBand` slot so its rule pair spans the full scroll-area width (same
- * pattern as the breadcrumb band). Pages inside this group render only
- * their editorial page head + content — no masthead per page.
+ * No masthead band — each finance page renders the prototype flow itself:
+ * `.page-head` → `<FinanceTabs />` (`.tabs` strip) → content.
  */
 export default async function FinanceLayout({ children }: { children: React.ReactNode }) {
   await requireUser();
   return (
-    <AppShellServer topBand={<FinanceMasthead />}>
+    <AppShellServer>
       {children}
       <RepoFooter repo="portfolio-finance" label="portfolio-finance" />
     </AppShellServer>

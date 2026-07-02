@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLink, Btn, DepartmentHead, LedeStat } from "@/components/editorial";
+import { ArrowLink, Btn, LedeStat } from "@/components/editorial";
 import { AccountActivity } from "@/components/finance/account-activity";
 import { useMemo, type ReactNode } from "react";
 import { useGroupLedger, useAccountStatement } from "@/hooks/use-ledger";
@@ -93,8 +93,8 @@ export function HouseholdMoneySummary({
       {/* Settle up — your actions */}
       {(iOwe.length > 0 || owedToMe.length > 0) && (
         <section className="flex flex-col gap-5">
-          <DepartmentHead kicker="Settle up" title="Square <em>up</em>" />
-          <div className="border-ink bg-paper">
+          <p className="ed-kicker">// SETTLE_UP</p>
+          <div className="border border-border bg-paper">
             {iOwe.map((t, i) => (
               <SettleRow
                 key={`owe-${i}`}
@@ -132,7 +132,7 @@ export function HouseholdMoneySummary({
       {/* Your activity — the caller's Member account, periodized */}
       {statement && (
         <section className="flex flex-col gap-5">
-          <DepartmentHead kicker="Your activity" title="What you owed &amp; <em>paid</em>" />
+          <p className="ed-kicker">// YOUR_ACTIVITY</p>
           <AccountActivity statement={statement} isMember />
         </section>
       )}
@@ -171,7 +171,7 @@ function SettleRow({
 }) {
   return (
     <div className="flex items-center justify-between gap-4 border-b border-rule-soft px-5 py-4 last:border-b-0">
-      <span className="font-serif text-base italic text-ink">{label}</span>
+      <span className="font-mono text-sm font-semibold text-ink">{label}</span>
       <div className="flex items-center gap-4">
         <span
           className={`whitespace-nowrap font-mono text-sm tabular-nums ${tone === "pos" ? "text-green" : "text-ink"}`}

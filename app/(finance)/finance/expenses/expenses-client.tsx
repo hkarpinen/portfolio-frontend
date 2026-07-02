@@ -1,6 +1,7 @@
 "use client";
 
-import { DepartmentHead, EmptyDispatch, Icon, Ticker } from "@/components/editorial";
+import { Icon } from "@/components/editorial";
+import { SectionHead } from "../../section-head";
 import { useId, useState, type ReactNode } from "react";
 import { useOverview } from "@/hooks/use-household";
 import { useIncome } from "@/hooks/use-income";
@@ -9,12 +10,12 @@ import { ExpenseList } from "./expense-list";
 import { FinancialSummary } from "./financial-summary";
 import { PersonalOneTimeList } from "./personal-one-time-list";
 import { SharedSplitsTable, groupSharedSplitsByBill } from "./shared-splits-table";
-import { buildUpcomingFromPeriod } from "./expenses-derivations";
+import { buildRecentExpenses, spendByCategory } from "./expenses-derivations";
 
-import { buildExpensesTicker } from "@/lib/finance/editorial-copy";
 import { findCurrentPeriod, recurringPersonalBills } from "@/lib/contributions";
-import { formatCurrency } from "@/lib/formatting";
-import { pluralize, sumBy } from "@/lib/utils";
+import { categoryIcon } from "@/lib/expense-category";
+import { formatCurrency, formatShortDate } from "@/lib/formatting";
+import { pluralize, sumBy, toMonthlyAmount } from "@/lib/utils";
 import type { Expense, ExpensePage } from "@/types/expense";
 import type { ContributionPeriod } from "@/types/contributions";
 import type { IncomeSource } from "@/types/income";
@@ -70,6 +71,11 @@ export function ExpensesClient({
   const personalRecurringBills = recurringPersonalBills(selectedPeriod);
   const sharedSplitGroups = groupSharedSplitsByBill(selectedPeriod?.contributions ?? []);
 
+  // Prototype overview blocks (`.grid-2`): the RECENT_EXPENSES `.tx-row` stack
+  // and the BUDGET_OVERVIEW bars are both derived from the selected period.
+  const recentExpenses = buildRecentExpenses(selectedPeriod);
+  const budgetCategories = spendByCategory(selectedPeriod);
+
   // One-time slice comes from the full personal-expenses list (not the period
   // projection) because the row component needs the full `Expense` shape for
   // its inline edit form. Filter to the selected period so the dept-head count
@@ -80,15 +86,7 @@ export function ExpensesClient({
     (e) => !e.recurrenceFrequency && e.dueDate.slice(0, 7) === personalMonthKey,
   );
 
-  // Ticker = the page's "coming up" strip (upcoming bills only). The money
-  // figures live in the FinancialSummary lede below, so the ticker doesn't
-  // restate them — it adds what the lede doesn't show: what's due, and when.
-  const tickerItems = buildExpensesTicker({
-    upcoming: buildUpcomingFromPeriod(selectedPeriod),
-    monthName: selectedMonthName,
-  });
-
-  // Department head counts/totals for each section header.
+  // Section head counts/totals for each section header.
   const personalRecurringCount = personalRecurringBills.length;
   const personalRecurringTotal = sumBy(personalRecurringBills, (b) => b.amount);
   const sharedTotal = sumBy(sharedSplitGroups, (g) => g.monthlyAmount);
@@ -99,7 +97,7 @@ export function ExpensesClient({
     <div className="flex flex-col gap-10">
       {months.length > 1 && (
         <div className="flex items-center justify-end gap-2">
-          <label htmlFor="money-period" className="ed-label-muted">
+          <label htmlFor="money-period" className="label">
             Viewing
           </label>
           <select
@@ -117,8 +115,7 @@ export function ExpensesClient({
         </div>
       )}
 
-      <Ticker items={tickerItems} ariaLabel="Upcoming bills" />
-
+      {/* Stats strip — prototype `.stats` 4-up (Net / Expenses / Income / Savings rate). */}
       <FinancialSummary
         period={selectedPeriod}
         incomeSources={incomeSources}
@@ -127,10 +124,121 @@ export function ExpensesClient({
 
       {afterSummary}
 
+      {/* Prototype `.grid-2`: RECENT_EXPENSES tx-rows (left) · income cards + budget bars (right). */}
+      <div className="grid-2" style={{ gap: "16px" }}>
+        <div>
+          <div className="section-h">
+            <h2>// RECENT_EXPENSES</h2>
+          </div>
+          {recentExpenses.length > 0 ? (
+            <div className="stack">
+              {recentExpenses.map((tx) => (
+                <div key={tx.key} className="tx-row">
+                  <div className="tx-icon">
+                    <Icon name={categoryIcon(tx.category)} size={15} strokeWidth={1.75} />
+                  </div>
+                  <div className="tx-body">
+                    <div className="tx-name">{tx.name}</div>
+                    <div className="tx-sub">
+                      {(tx.category || "Other") + " · " + formatShortDate(tx.dueDate)}
+                    </div>
+                  </div>
+                  <div className="tx-amount debit">
+                    −{formatCurrency(tx.amount, tx.currency, { precision: 2 })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="label" style={{ color: "var(--text-3)" }}>
+              No outgoings posted this month.
+            </p>
+          )}
+        </div>
+
+        <div>
+          <div className="section-h">
+            <h2>// INCOME_SOURCES</h2>
+          </div>
+          {incomeSources.length > 0 ? (
+            incomeSources.slice(0, 3).map((src) => (
+              <div key={src.incomeId} className="card" style={{ marginBottom: "10px" }}>
+                <div className="label">{src.source}</div>
+                <div
+                  style={{
+                    font: "700 1.375rem/1 var(--ff-mono)",
+                    color: "var(--green)",
+                    margin: "8px 0",
+                  }}
+                >
+                  {formatCurrency(toMonthlyAmount(src.amount, src.quotedAs), src.currency ?? "USD", {
+                    precision: 0,
+                  })}
+                  <span
+                    style={{
+                      fontSize: "0.78rem",
+                      color: "var(--text-4)",
+                      fontWeight: 500,
+                    }}
+                  >
+                    /mo
+                  </span>
+                </div>
+                <div className="label">
+                  {(src.paidEvery ?? "Biweekly") + " · paid " + (src.paidEvery ?? "biweekly")}
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="label" style={{ color: "var(--text-3)", marginBottom: "18px" }}>
+              No income sources on file.
+            </p>
+          )}
+
+          {/* BUDGET_OVERVIEW — no budget-target model exists yet, so these bars
+              show real per-category spend as a share of the heaviest category
+              (share-of-peak, not share-of-budget). Data gap noted in code. */}
+          <div className="section-h" style={{ marginTop: "8px" }}>
+            <h2>// SPEND_BY_CATEGORY</h2>
+          </div>
+          {budgetCategories.length > 0 ? (
+            budgetCategories.map((cat) => (
+              <div key={cat.category} style={{ marginBottom: "12px" }}>
+                <div
+                  className="row"
+                  style={{ justifyContent: "space-between", marginBottom: "5px" }}
+                >
+                  <span style={{ font: "500 0.75rem/1 var(--ff-mono)", color: "var(--text)" }}>
+                    {cat.category}
+                  </span>
+                  <span style={{ font: "400 0.68rem/1 var(--ff-mono)", color: "var(--text-4)" }}>
+                    {formatCurrency(cat.spent, "USD", { precision: 0 })}
+                  </span>
+                </div>
+                <div
+                  style={{
+                    height: "4px",
+                    background: "var(--raised)",
+                    border: "1px solid var(--border)",
+                  }}
+                >
+                  {/* dynamic fill — share of the heaviest category */}
+                  <div style={{ width: `${cat.pct}%`, height: "100%", background: "var(--amber)" }} />
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="label" style={{ color: "var(--text-3)" }}>
+              No categorized spend this month.
+            </p>
+          )}
+        </div>
+      </div>
+
       <CollapsibleSection
         head={
-          <DepartmentHead
-            kicker="Recurring · Personal"
+          <SectionHead
+            kicker="RECURRING · PERSONAL"
             count={`${personalRecurringCount} ${pluralize("bill", personalRecurringCount)} · ${formatCurrency(personalRecurringTotal, "USD", { precision: 0 })}/mo`}
             title="Personal <em>recurring</em>"
             deck="Bills you owe on a schedule. Edit cadence and category from the row."
@@ -142,8 +250,8 @@ export function ExpensesClient({
 
       <CollapsibleSection
         head={
-          <DepartmentHead
-            kicker="Shared · Households"
+          <SectionHead
+            kicker="SHARED · HOUSEHOLDS"
             count={`${sharedSplitGroups.length} ${pluralize("bill", sharedSplitGroups.length)} · ${formatCurrency(sharedTotal, "USD", { precision: 0 })}/mo`}
             title="Shared <em>household splits</em>"
             deck="Your share of recurring bills across every household you contribute to."
@@ -153,16 +261,16 @@ export function ExpensesClient({
         {sharedSplitGroups.length > 0 ? (
           <SharedSplitsTable groups={sharedSplitGroups} householdNamesById={householdNamesById} />
         ) : (
-          <EmptyDispatch>
-            No shared household bills <em>due</em> this month
-          </EmptyDispatch>
+          <p className="label" style={{ color: "var(--text-3)" }}>
+            No shared household bills due this month.
+          </p>
         )}
       </CollapsibleSection>
 
       <CollapsibleSection
         head={
-          <DepartmentHead
-            kicker={`One-time · ${selectedMonthName}`}
+          <SectionHead
+            kicker={`ONE-TIME · ${selectedMonthName.toUpperCase()}`}
             count={
               oneTimeCount > 0
                 ? `${oneTimeCount} ${pluralize("expense", oneTimeCount)} · ${formatCurrency(oneTimeTotal, "USD", { precision: 0 })}`
@@ -179,8 +287,8 @@ export function ExpensesClient({
   );
 }
 
-/** A bill section whose body collapses under its DepartmentHead. Default open;
- *  a discreet Hide/Show toggle keeps the editorial header intact (rather than
+/** A bill section whose body collapses under its SectionHead. Default open;
+ *  a discreet Hide/Show toggle keeps the section header intact (rather than
  *  swapping it for a plainer accordion trigger). */
 function CollapsibleSection({ head, children }: { head: ReactNode; children: ReactNode }) {
   const [open, setOpen] = useState(true);
@@ -194,7 +302,7 @@ function CollapsibleSection({ head, children }: { head: ReactNode; children: Rea
           onClick={() => setOpen((o) => !o)}
           aria-expanded={open}
           aria-controls={contentId}
-          className="ed-label-muted inline-flex items-center gap-1 hover:text-red"
+          className="label inline-flex items-center gap-1 hover:text-red"
         >
           {open ? "Hide" : "Show"}
           <Icon name={open ? "chevDown" : "chevRight"} size={12} strokeWidth={2} />

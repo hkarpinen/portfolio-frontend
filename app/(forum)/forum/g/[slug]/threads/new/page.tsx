@@ -1,15 +1,6 @@
 "use client";
 
-import {
-  Alert,
-  ArrowLink,
-  Btn,
-  Icon,
-  Input,
-  SectionHeader,
-  SelectField,
-  Textarea,
-} from "@/components/editorial";
+import { Alert, Icon } from "@/components/editorial";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -96,28 +87,41 @@ export default function NewThreadPage({ params }: { params: { slug: string } }) 
     //                 so drafts persist across devices and sessions.
   }
 
+  // Back link + page head shared by demo and live forms.
+  const Head = (
+    <>
+      <Link
+        href={`/forum/g/${params.slug}`}
+        className="back inline-flex items-center gap-2 no-underline"
+      >
+        <Icon name="arrowLeft" size={12} strokeWidth={2} aria-hidden /> g/{params.slug}
+      </Link>
+      <header className="page-head">
+        <div className="titles">
+          <div className="kicker" style={{ marginBottom: 8 }}>
+            // FORUM · NEW
+          </div>
+          <h1>New thread</h1>
+        </div>
+      </header>
+    </>
+  );
+
   if (isDemo) {
     return (
-      <div className="page-enter flex max-w-[680px] flex-col gap-8">
-        <ArrowLink
-          href={`/forum/g/${params.slug}`}
-          direction="left"
-          className="ed-label-muted"
-        >
-          g/{params.slug}
-        </ArrowLink>
-        <SectionHeader kicker="New thread" title="Start a <em>thread</em>" />
-        <div className="ed-card flex flex-col items-start gap-4">
-          <p className="ed-deck">
+      <div className="page-enter">
+        {Head}
+        <div className="card flex flex-col items-start gap-4">
+          <p className="deck">
             Posting threads isn&apos;t available in the demo.{" "}
-            <Link href="/identity/register" className="font-semibold text-red">
+            <Link href="/identity/register" className="font-semibold text-accent no-underline">
               Create a free account
             </Link>{" "}
             to join the conversation.
           </p>
-          <Btn type="button" variant="secondary" size="lg" onClick={() => router.back()}>
+          <button type="button" className="btn" onClick={() => router.back()}>
             Go back
-          </Btn>
+          </button>
         </div>
       </div>
     );
@@ -145,18 +149,10 @@ export default function NewThreadPage({ params }: { params: { slug: string } }) 
   }
 
   return (
-    <div className="page-enter flex max-w-[680px] flex-col gap-8">
-      <ArrowLink href={`/forum/g/${params.slug}`} direction="left" className="ed-label-muted">
-        g/{params.slug}
-      </ArrowLink>
+    <div className="page-enter">
+      {Head}
 
-      <SectionHeader
-        kicker="New thread"
-        title="Start a <em>thread</em>"
-        subtitle={`Posting to g/${params.slug}. Read the rules first — they're in the sidebar.`}
-      />
-
-      <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+      <form className="form wide" onSubmit={handleSubmit}>
         {createThread.isError && (
           <Alert variant="danger">
             {getErrorMessage(createThread.error, "An unexpected error occurred.")}
@@ -165,108 +161,132 @@ export default function NewThreadPage({ params }: { params: { slug: string } }) 
 
         {draftSaved && <Alert variant="success">Draft saved to this browser.</Alert>}
 
-        <SelectField
-          label="Community"
-          value={communitySlug}
-          onChange={(e) => setCommunitySlug(e.target.value)}
-          required
-        >
-          {communities.length === 0 && <option value={params.slug}>{params.slug}</option>}
-          {communities.map((c) => (
-            <option key={c.communityId} value={c.slug}>
-              {c.name}
-            </option>
-          ))}
-        </SelectField>
+        <div className="field">
+          <label htmlFor="thread-community">Community</label>
+          <select
+            id="thread-community"
+            value={communitySlug}
+            onChange={(e) => setCommunitySlug(e.target.value)}
+            required
+          >
+            {communities.length === 0 && <option value={params.slug}>{params.slug}</option>}
+            {communities.map((c) => (
+              <option key={c.communityId} value={c.slug}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+        </div>
 
-        <Input
-          label="Title"
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
-          maxLength={TITLE_MAX}
-          placeholder="Short and clear. Questions get more replies."
-          hint={`${title.length} / ${TITLE_MAX} characters`}
-        />
+        <div className="field">
+          <label htmlFor="thread-title">Title</label>
+          <input
+            id="thread-title"
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            required
+            maxLength={TITLE_MAX}
+            placeholder="What's your question or topic?"
+          />
+          <span className="hint">
+            {title.length} / {TITLE_MAX} characters
+          </span>
+        </div>
 
-        <Textarea
-          label="Body"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          maxLength={10000}
-          placeholder="Supports markdown."
-          rows={8}
-          hint="Optional · supports markdown."
-        />
+        <div className="field">
+          <label htmlFor="thread-body">Body</label>
+          <textarea
+            id="thread-body"
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            maxLength={10000}
+            rows={12}
+            placeholder="Markdown is supported…"
+          />
+          <span className="hint">Optional · supports markdown.</span>
+        </div>
 
-        <Input
-          label="Tags"
-          type="text"
-          value={tags}
-          onChange={(e) => setTags(e.target.value)}
-          placeholder="e.g. question, help, cedar-place"
-          hint="Comma-separated. Helps readers discover your post."
-          // TODO(handoff8): wire tags to backend — no tags field on ThreadRequest yet.
-          //                 Currently stored locally and visible in the UI only.
-        />
+        <div className="field">
+          <label htmlFor="thread-tags">Tags</label>
+          <input
+            id="thread-tags"
+            type="text"
+            value={tags}
+            onChange={(e) => setTags(e.target.value)}
+            placeholder="e.g. question, help, cedar-place"
+          />
+          {/* TODO(handoff8): wire tags to backend — no tags field on ThreadRequest yet.
+              Currently stored locally and visible in the UI only. */}
+          <span className="hint">Comma-separated. Helps readers discover your post.</span>
+        </div>
 
         {/* MARK AS DISCUSSION checkbox */}
-        <label className="group flex cursor-pointer select-none items-center gap-3">
+        <label className="row" style={{ gap: 10, cursor: "pointer" }}>
           <input
             type="checkbox"
             checked={isDiscussion}
             onChange={(e) => setIsDiscussion(e.target.checked)}
-            className="h-9 w-9 cursor-pointer accent-[var(--red)]"
+            style={{ width: 16, height: 16, accentColor: "var(--amber)", cursor: "pointer" }}
           />
-          <span className="text-base font-semibold text-ink transition-colors group-hover:text-red">
+          <span style={{ font: "600 0.72rem/1 var(--ff-mono)", color: "var(--text)" }}>
             Mark as discussion
           </span>
-          <span className="text-sm text-ink-3">— sets flair to &ldquo;Discussion&rdquo;</span>
+          <span className="hint">— sets flair to &ldquo;Discussion&rdquo;</span>
         </label>
 
         {/* FLAIR — kept alongside TAGS for backwards compatibility.
-            Flair is enum-constrained; tags are free-form.
-            Hidden behind a details element to reduce visual noise for most users. */}
+            Flair is enum-constrained; tags are free-form. */}
         <details className="group">
-          <summary className="flex cursor-pointer list-none items-center gap-2 text-sm font-semibold uppercase tracking-[0.08em] text-ink-3 transition-colors hover:text-ink">
+          <summary
+            className="row"
+            style={{
+              cursor: "pointer",
+              listStyle: "none",
+              font: "600 0.62rem/1 var(--ff-mono)",
+              textTransform: "uppercase",
+              letterSpacing: "0.14em",
+              color: "var(--text-3)",
+              gap: 6,
+            }}
+          >
             <span aria-hidden="true" className="transition-transform group-open:rotate-90">
               <Icon name="chevRight" size={10} strokeWidth={2.5} />
             </span>
             Advanced — flair
           </summary>
-          <div className="mt-4">
-            <SelectField
-              label="Flair"
+          <div className="field" style={{ marginTop: 14 }}>
+            <label htmlFor="thread-flair">Flair</label>
+            <select
+              id="thread-flair"
               value={flair}
               onChange={(e) => setFlair(e.target.value)}
-              hint="Overridden by 'Mark as discussion' when checked."
             >
               {FLAIR_OPTIONS.map((f) => (
                 <option key={f} value={f}>
                   {f}
                 </option>
               ))}
-            </SelectField>
+            </select>
+            <span className="hint">Overridden by &lsquo;Mark as discussion&rsquo; when checked.</span>
           </div>
         </details>
 
-        <div className="flex flex-wrap gap-3">
-          <Btn
+        <div className="form-actions">
+          <button
             type="submit"
-            variant="primary"
-            size="lg"
+            className="btn btn-primary btn-lg"
             disabled={createThread.isPending}
-            iconRight={<Icon name="arrowRight" size={16} />}
           >
-            {createThread.isPending ? "Posting…" : "Post thread"}
-          </Btn>
-          <Btn type="button" variant="secondary" size="lg" onClick={handleSaveDraft}>
+            {createThread.isPending ? "Posting…" : "$ post-thread"}{" "}
+            <Icon name="arrowRight" size={14} strokeWidth={2} aria-hidden />
+          </button>
+          <button type="button" className="btn btn-lg" onClick={handleSaveDraft}>
             Save draft
-          </Btn>
-          <Btn type="button" variant="ghost" size="lg" onClick={() => router.back()}>
+          </button>
+          <button type="button" className="btn btn-ghost btn-lg" onClick={() => router.back()}>
             Cancel
-          </Btn>
+          </button>
         </div>
       </form>
     </div>

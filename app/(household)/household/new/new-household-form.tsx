@@ -88,7 +88,7 @@ export function NewHouseholdForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
+    <form onSubmit={handleSubmit(onSubmit)} className="form wide">
       {createHousehold.isError && (
         <Alert variant="danger">{getErrorMessage(createHousehold.error)}</Alert>
       )}
@@ -108,7 +108,7 @@ export function NewHouseholdForm() {
         {...register("description")}
       />
 
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+      <div className="field-row">
         <SelectField label="Currency" {...register("currencyCode")}>
           {CURRENCIES.map((c) => (
             <option key={c} value={c}>
@@ -125,7 +125,7 @@ export function NewHouseholdForm() {
         </SelectField>
       </div>
 
-      <div className="flex gap-3">
+      <div className="form-actions">
         <Btn
           type="submit"
           disabled={isSubmitting || createHousehold.isPending}

@@ -1,12 +1,7 @@
 "use client";
 
-import {
-  Btn,
-  DepartmentHead,
-  EditorialPageHead,
-  EmptyDispatch,
-  Icon,
-} from "@/components/editorial";
+import { Btn, EmptyState, Icon, SectionHeader } from "@/components/editorial";
+import { HouseholdTabs } from "../household-tabs";
 import Link from "next/link";
 import { useState, useMemo } from "react";
 import { useCalendarEvents, useDeleteCalendarEvent } from "@/hooks/use-calendar";
@@ -14,7 +9,7 @@ import { useCalendarEvents, useDeleteCalendarEvent } from "@/hooks/use-calendar"
 import { CalendarGrid } from "./calendar-grid";
 import { eventCalendarDate } from "./date-helpers";
 import { calendarHeadline } from "@/lib/household/editorial-copy";
-import { MONTH_NAMES, pluralize } from "@/lib/utils";
+import { MONTH_NAMES } from "@/lib/utils";
 
 export default function CalendarPage({ params }: { params: { id: string } }) {
   const { id: householdId } = params;
@@ -60,51 +55,75 @@ export default function CalendarPage({ params }: { params: { id: string } }) {
   const headline = calendarHeadline({ count: events.length, monthName });
 
   return (
-    <div className="page-enter flex flex-col gap-6">
-      <EditorialPageHead
-        kicker={`${monthName} ${year}`}
+    <div className="page-enter">
+      <SectionHeader
+        kicker={`// ${monthName.toUpperCase()}_${year}`}
         title={headline}
-        deck="Birthdays, bills, deadlines, gatherings — anything the household needs to put on a date."
+        subtitle="Birthdays, bills, deadlines, gatherings — anything the household needs to put on a date."
       />
 
-      <div className="-mt-2 flex items-center justify-end gap-2">
-        <Btn variant="secondary" size="sm" onClick={prevMonth} aria-label="Previous month">
-          <Icon name="arrowLeft" size={14} strokeWidth={2} />
-        </Btn>
-        <Btn variant="secondary" size="sm" onClick={goToday}>
-          Today
-        </Btn>
-        <Btn variant="secondary" size="sm" onClick={nextMonth} aria-label="Next month">
-          <Icon name="arrowRight" size={14} strokeWidth={2} />
-        </Btn>
+      <HouseholdTabs />
+
+      {/* .card — month nav header (label + ← Today →) wrapping the month grid */}
+      <div className="card" style={{ marginTop: 16, marginBottom: 16 }}>
+        <div className="row" style={{ justifyContent: "space-between", marginBottom: 16 }}>
+          <h2 style={{ fontSize: "0.95rem" }}>
+            {monthName} {year}
+          </h2>
+          <div className="row" style={{ gap: 6 }}>
+            <Btn variant="secondary" size="sm" onClick={prevMonth} aria-label="Previous month">
+              <Icon name="arrowLeft" size={14} strokeWidth={2} />
+            </Btn>
+            <Btn variant="secondary" size="sm" onClick={goToday}>
+              Today
+            </Btn>
+            <Btn variant="secondary" size="sm" onClick={nextMonth} aria-label="Next month">
+              <Icon name="arrowRight" size={14} strokeWidth={2} />
+            </Btn>
+          </div>
+        </div>
+
+        {/* Calendar grid */}
+        {eventsQuery.isLoading ? (
+          <p className="ed-label-muted py-12 text-center">Loading…</p>
+        ) : (
+          <CalendarGrid
+            year={year}
+            month={month}
+            events={events}
+            onDelete={(id) => deleteEvent.mutate(id)}
+            deleting={deleteEvent.isPending}
+          />
+        )}
       </div>
 
-      {/* Calendar grid */}
-      {eventsQuery.isLoading ? (
-        <p className="ed-label-muted py-12 text-center">Loading…</p>
-      ) : (
-        <CalendarGrid
-          year={year}
-          month={month}
-          events={events}
-          onDelete={(id) => deleteEvent.mutate(id)}
-          deleting={deleteEvent.isPending}
-        />
-      )}
+      {/* .section-h — // UPCOMING + Add event */}
+      <div className="section-h">
+        <h2>// UPCOMING</h2>
+        <div className="actions">
+          <Btn
+            href={`/household/${householdId}/calendar/new`}
+            variant="primary"
+            size="sm"
+            iconLeft={<Icon name="plus" size={12} strokeWidth={2.5} />}
+          >
+            Add event
+          </Btn>
+        </div>
+      </div>
 
-      {/* Events list */}
+      {/* Events list — Terminus date / event / who stack rows */}
       <section className="flex flex-col gap-4">
-        <DepartmentHead
-          kicker={`${monthName} · Events`}
-          count={`${events.length} ${pluralize("event", events.length)}`}
-          title="Posted <em>this month</em>"
-        />
         {events.length === 0 ? (
-          <EmptyDispatch>
-            No events <em>filed</em> for {monthName}
-          </EmptyDispatch>
+          <EmptyState
+            glyph={<Icon name="calendar" size={24} strokeWidth={1.5} />}
+            kicker="// EVENTS_EMPTY"
+            title={`No events filed for <em>${monthName}</em>`}
+            body="Add an event and it will show up here and on the grid above."
+            cta={{ label: "$ add-event →", href: `/household/${householdId}/calendar/new` }}
+          />
         ) : (
-          <ol className="flex flex-col">
+          <ol className="stack">
             {events
               .slice()
               .sort(
@@ -114,40 +133,49 @@ export default function CalendarPage({ params }: { params: { id: string } }) {
                 // All-day events read in UTC so the date doesn't slide
                 // backwards in west-of-UTC viewer timezones.
                 const date = eventCalendarDate(ev).toLocaleDateString("en-US", {
-                  weekday: "short",
                   month: "short",
                   day: "numeric",
                 });
                 const time = !ev.allDay
-                  ? " · " +
-                    new Date(ev.startsAt).toLocaleTimeString("en-US", {
+                  ? new Date(ev.startsAt).toLocaleTimeString("en-US", {
                       hour: "numeric",
                       minute: "2-digit",
                     })
-                  : "";
+                  : "All day";
                 const isBill = ev.kind === "FinanceBill";
                 return (
                   <li
                     key={ev.id}
-                    className="flex items-center justify-between gap-6 border-b border-rule-soft py-3 last:border-b-0"
+                    className="flex items-center gap-4 border-b border-border py-3 last:border-b-0"
                   >
-                    <div className="min-w-0 flex-1">
-                      <p className="flex items-center gap-2 font-serif text-md">
-                        {isBill && (
-                          <span
-                            className="inline-flex items-center border border-green bg-green-soft px-1.5 py-0.5 font-mono text-[0.625rem] uppercase tracking-[0.08em] text-ink"
-                            aria-label="Synced from a shared expense"
-                          >
-                            Bill
-                          </span>
-                        )}
-                        <span className="truncate">{ev.title}</span>
-                      </p>
-                      <p className="mt-1 font-mono text-sm text-ink-3">
-                        {date}
-                        {time}
-                      </p>
+                    {/* Amber date column (fixed width), per Terminus UPCOMING rows */}
+                    <div
+                      style={{
+                        font: "600 0.68rem/1 var(--ff-mono)",
+                        color: "var(--amber)",
+                        flexShrink: 0,
+                        width: 56,
+                      }}
+                    >
+                      {date}
                     </div>
+                    <div className="flex min-w-0 flex-1 items-center gap-2">
+                      {isBill && (
+                        <span className="badge green" aria-label="Synced from a shared expense">
+                          Bill
+                        </span>
+                      )}
+                      <span
+                        className="truncate"
+                        style={{ font: "500 0.78rem/1 var(--ff-mono)", color: "var(--text)" }}
+                      >
+                        {ev.title}
+                      </span>
+                    </div>
+                    {/* "who" column = the time/all-day, matching the prototype's right meta */}
+                    <span className="label" style={{ flexShrink: 0 }}>
+                      {time}
+                    </span>
                     {isBill && ev.linkedExpenseId ? (
                       <Link
                         href={`/household/${householdId}/expenses/${ev.linkedExpenseId}`}

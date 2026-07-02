@@ -1,6 +1,5 @@
 "use client";
 
-import { Btn } from "@/components/editorial";
 import { useCommunityMembership, useJoinCommunity } from "@/hooks/use-community";
 import { ApiError } from "@/lib/api-client";
 
@@ -8,6 +7,11 @@ interface JoinButtonProps {
   communityId: string;
 }
 
+/**
+ * <JoinButton> — Terminus `.btn` join control used in community tiles.
+ * Stops propagation so it stays a standalone action even when a tile's
+ * title links elsewhere.
+ */
 export function JoinButton({ communityId }: JoinButtonProps) {
   const { data: membership, isLoading } = useCommunityMembership(communityId);
   const joinMutation = useJoinCommunity(communityId);
@@ -15,21 +19,25 @@ export function JoinButton({ communityId }: JoinButtonProps) {
   const joined = membership?.isMember ?? false;
 
   if (isLoading) {
-    return <div className="h-[30px] w-[58px] shrink-0 bg-paper-3" />;
-  }
-
-  if (joined) {
     return (
-      <span className="shrink-0 border-ink bg-paper-2 px-6 py-[5px] text-base font-semibold text-ink-3">
-        Joined
+      <span
+        className="badge shrink-0 opacity-40"
+        style={{ height: 28 }}
+        aria-hidden="true"
+      >
+        …
       </span>
     );
   }
 
+  if (joined) {
+    return <span className="badge green shrink-0">Joined</span>;
+  }
+
   return (
-    <Btn
-      variant="outline"
-      size="sm"
+    <button
+      type="button"
+      className="btn btn-sm shrink-0"
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -42,9 +50,8 @@ export function JoinButton({ communityId }: JoinButtonProps) {
         });
       }}
       disabled={joinMutation.isPending}
-      loading={joinMutation.isPending}
     >
-      {joinMutation.isPending ? "…" : "Join"}
-    </Btn>
+      {joinMutation.isPending ? "…" : "$ join"}
+    </button>
   );
 }

@@ -30,9 +30,9 @@ interface CalendarGridProps {
 // so they don't compete with the red "today" marker; member events get a
 // neutral ink tint. Selected state is filled-ink for both kinds.
 function eventChipClass(kind: CalendarEventDto["kind"], selected: boolean): string {
-  if (selected) return "bg-ink text-paper border-ink";
+  if (selected) return "bg-accent text-paper border-accent";
   if (kind === "FinanceBill") return "bg-green-soft text-ink border-green";
-  return "bg-paper-3 text-ink border-ink-4";
+  return "bg-paper-3 text-ink border-border";
 }
 
 export function CalendarGrid({ year, month, events, onDelete, deleting }: CalendarGridProps) {
@@ -60,13 +60,13 @@ export function CalendarGrid({ year, month, events, onDelete, deleting }: Calend
     <div>
       <div role="grid" aria-label={`${MONTH_NAMES[month]} ${year} calendar`}>
         {/* Day-of-week header row */}
-        <div role="row" className="grid grid-cols-7 border-b border-t border-[var(--ink)]">
+        <div role="row" className="grid grid-cols-7 border-b border-t border-border">
           {DAYS.map((d) => (
             <div
               key={d}
               role="columnheader"
               aria-label={d}
-              className="border-r border-[var(--ink-4)] py-2 text-center font-mono text-sm uppercase tracking-[0.08em] text-ink-3 last:border-r-0"
+              className="border-r border-border py-2 text-center font-mono text-sm uppercase tracking-[0.08em] text-ink-3 last:border-r-0"
             >
               <span aria-hidden>{d}</span>
             </div>
@@ -79,13 +79,13 @@ export function CalendarGrid({ year, month, events, onDelete, deleting }: Calend
          * silently dropped both, which made cells lose their borders and
          * events lose their chip styling. The clsx-style join below keeps
          * each utility intact. */}
-        <div className="grid grid-cols-7 border border-t-0 border-[var(--ink)]">
+        <div className="grid grid-cols-7 border border-t-0 border-border">
           {cells.map((day, idx) => {
             const isLastColumn = (idx + 1) % 7 === 0;
             const isLastRow = idx >= cells.length - 7;
             const cellBorder = [
-              !isLastColumn && "border-r border-[var(--ink-4)]",
-              !isLastRow && "border-b border-[var(--ink-4)]",
+              !isLastColumn && "border-r border-border",
+              !isLastRow && "border-b border-border",
             ]
               .filter(Boolean)
               .join(" ");
@@ -117,7 +117,7 @@ export function CalendarGrid({ year, month, events, onDelete, deleting }: Calend
                   aria-hidden
                   className={
                     isToday
-                      ? "inline-flex h-7 w-7 items-center justify-center self-start bg-red font-mono text-sm font-bold leading-none text-paper"
+                      ? "inline-flex h-7 w-7 items-center justify-center self-start bg-accent font-mono text-sm font-bold leading-none text-paper"
                       : "inline-flex h-7 w-7 items-center justify-center self-start font-mono text-sm font-normal leading-none text-ink"
                   }
                 >
@@ -182,7 +182,7 @@ export function CalendarGrid({ year, month, events, onDelete, deleting }: Calend
       <div aria-live="polite" aria-atomic="true">
         {selectedEvent && selectedEvent.kind === "Member" && (
           <div
-            className="mt-8 border border-[var(--ink)] bg-paper px-10 py-8 shadow-card"
+            className="mt-8 border border-border bg-paper px-10 py-8"
             role="region"
             aria-label={`Event detail: ${selectedEvent.title}`}
           >

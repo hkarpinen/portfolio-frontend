@@ -9,5 +9,5 @@ export default function GeographyError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  return <ErrorSplash error={error} reset={reset} kicker="Weather · Error" />;
+  return <ErrorSplash error={error} reset={reset} kicker="// GEOGRAPHY · ERROR" />;
 }

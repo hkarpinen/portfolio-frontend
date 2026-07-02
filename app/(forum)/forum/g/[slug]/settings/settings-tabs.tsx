@@ -3,7 +3,6 @@
 import * as RadixTabs from "@radix-ui/react-tabs";
 import { CommunitySettingsForm } from "./settings-form";
 import { CommunityMembersTab } from "./members-tab";
-import { tabTriggerBody } from "@/lib/tab-styles";
 import type { CommunityVisibility } from "@/types/forum";
 
 interface Props {
@@ -30,16 +29,12 @@ export function SettingsTabs({
   return (
     <RadixTabs.Root defaultValue="general">
       {/* Tab bar */}
-      <RadixTabs.List className="border-ink-b flex">
-        <RadixTabs.Trigger value="general" style={tabTriggerBody}>
-          General
-        </RadixTabs.Trigger>
-        <RadixTabs.Trigger value="members" style={tabTriggerBody}>
-          Members
-        </RadixTabs.Trigger>
+      <RadixTabs.List className="tabs">
+        <RadixTabs.Trigger value="general">General</RadixTabs.Trigger>
+        <RadixTabs.Trigger value="members">Members</RadixTabs.Trigger>
       </RadixTabs.List>
 
-      <div className="border-ink bg-paper p-12 shadow-stamp">
+      <div className="ed-card">
         <RadixTabs.Content value="general">
           <CommunitySettingsForm
             communityId={communityId}
@@ -56,13 +51,6 @@ export function SettingsTabs({
           <CommunityMembersTab communityId={communityId} />
         </RadixTabs.Content>
       </div>
-
-      <style>{`
-        [data-radix-tabs-trigger][data-state="active"] {
-          color: var(--text) !important;
-          border-bottom-color: var(--red) !important;
-        }
-      `}</style>
     </RadixTabs.Root>
   );
 }

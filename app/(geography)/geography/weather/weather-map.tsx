@@ -97,7 +97,7 @@ export function WeatherMap({ coords }: { coords: GeoCoordinates }) {
           className="border-ink-b flex flex-wrap items-center gap-5 bg-paper-2 p-[10px_14px]"
         >
           <span className="ed-label-muted shrink-0 uppercase tracking-[0.22em]" aria-hidden="true">
-            Overlay
+            // OVERLAY
           </span>
           <div className="flex flex-wrap gap-3">
             {LAYERS.map((l) => {
