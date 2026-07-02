@@ -1,6 +1,6 @@
 "use client";
 
-import { Btn, Card, EditorialPageHead, Icon, Input, Textarea } from "@/components/editorial";
+import { Btn, Icon } from "@/components/editorial";
 import { useState } from "react";
 
 const LINKS = [
@@ -8,52 +8,76 @@ const LINKS = [
   {
     label: "LinkedIn",
     href: "https://www.linkedin.com/in/hank-karpinen/",
-    display: "linkedin.com/in/hank-karpinen",
+    display: "in/hank-karpinen",
   },
   { label: "Read.cv", href: "https://read.cv/hankk", display: "read.cv/hankk" },
 ];
 
+/**
+ * Contact aside — `.card` with the direct email, social links, and a
+ * location note. Mirrors the Terminus prototype's `// DIRECT` /
+ * `// ELSEWHERE` card.
+ */
 function ContactAside() {
   return (
-    <Card className="flex flex-col" aria-label="Direct contact information">
-      <h2 className="ed-h4">Direct</h2>
-      <a
-        href="mailto:hank@stackgazette.dev"
-        className="ed-contact-email"
-        aria-label="Send email to hank@stackgazette.dev"
-      >
-        hank@stackgazette.dev
-      </a>
+    <aside>
+      <div className="card">
+        <h2 className="card-h">// DIRECT</h2>
+        <a
+          href="mailto:contact@hankkarpinen.com"
+          style={{
+            color: "var(--amber)",
+            font: "600 0.875rem/1 var(--ff-mono)",
+            display: "inline-block",
+            marginTop: 8,
+          }}
+          aria-label="Send email to contact@hankkarpinen.com"
+        >
+          contact@hankkarpinen.com
+        </a>
 
-      <div className="ed-contact-divider my-6" role="separator" />
+        <div className="divider-hr" role="separator" />
 
-      <h2 className="ed-h4 mb-2">Elsewhere</h2>
-      <nav aria-label="Social profiles">
-        {LINKS.map((link) => (
-          <a
-            key={link.label}
-            href={link.href}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="ed-contact-row"
-            aria-label={`${link.label} — ${link.display} (opens in new tab)`}
-          >
-            <span>{link.label}</span>
-            <span className="ed-contact-row-handle" aria-hidden="true">
-              {link.display} <Icon name="arrowRight" size={12} />
-            </span>
-          </a>
-        ))}
-      </nav>
+        <h2 className="card-h">// ELSEWHERE</h2>
+        <nav className="stack" style={{ marginTop: 10 }} aria-label="Social profiles">
+          {LINKS.map((link) => (
+            <a
+              key={link.label}
+              href={link.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="row"
+              style={{
+                justifyContent: "space-between",
+                padding: "10px 0",
+                borderBottom: "1px solid var(--border)",
+                textDecoration: "none",
+              }}
+              aria-label={`${link.label} — ${link.display} (opens in new tab)`}
+            >
+              <span style={{ font: "600 0.75rem/1 var(--ff-mono)", color: "var(--text)" }}>
+                {link.label}
+              </span>
+              <span
+                style={{ font: "400 0.68rem/1 var(--ff-mono)", color: "var(--text-4)" }}
+                className="inline-flex items-center gap-1"
+                aria-hidden="true"
+              >
+                {link.display} <Icon name="arrowUpRight" size={12} strokeWidth={2} />
+              </span>
+            </a>
+          ))}
+        </nav>
 
-      <div className="ed-contact-divider my-6" role="separator" />
+        <div className="divider-hr" role="separator" />
 
-      <p className="ed-label-muted leading-relaxed">
-        Based in Pullman, WA · open to relocate
-        <br />
-        Response within 24h
-      </p>
-    </Card>
+        <div className="label" style={{ lineHeight: 1.9 }}>
+          // Pullman, WA · open to relocate
+          <br />
+          Response within 24h
+        </div>
+      </div>
+    </aside>
   );
 }
 
@@ -67,24 +91,25 @@ export default function ContactPage() {
   }
 
   return (
-    <div className="flex flex-col gap-10">
-      <EditorialPageHead
-        kicker="Contact"
-        title="Drop me a <em>line.</em>"
-        deck="Roles, freelance, code questions — all welcome. Hank Karpinen, full-stack engineer based in Pullman, WA. I'll get back to you within 24 hours."
-      />
+    <div className="flex flex-col gap-4">
+      <header className="page-head">
+        <div className="titles">
+          <div className="kicker" style={{ marginBottom: 8 }}>
+            // CONTACT
+          </div>
+          <h1>Drop me a line.</h1>
+          <p className="deck">
+            Roles, freelance, code questions — all welcome. Hank Karpinen, full-stack engineer based
+            in Pullman, WA. I&apos;ll get back to you within 24 hours.
+          </p>
+        </div>
+      </header>
 
       {submitted ? (
-        <div className="grid grid-cols-1 items-start gap-8 md:grid-cols-[1fr_280px]">
-          <div
-            className="ed-card flex flex-col items-start gap-4 text-left"
-            role="alert"
-            aria-live="polite"
-          >
+        <div className="split">
+          <div className="card flex flex-col items-start gap-4 text-left" role="alert" aria-live="polite">
             <h2 className="ed-h3">Message sent.</h2>
-            <p className="ed-deck">
-              Thanks for reaching out — I&apos;ll get back to you within 24h.
-            </p>
+            <p className="deck">Thanks for reaching out — I&apos;ll get back to you within 24h.</p>
             <Btn
               variant="secondary"
               onClick={() => {
@@ -92,68 +117,75 @@ export default function ContactPage() {
                 setForm({ name: "", email: "", subject: "", message: "" });
               }}
             >
-              Send another
+              $ send-another
             </Btn>
           </div>
           <ContactAside />
         </div>
       ) : (
-        <div className="grid grid-cols-1 items-start gap-8 md:grid-cols-[1fr_280px]">
-          <form
-            onSubmit={handleSubmit}
-            className="flex flex-col gap-6"
-            aria-label="Contact form"
-            noValidate
-          >
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-              <Input
+        <div className="split">
+          <form className="form wide" onSubmit={handleSubmit} aria-label="Contact form" noValidate>
+            <div className="field-row">
+              <div className="field">
+                <label htmlFor="c-name">Name</label>
+                <input
+                  id="c-name"
+                  type="text"
+                  value={form.name}
+                  onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+                  placeholder="Your name"
+                  autoComplete="name"
+                  required
+                />
+              </div>
+              <div className="field">
+                <label htmlFor="c-email">Email</label>
+                <input
+                  id="c-email"
+                  type="email"
+                  value={form.email}
+                  onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+                  placeholder="you@email.com"
+                  autoComplete="email"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="field">
+              <label htmlFor="c-subj">Subject</label>
+              <input
+                id="c-subj"
                 type="text"
-                label="Name"
-                value={form.name}
-                onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                placeholder="Your name"
-                autoComplete="name"
-                required
+                value={form.subject}
+                onChange={(e) => setForm((f) => ({ ...f, subject: e.target.value }))}
+                placeholder="What's this about?"
               />
-              <Input
-                type="email"
-                label="Email"
-                value={form.email}
-                onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-                placeholder="you@email.com"
-                autoComplete="email"
+            </div>
+
+            <div className="field">
+              <label htmlFor="c-msg">Message</label>
+              <textarea
+                id="c-msg"
+                value={form.message}
+                onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
+                placeholder="Tell me about the role, the team, or just say hi."
+                rows={8}
                 required
               />
             </div>
 
-            <Input
-              type="text"
-              label="Subject"
-              value={form.subject}
-              onChange={(e) => setForm((f) => ({ ...f, subject: e.target.value }))}
-              placeholder="e.g. Senior role, freelance project, or just hi"
-            />
-
-            <Textarea
-              label="Message"
-              value={form.message}
-              onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
-              placeholder="Tell me about the role, the team, or just say hi. I read every message."
-              required
-              rows={8}
-            />
-
-            <div className="flex flex-wrap gap-3">
+            <div className="form-actions">
               <Btn
                 type="submit"
                 variant="primary"
                 size="lg"
                 iconRight={<Icon name="arrowRight" size={16} aria-hidden />}
               >
-                Send message
+                $ send
               </Btn>
               <Btn type="button" variant="secondary" size="lg" href="/about">
-                Back to About
+                Cancel
               </Btn>
             </div>
           </form>

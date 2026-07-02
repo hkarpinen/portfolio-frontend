@@ -1,4 +1,4 @@
-import { Btn, EditorialPageHead, Icon, PullQuote } from "@/components/editorial";
+import { Btn, Icon, SectionHeader } from "@/components/editorial";
 import type { Metadata } from "next";
 import Link from "next/link";
 
@@ -17,20 +17,20 @@ import { BoundedContextsMap } from "@/components/architecture/bounded-contexts-m
  */
 
 export const metadata: Metadata = {
-  // Title template will append " — The Stack & Gazette" automatically
+  // Title template will append " — Hank Karpinen" automatically
   title: "Architecture",
   description:
-    "Seven .NET 8 microservices on a RabbitMQ spine. Volatility-based decomposition (IDesign × DDD), transactional outbox, idempotent consumers, hand-rolled identity. The architecture behind The Stack & Gazette, illustrated.",
+    "Seven .NET 8 microservices on a RabbitMQ spine. Volatility-based decomposition (IDesign × DDD), transactional outbox, idempotent consumers, hand-rolled identity. The architecture behind Hank Karpinen's portfolio, illustrated.",
   alternates: { canonical: "/about/architecture" },
   openGraph: {
-    title: "Architecture — The Stack & Gazette",
+    title: "Architecture — Hank Karpinen",
     description:
       "Seven .NET 8 microservices on one RabbitMQ spine. IDesign × DDD, transactional outbox, idempotent consumers — illustrated.",
     url: "/about/architecture",
     type: "article",
   },
   twitter: {
-    title: "Architecture — The Stack & Gazette",
+    title: "Architecture — Hank Karpinen",
     description:
       "Seven .NET 8 microservices on one RabbitMQ spine. IDesign × DDD, transactional outbox, idempotent consumers — illustrated.",
   },
@@ -70,10 +70,10 @@ const STACK: { label: string; items: string[] }[] = [
 export default function ArchitecturePage() {
   return (
     <div className="ed-about">
-      <EditorialPageHead
-        kicker="About · The architecture"
+      <SectionHeader
+        kicker="// ARCHITECTURE"
         title="Seven services, <em>one spine.</em>"
-        deck="The site is seven independent .NET microservices behind one Nginx gateway. They share no database and no contracts library — they cooperate through domain events on a RabbitMQ bus. Here's why, and what one event looks like end to end."
+        subtitle="The site is seven independent .NET microservices behind one Nginx gateway. They share no database and no contracts library — they cooperate through domain events on a RabbitMQ bus. Here's why, and what one event looks like end to end."
       />
 
       {/* ── Why this shape — the long-form intro ─────────────────────────── */}
@@ -115,7 +115,7 @@ export default function ArchitecturePage() {
 
         <aside aria-label="At a glance">
           <div className="ed-card-dark" role="complementary">
-            <p className="ed-kicker">At a glance</p>
+            <p className="ed-kicker">// AT_A_GLANCE</p>
             <dl className="mt-2 flex flex-col gap-3">
               <div>
                 <dt className="font-mono text-xs uppercase tracking-[0.16em] text-paper opacity-60">
@@ -146,13 +146,21 @@ export default function ArchitecturePage() {
         </aside>
       </section>
 
-      {/* ── Pull quote — the soul of the page ────────────────────────────── */}
-      <div style={{ marginTop: 72, marginBottom: 72 }}>
-        <PullQuote attribution="Design philosophy · IDesign × DDD">
+      {/* ── Design-philosophy callout (was PullQuote) ────────────────────── */}
+      <figure
+        className="pl-6"
+        style={{
+          marginTop: 72,
+          marginBottom: 72,
+          borderLeft: "2px solid var(--amber)",
+        }}
+      >
+        <blockquote className="ed-h3" style={{ color: "var(--text)", lineHeight: 1.5 }}>
           Each service is drawn around <em>what&apos;s likely to change together</em> — not around a
           noun. They never touch each other&apos;s tables. The bus is the only crossing.
-        </PullQuote>
-      </div>
+        </blockquote>
+        <figcaption className="ed-kicker mt-4">// DESIGN_PHILOSOPHY · IDESIGN × DDD</figcaption>
+      </figure>
 
       {/* ── Lifecycle ribbon ─────────────────────────────────────────────── */}
       <section aria-labelledby="lifecycle-heading" style={{ marginBottom: 96 }}>
@@ -160,12 +168,7 @@ export default function ArchitecturePage() {
           <h2 id="lifecycle-heading" className="ed-h3">
             One event, <em>end to end</em>
           </h2>
-          <p
-            className="font-mono text-xs uppercase tracking-[0.16em]"
-            style={{ color: "var(--ink-3)" }}
-          >
-            Diagram · the request thread &amp; the background dispatch
-          </p>
+          <p className="ed-meta">// DIAGRAM · the request thread &amp; the background dispatch</p>
         </div>
         <p className="ed-section-row-deck">
           A single tap on the &quot;Add expense&quot; button travels through seven stages. The
@@ -181,12 +184,7 @@ export default function ArchitecturePage() {
           <h2 id="contexts-heading" className="ed-h3">
             Bounded contexts, <em>one bus</em>
           </h2>
-          <p
-            className="font-mono text-xs uppercase tracking-[0.16em]"
-            style={{ color: "var(--ink-3)" }}
-          >
-            Diagram · who owns what, what they publish
-          </p>
+          <p className="ed-meta">// DIAGRAM · who owns what, what they publish</p>
         </div>
         <p className="ed-section-row-deck">
           Five services participate in the messaging story. Geography (weather) and Math (unit
@@ -206,21 +204,12 @@ export default function ArchitecturePage() {
         <dl className="grid grid-cols-1 gap-x-8 gap-y-5 sm:grid-cols-2">
           {STACK.map((group) => (
             <div key={group.label}>
-              <dt
-                className="font-700 mb-2 font-mono text-xs uppercase tracking-[0.16em]"
-                style={{ color: "var(--red)" }}
-              >
+              <dt className="ed-label mb-2" style={{ color: "var(--amber)" }}>
                 {group.label}
               </dt>
-              <dd className="flex flex-wrap gap-2">
+              <dd className="chips">
                 {group.items.map((t) => (
-                  <span
-                    key={t}
-                    className="font-600 border border-ink-3 px-2 py-1 font-mono text-xs uppercase tracking-[0.12em]"
-                    style={{ color: "var(--ink-2)" }}
-                  >
-                    {t}
-                  </span>
+                  <span key={t}>{t}</span>
                 ))}
               </dd>
             </div>
@@ -231,7 +220,7 @@ export default function ArchitecturePage() {
       {/* ── CTA back to /about and /contact ──────────────────────────────── */}
       <section className="ed-banner-dark" aria-label="Next steps">
         <div className="min-w-[240px] flex-1">
-          <p className="ed-kicker">Read the rest</p>
+          <p className="ed-kicker">// READ_THE_REST</p>
           <p className="ed-h3 ed-banner-dark-title">
             The <em>code</em> behind these diagrams.
           </p>
@@ -242,7 +231,7 @@ export default function ArchitecturePage() {
         </div>
         <div className="flex w-full flex-col gap-3 sm:w-auto sm:shrink-0 sm:flex-row">
           <Btn href="/#about" variant="secondary" size="lg" className="ed-btn-on-dark">
-            Back to bio
+            $ back-to-bio
           </Btn>
           <Btn
             href="/contact"
@@ -250,24 +239,25 @@ export default function ArchitecturePage() {
             size="lg"
             iconRight={<Icon name="arrowRight" size={16} />}
           >
-            Get in touch
+            $ get-in-touch
           </Btn>
         </div>
       </section>
 
-      <div className="mt-12 border-t border-rule py-6">
-        <p className="font-mono text-xs uppercase tracking-[0.22em] text-ink-2">
-          Source on{" "}
+      <div className="mt-12 border-t border-border py-6">
+        <p className="ed-meta">
+          // SOURCE ·{" "}
           <a
             href="https://github.com/hkarpinen"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-red underline"
+            className="underline"
+            style={{ color: "var(--amber)" }}
           >
             GitHub
           </a>{" "}
           · Seven .NET 8 services · One Next.js shell ·{" "}
-          <Link href="/" className="text-red underline">
+          <Link href="/" className="underline" style={{ color: "var(--amber)" }}>
             Back to home
           </Link>
         </p>

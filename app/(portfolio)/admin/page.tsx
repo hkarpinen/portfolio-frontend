@@ -1,14 +1,6 @@
 "use client";
 
-import {
-  Btn,
-  DepartmentHead,
-  EditorialPageHead,
-  Icon,
-  LedeStat,
-  Spinner,
-  UserInitials,
-} from "@/components/editorial";
+import { Btn, Icon, LedeStat, SectionHeader, Spinner, UserInitials } from "@/components/editorial";
 import { useState } from "react";
 import { useMe, useAdminUsers, useBanUser, useChangeUserRole } from "@/hooks/use-identity";
 import { pluralize } from "@/lib/utils";
@@ -32,14 +24,14 @@ export default function AdminPage() {
 
   return (
     <div className="page-enter flex flex-col gap-6">
-      <EditorialPageHead
-        kicker="Admin · Identity"
+      <SectionHeader
+        kicker="// ADMIN · IDENTITY"
         title={
           users.length > 0
             ? `<em>${users.length}</em> ${pluralize("member", users.length)} on file`
             : `<em>No</em> members on file yet`
         }
-        deck="Roster, roles, and ban status across the identity service. Changes take effect immediately."
+        subtitle="Roster, roles, and ban status across the identity service. Changes take effect immediately."
       />
 
       <LedeStat
@@ -55,13 +47,19 @@ export default function AdminPage() {
       />
 
       <section className="flex flex-col gap-5" aria-label="User management">
-        <DepartmentHead
-          kicker="Roster · Page"
-          count={`${users.length} on this page`}
-          title="The <em>roster</em>"
-          deck="Sortable by signup order. Click a row to inspect or act."
-        />
-        <div className="overflow-hidden border-ink bg-paper">
+        <div className="flex flex-col gap-2">
+          <div className="flex items-baseline justify-between gap-4">
+            <p className="ed-kicker">// ROSTER · PAGE</p>
+            <span className="ed-meta">{users.length} on this page</span>
+          </div>
+          <h2 className="ed-h3">
+            The <em>roster</em>
+          </h2>
+          <p className="ed-section-row-deck" style={{ marginBottom: 0 }}>
+            Sortable by signup order. Click a row to inspect or act.
+          </p>
+        </div>
+        <div className="overflow-hidden border border-border bg-paper">
           {isLoading ? (
             <div
               className="flex items-center justify-center p-20"
@@ -76,7 +74,7 @@ export default function AdminPage() {
           ) : (
             <table className="w-full" aria-label="Users table">
               <thead>
-                <tr className="border-ink-b bg-paper-2">
+                <tr className="border-b border-border bg-paper-2">
                   <th scope="col" className="ed-label-muted px-6 py-5 text-left">
                     User
                   </th>
@@ -107,8 +105,9 @@ export default function AdminPage() {
                       key={user.id}
                       className="row-hover"
                       style={{
-                        borderBottom: i < users.length - 1 ? "1.5px solid var(--ink)" : "none",
-                        background: user.isBanned ? "oklch(62% 0.21 22 / 0.04)" : undefined,
+                        borderBottom:
+                          i < users.length - 1 ? "1px solid var(--border)" : "none",
+                        background: user.isBanned ? "var(--danger-s)" : undefined,
                       }}
                     >
                       {/* User */}
@@ -145,7 +144,7 @@ export default function AdminPage() {
                           onChange={(e) =>
                             changeRole.mutate({ userId: user.id, role: e.target.value })
                           }
-                          className="h-18 cursor-pointer border-ink bg-paper-2 px-2 text-base text-ink outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                          className="h-18 cursor-pointer border border-border bg-paper-2 px-2 text-base text-ink outline-none disabled:cursor-not-allowed disabled:opacity-50"
                           aria-label={`Change role for ${user.displayName}`}
                         >
                           <option value="Member">Member</option>

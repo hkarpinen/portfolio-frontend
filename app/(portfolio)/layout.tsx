@@ -1,6 +1,5 @@
 import { AppShellServer } from "@/components/layout/app-shell-server";
 import { RepoFooter } from "@/components/layout/repo-footer";
-import { PortfolioMasthead } from "./portfolio-masthead";
 
 /**
  * The portfolio group is public. The admin sub-tree adds
@@ -9,7 +8,7 @@ import { PortfolioMasthead } from "./portfolio-masthead";
  */
 export default async function PortfolioLayout({ children }: { children: React.ReactNode }) {
   return (
-    <AppShellServer topBand={<PortfolioMasthead />}>
+    <AppShellServer>
       {children}
       <RepoFooter repo="portfolio-frontend" label="portfolio-frontend" />
     </AppShellServer>

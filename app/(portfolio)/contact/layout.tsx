@@ -17,14 +17,14 @@ export const metadata: Metadata = {
     "Get in touch with Hank Karpinen — full-stack engineer in Pullman, WA. Open to senior & staff roles, remote, hybrid, or onsite. Response within 24h.",
   alternates: { canonical: "/contact" },
   openGraph: {
-    title: "Contact Hank Karpinen — The Stack & Gazette",
+    title: "Contact — Hank Karpinen",
     description:
       "Get in touch — open to senior & staff full-stack roles, remote, hybrid, or onsite.",
     url: "/contact",
     type: "website",
   },
   twitter: {
-    title: "Contact Hank Karpinen — The Stack & Gazette",
+    title: "Contact — Hank Karpinen",
     description:
       "Get in touch — open to senior & staff full-stack roles, remote, hybrid, or onsite.",
   },
