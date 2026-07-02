@@ -53,16 +53,14 @@ function ResetPasswordContent() {
 
   if (!userId || !token) {
     return (
-      <div className="ed-auth-card text-center">
-        <div className="ed-medallion ed-medallion-bordered mx-auto mb-8">
-          <span className="text-red">
+      <div className="text-center">
+        <div className="mx-auto mb-8 flex h-28 w-28 items-center justify-center border border-danger bg-danger-s">
+          <span className="text-danger">
             <Icon name="x" size={24} strokeWidth={2} />
           </span>
         </div>
-        <p className="ed-kicker mb-4">Invalid link</p>
-        <h1 className="ed-h1 mb-6">
-          Something went <em>wrong.</em>
-        </h1>
+        <p className="ed-kicker mb-4">// INVALID_LINK</p>
+        <h1 className="ed-h1 mb-6">Something went wrong.</h1>
         <p className="ed-deck mb-10">This reset link is missing required information.</p>
         <Btn href="/identity/forgot-password" variant="primary">
           Request a new link
@@ -73,16 +71,14 @@ function ResetPasswordContent() {
 
   if (resetMutation.isSuccess) {
     return (
-      <div className="ed-auth-card text-center">
+      <div className="text-center">
         <div className="mx-auto mb-8 flex h-28 w-28 items-center justify-center border border-green bg-green-soft">
           <span className="text-green">
             <Icon name="check" size={24} strokeWidth={2} />
           </span>
         </div>
-        <p className="ed-kicker mb-4">Password updated</p>
-        <h1 className="ed-h1 mb-6">
-          You&apos;re all <em>set.</em>
-        </h1>
+        <p className="ed-kicker mb-4">// PASSWORD_UPDATED</p>
+        <h1 className="ed-h1 mb-6">You&apos;re all set.</h1>
         <p className="ed-deck mb-10">
           Your password has been reset. You can now sign in with your new password.
         </p>
@@ -98,10 +94,9 @@ function ResetPasswordContent() {
   }
 
   return (
-    <div className="ed-auth-card">
-      <h1 className="ed-h1">
-        New <em>password</em>
-      </h1>
+    <div>
+      <p className="ed-kicker mb-2.5">// AUTH · RESET</p>
+      <h1 className="ed-h1">New password</h1>
       <p className="ed-hint mb-2 mt-2">Choose a strong password for your account.</p>
       <p className="ed-label-muted mb-8 leading-relaxed">
         Min 8 characters · use a mix of letters, numbers, and symbols for best security.
@@ -112,7 +107,7 @@ function ResetPasswordContent() {
           <Alert variant="danger" role="alert">
             {displayError}{" "}
             {isExpiredLink && (
-              <a href="/identity/forgot-password" className="font-semibold text-ink underline">
+              <a href="/identity/forgot-password" className="font-semibold text-amber underline">
                 Request a new link
               </a>
             )}
@@ -179,13 +174,13 @@ export default function ResetPasswordPage() {
   return (
     <Suspense
       fallback={
-        <div className="ed-auth-card flex items-center justify-center py-16">
+        <div className="flex items-center justify-center py-16">
           {/* Spinner: composite border + animation has no single Tailwind equivalent — kept inline */}
           <div
             className="h-24 w-24"
             style={{
-              border: "2px solid var(--ink-4)",
-              borderTopColor: "var(--ink)",
+              border: "2px solid var(--border)",
+              borderTopColor: "var(--amber)",
               animation: "spin 0.8s linear infinite",
             }}
           />

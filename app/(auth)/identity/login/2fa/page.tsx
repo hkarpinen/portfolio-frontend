@@ -67,10 +67,9 @@ export default function TwoFactorPage() {
   }
 
   return (
-    <div className="ed-auth-card">
-      <h1 className="ed-h1">
-        Two-factor <em>code</em>
-      </h1>
+    <div>
+      <p className="ed-kicker mb-2.5">// AUTH · 2FA</p>
+      <h1 className="ed-h1">Two-factor code</h1>
       <p className="ed-hint mb-2 mt-2">Open your authenticator app and enter the six-digit code.</p>
       <p className="ed-label-muted mb-8 leading-relaxed">
         Codes refresh every 30 seconds — use the current one shown in your app.
@@ -106,7 +105,7 @@ export default function TwoFactorPage() {
                 onKeyDown={(e) => handleKeyDown(i, e)}
                 onPaste={handlePaste}
                 aria-label={`Digit ${i + 1} of 6`}
-                className="min-w-0 flex-1 border-[1.5px] border-[color:var(--ink)] bg-paper py-4 text-center font-mono text-xl font-semibold outline-none transition-colors focus:border-[color:var(--red)]"
+                className="min-w-0 flex-1 border border-border bg-paper py-4 text-center font-mono text-xl font-semibold outline-none transition-colors focus:border-[color:var(--amber)]"
               />
             ))}
           </div>
@@ -124,9 +123,9 @@ export default function TwoFactorPage() {
         </Btn>
       </form>
 
-      <div className="mt-8 border-t border-[color:var(--rule-soft)] pt-6 text-center">
+      <div className="mt-8 border-t border-border pt-6 text-center">
         <p className="ed-label-muted mb-2">Can&apos;t access your authenticator?</p>
-        <Link href="/identity/login/recovery" className="text-sm font-semibold text-red hover:underline">
+        <Link href="/identity/login/recovery" className="text-sm font-semibold text-amber hover:underline">
           Use a recovery code{" "}
           <Icon name="arrowRight" size={13} strokeWidth={2} className="inline align-[-2px]" />
         </Link>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Alert, Btn, GithubMark, GoogleG, Icon, Input } from "@/components/editorial";
+import { Alert, Btn, Icon, Input } from "@/components/editorial";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -58,52 +58,19 @@ export function LoginForm({ from }: LoginFormProps) {
   }
 
   return (
-    <div className="ed-auth-card">
-      <h1 className="ed-h1">
-        Sign <em>in</em>
-      </h1>
+    <div>
+      <p className="ed-kicker mb-2.5">// AUTH</p>
+      <h1 className="ed-h1">Sign in</h1>
       <p className="ed-hint mb-6 mt-2">
         New here?{" "}
-        <Link href="/identity/register" className="font-semibold text-red">
-          Create an account{" "}
+        <Link href="/identity/register" className="font-semibold text-amber">
+          $ register{" "}
           <Icon name="arrowRight" size={13} strokeWidth={2} className="inline align-[-2px]" />
         </Link>
       </p>
       <p className="ed-label-muted mb-8 leading-relaxed">
         Access your household dashboard, forum, and finance tools — all in one place.
       </p>
-
-      {/* OAuth buttons */}
-      <div className="mb-8 grid grid-cols-2 gap-3">
-        <Btn
-          variant="secondary"
-          fullWidth
-          onClick={() => {
-            window.location.href = "/api/identity/oauth/github";
-          }}
-          iconLeft={<GithubMark />}
-        >
-          GitHub
-        </Btn>
-        <Btn
-          variant="secondary"
-          fullWidth
-          onClick={() => {
-            window.location.href = "/api/identity/oauth/google";
-          }}
-          iconLeft={<GoogleG />}
-        >
-          Google
-        </Btn>
-      </div>
-
-      <div className="mb-8 flex items-center gap-6">
-        <div className="h-px flex-1 bg-ink-4" />
-        <span className="font-mono text-xs uppercase tracking-[0.2em] text-ink-3">
-          or with email
-        </span>
-        <div className="h-px flex-1 bg-ink-4" />
-      </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
         {login.isError && !unconfirmedEmail && (
@@ -169,11 +136,11 @@ export function LoginForm({ from }: LoginFormProps) {
                 type="checkbox"
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
-                className="h-4 w-4 cursor-pointer accent-[color:var(--ink)]"
+                className="h-4 w-4 cursor-pointer accent-[color:var(--amber)]"
               />
               <span className="ed-label-muted">Remember me</span>
             </label>
-            <Link href="/identity/forgot-password" className="ed-label-muted hover:text-red">
+            <Link href="/identity/forgot-password" className="ed-label-muted hover:text-amber">
               Forgot password?
             </Link>
           </div>
@@ -189,15 +156,15 @@ export function LoginForm({ from }: LoginFormProps) {
           className="mt-2"
           iconRight={<Icon name="arrowRight" size={16} />}
         >
-          {login.isPending ? "Signing in…" : "Sign in"}
+          {login.isPending ? "Signing in…" : "$ sign-in"}
         </Btn>
       </form>
 
-      <div className="mt-8 border-[1.5px] border-[color:var(--rule-soft)] p-4">
+      <div className="mt-8 border border-border p-4">
         <p className="ed-hint">
           Skip signup?{" "}
-          <Link href="/demo" className="font-semibold text-red">
-            Try the demo{" "}
+          <Link href="/demo" className="font-semibold text-amber">
+            $ try-demo{" "}
             <Icon name="arrowRight" size={13} strokeWidth={2} className="inline align-[-2px]" />
           </Link>{" "}
           — no account required, three seconds in.

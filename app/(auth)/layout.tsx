@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { requireAnonymous } from "@/lib/auth/session";
-import { Icon } from "@/components/editorial";
 
 /** Auth routes (login/register/etc.) add no SEO value — keep them out of
  *  the index so search results show the public landing instead. */
@@ -13,40 +12,45 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
   await requireAnonymous();
 
   return (
-    <div className="ed-auth-split">
-      {/* Left panel — dark ink */}
-      <div className="ed-auth-left">
-        <Link href="/" className="ed-auth-brand">
-          <span className="ed-sidebar-mark">SG</span>
-          <span className="ed-auth-brand-name">
-            The Stack <em>&amp;</em> Gazette
-          </span>
+    <div className="auth-grid">
+      {/* Aside — brand lockup + pitch (hidden < 960px) */}
+      <aside className="auth-aside">
+        <Link href="/" className="lockup">
+          <span className="mark">// HK</span>
+          <span className="name">Hank Karpinen</span>
         </Link>
 
-        <div className="ed-auth-left-foot">
-          <p className="ed-auth-tagline">
-            A full-stack app,
-            <br />
-            <em>built from scratch.</em>
-          </p>
-          <ul className="ed-auth-bullets">
-            <li>Six services · Thirty screens</li>
-            <li>Hand-rolled auth · RabbitMQ pipelines</li>
-            <li>Hiring me costs more than the demo</li>
-          </ul>
+        <p className="pitch">
+          A full-stack app,
+          <br />
+          <em>built from scratch.</em>
+        </p>
+        <div className="font-mono text-[0.72rem] leading-[1.9] text-ink-3">
+          Seven .NET 8 services
+          <br />
+          Thirty screens
+          <br />
+          Hand-rolled auth
+          <br />
+          RabbitMQ event mesh
         </div>
-      </div>
 
-      {/* Right panel — paper */}
-      <div className="ed-auth-right">
-        <div className="ed-auth-back-row">
-          <Link href="/" className="ed-auth-back">
-            <Icon name="arrowLeft" size={13} strokeWidth={2} className="inline align-[-2px]" /> Back
-            to landing
-          </Link>
+        <div className="foot">
+          // demo session available — no account required
+          <br />
+          three seconds in
         </div>
-        <div className="ed-auth-right-body">{children}</div>
-      </div>
+      </aside>
+
+      {/* Main — form column */}
+      <main id="main" className="auth-main-col">
+        <div className="auth-wrap">
+          <Link href="/" className="back">
+            ← / home
+          </Link>
+          {children}
+        </div>
+      </main>
     </div>
   );
 }

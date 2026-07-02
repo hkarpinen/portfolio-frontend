@@ -1,6 +1,6 @@
 "use client";
 
-import { Alert, Btn, GithubMark, GoogleG, Icon, Input } from "@/components/editorial";
+import { Alert, Btn, Icon, Input } from "@/components/editorial";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
@@ -20,34 +20,23 @@ function PasswordStrength({ password }: { password: string }) {
   const hasSpecial = /[^A-Za-z0-9]/.test(password);
 
   const score = [len >= 8, hasUpper && hasLower, hasNumber, hasSpecial].filter(Boolean).length;
-  // Dynamic runtime values — colors and score are computed at runtime from
-  // the password string; no static class can encode this, so style={{}} is kept here.
-  const colors = ["var(--red)", "var(--red)", "var(--warning)", "var(--warning)", "var(--green)"];
   const labels = ["", "Weak", "Fair", "Good", "Strong"];
 
   if (!password) return null;
 
   return (
-    <div className="mt-2 flex flex-col gap-2">
-      <div className="flex gap-1.5">
+    <>
+      <div className="pw-strength">
         {[0, 1, 2, 3].map((i) => (
-          <div
-            key={i}
-            style={{
-              flex: 1,
-              height: "2px",
-              background: i < score ? colors[score] : "var(--ink-4)",
-              transition: "background 220ms",
-            }}
-          />
+          <span key={i} className={i < score ? "on" : undefined} />
         ))}
       </div>
       {score > 0 && (
-        <span className="ed-label-muted" style={{ color: colors[score] }}>
-          {labels[score]}
-        </span>
+        <div className="ed-label-muted mt-1.5">
+          // {labels[score]} · {len} chars{hasNumber ? " · 1 number" : ""}
+        </div>
       )}
-    </div>
+    </>
   );
 }
 
@@ -82,10 +71,9 @@ export default function RegisterPage() {
 
   if (registerMutation.isSuccess) {
     return (
-      <div className="ed-auth-card">
-        <h1 className="ed-h1">
-          Check your <em>email</em>
-        </h1>
+      <div>
+        <p className="ed-kicker mb-2.5">// AUTH</p>
+        <h1 className="ed-h1">Check your email</h1>
         <p className="ed-deck mb-8 mt-3">
           We&apos;ve sent a confirmation link to your email. Click it to activate your account.
         </p>
@@ -98,49 +86,16 @@ export default function RegisterPage() {
 
   return (
     <>
-      <div className="ed-auth-card">
-        <h1 className="ed-h1">
-          Create an <em>account</em>
-        </h1>
+      <div>
+        <p className="ed-kicker mb-2.5">// AUTH</p>
+        <h1 className="ed-h1">Create account</h1>
         <p className="ed-hint mb-8 mt-2">
           Already have one?{" "}
-          <Link href="/identity/login" className="font-semibold text-red">
-            Sign in{" "}
+          <Link href="/identity/login" className="font-semibold text-amber">
+            $ login{" "}
             <Icon name="arrowRight" size={13} strokeWidth={2} className="inline align-[-2px]" />
           </Link>
         </p>
-
-        {/* OAuth */}
-        <div className="mb-8 grid grid-cols-1 gap-3">
-          <Btn
-            variant="secondary"
-            fullWidth
-            iconLeft={<GithubMark />}
-            onClick={() => {
-              window.location.href = "/api/identity/oauth/github";
-            }}
-          >
-            Continue with GitHub
-          </Btn>
-          <Btn
-            variant="secondary"
-            fullWidth
-            iconLeft={<GoogleG />}
-            onClick={() => {
-              window.location.href = "/api/identity/oauth/google";
-            }}
-          >
-            Continue with Google
-          </Btn>
-        </div>
-
-        <div className="mb-8 flex items-center gap-6">
-          <div className="h-px flex-1 bg-ink-4" />
-          <span className="font-mono text-xs uppercase tracking-[0.2em] text-ink-3">
-            or with email
-          </span>
-          <div className="h-px flex-1 bg-ink-4" />
-        </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
           {registerMutation.isError && (
@@ -215,11 +170,11 @@ export default function RegisterPage() {
 
           <p className="ed-label-muted leading-relaxed">
             Protected by reCAPTCHA · by signing up you agree to the{" "}
-            <a href="/terms" className="underline hover:text-red">
+            <a href="/terms" className="underline hover:text-amber">
               terms of service
             </a>{" "}
             and{" "}
-            <a href="/privacy" className="underline hover:text-red">
+            <a href="/privacy" className="underline hover:text-amber">
               privacy policy
             </a>
             .
@@ -234,15 +189,15 @@ export default function RegisterPage() {
             fullWidth
             iconRight={<Icon name="arrowRight" size={16} />}
           >
-            {registerMutation.isPending ? "Creating account…" : "Create account"}
+            {registerMutation.isPending ? "Creating account…" : "$ create-account"}
           </Btn>
         </form>
 
-        <div className="mt-8 border-[1.5px] border-[color:var(--rule-soft)] p-4">
+        <div className="mt-8 border border-border p-4">
           <p className="ed-hint">
             Just want to look around?{" "}
-            <Link href="/demo" className="font-semibold text-red">
-              Try the demo{" "}
+            <Link href="/demo" className="font-semibold text-amber">
+              $ try-demo{" "}
               <Icon name="arrowRight" size={13} strokeWidth={2} className="inline align-[-2px]" />
             </Link>
           </p>

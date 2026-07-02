@@ -39,10 +39,9 @@ export default function ForgotPasswordPage() {
 
   if (submitted) {
     return (
-      <div className="ed-auth-card">
-        <h1 className="ed-h1">
-          Check your <em>inbox</em>
-        </h1>
+      <div>
+        <p className="ed-kicker mb-2.5">// AUTH · RESET</p>
+        <h1 className="ed-h1">Check your inbox</h1>
         <p className="ed-deck mb-8 mt-3">
           If that email is registered, we&apos;ve sent a password reset link. Check your inbox and
           follow the instructions.
@@ -55,10 +54,9 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="ed-auth-card">
-      <h1 className="ed-h1">
-        Forgot <em>password?</em>
-      </h1>
+    <div>
+      <p className="ed-kicker mb-2.5">// AUTH · RESET</p>
+      <h1 className="ed-h1">Forgot password?</h1>
       <p className="ed-hint mb-2 mt-2">Enter your email and we&apos;ll send a reset link.</p>
       <p className="ed-label-muted mb-8 leading-relaxed">
         For your privacy, we won&apos;t confirm whether the address is registered. Check your inbox

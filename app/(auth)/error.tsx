@@ -9,5 +9,5 @@ export default function AuthError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  return <ErrorSplash error={error} reset={reset} kicker="Auth · Error" />;
+  return <ErrorSplash error={error} reset={reset} kicker="// AUTH · ERROR" />;
 }

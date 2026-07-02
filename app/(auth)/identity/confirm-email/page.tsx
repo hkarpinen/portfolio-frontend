@@ -39,7 +39,7 @@ function ConfirmEmailContent() {
       : "Your email has been confirmed. You can now sign in.";
 
   return (
-    <div className="ed-auth-card text-center">
+    <div className="text-center">
       {status === "loading" && (
         <>
           {/* Spinner: composite border + animation combo has no single Tailwind equivalent — kept inline */}
@@ -48,8 +48,8 @@ function ConfirmEmailContent() {
             aria-label="Confirming your email, please wait"
             className="mx-auto mb-10 h-28 w-28"
             style={{
-              border: "2px solid var(--ink-4)",
-              borderTopColor: "var(--ink)",
+              border: "2px solid var(--border)",
+              borderTopColor: "var(--amber)",
               animation: "spin 0.8s linear infinite",
             }}
           />
@@ -67,7 +67,7 @@ function ConfirmEmailContent() {
             </span>
           </div>
           <h1 className="ed-h1 mb-4">
-            Email confirmed<span className="text-red">.</span>
+            Email confirmed<span className="text-amber">.</span>
           </h1>
           <p className="mb-14 text-base leading-[1.6] text-ink-3">{message}</p>
           <Btn href="/identity/login" variant="primary">
@@ -78,15 +78,13 @@ function ConfirmEmailContent() {
 
       {status === "error" && (
         <>
-          <div className="ed-medallion ed-medallion-bordered mx-auto mb-10">
-            <span className="text-red">
+          <div className="mx-auto mb-10 flex h-28 w-28 items-center justify-center border border-danger bg-danger-s">
+            <span className="text-danger">
               <Icon name="x" size={24} strokeWidth={2} />
             </span>
           </div>
-          <p className="ed-kicker mb-2 text-red">Confirmation failed</p>
-          <h1 className="ed-h1 mb-4">
-            Link expired <em>or</em> invalid.
-          </h1>
+          <p className="ed-kicker mb-2 text-danger">// CONFIRMATION_FAILED</p>
+          <h1 className="ed-h1 mb-4">Link expired or invalid.</h1>
           <p className="mb-4 text-base leading-[1.6] text-ink-3">{message}</p>
           <p className="ed-label-muted mb-8 leading-relaxed">
             Confirmation links expire after 24 hours. Sign in to request a new one, or register
@@ -110,13 +108,13 @@ export default function ConfirmEmailPage() {
   return (
     <Suspense
       fallback={
-        <div className="ed-auth-card text-center">
+        <div className="text-center">
           {/* Spinner: composite border + animation combo has no single Tailwind equivalent — kept inline */}
           <div
             className="mx-auto h-24 w-24"
             style={{
-              border: "2px solid var(--ink-4)",
-              borderTopColor: "var(--ink)",
+              border: "2px solid var(--border)",
+              borderTopColor: "var(--amber)",
               animation: "spin 0.8s linear infinite",
             }}
           />
