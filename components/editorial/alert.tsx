@@ -11,17 +11,17 @@ interface AlertProps {
 }
 
 const VARIANT_COLOR: Record<AlertVariant, string> = {
-  info: "var(--ink)",
-  warning: "var(--red)",
-  danger: "var(--red)",
+  info: "var(--text-3)",
+  warning: "var(--amber)",
+  danger: "var(--danger)",
   success: "var(--green)",
 };
 
 const VARIANT_LABEL: Record<AlertVariant, string> = {
-  info: "— Notice —",
-  warning: "— Warning —",
-  danger: "— Danger —",
-  success: "— Note —",
+  info: "// NOTICE",
+  warning: "// WARNING",
+  danger: "// DANGER",
+  success: "// SUCCESS",
 };
 
 export function Alert({

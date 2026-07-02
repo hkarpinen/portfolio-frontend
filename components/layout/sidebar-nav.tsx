@@ -190,17 +190,17 @@ export function Sidebar({
 
         {/* Nav */}
         <nav aria-label="Sections" className="ed-sidebar-nav">
-          <p className="ed-sidebar-group-h">Portfolio</p>
+          <p className="ed-sidebar-group-h">PORTFOLIO</p>
           {NAV_PORTFOLIO.map((item) => (
             <NavItem key={item.href} item={item} pathname={pathname} collapsed={false} />
           ))}
 
-          <p className="ed-sidebar-group-h">Account</p>
+          <p className="ed-sidebar-group-h">ACCOUNT</p>
           {NAV_ACCOUNT.map((item) => (
             <NavItem key={item.href} item={item} pathname={pathname} collapsed={false} />
           ))}
 
-          <p className="ed-sidebar-group-h">Utilities</p>
+          <p className="ed-sidebar-group-h">UTILITIES</p>
           {NAV_UTILITIES.map((item) => (
             <NavItem key={item.href} item={item} pathname={pathname} collapsed={false} />
           ))}

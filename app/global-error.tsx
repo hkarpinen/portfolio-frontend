@@ -22,9 +22,9 @@ export default function GlobalError({
     <html lang="en">
       <body
         style={{
-          background: "#f5efe3",
-          color: "#15120a",
-          fontFamily: "Georgia, serif",
+          background: "#0d1117",
+          color: "#e6edf3",
+          fontFamily: "ui-monospace, 'SF Mono', Menlo, monospace",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -42,12 +42,12 @@ export default function GlobalError({
             letterSpacing: "0.16em",
             textTransform: "uppercase",
             marginBottom: "24px",
-            color: "#5a544a",
+            color: "#e6b450",
           }}
         >
-          Critical error
+          // CRITICAL_ERROR
         </p>
-        <h1 style={{ fontSize: "1.625rem", marginBottom: "16px" }}>
+        <h1 style={{ fontSize: "1.625rem", marginBottom: "16px", fontWeight: 700 }}>
           The application failed to start.
         </h1>
         {error.digest ? (
@@ -55,7 +55,7 @@ export default function GlobalError({
             style={{
               fontFamily: "ui-monospace, monospace",
               fontSize: "0.72rem",
-              color: "#5a544a",
+              color: "#8b949e",
               marginBottom: "24px",
             }}
           >
@@ -66,9 +66,9 @@ export default function GlobalError({
           type="button"
           onClick={reset}
           style={{
-            background: "#15120a",
-            color: "#f5efe3",
-            border: "1.5px solid #15120a",
+            background: "#e6b450",
+            color: "#0d1117",
+            border: "1px solid #e6b450",
             padding: "10px 20px",
             fontFamily: "ui-monospace, monospace",
             fontSize: "0.78rem",
@@ -77,7 +77,7 @@ export default function GlobalError({
             cursor: "pointer",
           }}
         >
-          Try again
+          $ try-again
         </button>
       </body>
     </html>

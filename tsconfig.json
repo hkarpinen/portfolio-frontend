@@ -37,6 +37,7 @@
     "**/*.test.ts",
     "**/*.test.tsx",
     "vitest.config.ts",
-    "handoff 8"
+    "handoff 8",
+    "handoff 9"
   ]
 }

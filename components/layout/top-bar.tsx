@@ -56,15 +56,13 @@ export function TopBarStack({
         </button>
       )}
 
-      <Link href="/" aria-label="The Stack & Gazette — home" className="ed-topbar-brand">
+      <Link href="/" aria-label="Hank Karpinen — home" className="ed-topbar-brand">
         <span className="ed-topbar-brand-mark" aria-hidden="true">
-          SG
+          // HK
         </span>
         <span className="ed-topbar-brand-copy">
-          <span className="ed-topbar-brand-name">
-            The Stack <em>&amp;</em> Gazette
-          </span>
-          <span className="ed-topbar-brand-tag">Portfolio · in app form</span>
+          <span className="ed-topbar-brand-name">Hank Karpinen</span>
+          <span className="ed-topbar-brand-tag">full-stack-engineer</span>
         </span>
       </Link>
 

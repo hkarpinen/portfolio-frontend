@@ -1,25 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import { Instrument_Serif, Newsreader, JetBrains_Mono } from "next/font/google";
+import { JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { QueryProvider } from "@/components/layout/query-provider";
 
-const instrumentSerif = Instrument_Serif({
-  subsets: ["latin"],
-  weight: ["400"],
-  style: ["normal", "italic"],
-  variable: "--ff-serif",
-});
-
-const newsreader = Newsreader({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  style: ["normal", "italic"],
-  variable: "--ff-body",
-});
-
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "700"],
+  weight: ["400", "500", "600", "700"],
   variable: "--ff-mono",
 });
 
@@ -30,7 +16,7 @@ const jetbrainsMono = JetBrains_Mono({
  */
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "https://hankkarpinen.com";
 
-const SITE_NAME = "The Stack & Gazette";
+const SITE_NAME = "Hank Karpinen";
 const DEFAULT_TITLE = "Hank Karpinen — Full-stack engineer · .NET microservices, Next.js";
 const DEFAULT_DESCRIPTION =
   "Portfolio of Hank Karpinen — full-stack engineer in Pullman, WA. Six .NET 8 microservices on RabbitMQ, hand-rolled auth, DDD + IDesign. Try the live demo.";
@@ -41,7 +27,7 @@ export const metadata: Metadata = {
   title: {
     /** Used on /, the bare-domain landing. */
     default: DEFAULT_TITLE,
-    /** Used by every child page: e.g. "Architecture — The Stack & Gazette". */
+    /** Used by every child page: e.g. "Architecture — Hank Karpinen". */
     template: `%s — ${SITE_NAME}`,
   },
 
@@ -126,7 +112,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#f1eadb",
+  themeColor: "#0d1117",
   width: "device-width",
   initialScale: 1,
 };
@@ -139,8 +125,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`h-full ${instrumentSerif.variable} ${newsreader.variable} ${jetbrainsMono.variable}`}
-      style={{ "--ff-display": "var(--ff-serif)" } as React.CSSProperties}
+      className={`h-full ${jetbrainsMono.variable}`}
     >
       <body className="h-full">
         <QueryProvider>{children}</QueryProvider>

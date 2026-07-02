@@ -16,18 +16,19 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // ── Editorial palette ────────────────────────────────────────────
-        paper: "var(--paper)",
-        "paper-2": "var(--paper-2)",
-        "paper-3": "var(--paper-3)",
-        "paper-4": "var(--paper-4)",
-        ink: "var(--ink)",
-        "ink-2": "var(--ink-2)",
-        "ink-3": "var(--ink-3)",
-        "ink-4": "var(--ink-4)",
-        red: "var(--red)",
-        "red-deep": "var(--red-deep)",
-        "red-soft": "var(--red-soft)",
+        // ── Terminus palette ─────────────────────────────────────────────
+        paper: "var(--void)",
+        "paper-2": "var(--surface)",
+        "paper-3": "var(--raised)",
+        "paper-4": "var(--border-hi)",
+        ink: "var(--text)",
+        "ink-2": "var(--text-2)",
+        "ink-3": "var(--text-3)",
+        "ink-4": "var(--text-4)",
+        red: "var(--amber)",
+        amber: "var(--amber)",
+        "red-deep": "var(--accent-hi)",
+        "red-soft": "var(--amber-dim)",
         "green-soft": "var(--green-soft)",
         green: "var(--green)",
 
@@ -52,7 +53,7 @@ const config: Config = {
           3: "var(--text-3)",
         },
         accent: {
-          DEFAULT: "var(--accent)",
+          DEFAULT: "var(--amber)",
           hi: "var(--accent-hi)",
           subtle: "var(--accent-subtle)",
           v: "var(--accent-v)",
@@ -121,13 +122,14 @@ const config: Config = {
       },
 
       boxShadow: {
-        card: "4px 4px 0 var(--ink)",
-        stamp: "6px 6px 0 var(--ink)",
-        modal: "8px 8px 0 var(--ink)",
+        // Terminus — no shadows anywhere
+        card: "none",
+        stamp: "none",
+        modal: "none",
         // Legacy aliases
-        sm: "4px 4px 0 var(--ink)",
-        md: "6px 6px 0 var(--ink)",
-        lg: "8px 8px 0 var(--ink)",
+        sm: "none",
+        md: "none",
+        lg: "none",
         none: "none",
       },
 

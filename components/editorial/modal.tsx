@@ -28,11 +28,11 @@ export function Modal({
           style={{ background: "var(--overlay)", animation: "fadeIn 150ms" }}
         >
           <Dialog.Content
-            className="flex w-full flex-col bg-paper"
+            className="flex w-full flex-col"
             style={{
               maxWidth,
-              border: "2px solid var(--ink)",
-              boxShadow: "var(--shadow-modal)",
+              background: "var(--surface)",
+              border: "1px solid var(--border)",
               animation: "scaleIn 200ms cubic-bezier(0.16, 1, 0.3, 1)",
               maxHeight: "90vh",
               overflow: "hidden",
@@ -41,11 +41,10 @@ export function Modal({
             {/* Header */}
             <div
               className="flex shrink-0 items-center justify-between px-[22px] py-8"
-              style={{ borderBottom: "1.5px solid var(--ink)" }}
+              style={{ borderBottom: "1px solid var(--border)" }}
             >
               <Dialog.Title
-                className="font-serif font-normal italic text-ink"
-                style={{ fontSize: "1.5rem", lineHeight: 1 }}
+                style={{ font: "700 1rem/1 var(--ff-mono)", color: "var(--text)" }}
               >
                 {title}
               </Dialog.Title>
@@ -73,7 +72,7 @@ export function Modal({
             {actions && (
               <div
                 className="flex shrink-0 items-center justify-end gap-5 px-[22px] py-7"
-                style={{ borderTop: "1.5px solid var(--ink)" }}
+                style={{ borderTop: "1px solid var(--border)" }}
               >
                 {actions}
               </div>
